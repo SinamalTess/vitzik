@@ -1,4 +1,11 @@
-export function formatToPixelValue(input) {
+/*
+Take any input and try its best to convert it to a px value.
+For example :
+100% --> '100px'
+120 --> '120px'
+*/
+
+export function formatToPixelValue(input: any) : string { // type 'any' is on purpose here :p
     const numberValue = Number(input);
     const pixelPattern = /^\d*(px)$/; // checks if the value is any number immediately followed by 'px'
     const percentagePattern = /^\d*%$/; // checks if the value is a percentage

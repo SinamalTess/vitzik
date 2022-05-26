@@ -2,8 +2,15 @@ import './staff.css';
 import treble_clef from '../../../src/note_symbols/notes_treble_clef.svg';
 import bass_clef from '../../../src/note_symbols/notes_bass_clef.svg';
 import { formatToPixelValue } from '../../utils';
+import React from 'react';
 
-export function Staff ({trebleClef, bassClef, spaceHeight}) {
+interface StaffProps {
+    trebleClef : boolean,
+    bassClef: boolean,
+    spaceHeight: string | number
+}
+
+export function Staff ({trebleClef, bassClef, spaceHeight} : StaffProps) {
 
     const nbSpaces = 4;
     const nbMeasures = 2;
