@@ -1,0 +1,26 @@
+table {
+    background-color: white;
+    border-spacing:0;
+    border-collapse: separate;
+    width: 100%;
+    empty-cells: show;
+}
+
+table td {
+    padding: 0;
+    position: relative;
+}
+
+table img {
+    position: absolute;
+    left: 0;
+    height: 100%;
+    top: 0;
+    z-index: 1;
+}
+
+table tr {
+    border: 1px solid black;
+    display: table;
+    width: 100%;
+}
