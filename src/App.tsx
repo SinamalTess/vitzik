@@ -4,6 +4,7 @@ import {MidiInputSelector} from "./components/MidiInputSelector";
 import {MidiInputReader} from "./components/MidiInputReader";
 import React, {useState} from "react";
 import {noteKeyToName} from "./utils";
+import {Piano} from "./components/Piano";
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -57,6 +58,10 @@ function App() {
 
     }
 
+    function onClickKey(key: string) {
+        setNote(key)
+    }
+
   return (
     <div className="App">
         <MidiInputSelector inputs={inputs} onChangeInput={onChangeInput} />
@@ -66,6 +71,7 @@ function App() {
           <br/>
           <br/>
           <Staff bassClef />
+          <Piano playingKey={note} onClickKey={onClickKey}/>
       </header>
     </div>
   );
