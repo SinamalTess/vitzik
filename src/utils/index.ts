@@ -12,7 +12,7 @@ export function formatToPixelValue(input: any) : string { // type 'any' is on pu
 
     if (pixelPattern.test(input)) {
         return input
-    } else if (percentagePattern) {
+    } else if (percentagePattern.test(input)) {
         return input?.replace('%', 'px')
     } else if (!Number.isNaN(numberValue)) {
         return numberValue + 'px';
