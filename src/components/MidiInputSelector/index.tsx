@@ -12,6 +12,7 @@ export function MidiInputSelector({inputs, onChangeInput}: MidiInputSelectorProp
                     <>
                         <label htmlFor="midiInputs">Choose a MIDI Input</label>
                         <select name="midiInputs" id="midiInputs" onChange={onChangeInput}>
+                            <option key='nit'>test</option>
                             {inputs.map((input) => (
                                 <option value={input.id} key={input.id}>{`${input.name} - ${input.manufacturer}`}</option>
                             ))}
