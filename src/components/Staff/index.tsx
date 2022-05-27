@@ -1,4 +1,4 @@
-import './staff.css';
+import './staff.scss';
 import treble_clef from '../../../src/note_symbols/notes_treble_clef.svg';
 import bass_clef from '../../../src/note_symbols/notes_bass_clef.svg';
 import { formatToPixelValue } from '../../utils';
