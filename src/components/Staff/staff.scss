@@ -14,8 +14,20 @@ table {
         position: absolute;
         left: 0;
         height: 100%;
-        top: 0;
         z-index: 1;
+        top: 0;
+    }
+
+    .treble-clef {
+        top: -45%;
+        height: 190%;
+        transform: translateX(-20%); // parent's container has a 0 width...so using 'transform' instead of 'left' property
+    }
+
+    .bass-clef {
+        height: 80%;
+        top: 1%;
+        transform: translateX(20%); // parent's container has a 0 width...so using 'transform' instead of 'left' property
     }
 
     tr {

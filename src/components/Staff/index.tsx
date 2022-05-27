@@ -29,7 +29,13 @@ export function Staff ({trebleClef, bassClef, spaceHeight} : StaffProps) {
         <table>
             <tbody>
                 <tr>
-                    <td><img alt='clef' src={trebleClef ? treble_clef : bass_clef}/></td> {/* TODO: make sure the clef aligns with the lines */}
+                    <td>
+                        <img
+                            className={trebleClef ? 'treble-clef' : 'bass-clef'}
+                            alt='clef'
+                            src={trebleClef ? treble_clef : bass_clef}
+                        />
+                    </td> {/* TODO: make sure the clef aligns with the lines */}
                     {measuresIterator.map((e, i) => (
                         <td key={i}> {/* using index for key as a last resort, without state management this is ok */}
                             <table>
