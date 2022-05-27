@@ -5,9 +5,9 @@ import { formatToPixelValue } from '../../utils';
 import React from 'react';
 
 interface StaffProps {
-    trebleClef : boolean,
-    bassClef: boolean,
-    spaceHeight: string | number
+    trebleClef? : boolean,
+    bassClef?: boolean,
+    spaceHeight?: string | number
 }
 
 export function Staff ({trebleClef, bassClef, spaceHeight} : StaffProps) {
@@ -35,7 +35,7 @@ export function Staff ({trebleClef, bassClef, spaceHeight} : StaffProps) {
                             alt='clef'
                             src={trebleClef ? treble_clef : bass_clef}
                         />
-                    </td> {/* TODO: make sure the clef aligns with the lines */}
+                    </td>
                     {measuresIterator.map((e, i) => (
                         <td key={i}> {/* using index for key as a last resort, without state management this is ok */}
                             <table>
