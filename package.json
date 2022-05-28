@@ -24,6 +24,9 @@
     "eject": "react-scripts eject",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -45,6 +48,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-conventional": "^17.0.0",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "prettier": "^2.6.2"
   }
 }

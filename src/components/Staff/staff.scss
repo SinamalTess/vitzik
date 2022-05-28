@@ -1,6 +1,6 @@
 table {
     background-color: white;
-    border-spacing:0;
+    border-spacing: 0;
     border-collapse: separate;
     width: 100%;
     empty-cells: show;
@@ -21,13 +21,17 @@ table {
     .treble-clef {
         top: -45%;
         height: 190%;
-        transform: translateX(-20%); // parent's container has a 0 width...so using 'transform' instead of 'left' property
+        transform: translateX(
+            -20%
+        ); // parent's container has a 0 width...so using 'transform' instead of 'left' property
     }
 
     .bass-clef {
         height: 80%;
         top: 1%;
-        transform: translateX(20%); // parent's container has a 0 width...so using 'transform' instead of 'left' property
+        transform: translateX(
+            20%
+        ); // parent's container has a 0 width...so using 'transform' instead of 'left' property
     }
 
     tr {
