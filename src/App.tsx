@@ -58,7 +58,7 @@ function App() {
 
     }
 
-    function onClickKey(key: string) {
+    function onKeyPressed(key: string | null) {
         setNote(key)
     }
 
@@ -71,7 +71,7 @@ function App() {
           <br/>
           <br/>
           <Staff bassClef />
-          <Piano playingKey={note} onClickKey={onClickKey}/>
+          <Piano playingKey={note} onKeyPressed={onKeyPressed}/>
       </header>
     </div>
   );
