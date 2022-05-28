@@ -22,6 +22,10 @@ function App() {
         })
 
         setInputs(inputs)
+
+        if (inputs[0]) {
+            inputs[0].onmidimessage = getMIDIMessage
+        }
     }
 
     function onMIDIFailure(msg: string) {
