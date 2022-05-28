@@ -8,5 +8,7 @@ interface MidiInputReader {
 }
 
 export function MidiInputReader({ note, musicSystem }: MidiInputReader) {
-    return <h1>{note ? translateKey(note, musicSystem) : 'no note playing'}</h1>
+    return (
+        <div>{note ? translateKey(note, musicSystem) : 'no note playing'}</div>
+    )
 }

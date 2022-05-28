@@ -30,6 +30,7 @@ export function Piano({
 
                     return (
                         <li
+                            key={key}
                             style={{
                                 width: isBlackKey
                                     ? 100 / nbWhiteKeys / 2 + '%' // black keys are twice smaller in width

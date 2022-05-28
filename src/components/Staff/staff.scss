@@ -1,42 +1,7 @@
-table {
-    background-color: white;
-    border-spacing: 0;
-    border-collapse: separate;
-    width: 100%;
-    empty-cells: show;
-
-    td {
-        padding: 0;
-        position: relative;
-    }
-
-    img {
-        position: absolute;
-        left: 0;
-        height: 100%;
-        z-index: 1;
-        top: 0;
-    }
-
-    .treble-clef {
-        top: -45%;
-        height: 190%;
-        transform: translateX(
-            -20%
-        ); // parent's container has a 0 width...so using 'transform' instead of 'left' property
-    }
-
-    .bass-clef {
-        height: 80%;
-        top: 1%;
-        transform: translateX(
-            20%
-        ); // parent's container has a 0 width...so using 'transform' instead of 'left' property
-    }
-
-    tr {
-        border: 1px solid black;
-        display: table;
-        width: 100%;
+#musicSheet {
+    position: relative;
+    svg {
+        display: block;
+        margin: 0 auto;
     }
 }

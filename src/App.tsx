@@ -72,13 +72,8 @@ function App() {
             <MidiInputSelector inputs={inputs} onChangeInput={onChangeInput} />
             <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
             <MidiInputReader musicSystem={musicSystem} note={note} />
-            <header className="App-header">
-                <Staff trebleClef />
-                <br />
-                <br />
-                <Staff bassClef />
-                <Piano playingKey={note} onKeyPressed={onKeyPressed} />
-            </header>
+            <Staff note={note} />
+            <Piano playingKey={note} onKeyPressed={onKeyPressed} />
         </div>
     )
 }
