@@ -1,8 +1,8 @@
-import "./staff.scss"
-import treble_clef from "../../../src/note_symbols/notes_treble_clef.svg"
-import bass_clef from "../../../src/note_symbols/notes_bass_clef.svg"
-import { formatToPixelValue } from "../../utils"
-import React from "react"
+import './staff.scss'
+import treble_clef from '../../../src/note_symbols/notes_treble_clef.svg'
+import bass_clef from '../../../src/note_symbols/notes_bass_clef.svg'
+import { formatToPixelValue } from '../../utils'
+import React from 'react'
 
 interface StaffProps {
     trebleClef?: boolean
@@ -13,7 +13,7 @@ interface StaffProps {
 export function Staff({ trebleClef, bassClef, spaceHeight }: StaffProps) {
     const nbSpaces = 4
     const nbMeasures = 2
-    const formattedSpaceHeight = formatToPixelValue(spaceHeight ?? "20px")
+    const formattedSpaceHeight = formatToPixelValue(spaceHeight ?? '20px')
 
     /*
         Converting to Arrays to be able to use() map with React
@@ -30,14 +30,14 @@ export function Staff({ trebleClef, bassClef, spaceHeight }: StaffProps) {
                 <tr>
                     <td>
                         <img
-                            className={trebleClef ? "treble-clef" : "bass-clef"}
+                            className={trebleClef ? 'treble-clef' : 'bass-clef'}
                             alt="clef"
                             src={trebleClef ? treble_clef : bass_clef}
                         />
                     </td>
                     {measuresIterator.map((e, i) => (
                         <td key={i}>
-                            {" "}
+                            {' '}
                             {/* using index for key as a last resort, without state management this is ok */}
                             <table>
                                 <tbody>

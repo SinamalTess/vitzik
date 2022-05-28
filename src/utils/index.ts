@@ -1,4 +1,4 @@
-import { keys_alphabetical } from "./keys"
+import { keys_alphabetical } from './keys'
 
 /*
 Take any input and try its best to convert it to a px value.
@@ -16,14 +16,14 @@ export function formatToPixelValue(input: any): string {
     if (pixelPattern.test(input)) {
         return input
     } else if (percentagePattern.test(input)) {
-        return input?.replace("%", "px")
+        return input?.replace('%', 'px')
     } else if (!Number.isNaN(numberValue)) {
-        return numberValue + "px"
+        return numberValue + 'px'
     } else {
         console.error(
             `Couldn't convert ${input} of type ${typeof input} to pixel value`
         )
-        return "0px"
+        return '0px'
     }
 }
 

@@ -1,17 +1,17 @@
-import "./App.scss"
-import { Staff } from "./components/Staff"
-import { MidiInputSelector } from "./components/MidiInputSelector"
-import { MidiInputReader } from "./components/MidiInputReader"
-import React, { useState } from "react"
-import { noteKeyToName } from "./utils"
-import { Piano } from "./components/Piano"
+import './App.scss'
+import { Staff } from './components/Staff'
+import { MidiInputSelector } from './components/MidiInputSelector'
+import { MidiInputReader } from './components/MidiInputReader'
+import React, { useState } from 'react'
+import { noteKeyToName } from './utils'
+import { Piano } from './components/Piano'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
     const [note, setNote] = useState<string | null>(null)
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
-        console.log("MIDI ready!")
+        console.log('MIDI ready!')
 
         let inputs: MIDIInput[] = []
         midiAccess.inputs.forEach((input) => {
@@ -22,7 +22,7 @@ function App() {
     }
 
     function onMIDIFailure(msg: string) {
-        console.log("Failed to get MIDI access - " + msg)
+        console.log('Failed to get MIDI access - ' + msg)
     }
 
     React.useEffect(() => {

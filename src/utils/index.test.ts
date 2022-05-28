@@ -1,7 +1,7 @@
-import { formatToPixelValue } from "./index"
+import { formatToPixelValue } from './index'
 
-describe("formatToPixelValue", () => {
-    test("returns px value", () => {
-        expect(formatToPixelValue("100")).toBe("100px")
+describe('formatToPixelValue', () => {
+    test('returns px value', () => {
+        expect(formatToPixelValue('100')).toBe('100px')
     })
 })
