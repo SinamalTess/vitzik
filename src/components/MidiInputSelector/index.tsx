@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from 'react'
+import React from 'react'
 
 interface MidiInputSelectorProps {
     inputs: MIDIInput[]
@@ -13,7 +13,6 @@ export function MidiInputSelector({
         <>
             <label htmlFor="midiInputs">Choose a MIDI Input</label>
             <select name="midiInputs" id="midiInputs" onChange={onChangeInput}>
-                <option key="nit">test</option>
                 {inputs.map((input) => (
                     <option
                         value={input.id}

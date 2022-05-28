@@ -1,4 +1,5 @@
 import { KEYS } from './const/keys'
+import { MusicSystem } from '../types/musicSystem'
 
 /*
 Take any input and try its best to convert it to a px value.
@@ -29,4 +30,15 @@ export function formatToPixelValue(input: any): string {
 
 export function noteKeyToName(key: number): string {
     return KEYS.alphabetical[key - 21] // 21 is the offset calculated from : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+}
+
+export function translateKey(key: string, musicSystem: MusicSystem): string {
+    for (const currentMusicSystem in KEYS) {
+        const passedKey = KEYS[currentMusicSystem as MusicSystem].indexOf(key)
+        if (passedKey) {
+            return KEYS[musicSystem][passedKey]
+        }
+    }
+
+    return key
 }

@@ -2,13 +2,16 @@ import './App.scss'
 import { Staff } from './components/Staff'
 import { MidiInputSelector } from './components/MidiInputSelector'
 import { MidiInputReader } from './components/MidiInputReader'
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
+import { MusicSystemSelector } from './components/MusicSystemSelector'
+import { MusicSystem } from './types/musicSystem'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
     const [note, setNote] = useState<string | null>(null)
+    const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
         console.log('MIDI ready!')
@@ -37,6 +40,10 @@ function App() {
         }
     }
 
+    function onChangeMusicSystem(musicSystem: ChangeEvent<HTMLSelectElement>) {
+        setMusicSystem(musicSystem.target.value as MusicSystem)
+    }
+
     function getMIDIMessage(message: any) {
         const command = message.data[0]
         const note = message.data[1]
@@ -63,7 +70,8 @@ function App() {
     return (
         <div className="App">
             <MidiInputSelector inputs={inputs} onChangeInput={onChangeInput} />
-            <MidiInputReader note={note} />
+            <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
+            <MidiInputReader musicSystem={musicSystem} note={note} />
             <header className="App-header">
                 <Staff trebleClef />
                 <br />
