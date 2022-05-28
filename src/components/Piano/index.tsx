@@ -1,6 +1,6 @@
 import React from 'react'
 import './piano.scss'
-import { keys_alphabetical } from '../../utils/keys'
+import { KEYS } from '../../utils/const/keys'
 
 interface PianoProps {
     playingKey: string | null
@@ -15,10 +15,10 @@ export function Piano({
     nbKey = 88,
     onKeyPressed,
 }: PianoProps) {
-    const startingKeyIndex = keys_alphabetical.findIndex(
+    const startingKeyIndex = KEYS.alphabetical.findIndex(
         (e) => e === startingKey
     )
-    const keysIterator = keys_alphabetical.slice(startingKeyIndex, nbKey)
+    const keysIterator = KEYS.alphabetical.slice(startingKeyIndex, nbKey)
     const nbWhiteKeys = keysIterator.filter((key) => !key.includes('#')).length
 
     return (

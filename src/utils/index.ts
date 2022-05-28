@@ -1,4 +1,4 @@
-import { keys_alphabetical } from './keys'
+import { KEYS } from './const/keys'
 
 /*
 Take any input and try its best to convert it to a px value.
@@ -28,5 +28,5 @@ export function formatToPixelValue(input: any): string {
 }
 
 export function noteKeyToName(key: number): string {
-    return keys_alphabetical[key - 21] // 21 is the offset calculated from : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+    return KEYS.alphabetical[key - 21] // 21 is the offset calculated from : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 }
