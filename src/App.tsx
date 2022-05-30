@@ -8,6 +8,7 @@ import { Piano } from './components/Piano'
 import { MusicSystemSelector } from './components/MusicSystemSelector'
 import { MusicSystem } from './types/MusicSystem'
 import { AlphabeticalNote } from './types/Notes'
+import { MidiImporter } from './components/MidiImporter'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -81,6 +82,7 @@ function App() {
     return (
         <div className="App">
             <MidiInputSelector inputs={inputs} onChangeInput={onChangeInput} />
+            <MidiImporter />
             <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
             <MidiInputReader musicSystem={musicSystem} notes={notes} />
             <Staff notes={notes} />
