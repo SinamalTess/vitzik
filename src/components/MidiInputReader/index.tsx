@@ -3,12 +3,16 @@ import { MusicSystem } from '../../types/musicSystem'
 import { translateKey } from '../../utils'
 
 interface MidiInputReader {
-    note: string | null
+    notes: string[]
     musicSystem: MusicSystem
 }
 
-export function MidiInputReader({ note, musicSystem }: MidiInputReader) {
+export function MidiInputReader({ notes, musicSystem }: MidiInputReader) {
     return (
-        <div>{note ? translateKey(note, musicSystem) : 'no note playing'}</div>
+        <div>
+            {notes.length
+                ? notes.map((note) => translateKey(note, musicSystem))
+                : 'no note playing'}
+        </div>
     )
 }

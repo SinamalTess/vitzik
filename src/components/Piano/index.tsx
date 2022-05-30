@@ -3,14 +3,14 @@ import './piano.scss'
 import { KEYS } from '../../utils/const/keys'
 
 interface PianoProps {
-    playingKey: string | null
+    activeKeys: string[]
     startingKey?: string
     nbKey?: number
-    onKeyPressed: (key: string | null) => void
+    onKeyPressed: (key: string[]) => void
 }
 
 export function Piano({
-    playingKey,
+    activeKeys,
     startingKey = 'A0',
     nbKey = 88,
     onKeyPressed,
@@ -42,11 +42,13 @@ export function Piano({
                                           }`
                                         : `0 0 0 0`,
                             }}
-                            onMouseDown={() => onKeyPressed(key)}
-                            onMouseUp={() => onKeyPressed(null)}
+                            onMouseDown={() => onKeyPressed([key])}
+                            onMouseUp={() => onKeyPressed([])}
                             className={`
                                 ${isBlackKey ? 'black' : 'white'} 
-                                ${key} ${key === playingKey ? 'active' : ''}`}
+                                ${key} ${
+                                activeKeys.includes(key) ? 'active' : ''
+                            }`}
                         ></li>
                     )
                 })}

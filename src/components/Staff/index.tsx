@@ -7,12 +7,12 @@ import { KEYS } from '../../utils/const/keys'
 import SVGContext = Vex.Flow.SVGContext
 
 interface StaffProps {
-    note: string | null
+    notes: string[]
 }
 
-export function Staff({ note }: StaffProps) {
+export function Staff({ notes }: StaffProps) {
     const { Renderer, Stave, StaveConnector, Voice } = Vex.Flow
-    const musicSheet = React.createRef<HTMLDivElement>()
+    const musicSheet = React.useRef<HTMLDivElement>()
     const contextRef = React.useRef<Vex.IRenderContext | null>(null) // persists the context throughout renders to allow re-rendering of the notes only
     const trebleStaff = new Stave(0, 0, 400).addClef('treble')
     const bassStaff = new Stave(0, 75, 400).addClef('bass')
@@ -54,24 +54,37 @@ export function Staff({ note }: StaffProps) {
     }, [])
 
     React.useEffect(() => {
-        if (note && contextRef.current) {
-            const isTopNote = KEYS.alphabetical.indexOf(note) >= 39 // middle C4 has index of 39 in KEYS
-            const noteFormatted =
-                note.substring(0, 1) + '/' + note.substring(1, 2)
+        if (notes.length === 1 && contextRef.current) {
+            // temporary
+            const activeNotes: StaveNote[] = []
 
-            const notes = [
-                new StaveNote({
-                    keys: [noteFormatted],
-                    duration: 'q',
-                    clef: isTopNote ? 'treble' : 'bass',
-                }),
-            ]
+            notes.forEach((note) => {
+                const isTopNote = KEYS.alphabetical.indexOf(note) >= 39 // middle C4 has index of 39 in KEYS
+                const noteFormatted =
+                    note.substring(0, 1) + '/' + note.substring(1, 2)
 
-            trebleStaff.setContext(contextRef.current).draw()
-            bassStaff.setContext(contextRef.current).draw()
-            voice.addTickables(notes)
-            new Formatter().joinVoices([voice]).format([voice], 200)
-            voice.draw(contextRef.current, isTopNote ? trebleStaff : bassStaff)
+                activeNotes.push(
+                    new StaveNote({
+                        keys: [noteFormatted],
+                        duration: 'q',
+                        clef: isTopNote ? 'treble' : 'bass',
+                    })
+                )
+
+                trebleStaff
+                    .setContext(contextRef.current as Vex.IRenderContext)
+                    .draw()
+
+                bassStaff
+                    .setContext(contextRef.current as Vex.IRenderContext)
+                    .draw()
+                voice.addTickables(activeNotes)
+                new Formatter().joinVoices([voice]).format([voice], 200)
+                voice.draw(
+                    contextRef.current as Vex.IRenderContext,
+                    isTopNote ? trebleStaff : bassStaff
+                )
+            })
 
             // Cleaning function, removes the last note
             return function () {
@@ -81,7 +94,8 @@ export function Staff({ note }: StaffProps) {
                 }
             }
         }
-    }, [note])
+    }, [notes])
 
+    // @ts-ignore
     return <div id="musicSheet" ref={musicSheet}></div>
 }

@@ -10,7 +10,7 @@ import { MusicSystem } from './types/musicSystem'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
-    const [note, setNote] = useState<string | null>(null)
+    const [keys, setKeys] = useState<string[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
@@ -50,34 +50,40 @@ function App() {
 
     function getMIDIMessage(message: any) {
         const command = message.data[0]
-        const note = message.data[1]
+        const note = noteKeyToName(message.data[1])
         const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
 
         switch (command) {
             case 144: // noteOn
                 if (velocity > 0) {
-                    setNote(noteKeyToName(note))
+                    setKeys((keys) => [...keys, note])
                 } else {
-                    setNote(null)
+                    const noteIndex = keys.findIndex((key) => key === note)
+                    if (noteIndex) {
+                        setKeys((keys) => keys.filter((key) => key !== note))
+                    }
                 }
                 break
             case 128: // noteOff
-                setNote(null)
+                const noteIndex = keys.findIndex((key) => key === note)
+                if (noteIndex) {
+                    setKeys((keys) => keys.filter((key) => key !== note))
+                }
                 break
         }
     }
 
-    function onKeyPressed(key: string | null) {
-        setNote(key)
+    function onKeyPressed(key: string[]) {
+        setKeys(key)
     }
 
     return (
         <div className="App">
             <MidiInputSelector inputs={inputs} onChangeInput={onChangeInput} />
             <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
-            <MidiInputReader musicSystem={musicSystem} note={note} />
-            <Staff note={note} />
-            <Piano playingKey={note} onKeyPressed={onKeyPressed} />
+            <MidiInputReader musicSystem={musicSystem} notes={keys} />
+            <Staff notes={keys} />
+            <Piano activeKeys={keys} onKeyPressed={onKeyPressed} />
         </div>
     )
 }
