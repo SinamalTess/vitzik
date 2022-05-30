@@ -6,11 +6,12 @@ import React, { ChangeEvent, useState } from 'react'
 import { noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
 import { MusicSystemSelector } from './components/MusicSystemSelector'
-import { MusicSystem } from './types/musicSystem'
+import { MusicSystem } from './types/MusicSystem'
+import { AlphabeticalNote } from './types/Notes'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
-    const [keys, setKeys] = useState<string[]>([])
+    const [notes, setNotes] = useState<AlphabeticalNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
@@ -56,34 +57,34 @@ function App() {
         switch (command) {
             case 144: // noteOn
                 if (velocity > 0) {
-                    setKeys((keys) => [...keys, note])
+                    setNotes((notes) => [...notes, note])
                 } else {
-                    const noteIndex = keys.findIndex((key) => key === note)
+                    const noteIndex = notes.findIndex((key) => key === note)
                     if (noteIndex) {
-                        setKeys((keys) => keys.filter((key) => key !== note))
+                        setNotes((notes) => notes.filter((key) => key !== note))
                     }
                 }
                 break
             case 128: // noteOff
-                const noteIndex = keys.findIndex((key) => key === note)
+                const noteIndex = notes.findIndex((key) => key === note)
                 if (noteIndex) {
-                    setKeys((keys) => keys.filter((key) => key !== note))
+                    setNotes((notes) => notes.filter((key) => key !== note))
                 }
                 break
         }
     }
 
-    function onKeyPressed(key: string[]) {
-        setKeys(key)
+    function onKeyPressed(key: AlphabeticalNote[]) {
+        setNotes(key)
     }
 
     return (
         <div className="App">
             <MidiInputSelector inputs={inputs} onChangeInput={onChangeInput} />
             <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
-            <MidiInputReader musicSystem={musicSystem} notes={keys} />
-            <Staff notes={keys} />
-            <Piano activeKeys={keys} onKeyPressed={onKeyPressed} />
+            <MidiInputReader musicSystem={musicSystem} notes={notes} />
+            <Staff notes={notes} />
+            <Piano activeKeys={notes} onKeyPressed={onKeyPressed} />
         </div>
     )
 }

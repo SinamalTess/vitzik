@@ -1,4 +1,4 @@
-export const KEYS = {
+export const NOTES = {
     alphabetical: [
         'A0',
         'A#0/Bb0',
@@ -88,7 +88,7 @@ export const KEYS = {
         'A#7/Bb7',
         'B7',
         'C8',
-    ],
+    ] as const,
     german: [
         'A0',
         'A#0/Hh0',
@@ -178,7 +178,7 @@ export const KEYS = {
         'A#7/Hh7',
         'H7',
         'C8',
-    ],
+    ] as const,
     syllabic: [
         'La0',
         'La#0/Si0',
@@ -268,5 +268,5 @@ export const KEYS = {
         'La#7/Si7',
         'Si7',
         'Do8',
-    ],
+    ] as const,
 }

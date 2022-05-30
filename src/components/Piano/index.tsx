@@ -1,12 +1,13 @@
 import React from 'react'
 import './piano.scss'
-import { KEYS } from '../../utils/const/keys'
+import { NOTES } from '../../utils/const/notes'
+import { AlphabeticalNote, Note } from '../../types/Notes'
 
 interface PianoProps {
-    activeKeys: string[]
-    startingKey?: string
+    activeKeys: AlphabeticalNote[]
+    startingKey?: AlphabeticalNote
     nbKey?: number
-    onKeyPressed: (key: string[]) => void
+    onKeyPressed: (key: AlphabeticalNote[]) => void
 }
 
 export function Piano({
@@ -15,10 +16,10 @@ export function Piano({
     nbKey = 88,
     onKeyPressed,
 }: PianoProps) {
-    const startingKeyIndex = KEYS.alphabetical.findIndex(
+    const startingKeyIndex = NOTES.alphabetical.findIndex(
         (e) => e === startingKey
     )
-    const keysIterator = KEYS.alphabetical.slice(startingKeyIndex, nbKey)
+    const keysIterator = NOTES.alphabetical.slice(startingKeyIndex, nbKey)
     const nbWhiteKeys = keysIterator.filter((key) => !key.includes('#')).length
 
     return (
