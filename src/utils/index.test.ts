@@ -1,15 +1,4 @@
-import { formatToPixelValue, noteKeyToName, translateNote } from './index'
-
-describe('formatToPixelValue()', () => {
-    test('returns px value', () => {
-        expect(formatToPixelValue('100')).toBe('100px')
-        expect(formatToPixelValue('100px')).toBe('100px')
-        expect(formatToPixelValue('100%')).toBe('100px')
-        expect(formatToPixelValue('10cnd0')).toBe('0px')
-        expect(formatToPixelValue('csad10px')).toBe('0px')
-        expect(formatToPixelValue('aa')).toBe('0px')
-    })
-})
+import { noteKeyToName, translateNote } from './index'
 
 describe('noteKeyToName()', () => {
     test('converts MIDI piano key to note', () => {
