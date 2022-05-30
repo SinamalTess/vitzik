@@ -9,11 +9,13 @@ import { MusicSystemSelector } from './components/MusicSystemSelector'
 import { MusicSystem } from './types/MusicSystem'
 import { AlphabeticalNote } from './types/Notes'
 import { MidiImporter } from './components/MidiImporter'
+import { SoundController } from './components/SoundController'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
     const [notes, setNotes] = useState<AlphabeticalNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
+    const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
         console.log('MIDI ready!')
@@ -86,7 +88,12 @@ function App() {
             <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
             <MidiInputReader musicSystem={musicSystem} notes={notes} />
             <Staff notes={notes} />
-            <Piano activeKeys={notes} onKeyPressed={onKeyPressed} />
+            <Piano
+                activeKeys={notes}
+                onKeyPressed={onKeyPressed}
+                isMute={!isSoundOn}
+            />
+            <SoundController isSoundOn={isSoundOn} toggleSound={setIsSoundOn} />
         </div>
     )
 }

@@ -1,13 +1,15 @@
 import React from 'react'
 import './piano.scss'
 import { NOTES } from '../../utils/const/notes'
-import { AlphabeticalNote, Note } from '../../types/Notes'
+import { AlphabeticalNote } from '../../types/Notes'
+import Soundfont from 'soundfont-player'
 
 interface PianoProps {
     activeKeys: AlphabeticalNote[]
     startingKey?: AlphabeticalNote
     nbKey?: number
     onKeyPressed: (key: AlphabeticalNote[]) => void
+    isMute: boolean
 }
 
 export function Piano({
@@ -15,12 +17,25 @@ export function Piano({
     startingKey = 'A0',
     nbKey = 88,
     onKeyPressed,
+    isMute,
 }: PianoProps) {
     const startingKeyIndex = NOTES.alphabetical.findIndex(
         (note) => note === startingKey
     )
     const keysIterator = NOTES.alphabetical.slice(startingKeyIndex, nbKey)
     const nbWhiteKeys = keysIterator.filter((key) => !key.includes('#')).length
+
+    React.useEffect(() => {
+        if (!isMute && activeKeys.length >= 1) {
+            Soundfont.instrument(
+                new AudioContext(),
+                'acoustic_grand_piano'
+            ).then(function (piano) {
+                const note = activeKeys[0]
+                piano.play(note.includes('#') ? note.split('/')[1] : note)
+            })
+        }
+    }, [activeKeys])
 
     return (
         <>
