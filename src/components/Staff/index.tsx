@@ -24,7 +24,6 @@ export function Staff({ notes }: StaffProps) {
     })
 
     const lineLeft = new StaveConnector(trebleStaff, bassStaff).setType(1)
-
     const lineRight = new StaveConnector(trebleStaff, bassStaff).setType(6)
 
     React.useEffect(() => {
