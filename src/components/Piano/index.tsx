@@ -17,7 +17,7 @@ export function Piano({
     onKeyPressed,
 }: PianoProps) {
     const startingKeyIndex = NOTES.alphabetical.findIndex(
-        (e) => e === startingKey
+        (note) => note === startingKey
     )
     const keysIterator = NOTES.alphabetical.slice(startingKeyIndex, nbKey)
     const nbWhiteKeys = keysIterator.filter((key) => !key.includes('#')).length
