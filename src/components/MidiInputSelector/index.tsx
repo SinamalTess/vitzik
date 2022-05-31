@@ -11,7 +11,6 @@ export function MidiInputSelector({
 }: MidiInputSelectorProps) {
     return inputs.length ? (
         <>
-            <label htmlFor="midiInputs">Choose a MIDI Input</label>
             <select name="midiInputs" id="midiInputs" onChange={onChangeInput}>
                 {inputs.map((input) => (
                     <option
@@ -22,6 +21,6 @@ export function MidiInputSelector({
             </select>
         </>
     ) : (
-        <div>No input found, try connecting an instrument to your laptop</div>
+        <div>No input found</div>
     )
 }

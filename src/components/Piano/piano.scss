@@ -18,6 +18,14 @@
         &:last-child {
             border-radius: 0 5px 5px 5px;
         }
+
+        span {
+            font-size: 15px;
+            position: absolute;
+            top: -20px;
+            display: none;
+            text-align: center;
+        }
     }
 
     .white {

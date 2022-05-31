@@ -17,3 +17,16 @@ export function translateNote(note: Note, musicSystem: MusicSystem): Note {
 
     return note
 }
+
+export function midiJsonToNotes(json: MidiJson) {
+    json.tracks.forEach((track) => {
+        const notes = track.filter(
+            (event) =>
+                event.hasOwnProperty('noteOn') ||
+                event.hasOwnProperty('noteOff')
+        )
+        const first10notes = notes.slice(0, 10)
+        console.log(first10notes)
+        return first10notes
+    })
+}

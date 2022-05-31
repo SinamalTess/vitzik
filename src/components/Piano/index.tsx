@@ -31,44 +31,49 @@ export function Piano({
                 new AudioContext(),
                 'acoustic_grand_piano'
             ).then(function (piano) {
-                const note = activeKeys[0]
-                piano.play(note.includes('#') ? note.split('/')[1] : note)
+                let note: string = activeKeys[0]
+                note = note.includes('#') ? note.split('/')[1] : note
+                piano.play(note)
             })
         }
     }, [activeKeys])
 
     return (
-        <>
-            <ul className="set">
-                {keysIterator.map((key, index) => {
-                    const isBlackKey = key.includes('#')
-                    const isSpecialKey = key.includes('C') || key.includes('F')
+        <ul className="set">
+            {keysIterator.map((key, index) => {
+                const isBlackKey = key.includes('#')
+                const isSpecialKey = key.includes('C') || key.includes('F')
 
-                    return (
-                        <li
-                            key={key}
-                            style={{
-                                width: isBlackKey
-                                    ? 100 / nbWhiteKeys / 2 + '%' // black keys are twice smaller in width
-                                    : 100 / nbWhiteKeys + '%',
-                                margin:
-                                    isBlackKey || !isSpecialKey
-                                        ? `0 0 0 -${
-                                              100 / nbWhiteKeys / 4 + '%'
-                                          }`
-                                        : `0 0 0 0`,
-                            }}
-                            onMouseDown={() => onKeyPressed([key])}
-                            onMouseUp={() => onKeyPressed([])}
-                            className={`
-                                ${isBlackKey ? 'black' : 'white'} 
-                                ${key} ${
-                                activeKeys.includes(key) ? 'active' : ''
-                            }`}
-                        ></li>
-                    )
-                })}
-            </ul>
-        </>
+                return (
+                    <li
+                        key={key}
+                        style={{
+                            width: isBlackKey
+                                ? 100 / nbWhiteKeys / 2 + '%' // black keys are twice smaller in width
+                                : 100 / nbWhiteKeys + '%',
+                            margin:
+                                isBlackKey || !isSpecialKey
+                                    ? `0 0 0 -${100 / nbWhiteKeys / 4 + '%'}`
+                                    : `0 0 0 0`,
+                        }}
+                        onMouseDown={() => onKeyPressed([key])}
+                        onMouseUp={() => onKeyPressed([])}
+                        className={`
+                            ${isBlackKey ? 'black' : 'white'} 
+                            ${key} ${activeKeys.includes(key) ? 'active' : ''}`}
+                    >
+                        <span
+                            style={
+                                activeKeys.includes(key)
+                                    ? { display: 'block' }
+                                    : {}
+                            }
+                        >
+                            {key}
+                        </span>
+                    </li>
+                )
+            })}
+        </ul>
     )
 }

@@ -1,7 +1,8 @@
 import React, { ChangeEvent } from 'react'
+import { MusicSystem } from '../../types/MusicSystem'
 
 interface MusicSystemSelectorProps {
-    onChangeMusicSystem: (musicSystem: ChangeEvent<HTMLSelectElement>) => void
+    onChangeMusicSystem: (musicSystem: MusicSystem) => void
 }
 
 export function MusicSystemSelector({
@@ -9,11 +10,12 @@ export function MusicSystemSelector({
 }: MusicSystemSelectorProps) {
     return (
         <>
-            <label htmlFor="musicSystem">Choose a music system</label>
             <select
                 name="musicSystem"
                 id="musicSystem"
-                onChange={onChangeMusicSystem}
+                onChange={(event) =>
+                    onChangeMusicSystem(event.target.value as MusicSystem)
+                }
             >
                 <option value="syllabic">Syllabic</option>
                 <option value="alphabetical">Alphabetical</option>
