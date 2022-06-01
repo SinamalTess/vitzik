@@ -1,13 +1,13 @@
 import './App.scss'
 import { Staff } from './components/Staff'
 import React, { useState } from 'react'
-import { noteKeyToName } from './utils'
+import { MidiJsonNote, noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
 import { MusicSystem } from './types/MusicSystem'
 import { AlphabeticalNote } from './types/Notes'
 import { Settings } from './components/Settings'
-import { MidiInputReader } from './components/MidiInputReader'
 import { TrackInfos } from './components/TrackInfos'
+import { Visualizer } from './components/Visualizer'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -15,6 +15,7 @@ function App() {
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
     const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
+    const [midiTrackNotes, setMidiTrackNotes] = useState<MidiJsonNote[]>([])
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
         console.log('MIDI ready!')
@@ -73,6 +74,11 @@ function App() {
         }
     }
 
+    function onMidiImport(title: string, notes: MidiJsonNote[]) {
+        setMidiTrackTitle(title)
+        setMidiTrackNotes(notes)
+    }
+
     return (
         <div className="App">
             <Settings
@@ -81,10 +87,11 @@ function App() {
                 onChangeMusicSystem={setMusicSystem}
                 midiInputs={inputs}
                 onChangeInput={onChangeInput}
-                onMidiImport={setMidiTrackTitle}
+                onMidiImport={onMidiImport}
             />
             <TrackInfos title={midiTrackTitle} />
             <Staff notes={notes} />
+            <Visualizer notes={midiTrackNotes} />
             <Piano
                 activeKeys={notes}
                 onKeyPressed={setNotes}

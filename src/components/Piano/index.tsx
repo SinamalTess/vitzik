@@ -3,27 +3,17 @@ import './piano.scss'
 import { NOTES } from '../../utils/const/notes'
 import { AlphabeticalNote } from '../../types/Notes'
 import Soundfont from 'soundfont-player'
+import { NB_WHITE_PIANO_KEYS } from '../../utils/const/piano_keys'
 
 interface PianoProps {
     activeKeys: AlphabeticalNote[]
     startingKey?: AlphabeticalNote
-    nbKey?: number
     onKeyPressed: (key: AlphabeticalNote[]) => void
     isMute: boolean
 }
 
-export function Piano({
-    activeKeys,
-    startingKey = 'A0',
-    nbKey = 88,
-    onKeyPressed,
-    isMute,
-}: PianoProps) {
-    const startingKeyIndex = NOTES.alphabetical.findIndex(
-        (note) => note === startingKey
-    )
-    const keysIterator = NOTES.alphabetical.slice(startingKeyIndex, nbKey)
-    const nbWhiteKeys = keysIterator.filter((key) => !key.includes('#')).length
+export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
+    const keysIterator = NOTES.alphabetical
 
     React.useEffect(() => {
         if (!isMute && activeKeys.length >= 1) {
@@ -49,11 +39,13 @@ export function Piano({
                         key={key}
                         style={{
                             width: isBlackKey
-                                ? 100 / nbWhiteKeys / 2 + '%' // black keys are twice smaller in width
-                                : 100 / nbWhiteKeys + '%',
+                                ? 100 / NB_WHITE_PIANO_KEYS / 2 + '%' // black keys are twice smaller in width
+                                : 100 / NB_WHITE_PIANO_KEYS + '%',
                             margin:
                                 isBlackKey || !isSpecialKey
-                                    ? `0 0 0 -${100 / nbWhiteKeys / 4 + '%'}`
+                                    ? `0 0 0 -${
+                                          100 / NB_WHITE_PIANO_KEYS / 4 + '%'
+                                      }`
                                     : `0 0 0 0`,
                         }}
                         onMouseDown={() => onKeyPressed([key])}

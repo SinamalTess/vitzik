@@ -1,9 +1,12 @@
 import { parseArrayBuffer } from 'midi-json-parser'
 import React from 'react'
-import { midiJsonToNotes } from '../../utils'
+import { MidiJsonNote, midiJsonToNotes } from '../../utils'
 
 interface MidiImporterProps {
-    onMidiImport: (midiTrackTitle: string) => void
+    onMidiImport: (
+        midiTrackTitle: string,
+        midiTrackNotes: MidiJsonNote[]
+    ) => void
 }
 
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
@@ -15,10 +18,11 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         reader.onload = function () {
             const arrayBuffer = this.result
 
-            parseArrayBuffer(arrayBuffer as ArrayBuffer).then((json: any) => {
-                midiJsonToNotes(json)
-                onMidiImport(filesArr[0].name)
-            })
+            parseArrayBuffer(arrayBuffer as ArrayBuffer).then(
+                (json: MidiJson) => {
+                    onMidiImport(filesArr[0].name, midiJsonToNotes(json))
+                }
+            )
         }
 
         reader.readAsArrayBuffer(filesArr[0])

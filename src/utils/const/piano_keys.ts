@@ -1,0 +1,3 @@
+export const NB_PIANO_KEYS = 88
+export const NB_WHITE_PIANO_KEYS = 52
+export const NB_BLACK_PIANO_KEYS = NB_PIANO_KEYS - NB_WHITE_PIANO_KEYS

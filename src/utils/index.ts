@@ -18,15 +18,32 @@ export function translateNote(note: Note, musicSystem: MusicSystem): Note {
     return note
 }
 
-export function midiJsonToNotes(json: MidiJson) {
-    json.tracks.forEach((track) => {
+export interface MidiJsonNote {
+    channel: number
+    delta: number
+    noteOn?: {
+        noteNumber: number
+        velocity: number
+    }
+    noteOff?: {
+        noteNumber: number
+        velocity: number
+    }
+}
+
+export function midiJsonToNotes(json: MidiJson): MidiJsonNote[] {
+    let notesArr: any[] = []
+
+    json.tracks.forEach((track: any) => {
         const notes = track.filter(
-            (event) =>
+            (event: any) =>
                 event.hasOwnProperty('noteOn') ||
                 event.hasOwnProperty('noteOff')
         )
-        const first10notes = notes.slice(0, 10)
-        console.log(first10notes)
-        return first10notes
+        if (notes.length) {
+            notesArr.push(...notes)
+        }
     })
+
+    return notesArr.slice(0, 100)
 }

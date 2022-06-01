@@ -5,6 +5,7 @@ import { MidiImporter } from '../MidiImporter'
 import { MidiInputSelector } from '../MidiInputSelector'
 import { MusicSystem } from '../../types/MusicSystem'
 import './settings.scss'
+import { MidiJsonNote } from '../../utils'
 
 interface SettingsProps {
     isSoundOn: boolean
@@ -12,7 +13,10 @@ interface SettingsProps {
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     midiInputs: MIDIInput[]
     onChangeInput: (event: React.ChangeEvent<HTMLSelectElement>) => void
-    onMidiImport: (midiTrackTitle: string) => void
+    onMidiImport: (
+        midiTrackTitle: string,
+        midiTrackNotes: MidiJsonNote[]
+    ) => void
 }
 
 export function Settings({
