@@ -3,9 +3,9 @@ import React from 'react'
 import Vex from 'vexflow'
 import StaveNote = Vex.Flow.StaveNote
 import Formatter = Vex.Flow.Formatter
-import { NOTES } from '../../utils/const/notes'
+import { NOTES } from '../../utils/const'
 import SVGContext = Vex.Flow.SVGContext
-import { AlphabeticalNote } from '../../types/Notes'
+import { AlphabeticalNote } from '../../types'
 
 interface StaffProps {
     notes: AlphabeticalNote[]

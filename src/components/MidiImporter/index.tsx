@@ -1,6 +1,7 @@
 import { parseArrayBuffer } from 'midi-json-parser'
 import React from 'react'
-import { MidiJsonNote, midiJsonToNotes } from '../../utils'
+import { midiJsonToNotes } from '../../utils'
+import { MidiJson, MidiJsonNote } from '../../types'
 
 interface MidiImporterProps {
     onMidiImport: (

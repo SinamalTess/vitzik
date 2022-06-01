@@ -1,13 +1,12 @@
 import './App.scss'
 import { Staff } from './components/Staff'
 import React, { useState } from 'react'
-import { MidiJsonNote, noteKeyToName } from './utils'
+import { noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
-import { MusicSystem } from './types/MusicSystem'
-import { AlphabeticalNote } from './types/Notes'
 import { Settings } from './components/Settings'
 import { TrackInfos } from './components/TrackInfos'
 import { Visualizer } from './components/Visualizer'
+import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])

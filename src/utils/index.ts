@@ -1,9 +1,11 @@
 import { NOTES } from './const/notes'
-import { MusicSystem } from '../types/MusicSystem'
-import { AlphabeticalNote, Note } from '../types/Notes'
+import { MusicSystem } from '../types'
+import { AlphabeticalNote, Note } from '../types'
+import { MidiJson, MidiJsonNote } from '../types'
+import { MIDI_PIANO_KEYS_OFFSET } from './const/piano_keys'
 
 export function noteKeyToName(key: number): AlphabeticalNote {
-    return NOTES.alphabetical[key - 21] // 21 is the offset calculated from : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+    return NOTES.alphabetical[key - MIDI_PIANO_KEYS_OFFSET]
 }
 
 export function translateNote(note: Note, musicSystem: MusicSystem): Note {
@@ -16,19 +18,6 @@ export function translateNote(note: Note, musicSystem: MusicSystem): Note {
     }
 
     return note
-}
-
-export interface MidiJsonNote {
-    channel: number
-    delta: number
-    noteOn?: {
-        noteNumber: number
-        velocity: number
-    }
-    noteOff?: {
-        noteNumber: number
-        velocity: number
-    }
 }
 
 export function midiJsonToNotes(json: MidiJson): MidiJsonNote[] {

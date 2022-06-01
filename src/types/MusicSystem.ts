@@ -1,3 +1,3 @@
-import { NOTES } from '../utils/const/notes'
+import { NOTES } from '../utils/const'
 
 export type MusicSystem = keyof typeof NOTES

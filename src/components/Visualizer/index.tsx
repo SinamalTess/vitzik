@@ -1,7 +1,8 @@
 import React from 'react'
-import { MidiJsonNote, noteKeyToName } from '../../utils'
-import { NB_WHITE_PIANO_KEYS } from '../../utils/const/piano_keys'
+import { noteKeyToName } from '../../utils'
+import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import './visualizer.scss'
+import { MidiJsonNote } from '../../types'
 
 interface VisualizerProps {
     notes: MidiJsonNote[]

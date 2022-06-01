@@ -1,7 +1,6 @@
 import React from 'react'
-import { MusicSystem } from '../../types/MusicSystem'
 import { translateNote } from '../../utils'
-import { AlphabeticalNote } from '../../types/Notes'
+import { AlphabeticalNote, MusicSystem } from '../../types'
 
 interface MidiInputReader {
     notes: AlphabeticalNote[]

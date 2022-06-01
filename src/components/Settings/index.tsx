@@ -3,9 +3,8 @@ import React from 'react'
 import { MusicSystemSelector } from '../MusicSystemSelector'
 import { MidiImporter } from '../MidiImporter'
 import { MidiInputSelector } from '../MidiInputSelector'
-import { MusicSystem } from '../../types/MusicSystem'
 import './settings.scss'
-import { MidiJsonNote } from '../../utils'
+import { MidiJsonNote, MusicSystem } from '../../types'
 
 interface SettingsProps {
     isSoundOn: boolean

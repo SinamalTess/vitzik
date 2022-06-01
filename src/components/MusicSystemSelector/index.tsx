@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from 'react'
-import { MusicSystem } from '../../types/MusicSystem'
+import React from 'react'
+import { MusicSystem } from '../../types'
 
 interface MusicSystemSelectorProps {
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
