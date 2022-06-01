@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from '../generics/Button'
 
 interface SoundControllerProps {
     isSoundOn: boolean
@@ -10,8 +11,6 @@ export function SoundController({
     toggleSound,
 }: SoundControllerProps) {
     return (
-        <button onClick={() => toggleSound(!isSoundOn)}>
-            Sound {isSoundOn ? 'On' : 'Off'}
-        </button>
+        <Button onClick={() => toggleSound(!isSoundOn)} icon="volume"></Button>
     )
 }
