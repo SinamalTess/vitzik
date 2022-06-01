@@ -1,28 +1,35 @@
 import React from 'react'
 import './button.scss'
+import { Icon } from '../Icon'
+import { CSSSize } from '../../../types/CSSSize'
 
 export interface ButtonProps {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
-    isDisabled?: boolean
+    disable?: boolean
+    active?: boolean
     icon?: 'volume' | null
     children?: string
-    size?: 'small' | 'medium' | 'large'
+    size?: CSSSize
 }
 
 export function Button({
     onClick,
-    isDisabled = false,
+    disable = false,
+    active = false,
     icon,
     children,
-    size = 'medium',
+    size = 'md',
 }: ButtonProps) {
     return (
         <button
             onClick={onClick}
-            disabled={isDisabled}
-            className={`btn btn--${size}`}
+            disabled={disable}
+            className={`btn btn--${size} padding--${size} margin--${size} ${
+                active ? 'active' : ''
+            }`}
         >
-            <span className={icon ? 'icon icon--' + icon : ''}>{children}</span>
+            {icon ? <Icon name={icon} size={size} /> : null}
+            {children}
         </button>
     )
 }

@@ -1,7 +1,6 @@
 import { SoundController } from '../SoundController'
 import React from 'react'
 import { MusicSystemSelector } from '../MusicSystemSelector'
-import { MidiImporter } from '../MidiImporter'
 import { MidiInputSelector } from '../MidiInputSelector'
 import './settings.scss'
 import { MidiJsonNote, MusicSystem } from '../../types'
@@ -18,6 +17,8 @@ interface SettingsProps {
         midiTrackTitle: string,
         midiTrackNotes: MidiJsonNote[]
     ) => void
+    appMode: AppMode
+    musicSystem: MusicSystem
 }
 
 export function Settings({
@@ -27,14 +28,17 @@ export function Settings({
     midiInputs,
     onChangeInput,
     onChangeAppMode,
-    onMidiImport,
+    appMode,
+    musicSystem,
 }: SettingsProps) {
     return (
         <div className="settings">
             <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
-            <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
-            <ModeSelector onChangeAppMode={onChangeAppMode} />
-            <MidiImporter onMidiImport={onMidiImport} />
+            <MusicSystemSelector
+                onChangeMusicSystem={onChangeMusicSystem}
+                musicSystem={musicSystem}
+            />
+            <ModeSelector onChangeAppMode={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector
                 inputs={midiInputs}
                 onChangeInput={onChangeInput}

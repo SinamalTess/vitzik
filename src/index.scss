@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
-@import 'src/style/fonts/icons';
+@import 'style/icons';
+@import 'src/style/vars';
 
 body {
     margin: 0;
@@ -8,4 +9,16 @@ body {
         'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.padding {
+    &--sm {
+        padding: map-get($theme-sizes, 'sm');
+    }
+    &--md {
+        padding: map-get($theme-sizes, 'md');
+    }
+    &--lg {
+        padding: map-get($theme-sizes, 'lg');
+    }
 }

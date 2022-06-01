@@ -1,0 +1,10 @@
+@import 'src/style/vars';
+
+.dropzone {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: map-get($theme-sizes, 'sm');
+    font-size: map-get($theme-sizes, 'sm');
+    padding: map-get($theme-sizes, 'lg');
+    margin: map-get($theme-sizes, 'lg');
+    text-align: center;
+}

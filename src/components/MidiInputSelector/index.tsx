@@ -1,4 +1,5 @@
 import React from 'react'
+import { Icon } from '../generics/Icon'
 
 interface MidiInputSelectorProps {
     inputs: MIDIInput[]
@@ -21,6 +22,8 @@ export function MidiInputSelector({
             </select>
         </>
     ) : (
-        <div>No input found</div>
+        <>
+            <Icon name="frequency">No input found</Icon>
+        </>
     )
 }

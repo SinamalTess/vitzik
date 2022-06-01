@@ -1,0 +1,26 @@
+@font-face {
+    font-family: 'Custom Icons';
+    src: url('fonts/icons.woff') format('woff');
+}
+
+// Maps the icons to characters in the font
+.icon {
+    &::before {
+        font-family: 'Custom Icons', serif;
+    }
+    &--volume {
+        &::before {
+            content: 'a';
+        }
+    }
+    &--frequency {
+        &::before {
+            content: 'b';
+        }
+    }
+    &--infos {
+        &::before {
+            content: 'c';
+        }
+    }
+}

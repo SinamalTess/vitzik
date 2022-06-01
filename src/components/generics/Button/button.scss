@@ -7,22 +7,22 @@
     border: none;
     cursor: pointer;
     opacity: 0.75;
+    &.active {
+        background-color: map.get($theme-colors, 'primary');
+    }
     &:hover {
         opacity: 1;
     }
-    &--small {
-        padding: 0;
-        margin: 0;
-        font-size: map.get($theme-sizes, 'small');
+    &:focus {
+        opacity: 1;
     }
-    &--medium {
-        padding: 5px;
-        margin: 5px;
-        font-size: map.get($theme-sizes, 'medium');
+    &--sm {
+        font-size: map.get($theme-sizes, 'sm');
     }
-    &--large {
-        padding: 10px;
-        margin: 10px;
-        font-size: map.get($theme-sizes, 'large');
+    &--md {
+        font-size: map.get($theme-sizes, 'md');
+    }
+    &--lg {
+        font-size: map.get($theme-sizes, 'lg');
     }
 }

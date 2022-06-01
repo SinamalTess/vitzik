@@ -8,6 +8,7 @@ import { TrackInfos } from './components/TrackInfos'
 import { Visualizer } from './components/Visualizer'
 import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
+import { MidiImporter } from './components/MidiImporter'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -83,6 +84,7 @@ function App() {
     return (
         <div className="App">
             <Settings
+                appMode={appMode}
                 toggleSound={setIsSoundOn}
                 isSoundOn={isSoundOn}
                 onChangeMusicSystem={setMusicSystem}
@@ -90,10 +92,17 @@ function App() {
                 onChangeInput={onChangeInput}
                 onMidiImport={onMidiImport}
                 onChangeAppMode={setAppMode}
+                musicSystem={musicSystem}
             />
-            <TrackInfos title={midiTrackTitle} />
-            {appMode === 'learning' ? <Staff notes={notes} /> : null}
-            <Visualizer notes={midiTrackNotes} />
+            {appMode === 'learning' ? (
+                <Staff notes={notes} />
+            ) : (
+                <>
+                    <TrackInfos title={midiTrackTitle} />
+                    <MidiImporter onMidiImport={onMidiImport} />
+                    <Visualizer notes={midiTrackNotes} />
+                </>
+            )}
             <Piano
                 activeKeys={notes}
                 onKeyPressed={setNotes}

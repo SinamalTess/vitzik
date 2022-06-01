@@ -1,11 +1,13 @@
 $theme-colors: (
+    'primary': #2d338b,
+    // ['#dc202e', '#f7ed99', '#2d338b', '#ea8c2d']
     'success': #28a745,
     'info': #17a2b8,
     'warning': #ffc107,
 );
 
 $theme-sizes: (
-    'small': 0.75rem,
-    'medium': 1rem,
-    'large': 1.25rem,
+    'sm': 0.75rem,
+    'md': 1rem,
+    'lg': 1.25rem,
 );
