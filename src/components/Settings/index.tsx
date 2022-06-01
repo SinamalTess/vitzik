@@ -27,7 +27,7 @@ export function Settings({
     onMidiImport,
 }: SettingsProps) {
     return (
-        <div id="Settings">
+        <div className="settings">
             <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
             <MusicSystemSelector onChangeMusicSystem={onChangeMusicSystem} />
             <MidiImporter onMidiImport={onMidiImport} />

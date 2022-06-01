@@ -1,4 +1,4 @@
-.cartesian {
+.visualizer--cartesian {
     display: flex;
     overflow: scroll;
     transform: scaleY(-1); // flip to emulate cartesian coordinates system
@@ -7,7 +7,7 @@
             -1
         ); // Re-flip all <text> element descendants to their original side up. */
     }
-    [class^='note-'] {
+    [class^='visualizer__note'] {
         border-radius: 5px;
     }
 }

@@ -8,9 +8,11 @@ interface TrackInfosPros {
 export function TrackInfos({ title }: TrackInfosPros) {
     return (
         <div className="track">
-            {title.endsWith('.mid')
-                ? title.slice(0, title.length - '.mid'.length)
-                : title}
+            <p className="track__title">
+                {title.endsWith('.mid')
+                    ? title.slice(0, title.length - '.mid'.length)
+                    : title}
+            </p>
         </div>
     )
 }

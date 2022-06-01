@@ -97,5 +97,5 @@ export function Staff({ notes }: StaffProps) {
     }, [notes])
 
     // @ts-ignore
-    return <div id="musicSheet" ref={musicSheet}></div>
+    return <div className="musicscore" ref={musicSheet}></div>
 }

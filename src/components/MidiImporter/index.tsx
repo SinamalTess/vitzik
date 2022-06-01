@@ -29,13 +29,5 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         reader.readAsArrayBuffer(filesArr[0])
     }
 
-    return (
-        <input
-            type="file"
-            onChange={onUpload}
-            id="myFile"
-            name="filename"
-            accept=".mid"
-        />
-    )
+    return <input type="file" onChange={onUpload} accept=".mid" />
 }

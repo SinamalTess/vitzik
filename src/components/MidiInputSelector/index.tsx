@@ -11,7 +11,7 @@ export function MidiInputSelector({
 }: MidiInputSelectorProps) {
     return inputs.length ? (
         <>
-            <select name="midiInputs" id="midiInputs" onChange={onChangeInput}>
+            <select name="midiInputs" onChange={onChangeInput}>
                 {inputs.map((input) => (
                     <option
                         value={input.id}

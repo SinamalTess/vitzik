@@ -28,10 +28,13 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
     }, [activeKeys])
 
     return (
-        <ul className="set">
+        <ul className="piano">
             {keysIterator.map((key, index) => {
                 const isBlackKey = key.includes('#')
                 const isSpecialKey = key.includes('C') || key.includes('F')
+                const keyClassName = isBlackKey
+                    ? 'piano__blackkey'
+                    : 'piano__whitekey'
 
                 return (
                     <li
@@ -50,8 +53,12 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
                         onMouseDown={() => onKeyPressed([key])}
                         onMouseUp={() => onKeyPressed([])}
                         className={`
-                            ${isBlackKey ? 'black' : 'white'} 
-                            ${key} ${activeKeys.includes(key) ? 'active' : ''}`}
+                            ${keyClassName} 
+                            ${key} ${
+                            activeKeys.includes(key)
+                                ? `${keyClassName}--active`
+                                : ''
+                        }`}
                     >
                         <span
                             style={

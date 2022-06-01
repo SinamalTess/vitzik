@@ -14,9 +14,12 @@ export function Visualizer({
     colors = ['#dc202e', '#f7ed99', '#2d338b', '#76306b', '#ea8c2d'],
 }: VisualizerProps) {
     let deltaAcc = 0
-    console.log(notes)
     return (
-        <svg width="100%" height="200px" className="cartesian">
+        <svg
+            width="100%"
+            height="200px"
+            className="visualizer visualizer--cartesian"
+        >
             {notes.map((note, index) => {
                 const noteIndex =
                     note?.noteOn?.noteNumber || note?.noteOff?.noteNumber || 0
@@ -36,12 +39,6 @@ export function Visualizer({
                         for (let y = 0; y <= endNoteIndex - index; y++) {
                             heightAcc = heightAcc + notes[index + y].delta
                         }
-                        console.log({
-                            endNoteIndex,
-                            index,
-                            noteName,
-                            heightAcc,
-                        })
                     }
 
                     return (
@@ -65,7 +62,7 @@ export function Visualizer({
                                         )
                                     ],
                                 }}
-                                className={`note-${noteName} ${index}`}
+                                className={`visualizer__note${noteName} ${index}`}
                             />
                         </>
                     )

@@ -12,7 +12,6 @@ export function MusicSystemSelector({
         <>
             <select
                 name="musicSystem"
-                id="musicSystem"
                 onChange={(event) =>
                     onChangeMusicSystem(event.target.value as MusicSystem)
                 }
