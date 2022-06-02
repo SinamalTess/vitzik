@@ -1,14 +1,11 @@
 import './App.scss'
-import { Staff } from './components/Staff'
 import React, { useState } from 'react'
 import { noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
-import { TrackInfos } from './components/TrackInfos'
-import { Visualizer } from './components/Visualizer'
 import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
-import { MidiImporter } from './components/MidiImporter'
+import { Preview } from './components/Preview'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -82,32 +79,35 @@ function App() {
     }
 
     return (
-        <div className="App">
-            <Settings
-                appMode={appMode}
-                toggleSound={setIsSoundOn}
-                isSoundOn={isSoundOn}
-                onChangeMusicSystem={setMusicSystem}
-                midiInputs={inputs}
-                onChangeInput={onChangeInput}
-                onMidiImport={onMidiImport}
-                onChangeAppMode={setAppMode}
-                musicSystem={musicSystem}
-            />
-            {appMode === 'learning' ? (
-                <Staff notes={notes} />
-            ) : (
-                <>
-                    <TrackInfos title={midiTrackTitle} />
-                    <MidiImporter onMidiImport={onMidiImport} />
-                    <Visualizer notes={midiTrackNotes} />
-                </>
-            )}
-            <Piano
-                activeKeys={notes}
-                onKeyPressed={setNotes}
-                isMute={!isSoundOn}
-            />
+        <div className="container">
+            <div className="item">
+                <Settings
+                    appMode={appMode}
+                    toggleSound={setIsSoundOn}
+                    isSoundOn={isSoundOn}
+                    onChangeMusicSystem={setMusicSystem}
+                    midiInputs={inputs}
+                    onChangeInput={onChangeInput}
+                    onChangeAppMode={setAppMode}
+                    musicSystem={musicSystem}
+                />
+            </div>
+            <div className="item">
+                <Preview
+                    appMode={appMode}
+                    notes={notes}
+                    midiTrackNotes={midiTrackNotes}
+                    onMidiImport={onMidiImport}
+                    midiTrackTitle={midiTrackTitle}
+                />
+            </div>
+            <div className="item">
+                <Piano
+                    activeKeys={notes}
+                    onKeyPressed={setNotes}
+                    isMute={!isSoundOn}
+                />
+            </div>
         </div>
     )
 }
