@@ -1,8 +1,21 @@
+@import 'style/vars';
+
+#root {
+    height: 100vh;
+    width: 100vw;
+}
+
 .container {
     background-color: #282c34;
     font-size: map-get($theme-font-sizes, 'md');
     color: white;
     display: grid;
-    grid-template-rows: auto;
+    height: 100vh;
+    width: 100vw;
     grid-template-columns: 1fr;
+    grid-template-rows: 40px 75% 1fr;
+    grid-template-areas:
+        'header'
+        'main'
+        'piano';
 }

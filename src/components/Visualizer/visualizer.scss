@@ -1,13 +1,18 @@
-.visualizer--cartesian {
-    display: flex;
-    overflow: scroll;
-    transform: scaleY(-1); // flip to emulate cartesian coordinates system
-    g text {
-        transform: scaleY(
-            -1
-        ); // Re-flip all <text> element descendants to their original side up. */
-    }
-    [class^='visualizer__note'] {
-        border-radius: 5px;
+.visualizer {
+    width: 100%;
+    height: 100%;
+
+    &--cartesian {
+        display: flex;
+        overflow: scroll;
+        transform: scaleY(-1); // flip to emulate cartesian coordinates system
+        g text {
+            transform: scaleY(
+                -1
+            ); // Re-flip all <text> element descendants to their original side up. */
+        }
+        [class^='visualizer__note'] {
+            border-radius: 5px;
+        }
     }
 }
