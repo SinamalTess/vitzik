@@ -17,12 +17,12 @@
         opacity: 1;
     }
     &--sm {
-        font-size: map.get($theme-sizes, 'sm');
+        font-size: map.get($theme-font-sizes, 'sm');
     }
     &--md {
-        font-size: map.get($theme-sizes, 'md');
+        font-size: map.get($theme-font-sizes, 'md');
     }
     &--lg {
-        font-size: map.get($theme-sizes, 'lg');
+        font-size: map.get($theme-font-sizes, 'lg');
     }
 }

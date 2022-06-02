@@ -2,7 +2,6 @@
 
 .dropzone {
     background-color: rgba(0, 0, 0, 0.5);
-    border-radius: map-get($theme-sizes, 'sm');
-    font-size: map-get($theme-sizes, 'sm');
+    border-radius: map-get($theme-spacing-sizes, 'sm');
     text-align: center;
 }

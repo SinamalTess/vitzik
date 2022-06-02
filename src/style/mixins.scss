@@ -6,17 +6,17 @@
     #{$property}: $value;
 }
 
-@mixin addsizes($property) {
+@mixin addSpacingSizes($property) {
     &--none {
-        #{$property}: map-get($theme-sizes, 'none');
+        #{$property}: map-get($theme-spacing-sizes, 'none');
     }
     &--sm {
-        #{$property}: map-get($theme-sizes, 'sm');
+        #{$property}: map-get($theme-spacing-sizes, 'sm');
     }
     &--md {
-        #{$property}: map-get($theme-sizes, 'md');
+        #{$property}: map-get($theme-spacing-sizes, 'md');
     }
     &--lg {
-        #{$property}: map-get($theme-sizes, 'lg');
+        #{$property}: map-get($theme-spacing-sizes, 'lg');
     }
 }
