@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
 @import 'style/icons';
 @import 'src/style/vars';
+@import 'src/style/mixins';
 
 body {
     margin: 0;
@@ -12,13 +13,9 @@ body {
 }
 
 .padding {
-    &--sm {
-        padding: map-get($theme-sizes, 'sm');
-    }
-    &--md {
-        padding: map-get($theme-sizes, 'md');
-    }
-    &--lg {
-        padding: map-get($theme-sizes, 'lg');
-    }
+    @include addsizes(padding);
+}
+
+.margin {
+    @include addsizes(margin);
 }

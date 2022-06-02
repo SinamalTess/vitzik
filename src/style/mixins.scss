@@ -4,4 +4,19 @@
     -ms-#{$property}: $value;
     -o-#{$property}: $value;
     #{$property}: $value;
-} ;
+}
+
+@mixin addsizes($property) {
+    &--none {
+        #{$property}: map-get($theme-sizes, 'none');
+    }
+    &--sm {
+        #{$property}: map-get($theme-sizes, 'sm');
+    }
+    &--md {
+        #{$property}: map-get($theme-sizes, 'md');
+    }
+    &--lg {
+        #{$property}: map-get($theme-sizes, 'lg');
+    }
+}
