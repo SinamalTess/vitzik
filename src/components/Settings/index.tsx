@@ -3,7 +3,7 @@ import React from 'react'
 import { MusicSystemSelector } from '../MusicSystemSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
 import './settings.scss'
-import { MidiJsonNote, MusicSystem } from '../../types'
+import { MusicSystem } from '../../types'
 import { AppMode, ModeSelector } from '../ModeSelector'
 
 interface SettingsProps {
@@ -13,10 +13,6 @@ interface SettingsProps {
     midiInputs: MIDIInput[]
     onChangeInput: (event: React.ChangeEvent<HTMLSelectElement>) => void
     onChangeAppMode: (mode: AppMode) => void
-    onMidiImport: (
-        midiTrackTitle: string,
-        midiTrackNotes: MidiJsonNote[]
-    ) => void
     appMode: AppMode
     musicSystem: MusicSystem
 }
