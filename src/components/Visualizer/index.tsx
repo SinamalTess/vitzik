@@ -9,10 +9,7 @@ interface VisualizerProps {
     colors?: string[]
 }
 
-export function Visualizer({
-    notes,
-    colors = ['#dc202e', '#f7ed99', '#2d338b', '#76306b', '#ea8c2d'],
-}: VisualizerProps) {
+export function Visualizer({ notes, colors = ['#00E2DC'] }: VisualizerProps) {
     let deltaAcc = 0
     return (
         <svg

@@ -1,3 +1,5 @@
+@import 'src/style/vars';
+
 .piano {
     padding: 0;
     margin: 0;
@@ -37,7 +39,7 @@
             0 0 3px rgba(0, 0, 0, 0.2);
         background: linear-gradient(to bottom, #eee 0%, #fff 100%);
         &--active {
-            background: lightblue;
+            background: map-get($theme-colors, 'primary');
         }
     }
 
@@ -50,7 +52,7 @@
             0 2px 4px rgba(0, 0, 0, 0.5);
         background: linear-gradient(45deg, #222 0%, #555 100%);
         &--active {
-            background: lightblue;
+            background: map-get($theme-colors, 'primary');
         }
     }
 }
