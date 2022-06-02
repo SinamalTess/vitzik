@@ -1,5 +1,5 @@
 import React from 'react'
-import { CSSSize } from '../../../types/CSSSize'
+import { CSSSize } from '../../../types'
 
 export type IconName = 'volume' | 'frequency' | 'infos'
 
