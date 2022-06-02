@@ -1,15 +1,17 @@
 import React from 'react'
 import './button.scss'
-import { Icon } from '../Icon'
-import { CSSSize } from '../../../types/CSSSize'
+import { Icon, IconName } from '../Icon'
+import { CSSSize, CSSColor } from '../../../types'
 
 export interface ButtonProps {
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
     disable?: boolean
     active?: boolean
-    icon?: 'volume' | null
+    icon?: IconName
     children?: string
     size?: CSSSize
+    color?: CSSColor
+    outline?: boolean
 }
 
 export function Button({
@@ -19,15 +21,14 @@ export function Button({
     icon,
     children,
     size = 'md',
+    outline = false,
 }: ButtonProps) {
+    const className = `btn btn--${size} padding--${size} ${active ? 'btn--active' : ''} ${
+        outline ? 'btn--outline' : ''
+    }`
+
     return (
-        <button
-            onClick={onClick}
-            disabled={disable}
-            className={`btn btn--${size} padding--${size} margin--${size} ${
-                active ? 'active' : ''
-            }`}
-        >
+        <button onClick={onClick} disabled={disable} className={className}>
             {icon ? <Icon name={icon} size={size} /> : null}
             {children}
         </button>

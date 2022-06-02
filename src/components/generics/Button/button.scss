@@ -2,20 +2,38 @@
 @import 'src/style/vars';
 
 .btn {
-    background-color: transparent;
-    color: white;
+    color: darken(map.get($theme-colors, 'primary'), 20%);
     border: none;
     cursor: pointer;
     opacity: 0.75;
-    &.active {
-        background-color: map.get($theme-colors, 'primary');
-    }
-    &:hover {
-        opacity: 1;
-    }
+    border-radius: 5px;
+    text-transform: uppercase;
+    background-color: map.get($theme-colors, 'secondary');
+    letter-spacing: 1px;
+
+    &:hover,
     &:focus {
-        opacity: 1;
+        background-color: lighten(map.get($theme-colors, 'secondary'), 10%);
     }
+
+    &--outline {
+        border: 1px solid map.get($theme-colors, 'primary');
+        background-color: transparent;
+        color: map.get($theme-colors, 'primary');
+        &:hover,
+        &:focus {
+            border: lighten(map.get($theme-colors, 'primary'), 10%);
+        }
+    }
+
+    &--active {
+        background-color: map.get($theme-colors, 'primary');
+        &:hover,
+        &:focus {
+            background-color: lighten(map.get($theme-colors, 'primary'), 10%);
+        }
+    }
+
     &--sm {
         font-size: map.get($theme-font-sizes, 'sm');
     }

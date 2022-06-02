@@ -9,7 +9,7 @@ interface ButtonGroupProps {
 
 export function ButtonGroup({ children }: ButtonGroupProps) {
     return (
-        <div className="btn-group" role="group">
+        <div className="btn-group margin--sm" role="group">
             {children}
         </div>
     )
