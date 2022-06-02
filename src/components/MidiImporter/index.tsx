@@ -52,7 +52,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
 
     return (
         <div
-            className="dropzone"
+            className="dropzone padding--lg"
             onDrop={(event) => dropHandler(event)}
             onDragOver={(event) => dragOverHandler(event)}
         >
