@@ -6,13 +6,17 @@ import { MidiJsonNote } from '../../types'
 
 interface VisualizerProps {
     notes: MidiJsonNote[]
-    colors?: string[]
+    color?: string
+    trackPosition: number
 }
 
-export function Visualizer({ notes, colors = ['#00E2DC'] }: VisualizerProps) {
+export function Visualizer({ notes, color = '#00E2DC', trackPosition }: VisualizerProps) {
     let deltaAcc = 0
     return (
-        <svg className="visualizer visualizer--cartesian">
+        <svg
+            className="visualizer visualizer--cartesian"
+            style={{ transform: `translateY(${trackPosition}%) scaleY(-1)` }}
+        >
             {notes.map((note, index) => {
                 const noteNumber = note?.noteOn?.noteNumber || note?.noteOff?.noteNumber || 0
                 const noteName = noteKeyToName(noteNumber)
@@ -55,9 +59,9 @@ export function Visualizer({ notes, colors = ['#00E2DC'] }: VisualizerProps) {
                             height={heightAcc / 10}
                             x={x}
                             y={deltaAcc / 10}
-                            key={'note-' + noteNumber}
+                            key={'note-' + noteNumber + index}
                             style={{
-                                fill: getRandom(colors),
+                                fill: color,
                             }}
                             className={`visualizer__note${noteName} ${index}`}
                         />

@@ -4,7 +4,7 @@
 
     &--cartesian {
         display: flex;
-        overflow: scroll;
+        overflow: visible;
         transform: scaleY(-1); // flip to emulate cartesian coordinates system
         g text {
             transform: scaleY(

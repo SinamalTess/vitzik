@@ -11,10 +11,8 @@ interface PreviewProps {
     notes: AlphabeticalNote[]
     midiTrackNotes: MidiJsonNote[]
     midiTrackTitle: string
-    onMidiImport: (
-        midiTrackTitle: string,
-        midiTrackNotes: MidiJsonNote[]
-    ) => void
+    onMidiImport: (midiTrackTitle: string, midiTrackNotes: MidiJsonNote[]) => void
+    trackPosition: number
 }
 
 export function Preview({
@@ -23,6 +21,7 @@ export function Preview({
     midiTrackNotes,
     onMidiImport,
     midiTrackTitle,
+    trackPosition,
 }: PreviewProps) {
     const isMidiImported = Boolean(midiTrackNotes.length)
 
@@ -31,10 +30,8 @@ export function Preview({
     ) : (
         <>
             <TrackInfos title={midiTrackTitle} />
-            {isMidiImported ? null : (
-                <MidiImporter onMidiImport={onMidiImport} />
-            )}
-            <Visualizer notes={midiTrackNotes} />
+            {isMidiImported ? null : <MidiImporter onMidiImport={onMidiImport} />}
+            <Visualizer notes={midiTrackNotes} trackPosition={trackPosition} />
         </>
     )
 }

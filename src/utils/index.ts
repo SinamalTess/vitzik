@@ -32,7 +32,7 @@ export function midiJsonToNotes(json: MidiJson): MidiJsonNote[] {
         }
     })
 
-    return notesArr.slice(0, 100)
+    return notesArr
 }
 
 export function isSpecialKey(note: AlphabeticalNote) {

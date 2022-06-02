@@ -15,6 +15,7 @@ function App() {
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrackNotes, setMidiTrackNotes] = useState<MidiJsonNote[]>([])
     const [appMode, setAppMode] = useState<AppMode>('import')
+    const [trackPosition, setTrackPosition] = useState<number>(0)
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
         console.log('MIDI ready!')
@@ -90,6 +91,8 @@ function App() {
                     onChangeInput={onChangeInput}
                     onChangeAppMode={setAppMode}
                     musicSystem={musicSystem}
+                    trackPosition={trackPosition}
+                    setTrackPosition={setTrackPosition}
                 />
             </div>
             <div className="item">
@@ -99,14 +102,11 @@ function App() {
                     midiTrackNotes={midiTrackNotes}
                     onMidiImport={onMidiImport}
                     midiTrackTitle={midiTrackTitle}
+                    trackPosition={trackPosition}
                 />
             </div>
             <div className="item">
-                <Piano
-                    activeKeys={notes}
-                    onKeyPressed={setNotes}
-                    isMute={!isSoundOn}
-                />
+                <Piano activeKeys={notes} onKeyPressed={setNotes} isMute={!isSoundOn} />
             </div>
         </div>
     )
