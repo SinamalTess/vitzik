@@ -25,9 +25,7 @@ export function midiJsonToNotes(json: MidiJson): MidiJsonNote[] {
 
     json.tracks.forEach((track: any) => {
         const notes = track.filter(
-            (event: any) =>
-                event.hasOwnProperty('noteOn') ||
-                event.hasOwnProperty('noteOff')
+            (event: any) => event.hasOwnProperty('noteOn') || event.hasOwnProperty('noteOff')
         )
         if (notes.length) {
             notesArr.push(...notes)
@@ -35,4 +33,12 @@ export function midiJsonToNotes(json: MidiJson): MidiJsonNote[] {
     })
 
     return notesArr.slice(0, 100)
+}
+
+export function isSpecialKey(note: AlphabeticalNote) {
+    return note.includes('C') || note.includes('F')
+}
+
+export function getRandom(arr: any[]) {
+    return arr[Math.floor(Math.random() * arr.length)]
 }

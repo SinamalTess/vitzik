@@ -3,6 +3,7 @@ import './piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import { AlphabeticalNote } from '../../types'
 import Soundfont from 'soundfont-player'
+import { isSpecialKey as checkIsSpecialKey } from '../../utils'
 
 interface PianoProps {
     activeKeys: AlphabeticalNote[]
@@ -16,10 +17,7 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
 
     React.useEffect(() => {
         if (!isMute && activeKeys.length >= 1) {
-            Soundfont.instrument(
-                new AudioContext(),
-                'acoustic_grand_piano'
-            ).then(function (piano) {
+            Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(function (piano) {
                 let note: string = activeKeys[0]
                 note = note.includes('#') ? note.split('/')[1] : note
                 piano.play(note)
@@ -29,46 +27,27 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
 
     return (
         <ul className="piano">
-            {keysIterator.map((key, index) => {
+            {keysIterator.map((key) => {
                 const isBlackKey = key.includes('#')
-                const isSpecialKey = key.includes('C') || key.includes('F')
-                const keyClassName = isBlackKey
-                    ? 'piano__blackkey'
-                    : 'piano__whitekey'
+                const isSpecialKey = checkIsSpecialKey(key)
+                const keyClassName = isBlackKey ? 'piano__blackkey' : 'piano__whitekey'
+                const margin =
+                    isBlackKey || !isSpecialKey ? `0 0 0 -${100 / NB_WHITE_PIANO_KEYS / 4}%` : '0'
+                const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
+                const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`
+                const styleKeyName = activeKeys.includes(key) ? { display: 'block' } : {}
 
                 return (
                     <li
                         key={key}
-                        style={{
-                            width: isBlackKey
-                                ? 100 / NB_WHITE_PIANO_KEYS / 2 + '%' // black keys are twice smaller in width
-                                : 100 / NB_WHITE_PIANO_KEYS + '%',
-                            margin:
-                                isBlackKey || !isSpecialKey
-                                    ? `0 0 0 -${
-                                          100 / NB_WHITE_PIANO_KEYS / 4 + '%'
-                                      }`
-                                    : `0 0 0 0`,
-                        }}
+                        style={{ width, margin }}
                         onMouseDown={() => onKeyPressed([key])}
                         onMouseUp={() => onKeyPressed([])}
                         className={`
                             ${keyClassName} 
-                            ${key} ${
-                            activeKeys.includes(key)
-                                ? `${keyClassName}--active`
-                                : ''
-                        }`}
+                            ${key} ${activeKeys.includes(key) ? `${keyClassName}--active` : ''}`}
                     >
-                        <span
-                            style={
-                                activeKeys.includes(key)
-                                    ? { display: 'block' }
-                                    : {}
-                            }
-                        >
-                            {key}
-                        </span>
+                        <span style={styleKeyName}>{key}</span>
                     </li>
                 )
             })}
