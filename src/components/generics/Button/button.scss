@@ -16,24 +16,23 @@
         background-color: lighten(map.get($theme-colors, 'secondary'), 10%);
     }
 
+    &--active {
+        background-color: map.get($theme-colors, 'primary');
+        &:hover,
+        &:focus {
+            background-color: lighten(map.get($theme-colors, 'primary'), 10%);
+        }
+    }
+
     &--outline {
         border: 1px solid map.get($theme-colors, 'primary');
         background-color: transparent;
         color: map.get($theme-colors, 'primary');
         &:hover,
         &:focus {
-            border: lighten(map.get($theme-colors, 'primary'), 10%);
-        }
-    }
-
-    &--active {
-        background-color: map.get(
-            $theme-colors,
-            'primary'
-        ); // TODO: fix when used with outline the button can't be read
-        &:hover,
-        &:focus {
-            background-color: lighten(map.get($theme-colors, 'primary'), 10%);
+            border: 1px solid lighten(map.get($theme-colors, 'primary'), 25%);
+            color: lighten(map.get($theme-colors, 'primary'), 25%);
+            background-color: transparent;
         }
     }
 
