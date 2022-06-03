@@ -1,5 +1,5 @@
 import { parseArrayBuffer } from 'midi-json-parser'
-import React from 'react'
+import React, { useState } from 'react'
 import { midiJsonToNotes } from '../../utils'
 import { MidiJson, MidiJsonNote } from '../../types'
 import './midiimporter.scss'
@@ -11,11 +11,16 @@ interface MidiImporterProps {
 
 // TODO: make dropzone fullscreen
 // TODO: allow to re-import another MIDI file
-// TODO: verify the type of file and if not MIDI show an error
+
+type midiImporterState = 'pending' | 'error'
 
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
+    const [state, setState] = useState<midiImporterState>('pending')
+
     function dropHandler(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault()
+
+        if (state === 'error') return
 
         let files = []
 
@@ -48,6 +53,13 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
 
     function dragOverHandler(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault()
+        if (event.dataTransfer.items[0].type !== 'audio/mid') {
+            setState('error')
+        }
+    }
+
+    function dragLeaveHandler(event: React.DragEvent<HTMLDivElement>) {
+        setState('pending')
     }
 
     return (
@@ -55,9 +67,14 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
             className="dropzone pd-lg"
             onDrop={(event) => dropHandler(event)}
             onDragOver={(event) => dragOverHandler(event)}
+            onDragLeave={(event) => dragLeaveHandler(event)}
         >
             <Icon name="midi" size={75} />
-            <p>Drag a MIDI file to this Drop Zone</p>
+            {state === 'pending' ? (
+                <p>Drag a MIDI file to this Drop Zone</p>
+            ) : (
+                <p>We only support MIDI files</p>
+            )}
         </div>
     )
 }
