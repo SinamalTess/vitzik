@@ -7,16 +7,16 @@
 }
 
 @mixin addSpacingSizes($property) {
-    &--none {
+    &-none {
         #{$property}: map-get($theme-spacing-sizes, 'none');
     }
-    &--sm {
+    &-sm {
         #{$property}: map-get($theme-spacing-sizes, 'sm');
     }
-    &--md {
+    &-md {
         #{$property}: map-get($theme-spacing-sizes, 'md');
     }
-    &--lg {
+    &-lg {
         #{$property}: map-get($theme-spacing-sizes, 'lg');
     }
 }

@@ -23,8 +23,7 @@ export function Button({
     size = 'md',
     outline = false,
 }: ButtonProps) {
-    const className = `btn btn--${size} padding--${size} ${active ? 'btn--active' : ''} ${
-        // TODO: review if to keep using 2 '--' for classes
+    const className = `btn btn--${size} pd-${size} ${active ? 'btn--active' : ''} ${
         outline ? 'btn--outline' : ''
     }`
 

@@ -11,10 +11,34 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.padding {
+.pd {
     @include addSpacingSizes(padding);
+    &-t {
+        @include addSpacingSizes(padding-top);
+    }
+    &-b {
+        @include addSpacingSizes(padding-bottom);
+    }
+    &-l {
+        @include addSpacingSizes(padding-left);
+    }
+    &-r {
+        @include addSpacingSizes(padding-right);
+    }
 }
 
-.margin {
+.mg {
     @include addSpacingSizes(margin);
+    &-t {
+        @include addSpacingSizes(margin-top);
+    }
+    &-b {
+        @include addSpacingSizes(margin-bottom);
+    }
+    &-l {
+        @include addSpacingSizes(margin-left);
+    }
+    &-r {
+        @include addSpacingSizes(margin-right);
+    }
 }
