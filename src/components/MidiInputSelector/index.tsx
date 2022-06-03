@@ -6,10 +6,9 @@ interface MidiInputSelectorProps {
     onChangeInput: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-export function MidiInputSelector({
-    inputs,
-    onChangeInput,
-}: MidiInputSelectorProps) {
+// TODO: align the icon and animation + color
+
+export function MidiInputSelector({ inputs, onChangeInput }: MidiInputSelectorProps) {
     return inputs.length ? (
         <>
             <select name="midiInputs" onChange={onChangeInput}>
