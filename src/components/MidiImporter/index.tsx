@@ -12,10 +12,9 @@ interface MidiImporterProps {
 // TODO: make dropzone fullscreen
 // TODO: allow to re-import another MIDI file
 // TODO: verify the type of file and if not MIDI show an error
-// TODO: better types
 
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
-    function dropHandler(event: any) {
+    function dropHandler(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault()
 
         let files = []
@@ -47,7 +46,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         }
     }
 
-    function dragOverHandler(event: any) {
+    function dragOverHandler(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault()
     }
 
