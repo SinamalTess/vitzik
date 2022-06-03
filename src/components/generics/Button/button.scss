@@ -27,7 +27,10 @@
     }
 
     &--active {
-        background-color: map.get($theme-colors, 'primary');
+        background-color: map.get(
+            $theme-colors,
+            'primary'
+        ); // TODO: fix when used with outline the button can't be read
         &:hover,
         &:focus {
             background-color: lighten(map.get($theme-colors, 'primary'), 10%);

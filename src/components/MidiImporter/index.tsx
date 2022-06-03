@@ -5,11 +5,14 @@ import { MidiJson, MidiJsonNote } from '../../types'
 import './midiimporter.scss'
 
 interface MidiImporterProps {
-    onMidiImport: (
-        midiTrackTitle: string,
-        midiTrackNotes: MidiJsonNote[]
-    ) => void
+    onMidiImport: (midiTrackTitle: string, midiTrackNotes: MidiJsonNote[]) => void
 }
+
+// TODO: add an icon to drop zone
+// TODO: make dropzone fullscreen
+// TODO: allow to re-import another MIDI file
+// TODO: verify the type of file and if not MIDI show an error
+// TODO: better types
 
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     function dropHandler(event: any) {
@@ -36,11 +39,9 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
             reader.onload = function () {
                 const arrayBuffer = this.result
 
-                parseArrayBuffer(arrayBuffer as ArrayBuffer).then(
-                    (json: MidiJson) => {
-                        onMidiImport(filesArr[0].name, midiJsonToNotes(json))
-                    }
-                )
+                parseArrayBuffer(arrayBuffer as ArrayBuffer).then((json: MidiJson) => {
+                    onMidiImport(filesArr[0].name, midiJsonToNotes(json))
+                })
             }
             reader.readAsArrayBuffer(filesArr[0])
         }

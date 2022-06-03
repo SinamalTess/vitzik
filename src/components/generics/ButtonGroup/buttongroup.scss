@@ -1,5 +1,5 @@
 .btn-group {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5); // TODO: review if to use scss variable for background
     border-radius: 5px;
     > .btn {
         border: none;

@@ -24,6 +24,7 @@ export function Button({
     outline = false,
 }: ButtonProps) {
     const className = `btn btn--${size} padding--${size} ${active ? 'btn--active' : ''} ${
+        // TODO: review if to keep using 2 '--' for classes
         outline ? 'btn--outline' : ''
     }`
 
