@@ -1,5 +1,5 @@
 import React from 'react'
-import { getRandom, isSpecialKey as checkIsSpecialKey, noteKeyToName } from '../../utils'
+import { isSpecialKey as checkIsSpecialKey, noteKeyToName } from '../../utils'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../../utils/const'
 import './visualizer.scss'
 import { MidiJsonNote } from '../../types'
@@ -38,7 +38,7 @@ export function Visualizer({ notes, color = '#00E2DC', trackPosition }: Visualiz
                         }
                     }
                     const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
-                    const margin = isBlackKey || !isSpecialKey ? widthWhiteKey / 4 : 0
+                    const margin = !isBlackKey ? widthWhiteKey / 4 : widthWhiteKey / 2
                     const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`
 
                     const previousKeys = NOTES.alphabetical.slice(
