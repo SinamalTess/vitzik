@@ -3,12 +3,12 @@ import React from 'react'
 import { midiJsonToNotes } from '../../utils'
 import { MidiJson, MidiJsonNote } from '../../types'
 import './midiimporter.scss'
+import { Icon } from '../generics/Icon'
 
 interface MidiImporterProps {
     onMidiImport: (midiTrackTitle: string, midiTrackNotes: MidiJsonNote[]) => void
 }
 
-// TODO: add an icon to drop zone
 // TODO: make dropzone fullscreen
 // TODO: allow to re-import another MIDI file
 // TODO: verify the type of file and if not MIDI show an error
@@ -57,6 +57,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
             onDrop={(event) => dropHandler(event)}
             onDragOver={(event) => dragOverHandler(event)}
         >
+            <Icon name="midi" size={75} />
             <p>Drag a MIDI file to this Drop Zone</p>
         </div>
     )

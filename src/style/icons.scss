@@ -9,19 +9,24 @@
         font-family: 'Custom Icons', serif;
         text-transform: none;
     }
-    &--volume {
+    &-volume {
         &::before {
             content: 'a';
         }
     }
-    &--frequency {
+    &-frequency {
         &::before {
             content: 'b';
         }
     }
-    &--infos {
+    &-infos {
         &::before {
             content: 'c';
+        }
+    }
+    &-midi {
+        &::before {
+            content: 'd';
         }
     }
 }

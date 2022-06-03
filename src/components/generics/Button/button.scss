@@ -1,5 +1,6 @@
 @use 'sass:map';
 @import 'src/style/vars';
+@import 'src/style/mixins';
 
 .btn {
     color: darken(map.get($theme-colors, 'primary'), 20%);
@@ -36,13 +37,5 @@
         }
     }
 
-    &--sm {
-        font-size: map.get($theme-font-sizes, 'sm');
-    }
-    &--md {
-        font-size: map.get($theme-font-sizes, 'md');
-    }
-    &--lg {
-        font-size: map.get($theme-font-sizes, 'lg');
-    }
+    @include addFontSizes(font-size);
 }

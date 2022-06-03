@@ -20,3 +20,15 @@
         #{$property}: map-get($theme-spacing-sizes, 'lg');
     }
 }
+
+@mixin addFontSizes($property) {
+    &-sm {
+        #{$property}: map-get($theme-font-sizes, 'sm');
+    }
+    &-md {
+        #{$property}: map-get($theme-font-sizes, 'md');
+    }
+    &-lg {
+        #{$property}: map-get($theme-font-sizes, 'lg');
+    }
+}
