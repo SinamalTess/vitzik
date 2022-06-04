@@ -1,5 +1,5 @@
-import { ButtonGroup } from '../generics/ButtonGroup'
-import { Button } from '../generics/Button'
+import { ButtonGroup } from './generics/ButtonGroup'
+import { Button } from './generics/Button'
 import React from 'react'
 
 export type AppMode = 'learning' | 'import'
@@ -14,16 +14,10 @@ export function ModeSelector({ onChangeAppMode, appMode }: ModeSelectorProps) {
 
     return (
         <ButtonGroup>
-            <Button
-                onClick={() => onChangeAppMode('learning')}
-                active={isLearningMode}
-            >
+            <Button onClick={() => onChangeAppMode('learning')} active={isLearningMode}>
                 Learning
             </Button>
-            <Button
-                onClick={() => onChangeAppMode('import')}
-                active={!isLearningMode}
-            >
+            <Button onClick={() => onChangeAppMode('import')} active={!isLearningMode}>
                 Import Midi
             </Button>
         </ButtonGroup>

@@ -1,10 +1,10 @@
-import { Staff } from '../Staff'
-import { TrackInfos } from '../TrackInfos'
-import { MidiImporter } from '../MidiImporter'
-import { Visualizer } from '../Visualizer'
+import { Staff } from './Staff'
+import { TrackInfos } from './TrackInfos'
+import { MidiImporter } from './MidiImporter'
+import { Visualizer } from './Visualizer'
 import React from 'react'
-import { AppMode } from '../ModeSelector'
-import { AlphabeticalNote, MidiJsonNote } from '../../types'
+import { AppMode } from './ModeSelector'
+import { AlphabeticalNote, MidiJsonNote } from '../types'
 
 interface PreviewProps {
     appMode: AppMode

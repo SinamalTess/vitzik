@@ -1,6 +1,6 @@
 @use 'sass:map';
-@import 'src/style/vars';
-@import 'src/style/mixins';
+@import '../../style/vars';
+@import '../../style/mixins';
 
 .btn {
     color: darken(map.get($theme-colors, 'primary'), 20%);

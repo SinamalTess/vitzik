@@ -1,9 +1,9 @@
 import React from 'react'
-import './piano.scss'
-import { NOTES, NB_WHITE_PIANO_KEYS } from '../../utils/const'
-import { AlphabeticalNote } from '../../types'
+import './Piano.scss'
+import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
+import { AlphabeticalNote } from '../types'
 import Soundfont from 'soundfont-player'
-import { isSpecialKey as checkIsSpecialKey } from '../../utils'
+import { isSpecialKey as checkIsSpecialKey } from '../utils'
 
 interface PianoProps {
     activeKeys: AlphabeticalNote[]

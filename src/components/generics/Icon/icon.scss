@@ -1,6 +1,0 @@
-@import 'src/style/mixins';
-@import 'src/style/vars';
-
-.icon {
-    @include addFontSizes(font-size);
-}

@@ -1,7 +1,7 @@
 import React from 'react'
-import { MusicSystem } from '../../types'
-import { ButtonGroup } from '../generics/ButtonGroup'
-import { Button } from '../generics/Button'
+import { MusicSystem } from '../types'
+import { ButtonGroup } from './generics/ButtonGroup'
+import { Button } from './generics/Button'
 
 interface MusicSystemSelectorProps {
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
@@ -26,10 +26,7 @@ export function MusicSystemSelector({
             >
                 Alphabetical
             </Button>
-            <Button
-                onClick={() => onChangeMusicSystem('german')}
-                active={musicSystem === 'german'}
-            >
+            <Button onClick={() => onChangeMusicSystem('german')} active={musicSystem === 'german'}>
                 German
             </Button>
         </ButtonGroup>

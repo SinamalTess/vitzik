@@ -1,11 +1,11 @@
-import './staff.scss'
+import './Staff.scss'
 import React from 'react'
 import Vex from 'vexflow'
 import StaveNote = Vex.Flow.StaveNote
 import Formatter = Vex.Flow.Formatter
-import { NOTES } from '../../utils/const'
+import { NOTES } from '../utils/const'
 import SVGContext = Vex.Flow.SVGContext
-import { AlphabeticalNote } from '../../types'
+import { AlphabeticalNote } from '../types'
 
 interface StaffProps {
     notes: AlphabeticalNote[]
@@ -28,10 +28,7 @@ export function Staff({ notes }: StaffProps) {
 
     React.useEffect(() => {
         if (musicSheet.current) {
-            const renderer = new Renderer(
-                musicSheet.current,
-                Renderer.Backends.SVG
-            )
+            const renderer = new Renderer(musicSheet.current, Renderer.Backends.SVG)
 
             renderer.resize(800, 400)
 
@@ -60,8 +57,7 @@ export function Staff({ notes }: StaffProps) {
 
             notes.forEach((note) => {
                 const isTopNote = NOTES.alphabetical.indexOf(note) >= 39 // middle C4 has index of 39 in NOTES
-                const noteFormatted =
-                    note.substring(0, 1) + '/' + note.substring(1, 2)
+                const noteFormatted = note.substring(0, 1) + '/' + note.substring(1, 2)
 
                 activeNotes.push(
                     new StaveNote({
@@ -71,13 +67,9 @@ export function Staff({ notes }: StaffProps) {
                     })
                 )
 
-                trebleStaff
-                    .setContext(contextRef.current as Vex.IRenderContext)
-                    .draw()
+                trebleStaff.setContext(contextRef.current as Vex.IRenderContext).draw()
 
-                bassStaff
-                    .setContext(contextRef.current as Vex.IRenderContext)
-                    .draw()
+                bassStaff.setContext(contextRef.current as Vex.IRenderContext).draw()
                 voice.addTickables(activeNotes)
                 new Formatter().joinVoices([voice]).format([voice], 200)
                 voice.draw(

@@ -1,7 +1,7 @@
 import React from 'react'
-import './button.scss'
-import { Icon, IconName } from '../Icon'
-import { CSSSpacingSize, CSSColor } from '../../../types'
+import './Button.scss'
+import { Icon, IconName } from './Icon'
+import { CSSSpacingSize, CSSColor } from '../../types'
 
 export interface ButtonProps {
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void

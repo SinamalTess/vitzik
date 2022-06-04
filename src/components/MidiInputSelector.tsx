@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon } from '../generics/Icon'
+import { Icon } from './generics/Icon'
 
 interface MidiInputSelectorProps {
     inputs: MIDIInput[]

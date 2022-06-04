@@ -1,9 +1,9 @@
 import { parseArrayBuffer } from 'midi-json-parser'
 import React, { useState } from 'react'
-import { midiJsonToNotes } from '../../utils'
-import { MidiJson, MidiJsonNote } from '../../types'
-import './midiimporter.scss'
-import { Icon } from '../generics/Icon'
+import { midiJsonToNotes } from '../utils'
+import { MidiJson, MidiJsonNote } from '../types'
+import './MidIimporter.scss'
+import { Icon } from './generics/Icon'
 import { set } from 'husky'
 
 interface MidiImporterProps {

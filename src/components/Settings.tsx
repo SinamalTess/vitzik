@@ -1,11 +1,11 @@
-import { SoundController } from '../SoundController'
+import { SoundController } from './SoundController'
 import React from 'react'
-import { MusicSystemSelector } from '../MusicSystemSelector'
-import { MidiInputSelector } from '../MidiInputSelector'
-import './settings.scss'
-import { MusicSystem } from '../../types'
-import { AppMode, ModeSelector } from '../ModeSelector'
-import { RangeSlider } from '../generics/RangeSlider'
+import { MusicSystemSelector } from './MusicSystemSelector'
+import { MidiInputSelector } from './MidiInputSelector'
+import './Settings.scss'
+import { MusicSystem } from '../types'
+import { AppMode, ModeSelector } from './ModeSelector'
+import { RangeSlider } from './generics/RangeSlider'
 
 interface SettingsProps {
     isSoundOn: boolean

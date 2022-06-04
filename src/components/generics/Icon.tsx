@@ -1,6 +1,6 @@
 import React from 'react'
-import { CSSSpacingSize } from '../../../types'
-import './icon.scss'
+import { CSSSpacingSize } from '../../types'
+import './Icon.scss'
 
 export type IconName = 'volume' | 'frequency' | 'infos' | 'midi'
 
