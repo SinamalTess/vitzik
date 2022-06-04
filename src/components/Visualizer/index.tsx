@@ -1,5 +1,5 @@
 import React from 'react'
-import { isSpecialKey as checkIsSpecialKey, noteKeyToName } from '../../utils'
+import { noteKeyToName } from '../../utils'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../../utils/const'
 import './visualizer.scss'
 import { MidiJsonNote } from '../../types'
@@ -21,7 +21,6 @@ export function Visualizer({ notes, color = '#00E2DC', trackPosition }: Visualiz
                 const noteNumber = note?.noteOn?.noteNumber || note?.noteOff?.noteNumber || 0
                 const noteName = noteKeyToName(noteNumber)
                 const isBlackKey = noteName.includes('#')
-                const isSpecialKey = checkIsSpecialKey(noteName)
                 const isNoteOn = note.hasOwnProperty('noteOn')
                 const { delta } = note
 
