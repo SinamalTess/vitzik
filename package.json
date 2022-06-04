@@ -22,8 +22,10 @@
   },
   "lint-staged": {
     "**/*": [
-      "prettier --write --ignore-unknown",
-      "jest --findRelatedTests"
+      "prettier --write --ignore-unknown"
+    ],
+    "**/*.{js, ts}": [
+      "react-scripts jest --findRelatedTests"
     ]
   },
   "eslintConfig": {
