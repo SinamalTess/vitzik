@@ -1,5 +1,5 @@
 import React from 'react'
-import { CSSSize } from '../../../types'
+import { CSSSpacingSize } from '../../../types'
 import './icon.scss'
 
 export type IconName = 'volume' | 'frequency' | 'infos' | 'midi'
@@ -7,7 +7,7 @@ export type IconName = 'volume' | 'frequency' | 'infos' | 'midi'
 interface IconProps {
     name: IconName
     children?: string
-    size?: CSSSize | number
+    size?: CSSSpacingSize | number
 }
 
 export function Icon({ name, children, size = 'md' }: IconProps) {

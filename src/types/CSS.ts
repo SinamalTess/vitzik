@@ -1,2 +1,2 @@
 export type CSSColor = 'primary' | 'secondary'
-export type CSSSize = 'none' | 'sm' | 'md' | 'lg'
+export type CSSSpacingSize = 'none' | 'sm' | 'md' | 'lg'
