@@ -4,27 +4,51 @@ import { midiJsonToNotes } from '../../utils'
 import { MidiJson, MidiJsonNote } from '../../types'
 import './midiimporter.scss'
 import { Icon } from '../generics/Icon'
+import { set } from 'husky'
 
 interface MidiImporterProps {
     onMidiImport: (midiTrackTitle: string, midiTrackNotes: MidiJsonNote[]) => void
 }
 
-// TODO: make dropzone fullscreen
 // TODO: allow to re-import another MIDI file
 
-type midiImporterState = 'pending' | 'error'
+type midiImporterState = 'pending' | 'error' | 'dragging'
 
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     const [state, setState] = useState<midiImporterState>('pending')
 
-    function dropHandler(event: React.DragEvent<HTMLDivElement>) {
+    React.useEffect(() => {
+        window.addEventListener('dragover', dragOverHandler)
+        window.addEventListener('drop', dropHandler)
+        window.addEventListener('dragleave', dragLeaveHandler)
+
+        return function () {
+            window.removeEventListener('dragover', dragOverHandler)
+            window.removeEventListener('drop', dropHandler)
+            window.removeEventListener('dragleave', dragLeaveHandler)
+        }
+    }, [])
+
+    function dragOverHandler(event: DragEvent) {
+        event.preventDefault()
+        setState('dragging')
+        if (event.dataTransfer?.items[0].type !== 'audio/mid') {
+            setState('error')
+        }
+    }
+
+    function dragLeaveHandler(event: DragEvent) {
+        setState('pending')
+    }
+
+    function dropHandler(event: DragEvent) {
         event.preventDefault()
 
         if (state === 'error') return
 
         let files = []
 
-        if (event.dataTransfer.items) {
+        if (event.dataTransfer?.items) {
             for (let i = 0; i < event.dataTransfer.items.length; i++) {
                 if (event.dataTransfer.items[i].kind === 'file') {
                     const file = event.dataTransfer.items[i].getAsFile()
@@ -32,8 +56,9 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
                 }
             }
         } else {
-            for (let i = 0; i < event.dataTransfer.files.length; i++) {
-                files.push(event.dataTransfer.files[i])
+            const length = event.dataTransfer?.files.length ?? 0
+            for (let i = 0; i < length; i++) {
+                files.push(event.dataTransfer?.files[i])
             }
         }
 
@@ -49,32 +74,19 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
             }
             reader.readAsArrayBuffer(filesArr[0])
         }
-    }
-
-    function dragOverHandler(event: React.DragEvent<HTMLDivElement>) {
-        event.preventDefault()
-        if (event.dataTransfer.items[0].type !== 'audio/mid') {
-            setState('error')
-        }
-    }
-
-    function dragLeaveHandler(event: React.DragEvent<HTMLDivElement>) {
         setState('pending')
     }
 
     return (
-        <div
-            className="dropzone pd-lg"
-            onDrop={(event) => dropHandler(event)}
-            onDragOver={(event) => dragOverHandler(event)}
-            onDragLeave={(event) => dragLeaveHandler(event)}
-        >
-            <Icon name="midi" size={75} />
-            {state === 'pending' ? (
-                <p>Drag a MIDI file to this Drop Zone</p>
-            ) : (
-                <p>We only support MIDI files</p>
-            )}
+        <div className={`dropzone dropzone--${state}`}>
+            <div className="dropzone__message">
+                <Icon name="midi" size={75} />
+                {state === 'error' ? (
+                    <p>We only support MIDI files</p>
+                ) : (
+                    <p>Drag a MIDI file to this Drop Zone</p>
+                )}
+            </div>
         </div>
     )
 }
