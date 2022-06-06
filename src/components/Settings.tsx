@@ -15,6 +15,7 @@ interface SettingsProps {
     musicSystem: MusicSystem
     setTrackPosition: (position: number) => void
     trackPosition: number
+    midiTrackDuration: number
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeMidiInput: onChangeMidiInput
     onChangeAppMode: (mode: AppMode) => void
@@ -28,13 +29,22 @@ export function Settings({
     musicSystem,
     setTrackPosition,
     trackPosition,
+    midiTrackDuration,
     onChangeMusicSystem,
     onChangeMidiInput,
     onChangeAppMode,
 }: SettingsProps) {
+    const trackPositionInDate = new Date(trackPosition)
     return (
         <div className="settings">
-            <RangeSlider setValue={setTrackPosition} value={trackPosition} />
+            <>
+                <RangeSlider
+                    setValue={setTrackPosition}
+                    value={trackPosition}
+                    max={midiTrackDuration}
+                />
+                {`${trackPositionInDate.getMinutes()}:${trackPositionInDate.getSeconds()}`}
+            </>
             <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
             <MusicSystemSelector
                 onChangeMusicSystem={onChangeMusicSystem}

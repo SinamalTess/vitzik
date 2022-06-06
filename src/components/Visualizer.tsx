@@ -117,7 +117,7 @@ export function Visualizer({
             <canvas
                 className="visualizer__canvas"
                 ref={canvasRef}
-                style={{ transform: `translateY(${trackPosition}%) scaleY(-1)` }}
+                style={{ transform: `translateY(${trackPosition}px) scaleY(-1)` }}
             ></canvas>
             {/*<canvas*/}
             {/*    className="visualizer__canvas_secondary"*/}

@@ -1,12 +1,11 @@
 import './App.scss'
 import React, { useState } from 'react'
-import { getMidiInfos, midiJsonToNotes, noteKeyToName } from './utils'
+import { getDurationTrack, getMidiInfos, midiJsonToNotes, noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
-import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
+import { AlphabeticalNote, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
-import { MidiTrackInfos } from './components/Visualizer'
 import { IMidiFile } from 'midi-json-parser-worker'
 
 function App() {
@@ -17,8 +16,7 @@ function App() {
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [trackPosition, setTrackPosition] = useState<number>(0)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
-    const [midiTrackNotes, setMidiTrackNotes] = useState<MidiJsonNote[]>([])
-    const [midiTrackInfos, setMidiTrackInfos] = useState<MidiTrackInfos | null>(null)
+    const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
         let inputs: MIDIInput[] = []
@@ -76,12 +74,13 @@ function App() {
     }
 
     function onMidiImport(title: string, midiJSON: IMidiFile) {
-        const notes = midiJsonToNotes(midiJSON)
-        const midiInfos = getMidiInfos(midiJSON)
         setMidiTrackTitle(title)
-        setMidiTrackNotes(notes)
-        setMidiTrackInfos(midiInfos)
+        setMidiTrack(midiJSON)
     }
+
+    const midiTrackNotes = midiTrack ? midiJsonToNotes(midiTrack) : []
+    const midiTrackDuration = midiTrack ? getDurationTrack(midiTrack) : 0
+    const midiTrackInfos = midiTrack ? getMidiInfos(midiTrack) : null
 
     return (
         <div className="container">
@@ -94,6 +93,7 @@ function App() {
                     musicSystem={musicSystem}
                     trackPosition={trackPosition}
                     setTrackPosition={setTrackPosition}
+                    midiTrackDuration={midiTrackDuration}
                     onChangeMidiInput={onChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
