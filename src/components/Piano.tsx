@@ -3,7 +3,7 @@ import './Piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote } from '../types'
 import Soundfont from 'soundfont-player'
-import { isSpecialKey as checkIsSpecialKey } from '../utils'
+import { isSpecialKey as checkIsSpecialKey, noteToKey } from '../utils'
 
 interface PianoProps {
     activeKeys: AlphabeticalNote[]
@@ -62,7 +62,9 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
                         onMouseUp={() => onKeyPressed([])}
                         className={`
                             ${keyClassName} 
-                            ${key} ${activeKeys.includes(key) ? `${keyClassName}--active` : ''}`}
+                            ${key} ${noteToKey(key)} ${
+                            activeKeys.includes(key) ? `${keyClassName}--active` : ''
+                        }`}
                     >
                         <span style={styleKeyName}>{key}</span>
                     </li>

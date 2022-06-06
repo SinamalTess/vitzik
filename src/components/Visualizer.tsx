@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { noteKeyToName } from '../utils'
+import { isContainedBy, noteKeyToName } from '../utils'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/const'
 import './Visualizer.scss'
 import { isNoteOn, MidiJsonNote } from '../types'
@@ -25,8 +25,13 @@ interface CanvasRectangle {
 }
 
 function drawRectangles(ctx: CanvasRenderingContext2D, rectangles: CanvasRectangle[]) {
-    rectangles.forEach(({ x, y, w, h }) => {
-        ctx.fillRect(x, y, w, h)
+    rectangles.forEach(({ x, y, w, h }, index) => {
+        const rectangle = { x1: x, x2: x + w, y1: y, y2: y + h }
+        const canvas = { x1: 0, x2: ctx.canvas.width, y1: 0, y2: ctx.canvas.height }
+        if (isContainedBy(canvas, rectangle)) {
+            ctx.fillRect(x, y, w, h)
+            console.log(`${index} inside canvas`)
+        }
     })
 }
 
@@ -40,10 +45,10 @@ function getNotesCoordinates(
     let deltaAcc = 0
 
     notes.forEach((note, index) => {
-        let heightAcc = 0
         deltaAcc = deltaAcc + note.delta
 
         if (isNoteOn(note)) {
+            let heightAcc = 0
             const key = note.noteOn.noteNumber
             const noteName = noteKeyToName(key)
             const isBlackKey = noteName.includes('#')
@@ -92,6 +97,7 @@ export function Visualizer({
         const ctx = canvas.getContext('2d')
         const parentElement = canvas.parentElement
         const parentElementWidth = parentElement?.clientWidth ?? 0
+        const parentElementHeight = parentElement?.clientHeight ?? 0
         if (midiInfos) {
             const rectangles = getNotesCoordinates(
                 parentElementWidth,
@@ -100,9 +106,9 @@ export function Visualizer({
                 midiInfos
             )
             // @ts-ignore
-            const canvasHeight = rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0)
+            // const canvasHeight = rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0)
             canvas.width = parentElementWidth
-            canvas.height = canvasHeight / 10 // until we optimize painting we can't render full track
+            canvas.height = parentElementHeight
 
             if (ctx) {
                 ctx.fillStyle = color
@@ -116,7 +122,7 @@ export function Visualizer({
             <canvas
                 className="visualizer__canvas"
                 ref={canvasRef}
-                style={{ transform: `translateY(${trackPosition}%) scaleY(-1)` }}
+                style={{ transform: `translateY(${trackPosition}%)` }}
             ></canvas>
         </div>
     )

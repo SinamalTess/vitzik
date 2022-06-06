@@ -20,3 +20,9 @@ export function translateNote(note: Note, musicSystem: MusicSystem): Note {
 export function isSpecialKey(note: AlphabeticalNote) {
     return note.includes('C') || note.includes('F')
 }
+
+export function noteToKey(note: AlphabeticalNote): number {
+    return (
+        NOTES.alphabetical.findIndex((currentNote) => currentNote === note) + MIDI_PIANO_KEYS_OFFSET
+    )
+}
