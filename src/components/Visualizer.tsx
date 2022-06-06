@@ -1,13 +1,7 @@
 import React, { useRef } from 'react'
-import {
-    CanvasRectangle,
-    getCoordinates,
-    getNotesCoordinates,
-    isHTMLCanvasElement,
-    isPartiallyIn,
-} from '../utils'
+import { getCoordinates, getNotesCoordinates, isPartiallyIn } from '../utils'
 import './Visualizer.scss'
-import { MidiJsonNote } from '../types'
+import { MidiJsonNote, isHTMLCanvasElement, CanvasRectangle } from '../types'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
