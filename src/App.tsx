@@ -1,12 +1,13 @@
 import './App.scss'
 import React, { useState } from 'react'
-import { noteKeyToName } from './utils'
+import { getMidiInfos, midiJsonToNotes, noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
 import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { MidiInfos } from './components/Visualizer'
+import { IMidiFile } from 'midi-json-parser-worker'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -74,7 +75,9 @@ function App() {
         }
     }
 
-    function onMidiImport(title: string, notes: MidiJsonNote[], midiInfos: MidiInfos) {
+    function onMidiImport(title: string, midiJSON: IMidiFile) {
+        const notes = midiJsonToNotes(midiJSON)
+        const midiInfos = getMidiInfos(midiJSON)
         setMidiTrackTitle(title)
         setMidiTrackNotes(notes)
         setMidiInfos(midiInfos)

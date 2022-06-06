@@ -119,10 +119,10 @@ export function Visualizer({
                 ref={canvasRef}
                 style={{ transform: `translateY(${trackPosition}%) scaleY(-1)` }}
             ></canvas>
-            <canvas
-                className="visualizer__canvas_secondary"
-                style={{ transform: `scaleY(-1)` }}
-            ></canvas>
+            {/*<canvas*/}
+            {/*    className="visualizer__canvas_secondary"*/}
+            {/*    style={{ transform: `scaleY(-1)` }}*/}
+            {/*></canvas>*/}
         </div>
     )
 }
