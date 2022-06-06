@@ -65,3 +65,16 @@ export function getMidiInfos(midiJson: IMidiFile): MidiInfos {
         ticksPerBeat: getTicksPerBeat(midiJson),
     }
 }
+
+export function getDurationTrack(midiJson: IMidiFile): Date {
+    const notes = midiJsonToNotes(midiJson)
+    const midiInfos = getMidiInfos(midiJson)
+    const nbTicks = notes.reduce((acc, nextNote) => acc + nextNote.delta, 0)
+    const nbBeats = nbTicks / midiInfos.ticksPerBeat
+    const totalMs = nbBeats * midiInfos.msPerBeat
+    const date = new Date(totalMs)
+
+    console.log(`${date.getMinutes()}min ${date.getSeconds()}s`)
+
+    return date
+}

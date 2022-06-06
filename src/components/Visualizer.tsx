@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { isContainedBy, noteKeyToName } from '../utils'
+import { noteKeyToName } from '../utils'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/const'
 import './Visualizer.scss'
 import { isNoteOn, MidiJsonNote } from '../types'
@@ -26,12 +26,7 @@ interface CanvasRectangle {
 
 function drawRectangles(ctx: CanvasRenderingContext2D, rectangles: CanvasRectangle[]) {
     rectangles.forEach(({ x, y, w, h }, index) => {
-        const rectangle = { x1: x, x2: x + w, y1: y, y2: y + h }
-        const canvas = { x1: 0, x2: ctx.canvas.width, y1: 0, y2: ctx.canvas.height }
-        if (isContainedBy(canvas, rectangle)) {
-            ctx.fillRect(x, y, w, h)
-            console.log(`${index} inside canvas`)
-        }
+        ctx.fillRect(x, y, w, h)
     })
 }
 
@@ -122,7 +117,11 @@ export function Visualizer({
             <canvas
                 className="visualizer__canvas"
                 ref={canvasRef}
-                style={{ transform: `translateY(${trackPosition}%)` }}
+                style={{ transform: `translateY(${trackPosition}%) scaleY(-1)` }}
+            ></canvas>
+            <canvas
+                className="visualizer__canvas_secondary"
+                style={{ transform: `scaleY(-1)` }}
             ></canvas>
         </div>
     )
