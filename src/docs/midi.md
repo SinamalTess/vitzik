@@ -59,3 +59,7 @@ Time signatures consist of two elements:
     -   If the bottom number is a `4`, it means the beats are quarter notes (four quarter notes in a measure).
     -   If the bottom number is `2`, it means the note value is half notes(half notes per measure).
     -   If the bottom number is an `8`, it means the beats are 8th notes...
+
+### Delta
+
+Tells how many ticks have passed since the last message.
