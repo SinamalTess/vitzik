@@ -12,7 +12,9 @@ interface ButtonGroupProps {
 export function ButtonGroup({ children, size = 'md' }: ButtonGroupProps) {
     return (
         <div className="btn-group mg-sm" role="group">
-            {children.map((child) => React.cloneElement(child, { size }))}
+            {children.map((child, index) =>
+                React.cloneElement(child, { size, key: 'btn' + index })
+            )}
         </div>
     )
 }
