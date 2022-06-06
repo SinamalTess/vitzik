@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote } from '../types'
@@ -15,19 +15,36 @@ interface PianoProps {
 export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
     const keysIterator = NOTES.alphabetical
 
+    const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
+
     React.useEffect(() => {
+        Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(
+            (piano) => {
+                setInstrument(piano)
+            },
+            () => {
+                console.error('Failed to start the piano audio')
+            }
+        )
+    }, [])
+
+    React.useEffect(() => {
+        instrument?.on('play', (e) => console.log(e))
         if (!isMute && activeKeys.length >= 1) {
-            Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(function (piano) {
-                let note: string = activeKeys[0]
-                note = note.includes('#') ? note.split('/')[1] : note
-                piano.play(note)
+            activeKeys.forEach(() => {
+                instrument?.play(formatKey(activeKeys))
             })
         }
     }, [activeKeys])
 
+    function formatKey(keys: AlphabeticalNote[]) {
+        let note = keys[0]
+        return note.includes('#') ? note.split('/')[1] : note
+    }
+
     return (
         <ul className="piano">
-            {keysIterator.map((key) => {
+            {keysIterator.map((key, index) => {
                 const isBlackKey = key.includes('#')
                 const isSpecialKey = checkIsSpecialKey(key)
                 const keyClassName = isBlackKey ? 'piano__blackkey' : 'piano__whitekey'

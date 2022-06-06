@@ -1,8 +1,6 @@
-import { NOTES } from './const/notes'
-import { MusicSystem } from '../types'
-import { AlphabeticalNote, Note } from '../types'
-import { MidiJson, MidiJsonNote } from '../types'
-import { MIDI_PIANO_KEYS_OFFSET } from './const/piano_keys'
+import { NOTES, MIDI_PIANO_KEYS_OFFSET } from './const'
+import { AlphabeticalNote, Note, MusicSystem, MidiJsonNote } from '../types'
+import { IMidiFile } from 'midi-json-parser-worker'
 
 export function noteKeyToName(key: number): AlphabeticalNote {
     return NOTES.alphabetical[key - MIDI_PIANO_KEYS_OFFSET]
@@ -20,7 +18,7 @@ export function translateNote(note: Note, musicSystem: MusicSystem): Note {
     return note
 }
 
-export function midiJsonToNotes(json: MidiJson): MidiJsonNote[] {
+export function midiJsonToNotes(json: IMidiFile): MidiJsonNote[] {
     let notesArr: any[] = []
 
     json.tracks.forEach((track: any) => {

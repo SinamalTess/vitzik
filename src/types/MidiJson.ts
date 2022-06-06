@@ -1,20 +1,7 @@
-export interface MidiJson {
-    division: number
+import { IMidiNoteOffEvent, IMidiNoteOnEvent } from 'midi-json-parser-worker'
 
-    format: number
+export type MidiJsonNote = IMidiNoteOffEvent | IMidiNoteOnEvent
 
-    tracks: any[][]
-}
-
-export interface MidiJsonNote {
-    channel: number
-    delta: number
-    noteOn?: {
-        noteNumber: number
-        velocity: number
-    }
-    noteOff?: {
-        noteNumber: number
-        velocity: number
-    }
+export function isNoteOn(note: MidiJsonNote): note is IMidiNoteOnEvent {
+    return (note as IMidiNoteOnEvent).noteOn !== undefined
 }
