@@ -6,6 +6,7 @@ import { Settings } from './components/Settings'
 import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
+import { MidiInfos } from './components/Visualizer'
 
 function App() {
     const [inputs, setInputs] = useState<MIDIInput[]>([])
@@ -14,12 +15,11 @@ function App() {
     const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrackNotes, setMidiTrackNotes] = useState<MidiJsonNote[]>([])
+    const [midiInfos, setMidiInfos] = useState<MidiInfos | null>(null)
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [trackPosition, setTrackPosition] = useState<number>(0)
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
-        console.log('MIDI ready!')
-
         let inputs: MIDIInput[] = []
         midiAccess.inputs.forEach((input) => {
             inputs.push(input)
@@ -74,9 +74,10 @@ function App() {
         }
     }
 
-    function onMidiImport(title: string, notes: MidiJsonNote[]) {
+    function onMidiImport(title: string, notes: MidiJsonNote[], midiInfos: MidiInfos) {
         setMidiTrackTitle(title)
         setMidiTrackNotes(notes)
+        setMidiInfos(midiInfos)
     }
 
     return (
@@ -103,6 +104,7 @@ function App() {
                     onMidiImport={onMidiImport}
                     midiTrackTitle={midiTrackTitle}
                     trackPosition={trackPosition}
+                    midiInfos={midiInfos}
                 />
             </div>
             <div className="item">

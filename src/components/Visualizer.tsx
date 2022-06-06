@@ -4,10 +4,17 @@ import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/con
 import './Visualizer.scss'
 import { isNoteOn, MidiJsonNote } from '../types'
 
+export interface MidiInfos {
+    ticksPerBeat: number
+    msPerBeat: number
+}
+
 interface VisualizerProps {
     notes: MidiJsonNote[]
     color?: string
+    midiInfos: MidiInfos | null
     trackPosition: number
+    heightPerBeat?: number
 }
 
 interface CanvasRectangle {
@@ -23,7 +30,12 @@ function drawRectangles(ctx: CanvasRenderingContext2D, rectangles: CanvasRectang
     })
 }
 
-function getNotesCoordinates(widthCanvas: number, notes: MidiJsonNote[]) {
+function getNotesCoordinates(
+    widthCanvas: number,
+    notes: MidiJsonNote[],
+    heightPerBeat: number,
+    midiInfos: MidiInfos
+) {
     let rectangles: CanvasRectangle[] = []
     let deltaAcc = 0
 
@@ -51,11 +63,14 @@ function getNotesCoordinates(widthCanvas: number, notes: MidiJsonNote[]) {
                 }
             }
 
+            const h = (heightAcc / midiInfos.ticksPerBeat) * heightPerBeat
+            const y = (deltaAcc / midiInfos.ticksPerBeat) * heightPerBeat
+
             rectangles.push({
                 w,
-                h: heightAcc / 10,
+                h,
                 x,
-                y: deltaAcc / 10,
+                y,
             })
         }
     })
@@ -63,7 +78,13 @@ function getNotesCoordinates(widthCanvas: number, notes: MidiJsonNote[]) {
     return rectangles
 }
 
-export function Visualizer({ notes, color = '#00E2DC', trackPosition }: VisualizerProps) {
+export function Visualizer({
+    notes,
+    color = '#00E2DC',
+    trackPosition,
+    heightPerBeat = 100,
+    midiInfos,
+}: VisualizerProps) {
     const canvasRef = useRef(null)
 
     if (canvasRef.current) {
@@ -71,15 +92,22 @@ export function Visualizer({ notes, color = '#00E2DC', trackPosition }: Visualiz
         const ctx = canvas.getContext('2d')
         const parentElement = canvas.parentElement
         const parentElementWidth = parentElement?.clientWidth ?? 0
-        const rectangles = getNotesCoordinates(parentElementWidth, notes)
-        // @ts-ignore
-        const canvasHeight = rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0)
-        canvas.width = parentElementWidth
-        canvas.height = canvasHeight / 10 // until we optimize painting we can't render full track
+        if (midiInfos) {
+            const rectangles = getNotesCoordinates(
+                parentElementWidth,
+                notes,
+                heightPerBeat,
+                midiInfos
+            )
+            // @ts-ignore
+            const canvasHeight = rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0)
+            canvas.width = parentElementWidth
+            canvas.height = canvasHeight / 10 // until we optimize painting we can't render full track
 
-        if (ctx) {
-            ctx.fillStyle = color
-            drawRectangles(ctx, rectangles)
+            if (ctx) {
+                ctx.fillStyle = color
+                drawRectangles(ctx, rectangles)
+            }
         }
     }
 
