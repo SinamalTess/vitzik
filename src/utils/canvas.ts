@@ -1,40 +1,24 @@
-import { isNoteOn, MidiJsonNote } from '../types'
+import {
+    CanvasRectangle,
+    isNoteOn,
+    MidiJsonNote,
+    Point,
+    Rectangle,
+    RectangleCoordinates,
+} from '../types'
 import { noteKeyToName } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
 
-interface Rectangle {
-    x1: number
-    x2: number
-    y1: number
-    y2: number
-}
-
-interface Point {
-    x: number
-    y: number
-}
-
-export interface CanvasRectangle {
-    w: number // width
-    h: number // height
-    x: number
-    y: number
-}
-
-type RectangleCoordinates = number[][]
-
-export function isHTMLCanvasElement(element: ChildNode): element is HTMLCanvasElement {
-    return element.nodeName === 'CANVAS'
-}
-
 // checks if a rectangle 'a' contains another rectangle 'b'
-export const isContainedBy = (a: Rectangle, b: Rectangle): boolean =>
-    a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2
+export function isContainedBy(a: Rectangle, b: Rectangle): boolean {
+    return a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2
+}
 
 // checks if a point is inside the given rectangle
-export const isPointInRect = ({ x1, y1, x2, y2 }: Rectangle, { x, y }: Point) =>
-    x > x1 && x < x2 && y > y1 && y < y2
+export function isPointInRect({ x1, y1, x2, y2 }: Rectangle, { x, y }: Point) {
+    return x > x1 && x < x2 && y > y1 && y < y2
+}
 
 // checks if a rectangle 'a' is at least partially inside another
 export function isPartiallyIn(coordinates: RectangleCoordinates, rectangle: Rectangle) {
