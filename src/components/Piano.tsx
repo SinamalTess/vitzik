@@ -8,8 +8,8 @@ import { isSpecialKey as checkIsSpecialKey, noteToKey } from '../utils'
 interface PianoProps {
     activeKeys: AlphabeticalNote[]
     startingKey?: AlphabeticalNote
-    onKeyPressed: (key: AlphabeticalNote[]) => void
     isMute: boolean
+    onKeyPressed: (key: AlphabeticalNote[]) => void
 }
 
 export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {

@@ -1,6 +1,5 @@
 import { parseArrayBuffer } from 'midi-json-parser'
 import React, { useState } from 'react'
-import { getMidiInfos, midiJsonToNotes } from '../utils'
 import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
 import { Icon } from './generics/Icon'
@@ -10,10 +9,9 @@ interface MidiImporterProps {
 }
 
 export type OnMidiImport = (title: string, midiJSON: IMidiFile) => void
+type midiImporterState = 'pending' | 'error' | 'dragging'
 
 // TODO: allow to re-import another MIDI file
-
-type midiImporterState = 'pending' | 'error' | 'dragging'
 
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     const [state, setState] = useState<midiImporterState>('pending')

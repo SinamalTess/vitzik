@@ -4,7 +4,7 @@ import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/con
 import './Visualizer.scss'
 import { isNoteOn, MidiJsonNote } from '../types'
 
-export interface MidiInfos {
+export interface MidiTrackInfos {
     ticksPerBeat: number
     msPerBeat: number
 }
@@ -12,7 +12,7 @@ export interface MidiInfos {
 interface VisualizerProps {
     notes: MidiJsonNote[]
     color?: string
-    midiInfos: MidiInfos | null
+    midiTrackInfos: MidiTrackInfos | null
     trackPosition: number
     heightPerBeat?: number
 }
@@ -34,7 +34,7 @@ function getNotesCoordinates(
     widthCanvas: number,
     notes: MidiJsonNote[],
     heightPerBeat: number,
-    midiInfos: MidiInfos
+    midiInfos: MidiTrackInfos
 ) {
     let rectangles: CanvasRectangle[] = []
     let deltaAcc = 0
@@ -83,7 +83,7 @@ export function Visualizer({
     color = '#00E2DC',
     trackPosition,
     heightPerBeat = 100,
-    midiInfos,
+    midiTrackInfos,
 }: VisualizerProps) {
     const canvasRef = useRef(null)
 
@@ -93,12 +93,12 @@ export function Visualizer({
         const parentElement = canvas.parentElement
         const parentElementWidth = parentElement?.clientWidth ?? 0
         const parentElementHeight = parentElement?.clientHeight ?? 0
-        if (midiInfos) {
+        if (midiTrackInfos) {
             const rectangles = getNotesCoordinates(
                 parentElementWidth,
                 notes,
                 heightPerBeat,
-                midiInfos
+                midiTrackInfos
             )
             // @ts-ignore
             // const canvasHeight = rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0)

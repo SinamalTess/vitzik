@@ -1,5 +1,5 @@
 import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
-import { MidiInfos } from '../components/Visualizer'
+import { MidiTrackInfos } from '../components/Visualizer'
 import { MidiJsonNote } from '../types'
 
 export function midiJsonToNotes(midiJson: IMidiFile): MidiJsonNote[] {
@@ -59,7 +59,7 @@ export function getTempo(midiJson: IMidiFile) {
     return 0
 }
 
-export function getMidiInfos(midiJson: IMidiFile): MidiInfos {
+export function getMidiInfos(midiJson: IMidiFile): MidiTrackInfos {
     return {
         msPerBeat: getTempo(midiJson),
         ticksPerBeat: getTicksPerBeat(midiJson),

@@ -5,8 +5,8 @@ import React from 'react'
 export type AppMode = 'learning' | 'import'
 
 interface ModeSelectorProps {
-    onChangeAppMode: (mode: AppMode) => void
     appMode: AppMode
+    onChangeAppMode: (mode: AppMode) => void
 }
 
 export function ModeSelector({ onChangeAppMode, appMode }: ModeSelectorProps) {

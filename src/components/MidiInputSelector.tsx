@@ -2,21 +2,23 @@ import React from 'react'
 import { Icon } from './generics/Icon'
 
 interface MidiInputSelectorProps {
-    inputs: MIDIInput[]
-    onChangeInput: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    midiInputs: MIDIInput[]
+    onChangeMidiInput: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
+
+export type onChangeMidiInput = (event: React.ChangeEvent<HTMLSelectElement>) => void
 
 // TODO: align the icon and animation + color
 
-export function MidiInputSelector({ inputs, onChangeInput }: MidiInputSelectorProps) {
-    return inputs.length ? (
+export function MidiInputSelector({ midiInputs, onChangeMidiInput }: MidiInputSelectorProps) {
+    return midiInputs.length ? (
         <>
-            <select name="midiInputs" onChange={onChangeInput}>
-                {inputs.map((input) => (
+            <select name="midiInputs" onChange={onChangeMidiInput}>
+                {midiInputs.map((midiInput) => (
                     <option
-                        value={input.id}
-                        key={input.id}
-                    >{`${input.name} - ${input.manufacturer}`}</option>
+                        value={midiInput.id}
+                        key={midiInput.id}
+                    >{`${midiInput.name} - ${midiInput.manufacturer}`}</option>
                 ))}
             </select>
         </>

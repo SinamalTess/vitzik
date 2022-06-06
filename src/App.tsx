@@ -6,19 +6,19 @@ import { Settings } from './components/Settings'
 import { MidiJsonNote, AlphabeticalNote, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
-import { MidiInfos } from './components/Visualizer'
+import { MidiTrackInfos } from './components/Visualizer'
 import { IMidiFile } from 'midi-json-parser-worker'
 
 function App() {
-    const [inputs, setInputs] = useState<MIDIInput[]>([])
+    const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
     const [notes, setNotes] = useState<AlphabeticalNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
     const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
-    const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
-    const [midiTrackNotes, setMidiTrackNotes] = useState<MidiJsonNote[]>([])
-    const [midiInfos, setMidiInfos] = useState<MidiInfos | null>(null)
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [trackPosition, setTrackPosition] = useState<number>(0)
+    const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
+    const [midiTrackNotes, setMidiTrackNotes] = useState<MidiJsonNote[]>([])
+    const [midiTrackInfos, setMidiTrackInfos] = useState<MidiTrackInfos | null>(null)
 
     function onMIDISuccess(midiAccess: MIDIAccess) {
         let inputs: MIDIInput[] = []
@@ -26,7 +26,7 @@ function App() {
             inputs.push(input)
         })
 
-        setInputs(inputs)
+        setMidiInputs(inputs)
 
         if (inputs[0]) {
             inputs[0].onmidimessage = getMIDIMessage
@@ -41,9 +41,9 @@ function App() {
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
     }, [])
 
-    function onChangeInput(event: React.ChangeEvent<HTMLSelectElement>) {
+    function onChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedInput = event.target.value
-        const input = inputs.find((e) => e.id === selectedInput)
+        const input = midiInputs.find((e) => e.id === selectedInput)
         if (input) {
             input.onmidimessage = getMIDIMessage
         }
@@ -80,7 +80,7 @@ function App() {
         const midiInfos = getMidiInfos(midiJSON)
         setMidiTrackTitle(title)
         setMidiTrackNotes(notes)
-        setMidiInfos(midiInfos)
+        setMidiTrackInfos(midiInfos)
     }
 
     return (
@@ -90,28 +90,28 @@ function App() {
                     appMode={appMode}
                     toggleSound={setIsSoundOn}
                     isSoundOn={isSoundOn}
-                    onChangeMusicSystem={setMusicSystem}
-                    midiInputs={inputs}
-                    onChangeInput={onChangeInput}
-                    onChangeAppMode={setAppMode}
+                    midiInputs={midiInputs}
                     musicSystem={musicSystem}
                     trackPosition={trackPosition}
                     setTrackPosition={setTrackPosition}
+                    onChangeMidiInput={onChangeMidiInput}
+                    onChangeAppMode={setAppMode}
+                    onChangeMusicSystem={setMusicSystem}
                 />
             </div>
             <div className="item">
                 <Preview
                     appMode={appMode}
                     notes={notes}
-                    midiTrackNotes={midiTrackNotes}
-                    onMidiImport={onMidiImport}
-                    midiTrackTitle={midiTrackTitle}
                     trackPosition={trackPosition}
-                    midiInfos={midiInfos}
+                    midiTrackNotes={midiTrackNotes}
+                    midiTrackTitle={midiTrackTitle}
+                    midiTrackInfos={midiTrackInfos}
+                    onMidiImport={onMidiImport}
                 />
             </div>
             <div className="item">
-                <Piano activeKeys={notes} onKeyPressed={setNotes} isMute={!isSoundOn} />
+                <Piano activeKeys={notes} isMute={!isSoundOn} onKeyPressed={setNotes} />
             </div>
         </div>
     )

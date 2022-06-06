@@ -1,7 +1,7 @@
 import { Staff } from './Staff'
-import { TrackInfos } from './TrackInfos'
+import { MidiTrackTitle } from './MidiTrackTitle'
 import { MidiImporter, OnMidiImport } from './MidiImporter'
-import { MidiInfos, Visualizer } from './Visualizer'
+import { MidiTrackInfos, Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
 import { AlphabeticalNote, MidiJsonNote } from '../types'
@@ -9,21 +9,21 @@ import { AlphabeticalNote, MidiJsonNote } from '../types'
 interface PreviewProps {
     appMode: AppMode
     notes: AlphabeticalNote[]
+    trackPosition: number
     midiTrackNotes: MidiJsonNote[]
     midiTrackTitle: string
+    midiTrackInfos: MidiTrackInfos | null
     onMidiImport: OnMidiImport
-    trackPosition: number
-    midiInfos: MidiInfos | null
 }
 
 export function Preview({
     appMode,
     notes,
     midiTrackNotes,
-    onMidiImport,
     midiTrackTitle,
     trackPosition,
-    midiInfos,
+    midiTrackInfos,
+    onMidiImport,
 }: PreviewProps) {
     const isMidiImported = Boolean(midiTrackNotes.length)
 
@@ -31,12 +31,12 @@ export function Preview({
         <Staff notes={notes} />
     ) : (
         <>
-            <TrackInfos title={midiTrackTitle} />
+            <MidiTrackTitle midiTrackTitle={midiTrackTitle} />
             {isMidiImported ? null : <MidiImporter onMidiImport={onMidiImport} />}
             <Visualizer
                 notes={midiTrackNotes}
                 trackPosition={trackPosition}
-                midiInfos={midiInfos}
+                midiTrackInfos={midiTrackInfos}
             />
         </>
     )

@@ -4,13 +4,13 @@ import { ButtonGroup } from './generics/ButtonGroup'
 import { Button } from './generics/Button'
 
 interface MusicSystemSelectorProps {
-    onChangeMusicSystem: (musicSystem: MusicSystem) => void
     musicSystem: MusicSystem
+    onChangeMusicSystem: (musicSystem: MusicSystem) => void
 }
 
 export function MusicSystemSelector({
-    onChangeMusicSystem,
     musicSystem,
+    onChangeMusicSystem,
 }: MusicSystemSelectorProps) {
     return (
         <ButtonGroup>
