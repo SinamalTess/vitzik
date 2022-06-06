@@ -5,8 +5,6 @@
     canvas {
         position: absolute;
         bottom: 0;
-    }
-    .visualizer__canvas_secondary {
-        top: -100%;
+        pointer-events: none;
     }
 }

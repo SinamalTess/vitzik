@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useState } from 'react'
-import { getDurationTrack, getMidiInfos, midiJsonToNotes, noteKeyToName } from './utils'
+import { getMidiInfos, midiJsonToNotes, noteKeyToName } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, MusicSystem } from './types'
@@ -79,7 +79,7 @@ function App() {
     }
 
     const midiTrackNotes = midiTrack ? midiJsonToNotes(midiTrack) : []
-    const midiTrackDuration = midiTrack ? getDurationTrack(midiTrack) : 0
+    const midiTrackDuration = midiTrack ? getMidiInfos(midiTrack).trackDuration : 0
     const midiTrackInfos = midiTrack ? getMidiInfos(midiTrack) : null
 
     return (
