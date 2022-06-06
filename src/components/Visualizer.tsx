@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { noteKeyToName } from '../utils'
+import { CanvasRectangle, getCoordinates, isPointInRect, noteKeyToName } from '../utils'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/const'
 import './Visualizer.scss'
 import { isNoteOn, MidiJsonNote } from '../types'
@@ -17,21 +17,38 @@ interface VisualizerProps {
     heightPerBeat?: number
 }
 
-interface CanvasRectangle {
-    w: number // width
-    h: number // height
-    x: number
-    y: number
+function isHTMLCanvasElement(element: ChildNode): element is HTMLCanvasElement {
+    return element.nodeName === 'CANVAS'
 }
 
-function drawRectangles(ctx: CanvasRenderingContext2D, rectangles: CanvasRectangle[]) {
-    rectangles.forEach(({ x, y, w, h }, index) => {
-        ctx.fillRect(x, y, w, h)
+function drawRectangles(
+    ctx: CanvasRenderingContext2D,
+    rectangles: CanvasRectangle[],
+    canvasIndex: number
+) {
+    rectangles.forEach(({ x, y, w, h }) => {
+        const canvasOffset = ctx.canvas.height
+        const canvas = {
+            x1: 0,
+            x2: ctx.canvas.width,
+            y1: canvasIndex * canvasOffset,
+            y2: canvasIndex * canvasOffset + canvasOffset,
+        }
+        const coordinates = getCoordinates({ x, y, w, h })
+        const isRectangleInCanvas = coordinates.some((coordinate) =>
+            isPointInRect(canvas, { x: coordinate[0], y: coordinate[1] })
+        )
+
+        if (isRectangleInCanvas) {
+            let yComputed = y - canvasIndex * canvasOffset
+            let hComputed = h - canvasIndex * canvasOffset
+            ctx.fillRect(x, yComputed, w, hComputed)
+        }
     })
 }
 
 function getNotesCoordinates(
-    widthCanvas: number,
+    canvasWidth: number,
     notes: MidiJsonNote[],
     heightPerBeat: number,
     midiInfos: MidiTrackInfos
@@ -50,7 +67,7 @@ function getNotesCoordinates(
             const noteOffIndex = notes.findIndex(
                 (note, i) => !isNoteOn(note) && note.noteOff.noteNumber === key && i > index
             )
-            const widthWhiteKey = widthCanvas / NB_WHITE_PIANO_KEYS
+            const widthWhiteKey = canvasWidth / NB_WHITE_PIANO_KEYS
             const w = isBlackKey ? widthWhiteKey / 2 : widthWhiteKey
             const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
             const nbPreviousWhiteKeys = previousKeys.filter((note) => !note.includes('#')).length
@@ -66,14 +83,12 @@ function getNotesCoordinates(
             const h = (heightAcc / midiInfos.ticksPerBeat) * heightPerBeat
             const y = (deltaAcc / midiInfos.ticksPerBeat) * heightPerBeat
 
-            rectangles.push({
-                w,
-                h,
-                x,
-                y,
-            })
+            rectangles.push({ w, h, x, y })
         }
     })
+
+    // const nbCanvas =
+    //     rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0) / canvas.height
 
     return rectangles
 }
@@ -85,44 +100,47 @@ export function Visualizer({
     heightPerBeat = 100,
     midiTrackInfos,
 }: VisualizerProps) {
-    const canvasRef = useRef(null)
+    const visualizerRef = useRef<HTMLDivElement>(null)
+    const nbCanvas = 2
+    if (visualizerRef.current) {
+        const width = visualizerRef.current?.clientWidth ?? 0
+        const height = visualizerRef.current?.clientHeight ?? 0
+        const children = visualizerRef.current.childNodes
 
-    if (canvasRef.current) {
-        const canvas = canvasRef.current as HTMLCanvasElement
-        const ctx = canvas.getContext('2d')
-        const parentElement = canvas.parentElement
-        const parentElementWidth = parentElement?.clientWidth ?? 0
-        const parentElementHeight = parentElement?.clientHeight ?? 0
-        if (midiTrackInfos) {
-            const rectangles = getNotesCoordinates(
-                parentElementWidth,
-                notes,
-                heightPerBeat,
-                midiTrackInfos
-            )
-            // @ts-ignore
-            // const canvasHeight = rectangles.reduce((acc, nextRectangle) => acc + nextRectangle.h, 0)
-            canvas.width = parentElementWidth
-            canvas.height = parentElementHeight
+        children.forEach((child, index) => {
+            if (isHTMLCanvasElement(child)) {
+                child.width = width
+                child.height = height
+                const ctx = child.getContext('2d')
 
-            if (ctx) {
-                ctx.fillStyle = color
-                drawRectangles(ctx, rectangles)
+                if (midiTrackInfos) {
+                    const rectangles = getNotesCoordinates(
+                        width,
+                        notes,
+                        heightPerBeat,
+                        midiTrackInfos
+                    )
+
+                    if (ctx) {
+                        ctx.fillStyle = color
+                        drawRectangles(ctx, rectangles, index)
+                    }
+                }
             }
-        }
+        })
     }
 
     return (
-        <div className="visualizer">
-            <canvas
-                className="visualizer__canvas"
-                ref={canvasRef}
-                style={{ transform: `translateY(${trackPosition}px) scaleY(-1)` }}
-            ></canvas>
-            {/*<canvas*/}
-            {/*    className="visualizer__canvas_secondary"*/}
-            {/*    style={{ transform: `scaleY(-1)` }}*/}
-            {/*></canvas>*/}
+        <div className="visualizer" ref={visualizerRef}>
+            {Array(nbCanvas)
+                .fill(null)
+                .map((value, index) => (
+                    <canvas
+                        className={`visualizer__canvas`}
+                        style={{ transform: `scaleY(-1)`, top: index === 1 ? '-100%' : 0 }}
+                        key={`visualizer__canvas` + index}
+                    ></canvas>
+                ))}
         </div>
     )
 }
