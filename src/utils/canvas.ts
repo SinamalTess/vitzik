@@ -10,20 +10,17 @@ import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
 
-// checks if a rectangle 'a' contains another rectangle 'b'
 export function isContainedBy(a: Rectangle, b: Rectangle): boolean {
     return a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2
 }
 
-// checks if a point is inside the given rectangle
-export function isPointInRect({ x1, y1, x2, y2 }: Rectangle, { x, y }: Point) {
+export function isPointInRect({ x, y }: Point, { x1, y1, x2, y2 }: Rectangle): boolean {
     return x > x1 && x < x2 && y > y1 && y < y2
 }
 
-// checks if a rectangle 'a' is at least partially inside another
 export function isPartiallyIn(coordinates: RectangleCoordinates, rectangle: Rectangle) {
     return coordinates.some((coordinate) =>
-        isPointInRect(rectangle, { x: coordinate[0], y: coordinate[1] })
+        isPointInRect({ x: coordinate[0], y: coordinate[1] }, rectangle)
     )
 }
 
