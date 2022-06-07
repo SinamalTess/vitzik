@@ -20,17 +20,20 @@ export function AudioPlayer({
     toggleSound,
     onPlay,
 }: AudioPlayerProps) {
-    const trackPositionInDate = new Date(trackPosition)
+    const trackPositionDate = new Date(trackPosition)
+    const currentTime = trackPositionDate.getMinutes() + ':' + trackPositionDate.getSeconds()
+    const midiTrackDurationDate = new Date(midiTrackDuration)
+    const totalTime = midiTrackDurationDate.getMinutes() + ':' + midiTrackDurationDate.getSeconds()
 
     return (
         <>
+            {currentTime}
             <RangeSlider
                 setValue={setTrackPosition}
                 value={trackPosition}
                 max={midiTrackDuration}
             />
-            {`${trackPositionInDate.getMinutes()}:${trackPositionInDate.getSeconds()}`}
-
+            {totalTime}
             <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
             <PlayerController onPlay={onPlay} />
         </>
