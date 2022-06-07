@@ -3,11 +3,11 @@ import { MidiTrackInfos } from '../components/Visualizer'
 import { MidiJsonNote } from '../types'
 
 export function midiJsonToNotes(midiJson: IMidiFile): MidiJsonNote[] {
-    let notesArr: any[] = []
-    midiJson.tracks.forEach((track: any) => {
+    let notesArr: MidiJsonNote[] = []
+    midiJson.tracks.forEach((track) => {
         const notes = track.filter(
-            (event: any) => event.hasOwnProperty('noteOn') || event.hasOwnProperty('noteOff')
-        )
+            (event) => event.hasOwnProperty('noteOn') || event.hasOwnProperty('noteOff')
+        ) as MidiJsonNote[]
         if (notes.length) {
             notesArr.push(...notes)
         }

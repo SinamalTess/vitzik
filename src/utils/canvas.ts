@@ -1,6 +1,6 @@
 import {
     CanvasRectangle,
-    isNoteOn,
+    isNoteOnEvent,
     MidiJsonNote,
     Point,
     Rectangle,
@@ -48,13 +48,13 @@ export function getNotesCoordinates(
     notes.forEach((note, index) => {
         deltaAcc = deltaAcc + note.delta
 
-        if (isNoteOn(note)) {
+        if (isNoteOnEvent(note)) {
             let heightAcc = 0
             const key = note.noteOn.noteNumber
             const noteName = keyToNote(key)
             const isBlackKey = noteName.includes('#')
             const noteOffIndex = notes.findIndex(
-                (note, i) => !isNoteOn(note) && note.noteOff.noteNumber === key && i > index
+                (note, i) => !isNoteOnEvent(note) && note.noteOff.noteNumber === key && i > index
             )
             const widthWhiteKey = canvasWidth / NB_WHITE_PIANO_KEYS
             const w = isBlackKey ? widthWhiteKey / 2 : widthWhiteKey
