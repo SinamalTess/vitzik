@@ -2,6 +2,7 @@ import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
 import { MidiTrackInfos } from '../components/Visualizer'
 import { MidiJsonNote } from '../types'
 
+// TODO: we should use only one track here
 export function midiJsonToNotes(midiJson: IMidiFile): MidiJsonNote[] {
     let notesArr: MidiJsonNote[] = []
     midiJson.tracks.forEach((track) => {
