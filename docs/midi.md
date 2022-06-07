@@ -11,9 +11,9 @@ This is the format it outputs with notes on each of the keys and their meaning. 
 
 ```ts
 interface IMidiFile {
-    division: number
-    format: number
-    tracks: TMidiEvent[][]
+  division: number;
+  format: number;
+  tracks: TMidiEvent[][];
 }
 ```
 
@@ -21,16 +21,16 @@ interface IMidiFile {
 
 Unit of time for delta timing (length quantities).
 
--   If the value is positive, then it represents the units per beat (1 beat = 1 [quarter note](https://en.wikipedia.org/wiki/Quarter_note)) . For example, +96 would mean 96 ticks per beat.
--   If the value is negative, delta times are in SMPTE compatible units.
+- If the value is positive, then it represents the units per beat (1 beat = 1 [quarter note](https://en.wikipedia.org/wiki/Quarter_note)) . For example, +96 would mean 96 ticks per beat.
+- If the value is negative, delta times are in SMPTE compatible units.
 
 #### format
 
 A number between `0` to `2`.
 
--   `0` = single track file format
--   `1` = multiple track file format
--   `2` = multiple song file format (i.e., a series of type 0 files)
+- `0` = single track file format
+- `1` = multiple track file format
+- `2` = multiple song file format (i.e., a series of type 0 files)
 
 #### tracks
 
@@ -44,21 +44,21 @@ One mistake that most beginners make is thinking that a beat is as long as one s
 
 All MIDI Files should specify tempo and time signature. If they don't, the time signature is assumed to be `4/4`, and the tempo `120` beats per minute. Unlike music, tempo in MIDI is not given as beats per minute, but rather in microseconds per beat. That can be changed, however, by a “meta event” that specifies a different tempo.
 
--   In format `0`, these meta-events should occur at least at the beginning of
-    the single multi-channel track.
--   In format `1`, these meta-events should be contained in the first track.
--   In format `2`, each of the temporally independent patterns should contain at least initial time signature and tempo
-    information.
+- In format `0`, these meta-events should occur at least at the beginning of
+  the single multi-channel track.
+- In format `1`, these meta-events should be contained in the first track.
+- In format `2`, each of the temporally independent patterns should contain at least initial time signature and tempo
+  information.
 
 #### Time signature
 
 Time signatures consist of two elements:
 
--   a top number (`numerator`) = number of beats in each measure.
--   a bottom number (`denominator`) = what note values those beats are.
-    -   If the bottom number is a `4`, it means the beats are quarter notes (four quarter notes in a measure).
-    -   If the bottom number is `2`, it means the note value is half notes(half notes per measure).
-    -   If the bottom number is an `8`, it means the beats are 8th notes...
+- a top number (`numerator`) = number of beats in each measure.
+- a bottom number (`denominator`) = what note values those beats are.
+  - If the bottom number is a `4`, it means the beats are quarter notes (four quarter notes in a measure).
+  - If the bottom number is `2`, it means the note value is half notes(half notes per measure).
+  - If the bottom number is an `8`, it means the beats are 8th notes...
 
 ### Delta
 
