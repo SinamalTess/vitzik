@@ -31,6 +31,15 @@ function App() {
         }
     }
 
+    function onPlay() {
+        if (midiTrack) {
+            setInterval(() => {
+                // @ts-ignore
+                setTrackPosition((trackPosition: number) => trackPosition + 10)
+            }, 10)
+        }
+    }
+
     function onMIDIFailure(msg: string) {
         console.log('Failed to get MIDI access - ' + msg)
     }
@@ -86,6 +95,7 @@ function App() {
         <div className="container">
             <div className="item">
                 <Settings
+                    onPlay={onPlay}
                     appMode={appMode}
                     toggleSound={setIsSoundOn}
                     isSoundOn={isSoundOn}
