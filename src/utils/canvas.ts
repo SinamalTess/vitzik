@@ -10,12 +10,24 @@ import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
 
-export function isContainedBy(a: Rectangle, b: Rectangle): boolean {
-    return a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2
+export function isContainedBy(rectA: Rectangle, rectB: Rectangle): boolean {
+    return (
+        rectA.x1 <= rectB.x1 && rectA.y1 <= rectB.y1 && rectA.x2 >= rectB.x2 && rectA.y2 >= rectB.y2
+    )
 }
 
-export function isPointInRect({ x, y }: Point, { x1, y1, x2, y2 }: Rectangle): boolean {
-    return x > x1 && x < x2 && y > y1 && y < y2
+export function isPointInRect(
+    Point: Point,
+    rectB: Rectangle,
+    excludeBorders: boolean = false
+): boolean {
+    if (excludeBorders) {
+        return Point.x > rectB.x1 && Point.x < rectB.x2 && Point.y > rectB.y1 && Point.y < rectB.y2
+    } else {
+        return (
+            Point.x >= rectB.x1 && Point.x <= rectB.x2 && Point.y >= rectB.y1 && Point.y <= rectB.y2
+        )
+    }
 }
 
 export function isPartiallyIn(coordinates: RectangleCoordinates, rectangle: Rectangle) {
