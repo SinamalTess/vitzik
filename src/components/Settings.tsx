@@ -1,12 +1,10 @@
-import { SoundController } from './SoundController'
 import React from 'react'
 import { MusicSystemSelector } from './MusicSystemSelector'
 import { MidiInputSelector, onChangeMidiInput } from './MidiInputSelector'
 import './Settings.scss'
 import { MusicSystem } from '../types'
 import { AppMode, ModeSelector } from './ModeSelector'
-import { RangeSlider } from './generics/RangeSlider'
-import { PlayerController } from './PlayerController'
+import { AudioPlayer } from './AudioPlayer'
 
 interface SettingsProps {
     isSoundOn: boolean
@@ -37,19 +35,16 @@ export function Settings({
     onChangeAppMode,
     onPlay,
 }: SettingsProps) {
-    const trackPositionInDate = new Date(trackPosition)
     return (
         <div className="settings">
-            <>
-                <RangeSlider
-                    setValue={setTrackPosition}
-                    value={trackPosition}
-                    max={midiTrackDuration}
-                />
-                {`${trackPositionInDate.getMinutes()}:${trackPositionInDate.getSeconds()}`}
-            </>
-            <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
-            <PlayerController onPlay={onPlay} />
+            <AudioPlayer
+                isSoundOn={isSoundOn}
+                toggleSound={toggleSound}
+                setTrackPosition={setTrackPosition}
+                trackPosition={trackPosition}
+                midiTrackDuration={midiTrackDuration}
+                onPlay={onPlay}
+            />
             <MusicSystemSelector
                 onChangeMusicSystem={onChangeMusicSystem}
                 musicSystem={musicSystem}

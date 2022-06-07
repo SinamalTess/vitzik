@@ -8,7 +8,7 @@ interface MidiInputSelectorProps {
 
 export type onChangeMidiInput = (event: React.ChangeEvent<HTMLSelectElement>) => void
 
-// TODO: align the icon and animation + color
+//TODO: align the icon and animation + color
 
 export function MidiInputSelector({ midiInputs, onChangeMidiInput }: MidiInputSelectorProps) {
     return midiInputs.length ? (
