@@ -1,7 +1,7 @@
-import React, { useRef } from 'react'
-import { convertCanvasRect, getCoordinates, getNotesCoordinates, isPartiallyIn } from '../utils'
+import React, { useRef, useState } from 'react'
+import { convertCanvasRect, getNotesCoordinates, isOverlapping, isPartiallyIn } from '../utils'
 import './Visualizer.scss'
-import { MidiJsonNote, isHTMLCanvasElement, CanvasRectangle } from '../types'
+import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates, AlphabeticalNote } from '../types'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
@@ -15,14 +15,16 @@ interface VisualizerProps {
     midiTrackInfos: MidiTrackInfos | null
     trackPosition: number
     heightPerBeat?: number
+    setActiveKeys: (keys: AlphabeticalNote[]) => void
 }
 
-function drawRectangles(
+function drawNotes(
     ctx: CanvasRenderingContext2D,
-    rectangles: CanvasRectangle[],
+    notesCoordinates: NoteCoordinates[],
     canvasIndex: number
 ) {
-    rectangles.forEach(({ x, y, w, h }) => {
+    notesCoordinates.forEach(({ x, y, w, h }) => {
+        //TODO: optimize this by not going through the whole array
         const canvasOffset = ctx.canvas.height
         const canvas = {
             x1: 0,
@@ -30,10 +32,10 @@ function drawRectangles(
             y1: canvasIndex * canvasOffset,
             y2: canvasIndex * canvasOffset + canvasOffset,
         }
-        const rectangle = convertCanvasRect({ x, y, h, w })
-        const isRectangleInCanvas = isPartiallyIn(rectangle, canvas)
+        const note = convertCanvasRect({ x, y, h, w })
+        const isNoteInCanvas = isPartiallyIn(note, canvas)
 
-        if (isRectangleInCanvas) {
+        if (isNoteInCanvas) {
             let yComputed = y - canvasIndex * canvasOffset
             let hComputed = h - canvasIndex * canvasOffset
             ctx.fillRect(x, yComputed, w, hComputed)
@@ -47,20 +49,28 @@ export function Visualizer({
     trackPosition,
     heightPerBeat = 100,
     midiTrackInfos,
+    setActiveKeys,
 }: VisualizerProps) {
     const visualizerRef = useRef<HTMLDivElement>(null)
+    const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[]>([])
     const nbCanvas = 2
 
-    if (visualizerRef.current) {
-        const width = visualizerRef.current.clientWidth ?? 0
-        const height = visualizerRef.current.clientHeight ?? 0
-        const children = visualizerRef.current.childNodes
-        let rectangles: CanvasRectangle[] = []
-        if (midiTrackInfos) {
-            rectangles = getNotesCoordinates(width, notes, heightPerBeat, midiTrackInfos)
-        }
+    const width = visualizerRef?.current?.clientWidth ?? 0
+    const height = visualizerRef?.current?.clientHeight ?? 0
+    const canvasChildren = visualizerRef?.current?.childNodes ?? []
 
-        children.forEach((child, index) => {
+    React.useEffect(() => {
+        if (!midiTrackInfos) return
+        const coordinates = getNotesCoordinates(width, notes, heightPerBeat, midiTrackInfos)
+        setNotesCoordinates(coordinates)
+    }, [midiTrackInfos])
+
+    React.useEffect(() => {
+        getActiveNotes(trackPosition)
+    }, [trackPosition])
+
+    React.useLayoutEffect(() => {
+        canvasChildren.forEach((child, index) => {
             if (isHTMLCanvasElement(child)) {
                 child.width = width
                 child.height = height
@@ -68,35 +78,54 @@ export function Visualizer({
 
                 if (ctx) {
                     ctx.fillStyle = color
-                    drawRectangles(ctx, rectangles, index)
+                    drawNotes(ctx, notesCoordinates, index)
                 }
             }
         })
-    }
+    }, [notesCoordinates])
 
-    function calcTop(index: number): string {
+    function calcTop(canvasIndex: number): string {
         if (midiTrackInfos && visualizerRef.current) {
             const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
             const heightCanvas = visualizerRef.current.clientHeight
             const percentageCanvas = heightDuration / heightCanvas
-            if (index === 0) {
+            if (canvasIndex === 0) {
                 return percentageCanvas * heightCanvas + 'px'
             } else {
                 return -heightCanvas + percentageCanvas * heightCanvas + 'px'
             }
         }
-        return '0'
+        return '0px'
+    }
+
+    function getActiveNotes(trackPosition: number) {
+        if (!midiTrackInfos) return
+        const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
+
+        const activeKeys = notesCoordinates
+            .filter((note) => {
+                const noteCoordinate = convertCanvasRect(note)
+                return isOverlapping(noteCoordinate, {
+                    x1: 0,
+                    x2: width,
+                    y1: heightDuration,
+                    y2: heightDuration,
+                })
+            })
+            .map((note) => note.name)
+
+        setActiveKeys(activeKeys)
     }
 
     return (
         <div className="visualizer" ref={visualizerRef}>
             {Array(nbCanvas)
                 .fill(null)
-                .map((value, index) => (
+                .map((value, canvasIndex) => (
                     <canvas
                         className={`visualizer__canvas`}
-                        style={{ transform: `scaleY(-1)`, top: calcTop(index) }}
-                        key={`visualizer__canvas` + index}
+                        style={{ transform: `scaleY(-1)`, top: calcTop(canvasIndex) }}
+                        key={`visualizer__canvas` + canvasIndex}
                     ></canvas>
                 ))}
         </div>

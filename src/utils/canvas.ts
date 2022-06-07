@@ -2,6 +2,7 @@ import {
     CanvasRectangle,
     isNoteOnEvent,
     MidiJsonNote,
+    NoteCoordinates,
     Point,
     Rectangle,
     RectangleCoordinates,
@@ -21,6 +22,16 @@ export function isPartiallyIn(rectA: Rectangle, rectB: Rectangle) {
     return coordinates.some((coordinate) =>
         isPointInRect({ x: coordinate[0], y: coordinate[1] }, rectB)
     )
+}
+
+export function isOverlapping(rectA: Rectangle, rectB: Rectangle) {
+    // no horizontal overlap
+    if (rectA.x1 >= rectB.x2 || rectB.x1 >= rectA.x2) return false
+
+    // no vertical overlap
+    if (rectA.y1 >= rectB.y2 || rectB.y1 >= rectA.y2) return false
+
+    return true
 }
 
 export function isPointInRect(
@@ -59,7 +70,7 @@ export function getNotesCoordinates(
     heightPerBeat: number,
     midiInfos: MidiTrackInfos
 ) {
-    let rectangles: CanvasRectangle[] = []
+    let rectangles: NoteCoordinates[] = []
     let deltaAcc = 0
 
     notes.forEach((note, index) => {
@@ -89,7 +100,7 @@ export function getNotesCoordinates(
             const h = (heightAcc / midiInfos.ticksPerBeat) * heightPerBeat
             const y = (deltaAcc / midiInfos.ticksPerBeat) * heightPerBeat
 
-            rectangles.push({ w, h, x, y })
+            rectangles.push({ w, h, x, y, name: noteName, key: key })
         }
     })
 

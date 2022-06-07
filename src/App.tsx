@@ -12,7 +12,7 @@ function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
     const [notes, setNotes] = useState<AlphabeticalNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
-    const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
+    const [isSoundOn, setIsSoundOn] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [trackPosition, setTrackPosition] = useState<number>(0)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
@@ -101,6 +101,7 @@ function App() {
             </div>
             <div className="item">
                 <Preview
+                    setActiveKeys={setNotes}
                     appMode={appMode}
                     notes={notes}
                     trackPosition={trackPosition}

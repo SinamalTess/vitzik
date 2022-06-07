@@ -1,3 +1,5 @@
+import { AlphabeticalNote } from './Notes'
+
 export interface Rectangle {
     x1: number
     x2: number
@@ -15,6 +17,11 @@ export interface CanvasRectangle {
     h: number // height
     x: number
     y: number
+}
+
+export interface NoteCoordinates extends CanvasRectangle {
+    name: AlphabeticalNote
+    key: number
 }
 
 export type RectangleCoordinates = number[][]

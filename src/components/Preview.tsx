@@ -14,6 +14,7 @@ interface PreviewProps {
     midiTrackTitle: string
     midiTrackInfos: MidiTrackInfos | null
     onMidiImport: OnMidiImport
+    setActiveKeys: (keys: AlphabeticalNote[]) => void
 }
 
 export function Preview({
@@ -24,6 +25,7 @@ export function Preview({
     trackPosition,
     midiTrackInfos,
     onMidiImport,
+    setActiveKeys,
 }: PreviewProps) {
     const isMidiImported = Boolean(midiTrackNotes.length)
 
@@ -37,6 +39,7 @@ export function Preview({
                 notes={midiTrackNotes}
                 trackPosition={trackPosition}
                 midiTrackInfos={midiTrackInfos}
+                setActiveKeys={setActiveKeys}
             />
         </>
     )
