@@ -18,11 +18,16 @@ function App() {
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
 
+    const midiTrackNotes = midiTrack ? midiJsonToNotes(midiTrack) : []
+    const midiTrackDuration = midiTrack ? getMidiInfos(midiTrack).trackDuration : 0
+    const midiTrackInfos = midiTrack ? getMidiInfos(midiTrack) : null
+
+    React.useEffect(() => {
+        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
+    }, [])
+
     function onMIDISuccess(midiAccess: MIDIAccess) {
-        let inputs: MIDIInput[] = []
-        midiAccess.inputs.forEach((input) => {
-            inputs.push(input)
-        })
+        const inputs: MIDIInput[] = Array.from(midiAccess.inputs.values())
 
         setMidiInputs(inputs)
 
@@ -34,50 +39,42 @@ function App() {
     function onPlay() {
         if (midiTrack) {
             setInterval(() => {
-                // @ts-ignore
-                setTrackPosition((trackPosition: number) => trackPosition + 10)
+                setTrackPosition((trackPosition) => trackPosition + 10)
             }, 10)
         }
     }
 
     function onMIDIFailure(msg: string) {
-        console.log('Failed to get MIDI access - ' + msg)
+        console.error('Failed to get MIDI access - ' + msg)
     }
 
-    React.useEffect(() => {
-        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
-    }, [])
-
     function onChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
-        const selectedInput = event.target.value
+        const selectedInput = event.target.value // TODO: can be improved by directly passing value ?
         const input = midiInputs.find((e) => e.id === selectedInput)
         if (input) {
             input.onmidimessage = getMIDIMessage
         }
     }
 
+    function removeNote(note: AlphabeticalNote) {
+        const noteIndex = notes.findIndex((key) => key === note)
+        if (noteIndex) {
+            setNotes((notes) => notes.filter((key) => key !== note))
+        }
+    }
+
     function getMIDIMessage(message: any) {
+        // TODO: have a more precise type
         const command = message.data[0]
         const note = keyToNote(message.data[1])
         const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
 
-        const clearNote = () => {
-            const noteIndex = notes.findIndex((key) => key === note)
-            if (noteIndex) {
-                setNotes((notes) => notes.filter((key) => key !== note))
-            }
-        }
-
         switch (command) {
             case 144: // noteOn
-                if (velocity > 0) {
-                    setNotes((notes) => [...notes, note])
-                } else {
-                    clearNote()
-                }
+                velocity > 0 ? setNotes((notes) => [...notes, note]) : removeNote(note)
                 break
             case 128: // noteOff
-                clearNote()
+                removeNote(note)
                 break
         }
     }
@@ -86,10 +83,6 @@ function App() {
         setMidiTrackTitle(title)
         setMidiTrack(midiJSON)
     }
-
-    const midiTrackNotes = midiTrack ? midiJsonToNotes(midiTrack) : []
-    const midiTrackDuration = midiTrack ? getMidiInfos(midiTrack).trackDuration : 0
-    const midiTrackInfos = midiTrack ? getMidiInfos(midiTrack) : null
 
     return (
         <div className="container">
