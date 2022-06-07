@@ -16,6 +16,13 @@ export function isContainedBy(rectA: Rectangle, rectB: Rectangle): boolean {
     )
 }
 
+export function isPartiallyIn(rectA: Rectangle, rectB: Rectangle) {
+    const coordinates = getCoordinates(rectA)
+    return coordinates.some((coordinate) =>
+        isPointInRect({ x: coordinate[0], y: coordinate[1] }, rectB)
+    )
+}
+
 export function isPointInRect(
     point: Point,
     rect: Rectangle,
@@ -28,18 +35,21 @@ export function isPointInRect(
     }
 }
 
-export function isPartiallyIn(coordinates: RectangleCoordinates, rectangle: Rectangle) {
-    return coordinates.some((coordinate) =>
-        isPointInRect({ x: coordinate[0], y: coordinate[1] }, rectangle)
-    )
+export function convertCanvasRect(rect: CanvasRectangle): Rectangle {
+    return {
+        x1: rect.x,
+        x2: rect.x + rect.w,
+        y1: rect.y,
+        y2: rect.y + rect.h,
+    }
 }
 
-export function getCoordinates({ x, y, h, w }: CanvasRectangle): RectangleCoordinates {
+export function getCoordinates({ x1, y1, y2, x2 }: Rectangle): RectangleCoordinates {
     return [
-        [x, y + h],
-        [x + w, y + h],
-        [x, y],
-        [x + w, y],
+        [x1, y1],
+        [x1, y2],
+        [x2, y1],
+        [x2, y2],
     ]
 }
 

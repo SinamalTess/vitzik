@@ -40,9 +40,8 @@ describe('isPointInRect()', () => {
 
 describe('isPartiallyIn()', () => {
     test('returns `true` if rectangle `a` is partially in rectangle `b`', () => {
-        const rectA = { x: 0, y: 20, w: 5, h: 40 }
-        const coordinates = getCoordinates(rectA)
+        const rectA = { x1: 0, y1: 20, x2: 5, y2: 40 }
         const rectB = { x1: 0, x2: 15, y1: 0, y2: 35 }
-        expect(isPartiallyIn(coordinates, rectB)).toBe(true)
+        expect(isPartiallyIn(rectA, rectB)).toBe(true)
     })
 })

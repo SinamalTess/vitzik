@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { getCoordinates, getNotesCoordinates, isPartiallyIn } from '../utils'
+import { convertCanvasRect, getCoordinates, getNotesCoordinates, isPartiallyIn } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, CanvasRectangle } from '../types'
 
@@ -30,8 +30,8 @@ function drawRectangles(
             y1: canvasIndex * canvasOffset,
             y2: canvasIndex * canvasOffset + canvasOffset,
         }
-        const coordinates = getCoordinates({ x, y, w, h })
-        const isRectangleInCanvas = isPartiallyIn(coordinates, canvas)
+        const rectangle = convertCanvasRect({ x, y, h, w })
+        const isRectangleInCanvas = isPartiallyIn(rectangle, canvas)
 
         if (isRectangleInCanvas) {
             let yComputed = y - canvasIndex * canvasOffset
