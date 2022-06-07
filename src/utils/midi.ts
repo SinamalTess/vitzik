@@ -13,7 +13,6 @@ export function midiJsonToNotes(midiJson: IMidiFile): MidiJsonNote[] {
         }
     })
 
-    console.log(notesArr.slice(0, 15))
     return notesArr
 }
 

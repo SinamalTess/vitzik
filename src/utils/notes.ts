@@ -1,8 +1,14 @@
 import { AlphabeticalNote, MusicSystem, Note } from '../types'
 import { MIDI_PIANO_KEYS_OFFSET, NOTES } from './const'
 
-export function noteKeyToName(key: number): AlphabeticalNote {
+export function keyToNote(key: number): AlphabeticalNote {
     return NOTES.alphabetical[key - MIDI_PIANO_KEYS_OFFSET]
+}
+
+export function noteToKey(note: AlphabeticalNote): number {
+    return (
+        NOTES.alphabetical.findIndex((currentNote) => currentNote === note) + MIDI_PIANO_KEYS_OFFSET
+    )
 }
 
 export function translateNote(note: Note, musicSystem: MusicSystem): Note {
@@ -19,10 +25,4 @@ export function translateNote(note: Note, musicSystem: MusicSystem): Note {
 
 export function isSpecialKey(note: AlphabeticalNote) {
     return note.includes('C') || note.includes('F')
-}
-
-export function noteToKey(note: AlphabeticalNote): number {
-    return (
-        NOTES.alphabetical.findIndex((currentNote) => currentNote === note) + MIDI_PIANO_KEYS_OFFSET
-    )
 }

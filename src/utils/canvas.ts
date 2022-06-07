@@ -6,7 +6,7 @@ import {
     Rectangle,
     RectangleCoordinates,
 } from '../types'
-import { noteKeyToName } from './notes'
+import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
 
@@ -51,7 +51,7 @@ export function getNotesCoordinates(
         if (isNoteOn(note)) {
             let heightAcc = 0
             const key = note.noteOn.noteNumber
-            const noteName = noteKeyToName(key)
+            const noteName = keyToNote(key)
             const isBlackKey = noteName.includes('#')
             const noteOffIndex = notes.findIndex(
                 (note, i) => !isNoteOn(note) && note.noteOff.noteNumber === key && i > index

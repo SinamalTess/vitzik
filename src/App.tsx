@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useState } from 'react'
-import { getMidiInfos, midiJsonToNotes, noteKeyToName } from './utils'
+import { getMidiInfos, midiJsonToNotes, keyToNote } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, MusicSystem } from './types'
@@ -49,7 +49,7 @@ function App() {
 
     function getMIDIMessage(message: any) {
         const command = message.data[0]
-        const note = noteKeyToName(message.data[1])
+        const note = keyToNote(message.data[1])
         const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
 
         const clearNote = () => {
