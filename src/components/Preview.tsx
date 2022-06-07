@@ -27,14 +27,12 @@ export function Preview({
     onMidiImport,
     setActiveKeys,
 }: PreviewProps) {
-    const isMidiImported = Boolean(midiTrackNotes.length)
-
     return appMode === 'learning' ? (
         <Staff notes={notes} />
     ) : (
         <>
             <MidiTrackTitle midiTrackTitle={midiTrackTitle} />
-            {isMidiImported ? null : <MidiImporter onMidiImport={onMidiImport} />}
+            <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
                 notes={midiTrackNotes}
                 trackPosition={trackPosition}

@@ -11,8 +11,6 @@ interface MidiImporterProps {
 export type OnMidiImport = (title: string, midiJSON: IMidiFile) => void
 type midiImporterState = 'pending' | 'error' | 'dragging'
 
-// TODO: allow to re-import another MIDI file
-
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     const [state, setState] = useState<midiImporterState>('pending')
 
@@ -45,33 +43,27 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
 
         if (state === 'error') return
 
-        let files = []
+        let files: File[] = []
 
         if (event.dataTransfer?.items) {
-            for (let i = 0; i < event.dataTransfer.items.length; i++) {
-                if (event.dataTransfer.items[i].kind === 'file') {
-                    const file = event.dataTransfer.items[i].getAsFile()
-                    files.push(file)
-                }
-            }
-        } else {
-            const length = event.dataTransfer?.files.length ?? 0
-            for (let i = 0; i < length; i++) {
-                files.push(event.dataTransfer?.files[i])
-            }
+            const filesArr = Array.from(event.dataTransfer.items).filter(
+                (item) => item.kind === 'file'
+            )
+            files = filesArr.map((file) => file.getAsFile()) as File[]
+        } else if (event.dataTransfer?.files) {
+            files = Array.from(event.dataTransfer.files)
         }
 
         if (files.length) {
-            const filesArr = Array.prototype.slice.call(files)
             const reader = new FileReader()
             reader.onload = function () {
                 const arrayBuffer = this.result
 
                 parseArrayBuffer(arrayBuffer as ArrayBuffer).then((midiJSON: IMidiFile) => {
-                    onMidiImport(filesArr[0].name, midiJSON)
+                    onMidiImport(files[0].name, midiJSON)
                 })
             }
-            reader.readAsArrayBuffer(filesArr[0])
+            reader.readAsArrayBuffer(files[0])
         }
         setState('pending')
     }
