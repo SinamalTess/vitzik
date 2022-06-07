@@ -17,15 +17,15 @@ export function isContainedBy(rectA: Rectangle, rectB: Rectangle): boolean {
 }
 
 export function isPointInRect(
-    Point: Point,
+    point: Point,
     rectB: Rectangle,
     excludeBorders: boolean = false
 ): boolean {
     if (excludeBorders) {
-        return Point.x > rectB.x1 && Point.x < rectB.x2 && Point.y > rectB.y1 && Point.y < rectB.y2
+        return point.x > rectB.x1 && point.x < rectB.x2 && point.y > rectB.y1 && point.y < rectB.y2
     } else {
         return (
-            Point.x >= rectB.x1 && Point.x <= rectB.x2 && Point.y >= rectB.y1 && Point.y <= rectB.y2
+            point.x >= rectB.x1 && point.x <= rectB.x2 && point.y >= rectB.y1 && point.y <= rectB.y2
         )
     }
 }
