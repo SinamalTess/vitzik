@@ -74,12 +74,18 @@ export function Visualizer({
         })
     }
 
-    function calcTop(index: number): number {
-        if (index === 0) {
-            return 0
-        } else {
-            return -100
+    function calcTop(index: number): string {
+        if (midiTrackInfos && visualizerRef.current) {
+            const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
+            const heightCanvas = visualizerRef.current.clientHeight
+            const percentageCanvas = heightDuration / heightCanvas
+            if (index === 0) {
+                return percentageCanvas * heightCanvas + 'px'
+            } else {
+                return -heightCanvas + percentageCanvas * heightCanvas + 'px'
+            }
         }
+        return '0'
     }
 
     return (
@@ -89,7 +95,7 @@ export function Visualizer({
                 .map((value, index) => (
                     <canvas
                         className={`visualizer__canvas`}
-                        style={{ transform: `scaleY(-1)`, top: calcTop(index) + '%' }}
+                        style={{ transform: `scaleY(-1)`, top: calcTop(index) }}
                         key={`visualizer__canvas` + index}
                     ></canvas>
                 ))}
