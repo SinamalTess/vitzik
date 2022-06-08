@@ -10,7 +10,7 @@ import { IMidiFile } from 'midi-json-parser-worker'
 
 function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
-    const [notes, setNotes] = useState<AlphabeticalNote[]>([])
+    const [activeNotes, setActiveNotes] = useState<AlphabeticalNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
     const [isSoundOn, setIsSoundOn] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
@@ -50,9 +50,9 @@ function App() {
     }
 
     function removeNote(note: AlphabeticalNote) {
-        const noteIndex = notes.findIndex((key) => key === note)
+        const noteIndex = activeNotes.findIndex((key) => key === note)
         if (noteIndex) {
-            setNotes((notes) => notes.filter((key) => key !== note))
+            setActiveNotes((notes) => notes.filter((key) => key !== note))
         }
     }
 
@@ -64,7 +64,7 @@ function App() {
 
         switch (command) {
             case 144: // noteOn
-                velocity > 0 ? setNotes((notes) => [...notes, note]) : removeNote(note)
+                velocity > 0 ? setActiveNotes((notes) => [...notes, note]) : removeNote(note)
                 break
             case 128: // noteOff
                 removeNote(note)
@@ -97,18 +97,19 @@ function App() {
             </div>
             <div className="item">
                 <Preview
-                    setActiveNotes={setNotes}
+                    setActiveNotes={setActiveNotes}
                     appMode={appMode}
-                    notes={notes}
+                    notes={activeNotes}
                     trackPosition={trackPosition}
                     midiTrackNotes={midiTrackNotes}
                     midiTrackTitle={midiTrackTitle}
                     midiTrackInfos={midiTrackInfos}
                     onMidiImport={handleMidiImport}
+                    activeNotes={activeNotes}
                 />
             </div>
             <div className="item">
-                <Piano activeKeys={notes} isMute={!isSoundOn} onKeyPressed={setNotes} />
+                <Piano activeKeys={activeNotes} isMute={!isSoundOn} onKeyPressed={setActiveNotes} />
             </div>
         </div>
     )

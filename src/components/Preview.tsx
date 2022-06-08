@@ -15,6 +15,7 @@ interface PreviewProps {
     midiTrackInfos: MidiTrackInfos | null
     onMidiImport: OnMidiImport
     setActiveNotes: (notes: AlphabeticalNote[]) => void
+    activeNotes: AlphabeticalNote[]
 }
 
 export function Preview({
@@ -26,6 +27,7 @@ export function Preview({
     midiTrackInfos,
     onMidiImport,
     setActiveNotes,
+    activeNotes,
 }: PreviewProps) {
     return appMode === 'learning' ? (
         <Staff notes={notes} />
@@ -38,6 +40,7 @@ export function Preview({
                 trackPosition={trackPosition}
                 midiTrackInfos={midiTrackInfos}
                 setActiveNotes={setActiveNotes}
+                activeNotes={activeNotes}
             />
         </>
     )

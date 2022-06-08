@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { convertCanvasRect, getNotesCoordinates, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates, AlphabeticalNote } from '../types'
+import { isEqual } from 'lodash'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
@@ -10,6 +11,7 @@ export interface MidiTrackInfos {
 }
 
 interface VisualizerProps {
+    activeNotes: AlphabeticalNote[]
     notes: MidiJsonNote[]
     color?: string
     midiTrackInfos: MidiTrackInfos | null
@@ -44,6 +46,7 @@ function drawNotes(
 }
 
 export function Visualizer({
+    activeNotes,
     notes,
     color = '#00E2DC',
     trackPosition,
@@ -106,7 +109,9 @@ export function Visualizer({
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
             .map((note) => note.name)
 
-        setActiveNotes(activeKeys)
+        if (!isEqual(activeKeys, activeNotes)) {
+            setActiveNotes(activeKeys)
+        }
     }
 
     return (
