@@ -29,7 +29,6 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
     }, [])
 
     React.useEffect(() => {
-        instrument?.on('play', (e) => console.log(e))
         if (!isMute && activeKeys.length >= 1) {
             activeKeys.forEach(() => {
                 instrument?.play(formatKey(activeKeys))

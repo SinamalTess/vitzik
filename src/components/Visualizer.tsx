@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { convertCanvasRect, getNotesCoordinates, isPartiallyIn } from '../utils'
+import { convertCanvasRect, getNotesCoordinates, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates, AlphabeticalNote } from '../types'
 
@@ -33,11 +33,11 @@ function drawNotes(
             y2: canvasIndex * canvasOffset + canvasOffset,
         }
         const note = convertCanvasRect({ x, y, h, w })
-        const isNoteInCanvas = isPartiallyIn(note, canvas)
+        const isNoteInCanvas = isOverlapping(note, canvas)
 
         if (isNoteInCanvas) {
             let yComputed = y - canvasIndex * canvasOffset
-            let hComputed = h - canvasIndex * canvasOffset
+            let hComputed = h - canvasIndex * canvasOffset + (canvasIndex !== 0 ? canvasOffset : 0)
             ctx.fillRect(x, yComputed, w, hComputed)
         }
     })

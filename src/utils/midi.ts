@@ -59,7 +59,8 @@ export function getTempo(midiJson: IMidiFile) {
     return 0
 }
 
-export function getMidiInfos(midiJson: IMidiFile): MidiTrackInfos {
+export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null {
+    if (!midiJson) return null
     const notes = midiJsonToNotes(midiJson)
     const nbTicks = notes.reduce((acc, nextNote) => acc + nextNote.delta, 0)
     const ticksPerBeat = getTicksPerBeat(midiJson)
