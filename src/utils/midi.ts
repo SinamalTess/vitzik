@@ -37,26 +37,34 @@ export function getFormat(midiJson: IMidiFile) {
     return midiJson.format
 }
 
-export function getTempo(midiJson: IMidiFile) {
+export function getTempo(midiJson: IMidiFile): number {
     const format = getFormat(midiJson)
+    const defaultTempo = 60000 / 120 // 120 beats per minute is the default value
     switch (format) {
         case 0: // TODO: complete this section
+            return defaultTempo
         case 1:
             const setTempoEvents = midiJson.tracks[0].filter((event) =>
                 event.hasOwnProperty('setTempo')
             ) as IMidiSetTempoEvent[]
-            const lastSetTempo = setTempoEvents[setTempoEvents.length - 1]
-            const { microsecondsPerQuarter } = lastSetTempo.setTempo
-            const msPerBeat = Math.round(microsecondsPerQuarter / 1000)
 
-            console.log(`There are ${msPerBeat} milliseconds per quarter note (beat)`)
+            if (setTempoEvents.length > 1) {
+                const lastSetTempo = setTempoEvents[setTempoEvents.length - 1]
+                const { microsecondsPerQuarter } = lastSetTempo.setTempo
+                const msPerBeat = Math.round(microsecondsPerQuarter / 1000)
 
-            return msPerBeat
+                console.log(`There are ${msPerBeat} milliseconds per quarter note (beat)`)
+
+                return msPerBeat
+            }
+
+            return defaultTempo
+
         case 2: // TODO: complete this section
+            return defaultTempo
         default:
+            return defaultTempo
     }
-
-    return 0
 }
 
 export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null {
@@ -66,6 +74,11 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null 
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
     const msPerBeat = getTempo(midiJson)
+    console.log({
+        msPerBeat,
+        ticksPerBeat,
+        trackDuration: nbBeats * msPerBeat,
+    })
     return {
         msPerBeat,
         ticksPerBeat,
