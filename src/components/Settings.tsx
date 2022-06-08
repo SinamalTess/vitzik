@@ -18,7 +18,6 @@ interface SettingsProps {
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeMidiInput: onChangeMidiInput
     onChangeAppMode: (mode: AppMode) => void
-    onPlay: () => void
 }
 
 export function Settings({
@@ -33,7 +32,6 @@ export function Settings({
     onChangeMusicSystem,
     onChangeMidiInput,
     onChangeAppMode,
-    onPlay,
 }: SettingsProps) {
     return (
         <div className="settings">
@@ -43,7 +41,6 @@ export function Settings({
                 setTrackPosition={setTrackPosition}
                 trackPosition={trackPosition}
                 midiTrackDuration={midiTrackDuration}
-                onPlay={onPlay}
             />
             <MusicSystemSelector
                 onChangeMusicSystem={onChangeMusicSystem}
