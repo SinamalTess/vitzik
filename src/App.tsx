@@ -41,7 +41,7 @@ function App() {
         console.error('Failed to get MIDI access - ' + msg)
     }
 
-    function onChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
+    function handleChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedInput = event.target.value // TODO: can be improved by directly passing value ?
         const input = midiInputs.find((e) => e.id === selectedInput)
         if (input) {
@@ -72,7 +72,7 @@ function App() {
         }
     }
 
-    function onMidiImport(title: string, midiJSON: IMidiFile) {
+    function handleMidiImport(title: string, midiJSON: IMidiFile) {
         setMidiTrackTitle(title)
         setMidiTrack(midiJSON)
         console.log(midiJSON)
@@ -90,7 +90,7 @@ function App() {
                     trackPosition={trackPosition}
                     setTrackPosition={setTrackPosition}
                     midiTrackDuration={midiTrackDuration}
-                    onChangeMidiInput={onChangeMidiInput}
+                    onChangeMidiInput={handleChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                 />
@@ -104,7 +104,7 @@ function App() {
                     midiTrackNotes={midiTrackNotes}
                     midiTrackTitle={midiTrackTitle}
                     midiTrackInfos={midiTrackInfos}
-                    onMidiImport={onMidiImport}
+                    onMidiImport={handleMidiImport}
                 />
             </div>
             <div className="item">

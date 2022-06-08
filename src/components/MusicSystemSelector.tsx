@@ -5,28 +5,22 @@ import { Button } from './generics/Button'
 
 interface MusicSystemSelectorProps {
     musicSystem: MusicSystem
-    onChangeMusicSystem: (musicSystem: MusicSystem) => void
+    onChange: (musicSystem: MusicSystem) => void
 }
 
-export function MusicSystemSelector({
-    musicSystem,
-    onChangeMusicSystem,
-}: MusicSystemSelectorProps) {
+export function MusicSystemSelector({ musicSystem, onChange }: MusicSystemSelectorProps) {
     return (
         <ButtonGroup>
-            <Button
-                onClick={() => onChangeMusicSystem('syllabic')}
-                active={musicSystem === 'syllabic'}
-            >
+            <Button onClick={() => onChange('syllabic')} active={musicSystem === 'syllabic'}>
                 Syllabic
             </Button>
             <Button
-                onClick={() => onChangeMusicSystem('alphabetical')}
+                onClick={() => onChange('alphabetical')}
                 active={musicSystem === 'alphabetical'}
             >
                 Alphabetical
             </Button>
-            <Button onClick={() => onChangeMusicSystem('german')} active={musicSystem === 'german'}>
+            <Button onClick={() => onChange('german')} active={musicSystem === 'german'}>
                 German
             </Button>
         </ButtonGroup>

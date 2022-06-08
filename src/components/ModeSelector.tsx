@@ -6,18 +6,18 @@ export type AppMode = 'learning' | 'import'
 
 interface ModeSelectorProps {
     appMode: AppMode
-    onChangeAppMode: (mode: AppMode) => void
+    onChange: (mode: AppMode) => void
 }
 
-export function ModeSelector({ onChangeAppMode, appMode }: ModeSelectorProps) {
+export function ModeSelector({ onChange, appMode }: ModeSelectorProps) {
     const isLearningMode = appMode === 'learning'
 
     return (
         <ButtonGroup>
-            <Button onClick={() => onChangeAppMode('learning')} active={isLearningMode}>
+            <Button onClick={() => onChange('learning')} active={isLearningMode}>
                 Learning
             </Button>
-            <Button onClick={() => onChangeAppMode('import')} active={!isLearningMode}>
+            <Button onClick={() => onChange('import')} active={!isLearningMode}>
                 Import Midi
             </Button>
         </ButtonGroup>

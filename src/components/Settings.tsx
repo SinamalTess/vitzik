@@ -42,12 +42,9 @@ export function Settings({
                 trackPosition={trackPosition}
                 midiTrackDuration={midiTrackDuration}
             />
-            <MusicSystemSelector
-                onChangeMusicSystem={onChangeMusicSystem}
-                musicSystem={musicSystem}
-            />
-            <ModeSelector onChangeAppMode={onChangeAppMode} appMode={appMode} />
-            <MidiInputSelector midiInputs={midiInputs} onChangeMidiInput={onChangeMidiInput} />
+            <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
+            <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
+            <MidiInputSelector midiInputs={midiInputs} onChange={onChangeMidiInput} />
         </div>
     )
 }

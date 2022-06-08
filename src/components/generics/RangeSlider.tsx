@@ -3,19 +3,19 @@ import './RangeSlider.scss'
 
 interface RangeSliderPros {
     value: string | number
-    setValue: (value: number) => void
+    onChange: (value: number) => void
     min?: number
     max?: number
 }
 
-export function RangeSlider({ value, setValue, min = 0, max = 100 }: RangeSliderPros) {
+export function RangeSlider({ value, onChange, min = 0, max = 100 }: RangeSliderPros) {
     return (
         <input
             type="range"
             min={min}
             max={max}
             value={value}
-            onChange={(event) => setValue(parseInt(event.target.value))}
+            onChange={(event) => onChange(parseInt(event.target.value))}
         />
     )
 }

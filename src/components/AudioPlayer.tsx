@@ -23,7 +23,7 @@ export function AudioPlayer({
     const midiTrackDurationDate = new Date(midiTrackDuration)
     const totalTime = midiTrackDurationDate.getMinutes() + ':' + midiTrackDurationDate.getSeconds()
 
-    function onPlay() {
+    function handlePlay() {
         if (midiTrackDuration) {
             setInterval(() => {
                 // @ts-ignore
@@ -36,13 +36,13 @@ export function AudioPlayer({
         <>
             {currentTime}
             <RangeSlider
-                setValue={setTrackPosition}
+                onChange={setTrackPosition}
                 value={trackPosition}
                 max={midiTrackDuration}
             />
             {totalTime}
             <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
-            <PlayerController onPlay={onPlay} />
+            <PlayerController onPlay={handlePlay} />
         </>
     )
 }

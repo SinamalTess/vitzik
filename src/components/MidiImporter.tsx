@@ -15,18 +15,18 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     const [state, setState] = useState<midiImporterState>('pending')
 
     React.useEffect(() => {
-        window.addEventListener('dragover', dragOverHandler)
-        window.addEventListener('drop', dropHandler)
-        window.addEventListener('dragleave', dragLeaveHandler)
+        window.addEventListener('dragover', handleDragOver)
+        window.addEventListener('drop', handleDrop)
+        window.addEventListener('dragleave', handleDragLeave)
 
         return function () {
-            window.removeEventListener('dragover', dragOverHandler)
-            window.removeEventListener('drop', dropHandler)
-            window.removeEventListener('dragleave', dragLeaveHandler)
+            window.removeEventListener('dragover', handleDragOver)
+            window.removeEventListener('drop', handleDrop)
+            window.removeEventListener('dragleave', handleDragLeave)
         }
     }, [])
 
-    function dragOverHandler(event: DragEvent) {
+    function handleDragOver(event: DragEvent) {
         event.preventDefault()
         setState('dragging')
         if (event.dataTransfer?.items[0].type !== 'audio/mid') {
@@ -34,11 +34,11 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         }
     }
 
-    function dragLeaveHandler(event: DragEvent) {
+    function handleDragLeave(event: DragEvent) {
         setState('pending')
     }
 
-    function dropHandler(event: DragEvent) {
+    function handleDrop(event: DragEvent) {
         event.preventDefault()
 
         if (state === 'error') return
