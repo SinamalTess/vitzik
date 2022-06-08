@@ -3,6 +3,7 @@ import { convertCanvasRect, getNotesCoordinates, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates, AlphabeticalNote } from '../types'
 import { isEqual } from 'lodash'
+import { ActiveNote } from '../App'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
@@ -11,13 +12,13 @@ export interface MidiTrackInfos {
 }
 
 interface VisualizerProps {
-    activeNotes: AlphabeticalNote[]
+    activeNotes: ActiveNote[]
     notes: MidiJsonNote[]
     color?: string
     midiTrackInfos: MidiTrackInfos | null
     trackPosition: number
     heightPerBeat?: number
-    setActiveNotes: (notes: AlphabeticalNote[]) => void
+    setActiveNotes: (notes: ActiveNote[]) => void
 }
 
 function drawNotes(
@@ -107,7 +108,10 @@ export function Visualizer({
         const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
         const activeKeys = notesCoordinates
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
-            .map((note) => note.name)
+            .map(({ name, velocity }) => ({
+                name,
+                velocity,
+            }))
 
         if (!isEqual(activeKeys, activeNotes)) {
             setActiveNotes(activeKeys)

@@ -4,18 +4,19 @@ import { MidiImporter, OnMidiImport } from './MidiImporter'
 import { MidiTrackInfos, Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
-import { AlphabeticalNote, MidiJsonNote } from '../types'
+import { MidiJsonNote } from '../types'
+import { ActiveNote } from '../App'
 
 interface PreviewProps {
     appMode: AppMode
-    notes: AlphabeticalNote[]
+    notes: ActiveNote[]
     trackPosition: number
     midiTrackNotes: MidiJsonNote[]
     midiTrackTitle: string
     midiTrackInfos: MidiTrackInfos | null
     onMidiImport: OnMidiImport
-    setActiveNotes: (notes: AlphabeticalNote[]) => void
-    activeNotes: AlphabeticalNote[]
+    setActiveNotes: (notes: ActiveNote[]) => void
+    activeNotes: ActiveNote[]
 }
 
 export function Preview({
@@ -29,8 +30,9 @@ export function Preview({
     setActiveNotes,
     activeNotes,
 }: PreviewProps) {
+    const staffNotes = notes.map((note) => note.name)
     return appMode === 'learning' ? (
-        <Staff notes={notes} />
+        <Staff notes={staffNotes} />
     ) : (
         <>
             <MidiTrackTitle midiTrackTitle={midiTrackTitle} />

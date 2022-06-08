@@ -4,18 +4,20 @@ import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote } from '../types'
 import Soundfont from 'soundfont-player'
 import { isSpecialKey as checkIsSpecialKey, noteToKey } from '../utils'
+import { ActiveNote } from '../App'
 
 interface PianoProps {
-    activeKeys: AlphabeticalNote[]
+    activeKeys: ActiveNote[]
     startingKey?: AlphabeticalNote
     isMute: boolean
-    onKeyPressed: (key: AlphabeticalNote[]) => void
+    onKeyPressed: (note: ActiveNote[]) => void
 }
 
 export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
     const keysIterator = NOTES.alphabetical
 
     const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
+    const normalizeVelocity = (val: number, max: number, min: number) => (val - min) / (max - min)
 
     React.useEffect(() => {
         Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(
@@ -29,16 +31,30 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
     }, [])
 
     React.useEffect(() => {
+        //TODO: review naming
         if (!isMute && activeKeys.length >= 1) {
-            activeKeys.forEach(() => {
-                instrument?.play(formatKey(activeKeys))
+            activeKeys.forEach((activeKey) => {
+                const gain = normalizeVelocity(1, 127, activeKey.velocity)
+                instrument?.play(formatKey(activeKey.name), undefined, { gain })
             })
         }
     }, [activeKeys])
 
-    function formatKey(keys: AlphabeticalNote[]) {
-        let note = keys[0]
-        return note.includes('#') ? note.split('/')[1] : note
+    function formatKey(key: AlphabeticalNote): string {
+        return key.includes('#') ? key.split('/')[1] : key
+    }
+
+    function handleMouseDown(note: AlphabeticalNote) {
+        onKeyPressed([
+            {
+                name: note,
+                velocity: 100,
+            },
+        ])
+    }
+
+    function handleMouseUp() {
+        onKeyPressed([])
     }
 
     return (
@@ -51,18 +67,22 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
                     isBlackKey || !isSpecialKey ? `0 0 0 -${100 / NB_WHITE_PIANO_KEYS / 4}%` : '0'
                 const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
                 const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`
-                const styleKeyName = activeKeys.includes(key) ? { display: 'block' } : {}
+                const styleKeyName = activeKeys.find((currentKey) => currentKey.name === key)
+                    ? { display: 'block' }
+                    : {}
 
                 return (
                     <li
                         key={key}
                         style={{ width, margin }}
-                        onMouseDown={() => onKeyPressed([key])}
-                        onMouseUp={() => onKeyPressed([])}
+                        onMouseDown={() => handleMouseDown(key)}
+                        onMouseUp={handleMouseUp}
                         className={`
                             ${keyClassName} 
                             ${key} ${noteToKey(key)} ${
-                            activeKeys.includes(key) ? `${keyClassName}--active` : ''
+                            activeKeys.find((currentKey) => currentKey.name === key)
+                                ? `${keyClassName}--active`
+                                : ''
                         }`}
                     >
                         <span style={styleKeyName}>{key}</span>

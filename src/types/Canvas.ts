@@ -22,6 +22,7 @@ export interface CanvasRectangle {
 export interface NoteCoordinates extends CanvasRectangle {
     name: AlphabeticalNote
     key: number
+    velocity: number
 }
 
 export type RectangleCoordinates = number[][]

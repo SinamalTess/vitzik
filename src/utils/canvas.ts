@@ -76,6 +76,7 @@ export function getNotesCoordinates(
         deltaAcc = deltaAcc + note.delta
         const key = isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
         const noteName = keyToNote(key)
+        const velocity = isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
 
         if (isNoteOnEvent(note)) {
             const isBlackKey = noteName.includes('#')
@@ -94,6 +95,7 @@ export function getNotesCoordinates(
                 y,
                 name: noteName,
                 key,
+                velocity,
             }
 
             notesBeingProcessed.push(note)

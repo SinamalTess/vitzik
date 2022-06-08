@@ -8,9 +8,14 @@ import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 
+export interface ActiveNote {
+    name: AlphabeticalNote
+    velocity: number
+}
+
 function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
-    const [activeNotes, setActiveNotes] = useState<AlphabeticalNote[]>([])
+    const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('syllabic')
     const [isSoundOn, setIsSoundOn] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
@@ -49,18 +54,23 @@ function App() {
         }
     }
 
-    function removeNote(note: AlphabeticalNote) {
+    function removeNote(note: ActiveNote) {
         const noteIndex = activeNotes.findIndex((key) => key === note)
         if (noteIndex) {
-            setActiveNotes((notes) => notes.filter((key) => key !== note))
+            setActiveNotes((notes) => notes.filter((currentNote) => currentNote.name !== note.name))
         }
     }
 
     function getMIDIMessage(message: any) {
         // TODO: have a more precise type
         const command = message.data[0]
-        const note = keyToNote(message.data[1])
+        const name = keyToNote(message.data[1])
         const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
+
+        const note = {
+            name,
+            velocity,
+        }
 
         switch (command) {
             case 144: // noteOn
