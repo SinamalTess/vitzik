@@ -82,6 +82,7 @@ function App() {
     function onMidiImport(title: string, midiJSON: IMidiFile) {
         setMidiTrackTitle(title)
         setMidiTrack(midiJSON)
+        console.log(midiJSON)
     }
 
     return (

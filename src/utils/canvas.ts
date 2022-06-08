@@ -29,9 +29,7 @@ export function isOverlapping(rectA: Rectangle, rectB: Rectangle) {
     if (rectA.x1 >= rectB.x2 || rectB.x1 >= rectA.x2) return false
 
     // no vertical overlap
-    if (rectA.y1 >= rectB.y2 || rectB.y1 >= rectA.y2) return false
-
-    return true
+    return !(rectA.y1 >= rectB.y2 || rectB.y1 >= rectA.y2)
 }
 
 export function isPointInRect(
@@ -70,39 +68,46 @@ export function getNotesCoordinates(
     heightPerBeat: number,
     midiInfos: MidiTrackInfos
 ) {
-    let rectangles: NoteCoordinates[] = []
+    let notesCoordinates: NoteCoordinates[] = []
     let deltaAcc = 0
+    let notesBeingProcessed: NoteCoordinates[] = []
 
     notes.forEach((note, index) => {
         deltaAcc = deltaAcc + note.delta
+        const key = isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
+        const noteName = keyToNote(key)
 
         if (isNoteOnEvent(note)) {
-            let heightAcc = 0
-            const key = note.noteOn.noteNumber
-            const noteName = keyToNote(key)
             const isBlackKey = noteName.includes('#')
-            const noteOffIndex = notes.findIndex(
-                (note, i) => !isNoteOnEvent(note) && note.noteOff.noteNumber === key && i > index
-            )
             const widthWhiteKey = canvasWidth / NB_WHITE_PIANO_KEYS
             const w = isBlackKey ? widthWhiteKey / 2 : widthWhiteKey
             const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
             const nbPreviousWhiteKeys = previousKeys.filter((note) => !note.includes('#')).length
             const margin = !isBlackKey ? widthWhiteKey / 4 : widthWhiteKey / 2
             const x = nbPreviousWhiteKeys * widthWhiteKey - margin
-
-            if (noteOffIndex > 0) {
-                for (let y = 0; y <= noteOffIndex - index; y++) {
-                    heightAcc = heightAcc + notes[index + y].delta
-                }
-            }
-
-            const h = (heightAcc / midiInfos.ticksPerBeat) * heightPerBeat
             const y = (deltaAcc / midiInfos.ticksPerBeat) * heightPerBeat
 
-            rectangles.push({ w, h, x, y, name: noteName, key: key })
+            const note: NoteCoordinates = {
+                w,
+                h: deltaAcc,
+                x,
+                y,
+                name: noteName,
+                key,
+            }
+
+            notesBeingProcessed.push(note)
+        } else {
+            const noteOnIndex = notesBeingProcessed.findIndex((note, i) => note.key === key)
+
+            if (noteOnIndex) {
+                const note = { ...notesBeingProcessed[noteOnIndex] }
+                note.h = ((deltaAcc - note.h) / midiInfos.ticksPerBeat) * heightPerBeat
+                notesCoordinates.push(note)
+                notesBeingProcessed.splice(noteOnIndex, 1)
+            }
         }
     })
 
-    return rectangles
+    return notesCoordinates
 }

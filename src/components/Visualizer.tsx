@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { convertCanvasRect, getNotesCoordinates, isOverlapping, isPartiallyIn } from '../utils'
+import { convertCanvasRect, getNotesCoordinates, isPartiallyIn } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates, AlphabeticalNote } from '../types'
 
@@ -100,18 +100,10 @@ export function Visualizer({
 
     function getActiveNotes(trackPosition: number) {
         if (!midiTrackInfos) return
-        const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
 
+        const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
         const activeKeys = notesCoordinates
-            .filter((note) => {
-                const noteCoordinate = convertCanvasRect(note)
-                return isOverlapping(noteCoordinate, {
-                    x1: 0,
-                    x2: width,
-                    y1: heightDuration,
-                    y2: heightDuration,
-                })
-            })
+            .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
             .map((note) => note.name)
 
         setActiveKeys(activeKeys)
