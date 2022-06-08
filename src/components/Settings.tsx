@@ -12,7 +12,7 @@ interface SettingsProps {
     midiInputs: MIDIInput[]
     appMode: AppMode
     musicSystem: MusicSystem
-    setTrackPosition: (position: number) => void
+    setTrackPosition: React.Dispatch<React.SetStateAction<number>>
     trackPosition: number
     midiTrackDuration: number
     onChangeMusicSystem: (musicSystem: MusicSystem) => void

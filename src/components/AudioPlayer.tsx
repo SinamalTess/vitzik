@@ -4,7 +4,7 @@ import { PlayerController } from './PlayerController'
 import React from 'react'
 
 interface AudioPlayerProps {
-    setTrackPosition: (position: number) => void
+    setTrackPosition: React.Dispatch<React.SetStateAction<number>>
     trackPosition: number
     midiTrackDuration: number
     isSoundOn: boolean
@@ -25,9 +25,13 @@ export function AudioPlayer({
 
     function handlePlay() {
         if (midiTrackDuration) {
-            setInterval(() => {
-                // @ts-ignore
-                setTrackPosition((trackPosition: number) => trackPosition + 10)
+            const play = setInterval(() => {
+                setTrackPosition((trackPosition: number) => {
+                    if (trackPosition >= midiTrackDuration) {
+                        clearInterval(play)
+                    }
+                    return trackPosition + 10
+                })
             }, 10)
         }
     }
