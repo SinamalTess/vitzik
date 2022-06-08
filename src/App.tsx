@@ -97,7 +97,7 @@ function App() {
             </div>
             <div className="item">
                 <Preview
-                    setActiveKeys={setNotes}
+                    setActiveNotes={setNotes}
                     appMode={appMode}
                     notes={notes}
                     trackPosition={trackPosition}

@@ -15,7 +15,7 @@ interface VisualizerProps {
     midiTrackInfos: MidiTrackInfos | null
     trackPosition: number
     heightPerBeat?: number
-    setActiveKeys: (keys: AlphabeticalNote[]) => void
+    setActiveNotes: (notes: AlphabeticalNote[]) => void
 }
 
 function drawNotes(
@@ -49,7 +49,7 @@ export function Visualizer({
     trackPosition,
     heightPerBeat = 100,
     midiTrackInfos,
-    setActiveKeys,
+    setActiveNotes,
 }: VisualizerProps) {
     const visualizerRef = useRef<HTMLDivElement>(null)
     const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[]>([])
@@ -106,7 +106,7 @@ export function Visualizer({
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
             .map((note) => note.name)
 
-        setActiveKeys(activeKeys)
+        setActiveNotes(activeKeys)
     }
 
     return (
