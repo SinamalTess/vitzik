@@ -34,14 +34,17 @@ export function Piano({
     const prevTrackPosition = usePrevious(trackPosition)
 
     useEffect(() => {
-        Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(
-            (piano) => {
+        const ac = new AudioContext()
+        Soundfont.instrument(ac, 'acoustic_grand_piano')
+            .then((piano) => {
                 setInstrument(piano)
-            },
-            () => {
-                console.error('Failed to start the piano audio')
-            }
-        )
+            })
+            .catch((error) => {
+                console.error(`Failed to start the piano audio ${error}`)
+            })
+        return () => {
+            ac.close()
+        }
     }, [])
 
     useEffect(() => {
@@ -61,6 +64,7 @@ export function Piano({
     }, [activeKeys])
 
     useEffect(() => {
+        // if the user rewinds track we clear the notes
         if (prevTrackPosition && prevTrackPosition >= trackPosition) {
             notesAlreadyPlayed.current = []
         }
