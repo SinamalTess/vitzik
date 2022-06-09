@@ -86,13 +86,11 @@ export function Piano({
                 const isBlackKey = key.includes('#')
                 const isSpecialKey = checkIsSpecialKey(key)
                 const keyClassName = isBlackKey ? 'piano__blackkey' : 'piano__whitekey'
-                const margin =
-                    isBlackKey || !isSpecialKey ? `0 0 0 -${100 / NB_WHITE_PIANO_KEYS / 4}%` : '0'
                 const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
+                const margin = isBlackKey || !isSpecialKey ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
                 const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`
-                const styleKeyName = activeKeys.find((currentKey) => currentKey.name === key)
-                    ? { display: 'block' }
-                    : {}
+                const isActive = activeKeys.find((currentKey) => currentKey.name === key)
+                const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
                     musicSystem !== 'alphabetical' ? translateNote(key, musicSystem) : key
 
@@ -104,11 +102,7 @@ export function Piano({
                         onMouseUp={handleMouseUp}
                         className={`
                             ${keyClassName} 
-                            ${key} ${noteToKey(key)} ${
-                            activeKeys.find((currentKey) => currentKey.name === key)
-                                ? `${keyClassName}--active`
-                                : ''
-                        }`}
+                            ${key} ${isActive ? `${keyClassName}--active` : ''}`}
                     >
                         <span style={styleKeyName}>{keyTranslated}</span>
                     </li>
