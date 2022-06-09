@@ -120,7 +120,12 @@ function App() {
                 />
             </div>
             <div className="item">
-                <Piano activeKeys={activeNotes} isMute={!isSoundOn} onKeyPressed={setActiveNotes} />
+                <Piano
+                    activeKeys={activeNotes}
+                    isMute={!isSoundOn}
+                    onKeyPressed={setActiveNotes}
+                    musicSystem={musicSystem}
+                />
             </div>
         </div>
     )

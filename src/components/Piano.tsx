@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import './Piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
-import { AlphabeticalNote } from '../types'
+import { AlphabeticalNote, MusicSystem } from '../types'
 import Soundfont from 'soundfont-player'
-import { isSpecialKey as checkIsSpecialKey, noteToKey } from '../utils'
+import { isSpecialKey as checkIsSpecialKey, noteToKey, translateNote } from '../utils'
 import { ActiveNote } from '../App'
 
 interface PianoProps {
@@ -11,9 +11,10 @@ interface PianoProps {
     startingKey?: AlphabeticalNote
     isMute: boolean
     onKeyPressed: (note: ActiveNote[]) => void
+    musicSystem: MusicSystem
 }
 
-export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
+export function Piano({ activeKeys, onKeyPressed, isMute, musicSystem }: PianoProps) {
     const keysIterator = NOTES.alphabetical
 
     const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
@@ -70,6 +71,8 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
                 const styleKeyName = activeKeys.find((currentKey) => currentKey.name === key)
                     ? { display: 'block' }
                     : {}
+                const keyTranslated =
+                    musicSystem !== 'alphabetical' ? translateNote(key, musicSystem) : key
 
                 return (
                     <li
@@ -85,7 +88,7 @@ export function Piano({ activeKeys, onKeyPressed, isMute }: PianoProps) {
                                 : ''
                         }`}
                     >
-                        <span style={styleKeyName}>{key}</span>
+                        <span style={styleKeyName}>{keyTranslated}</span>
                     </li>
                 )
             })}
