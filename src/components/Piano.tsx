@@ -15,23 +15,22 @@ import { usePrevious } from '../hooks'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
-    startingKey?: AlphabeticalNote
     isMute: boolean
-    onKeyPressed: (note: ActiveNote[]) => void
     musicSystem: MusicSystem
     trackPosition: number
+    onKeyPressed: (note: ActiveNote[]) => void
 }
 
 export function Piano({
     activeKeys,
-    onKeyPressed,
     isMute,
     musicSystem,
     trackPosition,
+    onKeyPressed,
 }: PianoProps) {
-    const keysIterator = NOTES.alphabetical
+    const keys = NOTES.alphabetical
     const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
-    let alreadyPlayed: React.MutableRefObject<any[]> = useRef([])
+    const notesAlreadyPlayed: React.MutableRefObject<any[]> = useRef([])
     const prevTrackPosition = usePrevious(trackPosition)
 
     useEffect(() => {
@@ -46,38 +45,33 @@ export function Piano({
     }, [])
 
     useEffect(() => {
-        //TODO: review naming
-        if (!isMute && activeKeys.length >= 1) {
-            activeKeys.forEach((activeKey) => {
-                const { velocity, name, id, duration } = activeKey
+        if (!isMute && activeKeys.length) {
+            activeKeys.forEach((note) => {
+                const { velocity, id, duration, key } = note
                 const gain = normalizeVelocity(0, 1, velocity)
-                if (!alreadyPlayed.current.find((note) => note.id === id)) {
-                    instrument?.play(formatKey(name), undefined, {
+                if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
+                    instrument?.play(key.toString(), undefined, {
                         gain,
                         duration: msToSec(duration ?? 0),
                     })
-                    alreadyPlayed.current.push(activeKey)
+                    notesAlreadyPlayed.current.push(note)
                 }
             })
         }
     }, [activeKeys])
 
     useEffect(() => {
-        // @ts-ignore
-        if (prevTrackPosition >= trackPosition) {
-            alreadyPlayed.current = []
+        if (prevTrackPosition && prevTrackPosition >= trackPosition) {
+            notesAlreadyPlayed.current = []
         }
     }, [trackPosition])
-
-    function formatKey(key: AlphabeticalNote): string {
-        return key.includes('#') ? key.split('/')[1] : key
-    }
 
     function handleMouseDown(note: AlphabeticalNote) {
         onKeyPressed([
             {
                 name: note,
                 velocity: 100,
+                key: noteToKey(note),
             },
         ])
     }
@@ -88,7 +82,7 @@ export function Piano({
 
     return (
         <ul className="piano">
-            {keysIterator.map((key, index) => {
+            {keys.map((key, index) => {
                 const isBlackKey = key.includes('#')
                 const isSpecialKey = checkIsSpecialKey(key)
                 const keyClassName = isBlackKey ? 'piano__blackkey' : 'piano__whitekey'

@@ -109,11 +109,12 @@ export function Visualizer({
         const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
         const activeKeys = notesCoordinates
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
-            .map(({ name, velocity, id, duration }) => ({
+            .map(({ name, velocity, id, duration, key }) => ({
                 name,
                 velocity,
                 duration,
                 id,
+                key,
             }))
 
         if (!isEqual(activeKeys, activeNotes)) {

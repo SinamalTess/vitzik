@@ -5,7 +5,6 @@ import {
     NoteCoordinates,
     Point,
     Rectangle,
-    RectangleCoordinates,
 } from '../types'
 import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
@@ -39,13 +38,6 @@ export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
     y1: rect.y,
     y2: rect.y + rect.h,
 })
-
-export const getCoordinates = ({ x1, y1, y2, x2 }: Rectangle): RectangleCoordinates => [
-    [x1, y1],
-    [x1, y2],
-    [x2, y1],
-    [x2, y2],
-]
 
 export function getNotesCoordinates(
     canvasWidth: number,

@@ -13,6 +13,7 @@ export interface ActiveNote {
     velocity: number
     id?: number
     duration?: number
+    key: number
 }
 
 //TODO: add error boundary
@@ -67,6 +68,7 @@ function App() {
 
     function getMIDIMessage(message: any) {
         // TODO: have a more precise type
+        const key = message.data[1]
         const command = message.data[0]
         const name = keyToNote(message.data[1])
         const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
@@ -74,6 +76,7 @@ function App() {
         const note = {
             name,
             velocity,
+            key,
         }
 
         switch (command) {
