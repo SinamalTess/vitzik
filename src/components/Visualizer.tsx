@@ -9,6 +9,7 @@ export interface MidiTrackInfos {
     ticksPerBeat: number
     msPerBeat: number
     trackDuration: number
+    notes: MidiJsonNote[]
 }
 
 interface VisualizerProps {

@@ -37,7 +37,7 @@ export function getFormat(midiJson: IMidiFile) {
     return midiJson.format
 }
 
-export function getTempo(midiJson: IMidiFile): number {
+export function getMsPerBeat(midiJson: IMidiFile): number {
     const format = getFormat(midiJson)
     const defaultTempo = 60000 / 120 // 120 beats per minute is the default value
     switch (format) {
@@ -69,17 +69,15 @@ export function getTempo(midiJson: IMidiFile): number {
 
 export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null {
     if (!midiJson) return null
+
     const notes = midiJsonToNotes(midiJson)
     const nbTicks = notes.reduce((acc, nextNote) => acc + nextNote.delta, 0)
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
-    const msPerBeat = getTempo(midiJson)
-    console.log({
-        msPerBeat,
-        ticksPerBeat,
-        trackDuration: nbBeats * msPerBeat,
-    })
+    const msPerBeat = getMsPerBeat(midiJson)
+
     return {
+        notes,
         msPerBeat,
         ticksPerBeat,
         trackDuration: nbBeats * msPerBeat,

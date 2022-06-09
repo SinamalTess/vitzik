@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useMemo, useState } from 'react'
-import { getMidiInfos, midiJsonToNotes, keyToNote } from './utils'
+import { getMidiInfos, keyToNote } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, MusicSystem } from './types'
@@ -24,7 +24,7 @@ function App() {
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
 
     const midiInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
-    const midiTrackNotes = midiTrack ? midiJsonToNotes(midiTrack) : []
+    const midiTrackNotes = midiInfos?.notes ?? []
     const midiTrackDuration = midiInfos?.trackDuration ?? 0
     const midiTrackInfos = midiInfos
 
