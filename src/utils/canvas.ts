@@ -11,20 +11,10 @@ import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
 
-export function isContainedBy(rectA: Rectangle, rectB: Rectangle): boolean {
-    return (
-        rectA.x1 <= rectB.x1 && rectA.y1 <= rectB.y1 && rectA.x2 >= rectB.x2 && rectA.y2 >= rectB.y2
-    )
-}
+export const isContainedBy = (rectA: Rectangle, rectB: Rectangle): boolean =>
+    rectA.x1 <= rectB.x1 && rectA.y1 <= rectB.y1 && rectA.x2 >= rectB.x2 && rectA.y2 >= rectB.y2
 
-export function isPartiallyIn(rectA: Rectangle, rectB: Rectangle) {
-    const coordinates = getCoordinates(rectA)
-    return coordinates.some((coordinate) =>
-        isPointInRect({ x: coordinate[0], y: coordinate[1] }, rectB)
-    )
-}
-
-export function isOverlapping(rectA: Rectangle, rectB: Rectangle) {
+export const isOverlapping = (rectA: Rectangle, rectB: Rectangle): boolean => {
     // no horizontal overlap
     if (rectA.x1 >= rectB.x2 || rectB.x1 >= rectA.x2) return false
 
@@ -32,35 +22,30 @@ export function isOverlapping(rectA: Rectangle, rectB: Rectangle) {
     return !(rectA.y1 >= rectB.y2 || rectB.y1 >= rectA.y2)
 }
 
-export function isPointInRect(
+export const isPointInRect = (
     point: Point,
     rect: Rectangle,
     excludeBorders: boolean = false
-): boolean {
-    if (excludeBorders) {
+): boolean => {
+    if (excludeBorders)
         return point.x > rect.x1 && point.x < rect.x2 && point.y > rect.y1 && point.y < rect.y2
-    } else {
-        return point.x >= rect.x1 && point.x <= rect.x2 && point.y >= rect.y1 && point.y <= rect.y2
-    }
+
+    return point.x >= rect.x1 && point.x <= rect.x2 && point.y >= rect.y1 && point.y <= rect.y2
 }
 
-export function convertCanvasRect(rect: CanvasRectangle): Rectangle {
-    return {
-        x1: rect.x,
-        x2: rect.x + rect.w,
-        y1: rect.y,
-        y2: rect.y + rect.h,
-    }
-}
+export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
+    x1: rect.x,
+    x2: rect.x + rect.w,
+    y1: rect.y,
+    y2: rect.y + rect.h,
+})
 
-export function getCoordinates({ x1, y1, y2, x2 }: Rectangle): RectangleCoordinates {
-    return [
-        [x1, y1],
-        [x1, y2],
-        [x2, y1],
-        [x2, y2],
-    ]
-}
+export const getCoordinates = ({ x1, y1, y2, x2 }: Rectangle): RectangleCoordinates => [
+    [x1, y1],
+    [x1, y2],
+    [x2, y1],
+    [x2, y2],
+]
 
 export function getNotesCoordinates(
     canvasWidth: number,

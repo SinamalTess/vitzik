@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { convertCanvasRect, getNotesCoordinates, isOverlapping } from '../utils'
+import { convertCanvasRectToRect, getNotesCoordinates, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
@@ -36,7 +36,7 @@ function drawNotes(
             y1: canvasIndex * canvasOffset,
             y2: canvasIndex * canvasOffset + canvasOffset,
         }
-        const note = convertCanvasRect({ x, y, h, w })
+        const note = convertCanvasRectToRect({ x, y, h, w })
         const isNoteInCanvas = isOverlapping(note, canvas)
 
         if (isNoteInCanvas) {

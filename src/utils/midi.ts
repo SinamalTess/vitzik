@@ -3,7 +3,7 @@ import { MidiTrackInfos } from '../components/Visualizer'
 import { MidiJsonNote } from '../types'
 
 // TODO: we should use only one track here
-export function midiJsonToNotes(midiJson: IMidiFile): MidiJsonNote[] {
+export const midiJsonToNotes = (midiJson: IMidiFile): MidiJsonNote[] => {
     let notesArr: MidiJsonNote[] = []
     midiJson.tracks.forEach((track) => {
         const notes = track.filter(
@@ -17,7 +17,7 @@ export function midiJsonToNotes(midiJson: IMidiFile): MidiJsonNote[] {
     return notesArr
 }
 
-export function getTicksPerBeat(midiJson: IMidiFile) {
+export const getTicksPerBeat = (midiJson: IMidiFile) => {
     const { division } = midiJson
     const value = Math.sign(division)
     const isTickPerBeat = value === 0 || value === 1
@@ -33,11 +33,9 @@ export function getTicksPerBeat(midiJson: IMidiFile) {
     return division
 }
 
-export function getFormat(midiJson: IMidiFile) {
-    return midiJson.format
-}
+export const getFormat = (midiJson: IMidiFile): number => midiJson.format
 
-export function getMsPerBeat(midiJson: IMidiFile): number {
+export const getMsPerBeat = (midiJson: IMidiFile): number => {
     const format = getFormat(midiJson)
     const defaultTempo = 60000 / 120 // 120 beats per minute is the default value
     switch (format) {
@@ -67,7 +65,7 @@ export function getMsPerBeat(midiJson: IMidiFile): number {
     }
 }
 
-export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null {
+export const getMidiInfos = (midiJson: IMidiFile | null): MidiTrackInfos | null => {
     if (!midiJson) return null
 
     const notes = midiJsonToNotes(midiJson)
@@ -84,6 +82,5 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null 
     }
 }
 
-export function normalizeVelocity(val: number, max: number, min: number) {
-    return (val - min) / (max - min)
-}
+export const normalizeVelocity = (val: number, max: number, min: number): number =>
+    (val - min) / (max - min)

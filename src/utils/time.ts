@@ -1,4 +1,4 @@
-export function msToMinAndSec(msDuration: number): string {
+export const msToMinAndSec = (msDuration: number): string => {
     const msDurationDate = new Date(msDuration)
     const min = String(msDurationDate.getMinutes()).padStart(2, '0')
     const sec = String(msDurationDate.getSeconds()).padStart(2, '0')
@@ -6,6 +6,4 @@ export function msToMinAndSec(msDuration: number): string {
     return `${min}:${sec}`
 }
 
-export function msToSec(ms: number): number {
-    return ms / 1000
-}
+export const msToSec = (ms: number): number => ms / 1000

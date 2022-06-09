@@ -1,4 +1,4 @@
-import { isContainedBy, isPointInRect, isPartiallyIn, getCoordinates } from './canvas'
+import { isContainedBy, isPointInRect } from './canvas'
 
 describe('isContainedBy()', () => {
     test('returns `true` if rectangle `a` contains rectangle `b`', () => {
@@ -35,13 +35,5 @@ describe('isPointInRect()', () => {
             const rect = { x1: 0, x2: 5, y1: 0, y2: 5 }
             expect(isPointInRect(point, rect, true)).toBe(false)
         })
-    })
-})
-
-describe('isPartiallyIn()', () => {
-    test('returns `true` if rectangle `a` is partially in rectangle `b`', () => {
-        const rectA = { x1: 0, y1: 20, x2: 5, y2: 40 }
-        const rectB = { x1: 0, x2: 15, y1: 0, y2: 35 }
-        expect(isPartiallyIn(rectA, rectB)).toBe(true)
     })
 })
