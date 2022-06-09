@@ -86,6 +86,7 @@ function App() {
         setMidiTrackTitle(title)
         setMidiTrack(midiJSON)
         console.log(midiJSON)
+        setTrackPosition(0)
     }
 
     return (
