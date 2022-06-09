@@ -15,6 +15,8 @@ export interface ActiveNote {
     duration?: number
 }
 
+//TODO: add error boundary
+
 function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
