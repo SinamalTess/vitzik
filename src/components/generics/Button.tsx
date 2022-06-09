@@ -8,7 +8,7 @@ export interface ButtonProps {
     disable?: boolean
     active?: boolean
     icon?: IconName
-    children?: string
+    children?: string | string[]
     size?: CSSSpacingSize
     color?: CSSColor
     outline?: boolean

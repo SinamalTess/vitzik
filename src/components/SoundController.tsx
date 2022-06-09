@@ -7,5 +7,7 @@ interface SoundControllerProps {
 }
 
 export function SoundController({ isSoundOn, toggleSound }: SoundControllerProps) {
-    return <Button onClick={() => toggleSound(!isSoundOn)} icon="volume"></Button>
+    return (
+        <Button onClick={() => toggleSound(!isSoundOn)} icon="volume" active={isSoundOn}></Button>
+    )
 }

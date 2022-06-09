@@ -1,7 +1,7 @@
 import { RangeSlider } from './generics/RangeSlider'
 import { SoundController } from './SoundController'
 import { PlayerController } from './PlayerController'
-import React from 'react'
+import React, { useState } from 'react'
 
 interface AudioPlayerProps {
     setTrackPosition: React.Dispatch<React.SetStateAction<number>>
@@ -22,17 +22,30 @@ export function AudioPlayer({
     const currentTime = trackPositionDate.getMinutes() + ':' + trackPositionDate.getSeconds()
     const midiTrackDurationDate = new Date(midiTrackDuration)
     const totalTime = midiTrackDurationDate.getMinutes() + ':' + midiTrackDurationDate.getSeconds()
+    const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
-    function handlePlay() {
-        if (midiTrackDuration) {
-            const play = setInterval(() => {
+    React.useEffect(() => {
+        let timer: NodeJS.Timeout | undefined
+        if (isPlaying) {
+            timer = setInterval(() => {
                 setTrackPosition((trackPosition: number) => {
                     if (trackPosition >= midiTrackDuration) {
-                        clearInterval(play)
+                        clearInterval(timer)
+                        setIsPlaying(false)
+                        return 0
                     }
                     return trackPosition + 10
                 })
             }, 10)
+        }
+        return () => {
+            clearInterval(timer)
+        }
+    }, [isPlaying])
+
+    function onClick() {
+        if (midiTrackDuration) {
+            setIsPlaying((isPlaying) => !isPlaying)
         }
     }
 
@@ -46,7 +59,7 @@ export function AudioPlayer({
             />
             {totalTime}
             <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
-            <PlayerController onPlay={handlePlay} />
+            <PlayerController onClick={onClick} isPlaying={isPlaying} />
         </>
     )
 }
