@@ -11,6 +11,19 @@ interface MidiImporterProps {
 export type OnMidiImport = (title: string, midiJSON: IMidiFile) => void
 type midiImporterState = 'pending' | 'error' | 'dragging'
 
+const getFiles = (event: DragEvent) => {
+    let files: File[] = []
+
+    if (event.dataTransfer?.items) {
+        const filesArr = Array.from(event.dataTransfer.items).filter((item) => item.kind === 'file')
+        files = filesArr.map((file) => file.getAsFile()) as File[]
+    } else if (event.dataTransfer?.files) {
+        files = Array.from(event.dataTransfer.files)
+    }
+
+    return files
+}
+
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     const [state, setState] = useState<midiImporterState>('pending')
 
@@ -43,16 +56,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
 
         if (state === 'error') return
 
-        let files: File[] = []
-
-        if (event.dataTransfer?.items) {
-            const filesArr = Array.from(event.dataTransfer.items).filter(
-                (item) => item.kind === 'file'
-            )
-            files = filesArr.map((file) => file.getAsFile()) as File[]
-        } else if (event.dataTransfer?.files) {
-            files = Array.from(event.dataTransfer.files)
-        }
+        const files = getFiles(event)
 
         if (files.length) {
             const reader = new FileReader()
@@ -65,6 +69,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
             }
             reader.readAsArrayBuffer(files[0])
         }
+
         setState('pending')
     }
 
