@@ -11,6 +11,8 @@ import { IMidiFile } from 'midi-json-parser-worker'
 export interface ActiveNote {
     name: AlphabeticalNote
     velocity: number
+    id?: number
+    duration?: number
 }
 
 function App() {
@@ -121,6 +123,7 @@ function App() {
             </div>
             <div className="item">
                 <Piano
+                    trackPosition={trackPosition}
                     activeKeys={activeNotes}
                     isMute={!isSoundOn}
                     onKeyPressed={setActiveNotes}

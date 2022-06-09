@@ -1,9 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote, MusicSystem } from '../types'
 import Soundfont from 'soundfont-player'
-import { isSpecialKey as checkIsSpecialKey, noteToKey, translateNote } from '../utils'
+import {
+    isSpecialKey as checkIsSpecialKey,
+    msToSec,
+    normalizeVelocity,
+    noteToKey,
+    translateNote,
+} from '../utils'
 import { ActiveNote } from '../App'
 
 interface PianoProps {
@@ -12,13 +18,28 @@ interface PianoProps {
     isMute: boolean
     onKeyPressed: (note: ActiveNote[]) => void
     musicSystem: MusicSystem
+    trackPosition: number
 }
 
-export function Piano({ activeKeys, onKeyPressed, isMute, musicSystem }: PianoProps) {
+export function Piano({
+    activeKeys,
+    onKeyPressed,
+    isMute,
+    musicSystem,
+    trackPosition,
+}: PianoProps) {
     const keysIterator = NOTES.alphabetical
 
     const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
-    const normalizeVelocity = (val: number, max: number, min: number) => (val - min) / (max - min)
+    let alreadyPlayed: React.MutableRefObject<any[]> = useRef([])
+    const prevTrackPosition = usePrevious(trackPosition)
+    function usePrevious(value: any) {
+        const ref = useRef()
+        useEffect(() => {
+            ref.current = value
+        })
+        return ref.current
+    }
 
     React.useEffect(() => {
         Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(
@@ -35,11 +56,25 @@ export function Piano({ activeKeys, onKeyPressed, isMute, musicSystem }: PianoPr
         //TODO: review naming
         if (!isMute && activeKeys.length >= 1) {
             activeKeys.forEach((activeKey) => {
-                const gain = normalizeVelocity(1, 127, activeKey.velocity)
-                instrument?.play(formatKey(activeKey.name), undefined, { gain })
+                const { velocity, name, id, duration } = activeKey
+                const gain = normalizeVelocity(0, 1, velocity)
+                if (!alreadyPlayed.current.find((note) => note.id === id)) {
+                    instrument?.play(formatKey(name), undefined, {
+                        gain,
+                        duration: msToSec(duration ?? 0),
+                    })
+                    alreadyPlayed.current.push(activeKey)
+                }
             })
         }
     }, [activeKeys])
+
+    React.useEffect(() => {
+        // @ts-ignore
+        if (prevTrackPosition >= trackPosition) {
+            alreadyPlayed.current = []
+        }
+    }, [trackPosition])
 
     function formatKey(key: AlphabeticalNote): string {
         return key.includes('#') ? key.split('/')[1] : key

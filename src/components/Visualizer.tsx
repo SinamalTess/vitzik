@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { convertCanvasRect, getNotesCoordinates, isOverlapping } from '../utils'
 import './Visualizer.scss'
-import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates, AlphabeticalNote } from '../types'
+import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
 import { ActiveNote } from '../App'
 
@@ -109,9 +109,11 @@ export function Visualizer({
         const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
         const activeKeys = notesCoordinates
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
-            .map(({ name, velocity }) => ({
+            .map(({ name, velocity, id, duration }) => ({
                 name,
                 velocity,
+                duration,
+                id,
             }))
 
         if (!isEqual(activeKeys, activeNotes)) {

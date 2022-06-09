@@ -96,6 +96,8 @@ export function getNotesCoordinates(
                 name: noteName,
                 key,
                 velocity,
+                duration: 0,
+                id: index,
             }
 
             notesBeingProcessed.push(note)
@@ -104,6 +106,7 @@ export function getNotesCoordinates(
 
             if (noteOnIndex) {
                 const note = { ...notesBeingProcessed[noteOnIndex] }
+                note.duration = ((deltaAcc - note.h) / midiInfos.ticksPerBeat) * midiInfos.msPerBeat
                 note.h = ((deltaAcc - note.h) / midiInfos.ticksPerBeat) * heightPerBeat
                 notesCoordinates.push(note)
                 notesBeingProcessed.splice(noteOnIndex, 1)

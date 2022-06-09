@@ -5,3 +5,7 @@ export function msToMinAndSec(msDuration: number): string {
 
     return `${min}:${sec}`
 }
+
+export function msToSec(ms: number): number {
+    return ms / 1000
+}

@@ -13,16 +13,18 @@ export interface Point {
 }
 
 export interface CanvasRectangle {
-    w: number // width
-    h: number // height
-    x: number
-    y: number
+    w: number // width (px)
+    h: number // height (px)
+    x: number // (px)
+    y: number // (px)
 }
 
 export interface NoteCoordinates extends CanvasRectangle {
     name: AlphabeticalNote
     key: number
     velocity: number
+    duration: number // ms
+    id?: number
 }
 
 export type RectangleCoordinates = number[][]

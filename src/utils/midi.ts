@@ -83,3 +83,7 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null 
         trackDuration: nbBeats * msPerBeat,
     }
 }
+
+export function normalizeVelocity(val: number, max: number, min: number) {
+    return (val - min) / (max - min)
+}
