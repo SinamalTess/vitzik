@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import './Piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote, MusicSystem } from '../types'
@@ -11,6 +11,7 @@ import {
     translateNote,
 } from '../utils'
 import { ActiveNote } from '../App'
+import { usePrevious } from '../hooks'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
@@ -29,17 +30,9 @@ export function Piano({
     trackPosition,
 }: PianoProps) {
     const keysIterator = NOTES.alphabetical
-
     const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
     let alreadyPlayed: React.MutableRefObject<any[]> = useRef([])
     const prevTrackPosition = usePrevious(trackPosition)
-    function usePrevious(value: any) {
-        const ref = useRef()
-        useEffect(() => {
-            ref.current = value
-        })
-        return ref.current
-    }
 
     React.useEffect(() => {
         Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(
