@@ -1,5 +1,5 @@
 import './Staff.scss'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import Vex from 'vexflow'
 import StaveNote = Vex.Flow.StaveNote
 import Formatter = Vex.Flow.Formatter
@@ -13,8 +13,8 @@ interface StaffProps {
 
 export function Staff({ notes }: StaffProps) {
     const { Renderer, Stave, StaveConnector, Voice } = Vex.Flow
-    const musicSheet = React.useRef<HTMLDivElement>()
-    const contextRef = React.useRef<Vex.IRenderContext | null>(null) // persists the context throughout renders to allow re-rendering of the notes only
+    const musicSheet = useRef<HTMLDivElement>()
+    const contextRef = useRef<Vex.IRenderContext | null>(null) // persists the context throughout renders to allow re-rendering of the notes only
     const trebleStaff = new Stave(0, 0, 400).addClef('treble')
     const bassStaff = new Stave(0, 75, 400).addClef('bass')
 
@@ -26,7 +26,7 @@ export function Staff({ notes }: StaffProps) {
     const lineLeft = new StaveConnector(trebleStaff, bassStaff).setType(1)
     const lineRight = new StaveConnector(trebleStaff, bassStaff).setType(6)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (musicSheet.current) {
             const renderer = new Renderer(musicSheet.current, Renderer.Backends.SVG)
 
@@ -50,7 +50,7 @@ export function Staff({ notes }: StaffProps) {
         }
     }, [])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (notes.length === 1 && contextRef.current) {
             // temporary
             const activeNotes: StaveNote[] = []

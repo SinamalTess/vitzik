@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from './generics/Button'
 
 interface PlayerControllerProps {
@@ -9,7 +9,7 @@ interface PlayerControllerProps {
 export function PlayerController({ setTrackPosition, midiTrackDuration }: PlayerControllerProps) {
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
-    React.useEffect(() => {
+    useEffect(() => {
         let timer: NodeJS.Timeout | undefined
         if (isPlaying) {
             timer = setInterval(() => {

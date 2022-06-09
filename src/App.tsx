@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos, keyToNote } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
@@ -32,7 +32,7 @@ function App() {
     const midiTrackDuration = midiInfos?.trackDuration ?? 0
     const midiTrackInfos = midiInfos
 
-    React.useEffect(() => {
+    useEffect(() => {
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
     }, [])
 

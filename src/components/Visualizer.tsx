@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { convertCanvasRectToRect, getNotesCoordinates, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
@@ -64,17 +64,17 @@ export function Visualizer({
     const height = visualizerRef?.current?.clientHeight ?? 0
     const canvasChildren = visualizerRef?.current?.childNodes ?? []
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!midiTrackInfos) return
         const coordinates = getNotesCoordinates(width, notes, heightPerBeat, midiTrackInfos)
         setNotesCoordinates(coordinates)
     }, [midiTrackInfos])
 
-    React.useEffect(() => {
+    useEffect(() => {
         getActiveNotes(trackPosition)
     }, [trackPosition])
 
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         canvasChildren.forEach((child, index) => {
             if (isHTMLCanvasElement(child)) {
                 child.width = width

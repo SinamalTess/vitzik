@@ -1,5 +1,5 @@
 import { parseArrayBuffer } from 'midi-json-parser'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
 import { Icon } from './generics/Icon'
@@ -14,7 +14,7 @@ type midiImporterState = 'pending' | 'error' | 'dragging'
 export function MidiImporter({ onMidiImport }: MidiImporterProps) {
     const [state, setState] = useState<midiImporterState>('pending')
 
-    React.useEffect(() => {
+    useEffect(() => {
         window.addEventListener('dragover', handleDragOver)
         window.addEventListener('drop', handleDrop)
         window.addEventListener('dragleave', handleDragLeave)
