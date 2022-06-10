@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos, keyToNote } from './utils'
 import { Piano } from './components/Piano'
 import { Settings } from './components/Settings'
-import { AlphabeticalNote, MusicSystem } from './types'
+import { AlphabeticalNote, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
@@ -17,6 +17,7 @@ export interface ActiveNote {
 }
 
 //TODO: add error boundary
+//TODO: check accessibility
 
 function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
@@ -27,6 +28,7 @@ function App() {
     const [trackPosition, setTrackPosition] = useState<number>(0)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
+    const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Piano')
 
     const midiInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
     const midiTrackNotes = midiInfos?.notes ?? []
@@ -111,6 +113,7 @@ function App() {
                     onChangeMidiInput={handleChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
+                    onChangeInstrument={setInstrument}
                 />
             </div>
             <div className="item">
@@ -128,6 +131,7 @@ function App() {
             </div>
             <div className="item">
                 <Piano
+                    instrument={instrument}
                     trackPosition={trackPosition}
                     activeKeys={activeNotes}
                     isMute={!isSoundOn}

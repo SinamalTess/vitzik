@@ -27,8 +27,6 @@ export interface NoteCoordinates extends CanvasRectangle {
     id?: number
 }
 
-export type RectangleCoordinates = number[][]
-
 export function isHTMLCanvasElement(element: ChildNode): element is HTMLCanvasElement {
     return element.nodeName === 'CANVAS'
 }

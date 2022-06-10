@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './Piano.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
-import { AlphabeticalNote, MusicSystem } from '../types'
+import { AlphabeticalNote, Instrument, MusicSystem } from '../types'
 import Soundfont from 'soundfont-player'
 import {
     isSpecialKey as checkIsSpecialKey,
     msToSec,
+    normalizeInstrumentName,
     normalizeVelocity,
     noteToKey,
     translateNote,
@@ -19,6 +20,7 @@ interface PianoProps {
     musicSystem: MusicSystem
     trackPosition: number
     onKeyPressed: (note: ActiveNote[]) => void
+    instrument: Instrument
 }
 
 export function Piano({
@@ -27,17 +29,19 @@ export function Piano({
     musicSystem,
     trackPosition,
     onKeyPressed,
+    instrument,
 }: PianoProps) {
     const keys = NOTES.alphabetical
-    const [instrument, setInstrument] = useState<Soundfont.Player | null>(null)
+    const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const notesAlreadyPlayed: React.MutableRefObject<any[]> = useRef([])
     const prevTrackPosition = usePrevious(trackPosition)
 
     useEffect(() => {
         const ac = new AudioContext()
-        Soundfont.instrument(ac, 'acoustic_grand_piano')
-            .then((piano) => {
-                setInstrument(piano)
+        const SoundfontInstrument = normalizeInstrumentName(instrument)
+        Soundfont.instrument(ac, SoundfontInstrument)
+            .then((instrumentPlayer) => {
+                setInstrumentPlayer(instrumentPlayer)
             })
             .catch((error) => {
                 console.error(`Failed to start the piano audio ${error}`)
@@ -45,7 +49,7 @@ export function Piano({
         return () => {
             ac.close()
         }
-    }, [])
+    }, [instrument])
 
     useEffect(() => {
         if (!isMute && activeKeys.length) {
@@ -53,7 +57,7 @@ export function Piano({
                 const { velocity, id, duration, key } = note
                 const gain = normalizeVelocity(0, 1, velocity)
                 if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
-                    instrument?.play(key.toString(), undefined, {
+                    instrumentPlayer?.play(key.toString(), undefined, {
                         gain,
                         duration: msToSec(duration ?? 0),
                     })

@@ -4,7 +4,7 @@ export const MIDI_INSTRUMENTS = [
     'Electric Grand Piano',
     'Honky-tonk Piano',
     'Electric Piano',
-    'Electric Piano',
+    'Electric Piano 2',
     'Harpsichord',
     'Clavinet',
     'Celesta',
@@ -127,4 +127,4 @@ export const MIDI_INSTRUMENTS = [
     'Helicopter',
     'Applause',
     'Gunshot',
-]
+] as const

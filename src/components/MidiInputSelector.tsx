@@ -1,5 +1,6 @@
 import React from 'react'
 import { Icon } from './generics/Icon'
+import { Select } from './generics/Select'
 
 interface MidiInputSelectorProps {
     midiInputs: MIDIInput[]
@@ -12,16 +13,14 @@ export type onChangeMidiInput = (event: React.ChangeEvent<HTMLSelectElement>) =>
 
 export function MidiInputSelector({ midiInputs, onChange }: MidiInputSelectorProps) {
     return midiInputs.length ? (
-        <>
-            <select name="midiInputs" onChange={onChange}>
-                {midiInputs.map((midiInput) => (
-                    <option
-                        value={midiInput.id}
-                        key={midiInput.id}
-                    >{`${midiInput.name} - ${midiInput.manufacturer}`}</option>
-                ))}
-            </select>
-        </>
+        <Select name="midiInputs" onChange={onChange}>
+            {midiInputs.map((midiInput) => (
+                <option
+                    value={midiInput.id}
+                    key={midiInput.id}
+                >{`${midiInput.name} - ${midiInput.manufacturer}`}</option>
+            ))}
+        </Select>
     ) : (
         <>
             <Icon name="frequency">No input found</Icon>
