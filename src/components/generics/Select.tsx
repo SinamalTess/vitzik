@@ -1,4 +1,5 @@
 import React, { OptionHTMLAttributes, ReactElement } from 'react'
+import './Select.scss'
 
 interface SelectProps {
     onChange: (event: any) => void
