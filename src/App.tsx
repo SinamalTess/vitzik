@@ -7,7 +7,6 @@ import { AlphabeticalNote, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { func } from 'prop-types'
 import { AudioPlayerState } from './components/AudioPlayer'
 
 export interface ActiveNote {

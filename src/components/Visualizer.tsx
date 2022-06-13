@@ -1,11 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { convertCanvasRectToRect, getNotesCoordinates, isEven, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
 import { ActiveNote } from '../App'
 import { usePrevious } from '../hooks'
-import { func } from 'prop-types'
 import { AudioPlayerState } from './AudioPlayer'
 
 export interface MidiTrackInfos {
