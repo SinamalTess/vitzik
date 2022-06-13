@@ -37,22 +37,21 @@ function drawNotes(
     notesCoordinates: NoteCoordinates[],
     canvasIndex: number
 ) {
-    notesCoordinates.forEach(({ x, y, w, h }) => {
-        //TODO: optimize this by not going through the whole array
-        const canvasOffset = ctx.canvas.height
-        const canvas = {
-            x1: 0,
-            x2: ctx.canvas.width,
-            y1: canvasIndex * canvasOffset,
-            y2: canvasIndex * canvasOffset + canvasOffset,
-        }
+    const canvasOffset = ctx.canvas.height
+    const canvas = {
+        x1: 0,
+        x2: ctx.canvas.width,
+        y1: canvasIndex * canvasOffset,
+        y2: canvasIndex * canvasOffset + canvasOffset,
+    }
+    const notesInCanvas = notesCoordinates.filter(({ x, y, h, w }) => {
         const note = convertCanvasRectToRect({ x, y, h, w })
-        const isNoteInCanvas = isOverlapping(note, canvas)
+        return isOverlapping(note, canvas)
+    })
 
-        if (isNoteInCanvas) {
-            let yComputed = y - canvasIndex * canvasOffset
-            roundRect(ctx, x, yComputed, w, h, 5, true, false)
-        }
+    notesInCanvas.forEach(({ x, y, w, h }) => {
+        const yComputed = y - canvasIndex * canvasOffset
+        roundRect(ctx, x, yComputed, w, h, 5, true, false)
     })
 }
 
