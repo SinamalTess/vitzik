@@ -163,7 +163,7 @@ function App() {
                 <Keyboard
                     instrument={instrument}
                     activeKeys={activeNotes}
-                    isMute={!isMute}
+                    isMute={isMute}
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
                     audioPlayerState={audioPlayerState}

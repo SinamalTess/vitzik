@@ -37,7 +37,7 @@ export function Keyboard({
     useEffect(() => {
         const ac = new AudioContext()
         const SoundfontInstrument = normalizeInstrumentName(instrument)
-        Soundfont.instrument(ac, SoundfontInstrument)
+        Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
             .then((instrumentPlayer) => {
                 setInstrumentPlayer(instrumentPlayer)
             })
