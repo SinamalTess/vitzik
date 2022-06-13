@@ -6,13 +6,16 @@ interface MidiTrackInfosPros {
 }
 
 export function MidiTrackTitle({ midiTrackTitle }: MidiTrackInfosPros) {
+    function normalizeTitle(title: string) {
+        const normalizedTitle = title.replace('_', ' ')
+        return normalizedTitle.endsWith('.mid')
+            ? normalizedTitle.slice(0, title.length - '.mid'.length)
+            : normalizedTitle
+    }
+
     return (
         <div className="track">
-            <p className="track__title">
-                {midiTrackTitle.endsWith('.mid')
-                    ? midiTrackTitle.slice(0, midiTrackTitle.length - '.mid'.length)
-                    : midiTrackTitle}
-            </p>
+            <p className="track__title">{normalizeTitle(midiTrackTitle)}</p>
         </div>
     )
 }
