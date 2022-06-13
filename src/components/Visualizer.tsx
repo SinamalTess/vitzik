@@ -32,29 +32,6 @@ interface VisualizerProps {
     setActiveNotes: (notes: ActiveNote[]) => void
 }
 
-function drawNotes(
-    ctx: CanvasRenderingContext2D,
-    notesCoordinates: NoteCoordinates[],
-    canvasIndex: number
-) {
-    const canvasOffset = ctx.canvas.height
-    const canvas = {
-        x1: 0,
-        x2: ctx.canvas.width,
-        y1: canvasIndex * canvasOffset,
-        y2: canvasIndex * canvasOffset + canvasOffset,
-    }
-    const notesInCanvas = notesCoordinates.filter(({ x, y, h, w }) => {
-        const note = convertCanvasRectToRect({ x, y, h, w })
-        return isOverlapping(note, canvas)
-    })
-
-    notesInCanvas.forEach(({ x, y, w, h }) => {
-        const yComputed = y - canvasIndex * canvasOffset
-        roundRect(ctx, x, yComputed, w, h, 5, true, false)
-    })
-}
-
 export function Visualizer({
     activeNotes,
     notes,
@@ -87,14 +64,22 @@ export function Visualizer({
     useEffect(() => {
         if (indexCanvas === 0) {
             drawInitialState()
-        } else if (audioPlayerState === 'rewinding') {
-            reDrawCurrentState()
-        } else if (audioPlayerState === 'playing') {
-            drawForward()
-        } else if (audioPlayerState === 'seeking') {
-            reDrawCurrentState()
+        } else {
+            switch (audioPlayerState) {
+                case 'playing':
+                    drawForward()
+                    break
+                case 'rewinding':
+                    reDrawCurrentState()
+                    break
+                case 'seeking':
+                    reDrawCurrentState()
+                    break
+                default:
+                    break
+            }
         }
-    }, [indexCanvas, notesCoordinates, audioPlayerState])
+    }, [indexCanvas, audioPlayerState])
 
     function drawInitialState() {
         canvasChildren.forEach((child, index) => {
@@ -113,13 +98,8 @@ export function Visualizer({
 
     function drawForward() {
         const canvasToRedraw = isIndexEven ? 1 : 0
-        if (canvasChildren[canvasToRedraw] && isHTMLCanvasElement(canvasChildren[canvasToRedraw])) {
-            // @ts-ignore
-            const ctx = canvasChildren[canvasToRedraw].getContext('2d')
-            if (ctx) {
-                ctx.clearRect(0, 0, width, height)
-                drawNotes(ctx, notesCoordinates, indexCanvas + 1)
-            }
+        if (canvasChildren[canvasToRedraw]) {
+            reDrawCanvas(canvasChildren[canvasToRedraw], indexCanvas + 1)
         }
     }
 
@@ -127,13 +107,40 @@ export function Visualizer({
         const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
         const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
         canvasChildren.forEach((child, i) => {
-            if (isHTMLCanvasElement(child)) {
-                const ctx = child.getContext('2d')
+            const index = i === 0 ? canvas0 : canvas1
+            reDrawCanvas(child, index)
+        })
+    }
 
-                if (ctx) {
-                    ctx.clearRect(0, 0, width, height)
-                    drawNotes(ctx, notesCoordinates, i === 0 ? canvas0 : canvas1)
-                }
+    function reDrawCanvas(canvas: ChildNode, index: number) {
+        if (isHTMLCanvasElement(canvas)) {
+            const ctx = canvas.getContext('2d')
+
+            if (ctx) {
+                ctx.clearRect(0, 0, width, height)
+                drawNotes(ctx, notesCoordinates, index)
+            }
+        }
+    }
+
+    function drawNotes(
+        ctx: CanvasRenderingContext2D,
+        notesCoordinates: NoteCoordinates[],
+        canvasIndex: number
+    ) {
+        const canvasOffset = ctx.canvas.height
+        const canvas = {
+            x1: 0,
+            x2: ctx.canvas.width,
+            y1: canvasIndex * canvasOffset,
+            y2: canvasIndex * canvasOffset + canvasOffset,
+        }
+
+        notesCoordinates.forEach(({ x, y, w, h }) => {
+            const note = convertCanvasRectToRect({ x, y, h, w })
+            if (isOverlapping(note, canvas)) {
+                const yComputed = y - canvasIndex * canvasOffset
+                roundRect(ctx, x, yComputed, w, h, 5, true, false)
             }
         })
     }
@@ -146,8 +153,8 @@ export function Visualizer({
             const nbCanvasPassed = heightDuration / height
             const index = Math.floor(heightDuration / height)
             const percentageTop = Math.round((nbCanvasPassed % 1) * 100)
-            const percentageFirstCanvas = `-${100 - percentageTop}%`
-            const percentageSecondCanvas = `${percentageTop}%`
+            const percentageFirstCanvas = `${100 - percentageTop}%`
+            const percentageSecondCanvas = `-${percentageTop}%`
             if (index !== indexCanvas) {
                 setIndexCanvas(() => index)
             }
@@ -183,11 +190,11 @@ export function Visualizer({
         <div className="visualizer" ref={visualizerRef}>
             <canvas
                 className={`visualizer__canvas visualizer__canvas--0`}
-                style={{ transform: `scaleY(-1)`, top: calcTop(0) }}
+                style={{ transform: `scaleY(-1) translateY(${calcTop(0)})` }}
             ></canvas>
             <canvas
                 className={`visualizer__canvas visualizer__canvas--1`}
-                style={{ transform: `scaleY(-1)`, top: calcTop(1) }}
+                style={{ transform: `scaleY(-1) translateY(${calcTop(1)})` }}
             ></canvas>
         </div>
     )
