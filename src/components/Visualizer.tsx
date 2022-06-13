@@ -1,9 +1,10 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { convertCanvasRectToRect, getNotesCoordinates, isOverlapping } from '../utils'
+import { convertCanvasRectToRect, getNotesCoordinates, isEven, isOverlapping } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
 import { ActiveNote } from '../App'
+import { usePrevious } from '../hooks'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
@@ -41,8 +42,7 @@ function drawNotes(
 
         if (isNoteInCanvas) {
             let yComputed = y - canvasIndex * canvasOffset
-            let hComputed = h - canvasIndex * canvasOffset + (canvasIndex !== 0 ? canvasOffset : 0)
-            ctx.fillRect(x, yComputed, w, hComputed)
+            ctx.fillRect(x, yComputed, w, h)
         }
     })
 }
@@ -58,7 +58,7 @@ export function Visualizer({
 }: VisualizerProps) {
     const visualizerRef = useRef<HTMLDivElement>(null)
     const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[]>([])
-    const nbCanvas = 2
+    const [indexCanvas, setIndexCanvas] = useState<number>(0)
 
     const width = visualizerRef?.current?.clientWidth ?? 0
     const height = visualizerRef?.current?.clientHeight ?? 0
@@ -74,30 +74,55 @@ export function Visualizer({
         getActiveNotes(trackPosition)
     }, [trackPosition])
 
-    useLayoutEffect(() => {
-        canvasChildren.forEach((child, index) => {
-            if (isHTMLCanvasElement(child)) {
-                child.width = width
-                child.height = height
-                const ctx = child.getContext('2d')
+    useEffect(() => {
+        if (indexCanvas === 0) {
+            canvasChildren.forEach((child, index) => {
+                if (isHTMLCanvasElement(child)) {
+                    child.width = width
+                    child.height = height
+                    const ctx = child.getContext('2d')
 
+                    if (ctx) {
+                        ctx.fillStyle = color
+                        drawNotes(ctx, notesCoordinates, index)
+                    }
+                }
+            })
+        } else {
+            const isIndexEven = isEven(indexCanvas)
+            const canvasToRedraw = isIndexEven ? 1 : 0
+            if (
+                canvasChildren[canvasToRedraw] &&
+                isHTMLCanvasElement(canvasChildren[canvasToRedraw])
+            ) {
+                // @ts-ignore
+                const ctx = canvasChildren[canvasToRedraw].getContext('2d')
                 if (ctx) {
-                    ctx.fillStyle = color
-                    drawNotes(ctx, notesCoordinates, index)
+                    ctx.clearRect(0, 0, width, height)
+                    drawNotes(ctx, notesCoordinates, indexCanvas + 1)
                 }
             }
-        })
-    }, [notesCoordinates])
+        }
+    }, [indexCanvas, notesCoordinates])
 
     function calcTop(canvasIndex: number): string {
         if (midiTrackInfos && visualizerRef.current) {
-            const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
-            const heightCanvas = visualizerRef.current.clientHeight
-            const percentageCanvas = heightDuration / heightCanvas
+            const { msPerBeat } = midiTrackInfos
+            const nbBeatsPassed = trackPosition / msPerBeat
+            const heightDuration = nbBeatsPassed * heightPerBeat
+            const nbCanvasPassed = heightDuration / height
+            const index = Math.floor(heightDuration / height)
+            const isIndexEven = isEven(index)
+            const percentageTop = Math.round((nbCanvasPassed % 1) * 100)
+            const percentageFirstCanvas = `-${100 - percentageTop}%`
+            const percentageSecondCanvas = `${percentageTop}%`
+            if (index !== indexCanvas) {
+                setIndexCanvas(() => index)
+            }
             if (canvasIndex === 0) {
-                return percentageCanvas * heightCanvas + 'px'
+                return isIndexEven ? percentageSecondCanvas : percentageFirstCanvas
             } else {
-                return -heightCanvas + percentageCanvas * heightCanvas + 'px'
+                return isIndexEven ? percentageFirstCanvas : percentageSecondCanvas
             }
         }
         return '0px'
@@ -124,15 +149,14 @@ export function Visualizer({
 
     return (
         <div className="visualizer" ref={visualizerRef}>
-            {Array(nbCanvas)
-                .fill(null)
-                .map((value, canvasIndex) => (
-                    <canvas
-                        className={`visualizer__canvas`}
-                        style={{ transform: `scaleY(-1)`, top: calcTop(canvasIndex) }}
-                        key={`visualizer__canvas` + canvasIndex}
-                    ></canvas>
-                ))}
+            <canvas
+                className={`visualizer__canvas visualizer__canvas--0`}
+                style={{ transform: `scaleY(-1)`, top: calcTop(0) }}
+            ></canvas>
+            <canvas
+                className={`visualizer__canvas visualizer__canvas--1`}
+                style={{ transform: `scaleY(-1)`, top: calcTop(1) }}
+            ></canvas>
         </div>
     )
 }
