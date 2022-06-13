@@ -3,7 +3,7 @@ import { convertCanvasRectToRect, getNotesCoordinates, isEven, isOverlapping } f
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
-import { ActiveNote } from '../App'
+import { ActiveNote, AudioPlayerState } from '../App'
 import { usePrevious } from '../hooks'
 
 export interface MidiTrackInfos {

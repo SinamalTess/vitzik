@@ -7,6 +7,7 @@ import { AlphabeticalNote, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
+import { func } from 'prop-types'
 
 export interface ActiveNote {
     name: AlphabeticalNote
@@ -15,6 +16,8 @@ export interface ActiveNote {
     duration?: number
     key: number
 }
+
+export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused'
 
 //TODO: add error boundary
 //TODO: check accessibility
@@ -29,6 +32,7 @@ function App() {
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
+    const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('pending')
 
     const midiInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
     const midiTrackNotes = midiInfos?.notes ?? []
@@ -98,6 +102,20 @@ function App() {
         setMidiTrackCurrentTime(0)
     }
 
+    function handleRewind(midiTrackCurrentTime: number) {
+        setAudioPlayerState('rewinding')
+        setMidiTrackCurrentTime(midiTrackCurrentTime)
+    }
+
+    function handlePlay(midiTrackCurrentTime: number) {
+        setAudioPlayerState('playing')
+        setMidiTrackCurrentTime(midiTrackCurrentTime)
+    }
+
+    function handlePause() {
+        setAudioPlayerState('paused')
+    }
+
     return (
         <div className="container">
             <div className="item">
@@ -109,11 +127,13 @@ function App() {
                     musicSystem={musicSystem}
                     midiTrackCurrentTime={midiTrackCurrentTime}
                     midiTrackDuration={midiTrackDuration}
-                    onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                     onChangeMidiInput={handleChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstrument}
+                    onPlay={handlePlay}
+                    onRewind={handleRewind}
+                    onPause={handlePause}
                 />
             </div>
             <div className="item">
@@ -132,11 +152,11 @@ function App() {
             <div className="item">
                 <Keyboard
                     instrument={instrument}
-                    midiTrackCurrentTime={midiTrackCurrentTime}
                     activeKeys={activeNotes}
                     isMute={!isMute}
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
+                    audioPlayerState={audioPlayerState}
                 />
             </div>
         </div>

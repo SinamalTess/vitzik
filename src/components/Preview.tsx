@@ -5,7 +5,7 @@ import { MidiTrackInfos, Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
 import { MidiJsonNote } from '../types'
-import { ActiveNote } from '../App'
+import { ActiveNote, AudioPlayerState } from '../App'
 
 interface PreviewProps {
     appMode: AppMode

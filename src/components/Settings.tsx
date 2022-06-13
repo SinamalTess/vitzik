@@ -15,11 +15,13 @@ interface SettingsProps {
     musicSystem: MusicSystem
     midiTrackCurrentTime: number
     midiTrackDuration: number
-    onChangeMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeMidiInput: onChangeMidiInput
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: (instrument: Instrument) => void
+    onPlay: (midiTrackCurrentTime: number) => void
+    onRewind: (midiTrackCurrentTime: number) => void
+    onPause: () => void
 }
 
 export function Settings({
@@ -30,11 +32,13 @@ export function Settings({
     musicSystem,
     midiTrackCurrentTime,
     midiTrackDuration,
-    onChangeMidiTrackCurrentTime,
     onChangeMusicSystem,
     onChangeMidiInput,
     onChangeAppMode,
     onChangeInstrument,
+    onPlay,
+    onRewind,
+    onPause,
 }: SettingsProps) {
     return (
         <div className="settings">
@@ -43,7 +47,9 @@ export function Settings({
                 toggleSound={toggleSound}
                 midiTrackCurrentTime={midiTrackCurrentTime}
                 midiTrackDuration={midiTrackDuration}
-                onChangeMidiTrackCurrentTime={onChangeMidiTrackCurrentTime}
+                onPlay={onPlay}
+                onRewind={onRewind}
+                onPause={onPause}
             />
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />

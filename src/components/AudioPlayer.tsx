@@ -5,11 +5,13 @@ import React from 'react'
 import { msToMinAndSec } from '../utils'
 
 interface AudioPlayerProps {
-    onChangeMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
     midiTrackCurrentTime: number
     midiTrackDuration: number
     isMute: boolean
     toggleSound: (isSoundOn: boolean) => void
+    onPlay: (midiTrackCurrentTime: number) => void
+    onRewind: (midiTrackCurrentTime: number) => void
+    onPause: () => void
 }
 
 export function AudioPlayer({
@@ -17,24 +19,39 @@ export function AudioPlayer({
     midiTrackDuration,
     isMute,
     toggleSound,
-    onChangeMidiTrackCurrentTime,
+    onPlay,
+    onRewind,
+    onPause,
 }: AudioPlayerProps) {
     const currentTime = msToMinAndSec(midiTrackCurrentTime)
     const totalTime = msToMinAndSec(midiTrackDuration)
+
+    function handleChange(midiTrackNextTime: number) {
+        if (midiTrackNextTime < midiTrackCurrentTime) {
+            onRewind(midiTrackNextTime)
+        } else {
+            onPlay(midiTrackNextTime)
+        }
+    }
+
+    function handlePause() {
+        onPause()
+    }
 
     return (
         <>
             {currentTime}
             <RangeSlider
-                onChange={onChangeMidiTrackCurrentTime}
                 value={midiTrackCurrentTime}
                 max={midiTrackDuration}
+                onChange={handleChange}
             />
             {totalTime}
             <SoundController isMute={isMute} toggleSound={toggleSound} />
             <PlayerController
-                setMidiTrackCurrentTime={onChangeMidiTrackCurrentTime}
+                onPlay={onPlay}
                 midiTrackDuration={midiTrackDuration}
+                onPause={handlePause}
             />
         </>
     )
