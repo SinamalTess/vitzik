@@ -4,7 +4,6 @@ import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
 import { ActiveNote } from '../App'
-import { usePrevious } from '../hooks'
 import { AudioPlayerState } from './AudioPlayer'
 
 export interface MidiTrackInfos {
@@ -62,7 +61,6 @@ export function Visualizer({
     const visualizerRef = useRef<HTMLDivElement>(null)
     const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[]>([])
     const [indexCanvas, setIndexCanvas] = useState<number>(0)
-    const prevIndexCanvas = usePrevious(indexCanvas) ?? 0
 
     const width = visualizerRef?.current?.clientWidth ?? 0
     const height = visualizerRef?.current?.clientHeight ?? 0
@@ -140,7 +138,6 @@ export function Visualizer({
             const heightDuration = nbBeatsPassed * heightPerBeat
             const nbCanvasPassed = heightDuration / height
             const index = Math.floor(heightDuration / height)
-            const isIndexEven = isEven(index)
             const percentageTop = Math.round((nbCanvasPassed % 1) * 100)
             const percentageFirstCanvas = `-${100 - percentageTop}%`
             const percentageSecondCanvas = `${percentageTop}%`
