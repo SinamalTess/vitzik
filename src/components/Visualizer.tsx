@@ -64,6 +64,7 @@ export function Visualizer({
     const width = visualizerRef?.current?.clientWidth ?? 0
     const height = visualizerRef?.current?.clientHeight ?? 0
     const canvasChildren = visualizerRef?.current?.childNodes ?? []
+    const isIndexEven = isEven(indexCanvas)
 
     useEffect(() => {
         if (!midiTrackInfos) return
@@ -76,47 +77,56 @@ export function Visualizer({
     }, [trackPosition])
 
     useEffect(() => {
-        const isIndexEven = isEven(indexCanvas)
         if (indexCanvas === 0) {
-            canvasChildren.forEach((child, index) => {
-                if (isHTMLCanvasElement(child)) {
-                    child.width = width
-                    child.height = height
-                    const ctx = child.getContext('2d')
-
-                    if (ctx) {
-                        ctx.fillStyle = color
-                        drawNotes(ctx, notesCoordinates, index)
-                    }
-                }
-            })
+            drawInitialState()
         } else if (prevIndexCanvas < indexCanvas) {
-            const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
-            const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
-            canvasChildren.forEach((child, index) => {
-                if (isHTMLCanvasElement(child)) {
-                    const ctx = child.getContext('2d')
-                    if (ctx) {
-                        ctx.clearRect(0, 0, width, height)
-                        drawNotes(ctx, notesCoordinates, index === 0 ? canvas0 : canvas1)
-                    }
-                }
-            })
+            drawBackward()
         } else {
-            const canvasToRedraw = isIndexEven ? 1 : 0
-            if (
-                canvasChildren[canvasToRedraw] &&
-                isHTMLCanvasElement(canvasChildren[canvasToRedraw])
-            ) {
-                // @ts-ignore
-                const ctx = canvasChildren[canvasToRedraw].getContext('2d')
-                if (ctx) {
-                    ctx.clearRect(0, 0, width, height)
-                    drawNotes(ctx, notesCoordinates, indexCanvas + 1)
-                }
-            }
+            drawForward()
         }
     }, [indexCanvas, notesCoordinates])
+
+    function drawInitialState() {
+        canvasChildren.forEach((child, index) => {
+            if (isHTMLCanvasElement(child)) {
+                child.width = width
+                child.height = height
+                const ctx = child.getContext('2d')
+
+                if (ctx) {
+                    ctx.fillStyle = color
+                    drawNotes(ctx, notesCoordinates, index)
+                }
+            }
+        })
+    }
+
+    function drawForward() {
+        const canvasToRedraw = isIndexEven ? 1 : 0
+        if (canvasChildren[canvasToRedraw] && isHTMLCanvasElement(canvasChildren[canvasToRedraw])) {
+            // @ts-ignore
+            const ctx = canvasChildren[canvasToRedraw].getContext('2d')
+            if (ctx) {
+                ctx.clearRect(0, 0, width, height)
+                drawNotes(ctx, notesCoordinates, indexCanvas + 1)
+            }
+        }
+    }
+
+    function drawBackward() {
+        const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
+        const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
+        canvasChildren.forEach((child, i) => {
+            if (isHTMLCanvasElement(child)) {
+                const ctx = child.getContext('2d')
+
+                if (ctx) {
+                    ctx.clearRect(0, 0, width, height)
+                    drawNotes(ctx, notesCoordinates, i === 0 ? canvas0 : canvas1)
+                }
+            }
+        })
+    }
 
     function calcTop(canvasIndex: number): string {
         if (midiTrackInfos && visualizerRef.current) {
