@@ -4,7 +4,7 @@ import { MidiInputSelector, onChangeMidiInput } from './MidiInputSelector'
 import './Settings.scss'
 import { Instrument, MusicSystem } from '../types'
 import { AppMode, ModeSelector } from './ModeSelector'
-import { AudioPlayer } from './AudioPlayer'
+import { AudioPlayer, AudioPlayerState } from './AudioPlayer'
 import { InstrumentSelector } from './InstrumentSelector'
 
 interface SettingsProps {
@@ -20,10 +20,8 @@ interface SettingsProps {
     onChangeMidiInput: onChangeMidiInput
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: (instrument: Instrument) => void
-    onPlay: (midiTrackCurrentTime: number) => void
-    onRewind: (midiTrackCurrentTime: number) => void
-    onSeeking: (midiTrackCurrentTime: number) => void
-    onPause: () => void
+    onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
+    onChangeMidiTrackCurrentTime: (midiTrackCurrentTime: number) => void
 }
 
 export function Settings({
@@ -39,10 +37,8 @@ export function Settings({
     onChangeMidiInput,
     onChangeAppMode,
     onChangeInstrument,
-    onPlay,
-    onRewind,
-    onPause,
-    onSeeking,
+    onChangeAudioPlayerState,
+    onChangeMidiTrackCurrentTime,
 }: SettingsProps) {
     return (
         <div className="settings">
@@ -52,10 +48,8 @@ export function Settings({
                     toggleSound={toggleSound}
                     midiTrackCurrentTime={midiTrackCurrentTime}
                     midiTrackDuration={midiTrackDuration}
-                    onPlay={onPlay}
-                    onRewind={onRewind}
-                    onPause={onPause}
-                    onSeeking={onSeeking}
+                    onChangeAudioPlayerState={onChangeAudioPlayerState}
+                    onChangeMidiTrackCurrentTime={onChangeMidiTrackCurrentTime}
                 />
             ) : null}
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />

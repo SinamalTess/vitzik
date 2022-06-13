@@ -3,9 +3,10 @@ import { convertCanvasRectToRect, getNotesCoordinates, isEven, isOverlapping } f
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
-import { ActiveNote, AudioPlayerState } from '../App'
+import { ActiveNote } from '../App'
 import { usePrevious } from '../hooks'
 import { func } from 'prop-types'
+import { AudioPlayerState } from './AudioPlayer'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number

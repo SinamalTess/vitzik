@@ -8,6 +8,7 @@ import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { func } from 'prop-types'
+import { AudioPlayerState } from './components/AudioPlayer'
 
 export interface ActiveNote {
     name: AlphabeticalNote
@@ -16,8 +17,6 @@ export interface ActiveNote {
     duration?: number
     key: number
 }
-
-export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused' | 'seeking'
 
 //TODO: add error boundary
 //TODO: check accessibility
@@ -104,25 +103,6 @@ function App() {
         setMidiTrackCurrentTime(0)
     }
 
-    function handleRewind(midiTrackCurrentTime: number) {
-        setAudioPlayerState('rewinding')
-        setMidiTrackCurrentTime(midiTrackCurrentTime)
-    }
-
-    function handlePlay(midiTrackCurrentTime: number) {
-        setAudioPlayerState('playing')
-        setMidiTrackCurrentTime(midiTrackCurrentTime)
-    }
-
-    function handlePause() {
-        setAudioPlayerState('paused')
-    }
-
-    function handleSeeking(midiTrackCurrentTime: number) {
-        setAudioPlayerState('seeking')
-        setMidiTrackCurrentTime(midiTrackCurrentTime)
-    }
-
     return (
         <div className="container">
             <div className="item">
@@ -139,10 +119,8 @@ function App() {
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstrument}
-                    onPlay={handlePlay}
-                    onRewind={handleRewind}
-                    onPause={handlePause}
-                    onSeeking={handleSeeking}
+                    onChangeAudioPlayerState={setAudioPlayerState}
+                    onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                 />
             </div>
             <div className="item">

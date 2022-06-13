@@ -4,15 +4,15 @@ import { PlayerController } from './PlayerController'
 import React from 'react'
 import { msToMinAndSec } from '../utils'
 
+export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused' | 'seeking'
+
 interface AudioPlayerProps {
     midiTrackCurrentTime: number
     midiTrackDuration: number
     isMute: boolean
     toggleSound: (isSoundOn: boolean) => void
-    onPlay: (midiTrackCurrentTime: number) => void
-    onRewind: (midiTrackCurrentTime: number) => void
-    onPause: () => void
-    onSeeking: (midiTrackCurrentTime: number) => void
+    onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
+    onChangeMidiTrackCurrentTime: (midiTrackCurrentTime: number) => void
 }
 
 export function AudioPlayer({
@@ -20,24 +20,37 @@ export function AudioPlayer({
     midiTrackDuration,
     isMute,
     toggleSound,
-    onPlay,
-    onRewind,
-    onPause,
-    onSeeking,
+    onChangeAudioPlayerState,
+    onChangeMidiTrackCurrentTime,
 }: AudioPlayerProps) {
     const currentTime = msToMinAndSec(midiTrackCurrentTime)
     const totalTime = msToMinAndSec(midiTrackDuration)
 
     function handleChange(midiTrackNextTime: number) {
         if (midiTrackNextTime < midiTrackCurrentTime) {
-            onRewind(midiTrackNextTime)
+            handleRewind(midiTrackNextTime)
         } else {
-            onSeeking(midiTrackNextTime)
+            handleSeeking(midiTrackNextTime)
         }
     }
 
+    function handleRewind(midiTrackCurrentTime: number) {
+        onChangeAudioPlayerState('rewinding')
+        onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
+    }
+
+    function handlePlay(midiTrackCurrentTime: number) {
+        onChangeAudioPlayerState('playing')
+        onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
+    }
+
     function handlePause() {
-        onPause()
+        onChangeAudioPlayerState('paused')
+    }
+
+    function handleSeeking(midiTrackCurrentTime: number) {
+        onChangeAudioPlayerState('seeking')
+        onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
     }
 
     return (
@@ -51,7 +64,7 @@ export function AudioPlayer({
             {totalTime}
             <SoundController isMute={isMute} toggleSound={toggleSound} />
             <PlayerController
-                onPlay={onPlay}
+                onPlay={handlePlay}
                 midiTrackDuration={midiTrackDuration}
                 onPause={handlePause}
             />

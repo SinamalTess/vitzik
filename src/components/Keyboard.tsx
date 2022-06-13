@@ -11,7 +11,8 @@ import {
     noteToKey,
     translateNote,
 } from '../utils'
-import { ActiveNote, AudioPlayerState } from '../App'
+import { ActiveNote } from '../App'
+import { AudioPlayerState } from './AudioPlayer'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
