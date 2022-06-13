@@ -21,6 +21,7 @@ export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused' | 
 
 //TODO: add error boundary
 //TODO: check accessibility
+//TODO: create error on unused imports
 
 function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
@@ -38,6 +39,7 @@ function App() {
     const midiTrackNotes = midiInfos?.notes ?? []
     const midiTrackDuration = midiInfos?.trackDuration ?? 0
     const midiTrackInfos = midiInfos
+    const isMidiImported = midiTrack !== null
 
     useEffect(() => {
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
@@ -128,6 +130,7 @@ function App() {
                     appMode={appMode}
                     toggleSound={setIsMute}
                     isMute={isMute}
+                    isMidiImported={isMidiImported}
                     midiInputs={midiInputs}
                     musicSystem={musicSystem}
                     midiTrackCurrentTime={midiTrackCurrentTime}

@@ -9,6 +9,7 @@ import { InstrumentSelector } from './InstrumentSelector'
 
 interface SettingsProps {
     isMute: boolean
+    isMidiImported: boolean
     toggleSound: (isSoundOn: boolean) => void
     midiInputs: MIDIInput[]
     appMode: AppMode
@@ -27,6 +28,7 @@ interface SettingsProps {
 
 export function Settings({
     isMute,
+    isMidiImported,
     toggleSound,
     midiInputs,
     appMode,
@@ -44,16 +46,18 @@ export function Settings({
 }: SettingsProps) {
     return (
         <div className="settings">
-            <AudioPlayer
-                isMute={isMute}
-                toggleSound={toggleSound}
-                midiTrackCurrentTime={midiTrackCurrentTime}
-                midiTrackDuration={midiTrackDuration}
-                onPlay={onPlay}
-                onRewind={onRewind}
-                onPause={onPause}
-                onSeeking={onSeeking}
-            />
+            {isMidiImported ? (
+                <AudioPlayer
+                    isMute={isMute}
+                    toggleSound={toggleSound}
+                    midiTrackCurrentTime={midiTrackCurrentTime}
+                    midiTrackDuration={midiTrackDuration}
+                    onPlay={onPlay}
+                    onRewind={onRewind}
+                    onPause={onPause}
+                    onSeeking={onSeeking}
+                />
+            ) : null}
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector midiInputs={midiInputs} onChange={onChangeMidiInput} />
