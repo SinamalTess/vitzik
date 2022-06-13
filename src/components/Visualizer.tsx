@@ -1,10 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { convertCanvasRectToRect, getNotesCoordinates, isEven, isOverlapping } from '../utils'
+import {
+    convertCanvasRectToRect,
+    getNotesCoordinates,
+    isEven,
+    isOverlapping,
+    roundRect,
+} from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import isEqual from 'lodash.isequal'
 import { ActiveNote } from '../App'
 import { AudioPlayerState } from './AudioPlayer'
+
+//TODO: draw vertical lines to see notes better
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
@@ -43,7 +51,7 @@ function drawNotes(
 
         if (isNoteInCanvas) {
             let yComputed = y - canvasIndex * canvasOffset
-            ctx.fillRect(x, yComputed, w, h)
+            roundRect(ctx, x, yComputed, w, h, 5, true, false)
         }
     })
 }

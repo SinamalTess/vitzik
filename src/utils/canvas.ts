@@ -10,6 +10,13 @@ import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
 
+interface Radius {
+    tl: number
+    tr: number
+    br: number
+    bl: number
+}
+
 export const isContainedBy = (rectA: Rectangle, rectB: Rectangle): boolean =>
     rectA.x1 <= rectB.x1 && rectA.y1 <= rectB.y1 && rectA.x2 >= rectB.x2 && rectA.y2 >= rectB.y2
 
@@ -30,6 +37,42 @@ export const isPointInRect = (
         return point.x > rect.x1 && point.x < rect.x2 && point.y > rect.y1 && point.y < rect.y2
 
     return point.x >= rect.x1 && point.x <= rect.x2 && point.y >= rect.y1 && point.y <= rect.y2
+}
+
+export const roundRect = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    radius: number | { tl?: number; tr?: number; br?: number; bl?: number } = 5,
+    fill = false,
+    stroke = true
+) => {
+    // enforce type instead of using a let variable
+    let normalizedRadius = { tl: 0, tr: 0, br: 0, bl: 0 }
+    if (typeof radius === 'number') {
+        normalizedRadius = { tl: radius, tr: radius, br: radius, bl: radius }
+    } else {
+        normalizedRadius = { ...normalizedRadius, ...radius }
+    }
+    ctx.beginPath()
+    ctx.moveTo(x + normalizedRadius.tl, y)
+    ctx.lineTo(x + w - normalizedRadius.tr, y)
+    ctx.quadraticCurveTo(x + w, y, x + w, y + normalizedRadius.tr)
+    ctx.lineTo(x + w, y + h - normalizedRadius.br)
+    ctx.quadraticCurveTo(x + w, y + h, x + w - normalizedRadius.br, y + h)
+    ctx.lineTo(x + normalizedRadius.bl, y + h)
+    ctx.quadraticCurveTo(x, y + h, x, y + h - normalizedRadius.bl)
+    ctx.lineTo(x, y + normalizedRadius.tl)
+    ctx.quadraticCurveTo(x, y, x + normalizedRadius.tl, y)
+    ctx.closePath()
+    if (fill) {
+        ctx.fill()
+    }
+    if (stroke) {
+        ctx.stroke()
+    }
 }
 
 export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
