@@ -59,6 +59,7 @@ export function Visualizer({
     const visualizerRef = useRef<HTMLDivElement>(null)
     const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[]>([])
     const [indexCanvas, setIndexCanvas] = useState<number>(0)
+    const prevIndexCanvas = usePrevious(indexCanvas) ?? 0
 
     const width = visualizerRef?.current?.clientWidth ?? 0
     const height = visualizerRef?.current?.clientHeight ?? 0
@@ -75,6 +76,7 @@ export function Visualizer({
     }, [trackPosition])
 
     useEffect(() => {
+        const isIndexEven = isEven(indexCanvas)
         if (indexCanvas === 0) {
             canvasChildren.forEach((child, index) => {
                 if (isHTMLCanvasElement(child)) {
@@ -88,8 +90,19 @@ export function Visualizer({
                     }
                 }
             })
+        } else if (prevIndexCanvas < indexCanvas) {
+            const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
+            const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
+            canvasChildren.forEach((child, index) => {
+                if (isHTMLCanvasElement(child)) {
+                    const ctx = child.getContext('2d')
+                    if (ctx) {
+                        ctx.clearRect(0, 0, width, height)
+                        drawNotes(ctx, notesCoordinates, index === 0 ? canvas0 : canvas1)
+                    }
+                }
+            })
         } else {
-            const isIndexEven = isEven(indexCanvas)
             const canvasToRedraw = isIndexEven ? 1 : 0
             if (
                 canvasChildren[canvasToRedraw] &&
