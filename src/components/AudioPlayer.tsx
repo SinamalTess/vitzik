@@ -8,14 +8,14 @@ interface AudioPlayerProps {
     onChangeMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
     midiTrackCurrentTime: number
     midiTrackDuration: number
-    isSoundOn: boolean
+    isMute: boolean
     toggleSound: (isSoundOn: boolean) => void
 }
 
 export function AudioPlayer({
     midiTrackCurrentTime,
     midiTrackDuration,
-    isSoundOn,
+    isMute,
     toggleSound,
     onChangeMidiTrackCurrentTime,
 }: AudioPlayerProps) {
@@ -31,7 +31,7 @@ export function AudioPlayer({
                 max={midiTrackDuration}
             />
             {totalTime}
-            <SoundController isSoundOn={isSoundOn} toggleSound={toggleSound} />
+            <SoundController isMute={isMute} toggleSound={toggleSound} />
             <PlayerController
                 setMidiTrackCurrentTime={onChangeMidiTrackCurrentTime}
                 midiTrackDuration={midiTrackDuration}

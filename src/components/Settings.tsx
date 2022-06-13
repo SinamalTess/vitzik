@@ -8,7 +8,7 @@ import { AudioPlayer } from './AudioPlayer'
 import { InstrumentSelector } from './InstrumentSelector'
 
 interface SettingsProps {
-    isSoundOn: boolean
+    isMute: boolean
     toggleSound: (isSoundOn: boolean) => void
     midiInputs: MIDIInput[]
     appMode: AppMode
@@ -23,7 +23,7 @@ interface SettingsProps {
 }
 
 export function Settings({
-    isSoundOn,
+    isMute,
     toggleSound,
     midiInputs,
     appMode,
@@ -39,7 +39,7 @@ export function Settings({
     return (
         <div className="settings">
             <AudioPlayer
-                isSoundOn={isSoundOn}
+                isMute={isMute}
                 toggleSound={toggleSound}
                 midiTrackCurrentTime={midiTrackCurrentTime}
                 midiTrackDuration={midiTrackDuration}

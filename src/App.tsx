@@ -23,7 +23,7 @@ function App() {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
-    const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
+    const [isMute, setIsMute] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [midiTrackCurrentTime, setMidiTrackCurrentTime] = useState<number>(0)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
@@ -103,8 +103,8 @@ function App() {
             <div className="item">
                 <Settings
                     appMode={appMode}
-                    toggleSound={setIsSoundOn}
-                    isSoundOn={isSoundOn}
+                    toggleSound={setIsMute}
+                    isMute={isMute}
                     midiInputs={midiInputs}
                     musicSystem={musicSystem}
                     midiTrackCurrentTime={midiTrackCurrentTime}
@@ -134,7 +134,7 @@ function App() {
                     instrument={instrument}
                     midiTrackCurrentTime={midiTrackCurrentTime}
                     activeKeys={activeNotes}
-                    isMute={!isSoundOn}
+                    isMute={!isMute}
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
                 />
