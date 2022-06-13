@@ -1,6 +1,6 @@
 @import '../style/vars';
 
-.piano {
+.keyboard {
     padding: 0;
     margin: 0;
     height: 100%;
@@ -30,7 +30,7 @@
         }
     }
 
-    .piano__whitekey {
+    .keyboard__whitekey {
         height: 100%;
         z-index: 1;
         border-left: 1px solid #bbb;
@@ -44,7 +44,7 @@
         }
     }
 
-    .piano__blackkey {
+    .keyboard__blackkey {
         height: 50%;
         z-index: 2;
         border-radius: 0 0 3px 3px;

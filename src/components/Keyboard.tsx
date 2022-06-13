@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import './Piano.scss'
+import './Keyboard.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote, Instrument, MusicSystem } from '../types'
 import Soundfont from 'soundfont-player'
@@ -23,7 +23,7 @@ interface PianoProps {
     instrument: Instrument
 }
 
-export function Piano({
+export function Keyboard({
     activeKeys,
     isMute,
     musicSystem,
@@ -89,11 +89,11 @@ export function Piano({
     }
 
     return (
-        <ul className="piano">
+        <ul className="keyboard">
             {keys.map((key, index) => {
                 const isBlackKey = key.includes('#')
                 const isSpecialKey = checkIsSpecialKey(key)
-                const keyClassName = isBlackKey ? 'piano__blackkey' : 'piano__whitekey'
+                const keyClassName = isBlackKey ? 'keyboard__blackkey' : 'keyboard__whitekey'
                 const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
                 const margin = isBlackKey || !isSpecialKey ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
                 const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`

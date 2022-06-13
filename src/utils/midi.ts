@@ -1,7 +1,7 @@
 import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
 import { MidiTrackInfos } from '../components/Visualizer'
 import { Instrument, MidiJsonNote } from '../types'
-import { instrument, InstrumentName } from 'soundfont-player'
+import { InstrumentName } from 'soundfont-player'
 
 // TODO: we should use only one track here
 export const midiJsonToNotes = (midiJson: IMidiFile): MidiJsonNote[] => {

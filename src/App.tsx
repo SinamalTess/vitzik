@@ -1,7 +1,7 @@
 import './App.scss'
 import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos, keyToNote } from './utils'
-import { Piano } from './components/Piano'
+import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
@@ -28,7 +28,7 @@ function App() {
     const [trackPosition, setTrackPosition] = useState<number>(0)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
-    const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Piano')
+    const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
 
     const midiInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
     const midiTrackNotes = midiInfos?.notes ?? []
@@ -125,18 +125,18 @@ function App() {
                     midiTrackNotes={midiTrackNotes}
                     midiTrackTitle={midiTrackTitle}
                     midiTrackInfos={midiTrackInfos}
-                    onMidiImport={handleMidiImport}
                     activeNotes={activeNotes}
+                    onMidiImport={handleMidiImport}
                 />
             </div>
             <div className="item">
-                <Piano
+                <Keyboard
                     instrument={instrument}
                     trackPosition={trackPosition}
                     activeKeys={activeNotes}
                     isMute={!isSoundOn}
-                    onKeyPressed={setActiveNotes}
                     musicSystem={musicSystem}
+                    onKeyPressed={setActiveNotes}
                 />
             </div>
         </div>
