@@ -21,6 +21,7 @@ interface SettingsProps {
     onChangeInstrument: (instrument: Instrument) => void
     onPlay: (midiTrackCurrentTime: number) => void
     onRewind: (midiTrackCurrentTime: number) => void
+    onSeeking: (midiTrackCurrentTime: number) => void
     onPause: () => void
 }
 
@@ -39,6 +40,7 @@ export function Settings({
     onPlay,
     onRewind,
     onPause,
+    onSeeking,
 }: SettingsProps) {
     return (
         <div className="settings">
@@ -50,6 +52,7 @@ export function Settings({
                 onPlay={onPlay}
                 onRewind={onRewind}
                 onPause={onPause}
+                onSeeking={onSeeking}
             />
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />

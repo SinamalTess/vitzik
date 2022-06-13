@@ -12,6 +12,7 @@ interface AudioPlayerProps {
     onPlay: (midiTrackCurrentTime: number) => void
     onRewind: (midiTrackCurrentTime: number) => void
     onPause: () => void
+    onSeeking: (midiTrackCurrentTime: number) => void
 }
 
 export function AudioPlayer({
@@ -22,6 +23,7 @@ export function AudioPlayer({
     onPlay,
     onRewind,
     onPause,
+    onSeeking,
 }: AudioPlayerProps) {
     const currentTime = msToMinAndSec(midiTrackCurrentTime)
     const totalTime = msToMinAndSec(midiTrackDuration)
@@ -30,7 +32,7 @@ export function AudioPlayer({
         if (midiTrackNextTime < midiTrackCurrentTime) {
             onRewind(midiTrackNextTime)
         } else {
-            onPlay(midiTrackNextTime)
+            onSeeking(midiTrackNextTime)
         }
     }
 

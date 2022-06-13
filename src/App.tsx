@@ -17,7 +17,7 @@ export interface ActiveNote {
     key: number
 }
 
-export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused'
+export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused' | 'seeking'
 
 //TODO: add error boundary
 //TODO: check accessibility
@@ -116,6 +116,11 @@ function App() {
         setAudioPlayerState('paused')
     }
 
+    function handleSeeking(midiTrackCurrentTime: number) {
+        setAudioPlayerState('seeking')
+        setMidiTrackCurrentTime(midiTrackCurrentTime)
+    }
+
     return (
         <div className="container">
             <div className="item">
@@ -134,6 +139,7 @@ function App() {
                     onPlay={handlePlay}
                     onRewind={handleRewind}
                     onPause={handlePause}
+                    onSeeking={handleSeeking}
                 />
             </div>
             <div className="item">
@@ -147,6 +153,7 @@ function App() {
                     midiTrackInfos={midiTrackInfos}
                     activeNotes={activeNotes}
                     onMidiImport={handleMidiImport}
+                    audioPlayerState={audioPlayerState}
                 />
             </div>
             <div className="item">

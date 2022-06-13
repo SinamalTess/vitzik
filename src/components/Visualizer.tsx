@@ -5,6 +5,7 @@ import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import { isEqual } from 'lodash'
 import { ActiveNote, AudioPlayerState } from '../App'
 import { usePrevious } from '../hooks'
+import { func } from 'prop-types'
 
 export interface MidiTrackInfos {
     ticksPerBeat: number
@@ -20,6 +21,7 @@ interface VisualizerProps {
     midiTrackInfos: MidiTrackInfos | null
     midiTrackCurrentTime: number
     heightPerBeat?: number
+    audioPlayerState: AudioPlayerState
     setActiveNotes: (notes: ActiveNote[]) => void
 }
 
@@ -54,6 +56,7 @@ export function Visualizer({
     midiTrackCurrentTime,
     heightPerBeat = 100,
     midiTrackInfos,
+    audioPlayerState,
     setActiveNotes,
 }: VisualizerProps) {
     const visualizerRef = useRef<HTMLDivElement>(null)
@@ -79,12 +82,14 @@ export function Visualizer({
     useEffect(() => {
         if (indexCanvas === 0) {
             drawInitialState()
-        } else if (prevIndexCanvas < indexCanvas) {
-            drawBackward()
-        } else {
+        } else if (audioPlayerState === 'rewinding') {
+            reDrawCurrentState()
+        } else if (audioPlayerState === 'playing') {
             drawForward()
+        } else if (audioPlayerState === 'seeking') {
+            reDrawCurrentState()
         }
-    }, [indexCanvas, notesCoordinates])
+    }, [indexCanvas, notesCoordinates, audioPlayerState])
 
     function drawInitialState() {
         canvasChildren.forEach((child, index) => {
@@ -113,7 +118,7 @@ export function Visualizer({
         }
     }
 
-    function drawBackward() {
+    function reDrawCurrentState() {
         const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
         const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
         canvasChildren.forEach((child, i) => {

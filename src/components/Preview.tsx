@@ -17,6 +17,7 @@ interface PreviewProps {
     onMidiImport: OnMidiImport
     setActiveNotes: (notes: ActiveNote[]) => void
     activeNotes: ActiveNote[]
+    audioPlayerState: AudioPlayerState
 }
 
 export function Preview({
@@ -29,6 +30,7 @@ export function Preview({
     onMidiImport,
     setActiveNotes,
     activeNotes,
+    audioPlayerState,
 }: PreviewProps) {
     const staffNotes = notes.map((note) => note.name)
     return appMode === 'learning' ? (
@@ -43,6 +45,7 @@ export function Preview({
                 midiTrackInfos={midiTrackInfos}
                 setActiveNotes={setActiveNotes}
                 activeNotes={activeNotes}
+                audioPlayerState={audioPlayerState}
             />
         </>
     )
