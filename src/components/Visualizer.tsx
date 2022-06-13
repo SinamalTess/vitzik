@@ -18,7 +18,7 @@ interface VisualizerProps {
     notes: MidiJsonNote[]
     color?: string
     midiTrackInfos: MidiTrackInfos | null
-    trackPosition: number
+    midiTrackCurrentTime: number
     heightPerBeat?: number
     setActiveNotes: (notes: ActiveNote[]) => void
 }
@@ -51,7 +51,7 @@ export function Visualizer({
     activeNotes,
     notes,
     color = '#00E2DC',
-    trackPosition,
+    midiTrackCurrentTime,
     heightPerBeat = 100,
     midiTrackInfos,
     setActiveNotes,
@@ -73,8 +73,8 @@ export function Visualizer({
     }, [midiTrackInfos])
 
     useEffect(() => {
-        getActiveNotes(trackPosition)
-    }, [trackPosition])
+        getActiveNotes(midiTrackCurrentTime)
+    }, [midiTrackCurrentTime])
 
     useEffect(() => {
         if (indexCanvas === 0) {
@@ -131,7 +131,7 @@ export function Visualizer({
     function calcTop(canvasIndex: number): string {
         if (midiTrackInfos && visualizerRef.current) {
             const { msPerBeat } = midiTrackInfos
-            const nbBeatsPassed = trackPosition / msPerBeat
+            const nbBeatsPassed = midiTrackCurrentTime / msPerBeat
             const heightDuration = nbBeatsPassed * heightPerBeat
             const nbCanvasPassed = heightDuration / height
             const index = Math.floor(heightDuration / height)
@@ -151,10 +151,10 @@ export function Visualizer({
         return '0px'
     }
 
-    function getActiveNotes(trackPosition: number) {
+    function getActiveNotes(midiTrackCurrentTime: number) {
         if (!midiTrackInfos) return
 
-        const heightDuration = (trackPosition / midiTrackInfos.msPerBeat) * heightPerBeat
+        const heightDuration = (midiTrackCurrentTime / midiTrackInfos.msPerBeat) * heightPerBeat
         const activeKeys = notesCoordinates
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
             .map(({ name, velocity, id, duration, key }) => ({

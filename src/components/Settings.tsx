@@ -13,9 +13,9 @@ interface SettingsProps {
     midiInputs: MIDIInput[]
     appMode: AppMode
     musicSystem: MusicSystem
-    setTrackPosition: React.Dispatch<React.SetStateAction<number>>
-    trackPosition: number
+    midiTrackCurrentTime: number
     midiTrackDuration: number
+    onChangeMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeMidiInput: onChangeMidiInput
     onChangeAppMode: (mode: AppMode) => void
@@ -28,9 +28,9 @@ export function Settings({
     midiInputs,
     appMode,
     musicSystem,
-    setTrackPosition,
-    trackPosition,
+    midiTrackCurrentTime,
     midiTrackDuration,
+    onChangeMidiTrackCurrentTime,
     onChangeMusicSystem,
     onChangeMidiInput,
     onChangeAppMode,
@@ -41,9 +41,9 @@ export function Settings({
             <AudioPlayer
                 isSoundOn={isSoundOn}
                 toggleSound={toggleSound}
-                setTrackPosition={setTrackPosition}
-                trackPosition={trackPosition}
+                midiTrackCurrentTime={midiTrackCurrentTime}
                 midiTrackDuration={midiTrackDuration}
+                onChangeMidiTrackCurrentTime={onChangeMidiTrackCurrentTime}
             />
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />

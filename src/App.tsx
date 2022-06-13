@@ -25,7 +25,7 @@ function App() {
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [isSoundOn, setIsSoundOn] = useState<boolean>(true)
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [trackPosition, setTrackPosition] = useState<number>(0)
+    const [midiTrackCurrentTime, setMidiTrackCurrentTime] = useState<number>(0)
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
@@ -95,7 +95,7 @@ function App() {
         setMidiTrackTitle(title)
         setMidiTrack(midiJSON)
         console.log(midiJSON)
-        setTrackPosition(0)
+        setMidiTrackCurrentTime(0)
     }
 
     return (
@@ -107,9 +107,9 @@ function App() {
                     isSoundOn={isSoundOn}
                     midiInputs={midiInputs}
                     musicSystem={musicSystem}
-                    trackPosition={trackPosition}
-                    setTrackPosition={setTrackPosition}
+                    midiTrackCurrentTime={midiTrackCurrentTime}
                     midiTrackDuration={midiTrackDuration}
+                    onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                     onChangeMidiInput={handleChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
@@ -121,7 +121,7 @@ function App() {
                     setActiveNotes={setActiveNotes}
                     appMode={appMode}
                     notes={activeNotes}
-                    trackPosition={trackPosition}
+                    midiTrackCurrentTime={midiTrackCurrentTime}
                     midiTrackNotes={midiTrackNotes}
                     midiTrackTitle={midiTrackTitle}
                     midiTrackInfos={midiTrackInfos}
@@ -132,7 +132,7 @@ function App() {
             <div className="item">
                 <Keyboard
                     instrument={instrument}
-                    trackPosition={trackPosition}
+                    midiTrackCurrentTime={midiTrackCurrentTime}
                     activeKeys={activeNotes}
                     isMute={!isSoundOn}
                     musicSystem={musicSystem}

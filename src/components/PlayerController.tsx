@@ -3,23 +3,26 @@ import { Button } from './generics/Button'
 
 interface PlayerControllerProps {
     midiTrackDuration: number
-    setTrackPosition: React.Dispatch<React.SetStateAction<number>>
+    setMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
 }
 
-export function PlayerController({ setTrackPosition, midiTrackDuration }: PlayerControllerProps) {
+export function PlayerController({
+    setMidiTrackCurrentTime,
+    midiTrackDuration,
+}: PlayerControllerProps) {
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
     useEffect(() => {
         let timer: NodeJS.Timeout | undefined
         if (isPlaying) {
             timer = setInterval(() => {
-                setTrackPosition((trackPosition: number) => {
-                    if (trackPosition >= midiTrackDuration) {
+                setMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
+                    if (midiTrackCurrentTime >= midiTrackDuration) {
                         clearInterval(timer)
                         setIsPlaying(false)
                         return 0
                     }
-                    return trackPosition + 10
+                    return midiTrackCurrentTime + 10
                 })
             }, 10)
         }

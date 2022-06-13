@@ -18,7 +18,7 @@ interface PianoProps {
     activeKeys: ActiveNote[]
     isMute: boolean
     musicSystem: MusicSystem
-    trackPosition: number
+    midiTrackCurrentTime: number
     onKeyPressed: (note: ActiveNote[]) => void
     instrument: Instrument
 }
@@ -27,14 +27,14 @@ export function Keyboard({
     activeKeys,
     isMute,
     musicSystem,
-    trackPosition,
+    midiTrackCurrentTime,
     onKeyPressed,
     instrument,
 }: PianoProps) {
     const keys = NOTES.alphabetical
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const notesAlreadyPlayed: React.MutableRefObject<any[]> = useRef([])
-    const prevTrackPosition = usePrevious(trackPosition)
+    const prevmidiTrackCurrentTime = usePrevious(midiTrackCurrentTime)
 
     useEffect(() => {
         const ac = new AudioContext()
@@ -69,10 +69,10 @@ export function Keyboard({
 
     useEffect(() => {
         // if the user rewinds track we clear the notes
-        if (prevTrackPosition && prevTrackPosition >= trackPosition) {
+        if (prevmidiTrackCurrentTime && prevmidiTrackCurrentTime >= midiTrackCurrentTime) {
             notesAlreadyPlayed.current = []
         }
-    }, [trackPosition])
+    }, [midiTrackCurrentTime])
 
     function handleMouseDown(note: AlphabeticalNote) {
         onKeyPressed([

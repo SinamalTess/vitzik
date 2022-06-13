@@ -10,7 +10,7 @@ import { ActiveNote } from '../App'
 interface PreviewProps {
     appMode: AppMode
     notes: ActiveNote[]
-    trackPosition: number
+    midiTrackCurrentTime: number
     midiTrackNotes: MidiJsonNote[]
     midiTrackTitle: string
     midiTrackInfos: MidiTrackInfos | null
@@ -24,7 +24,7 @@ export function Preview({
     notes,
     midiTrackNotes,
     midiTrackTitle,
-    trackPosition,
+    midiTrackCurrentTime,
     midiTrackInfos,
     onMidiImport,
     setActiveNotes,
@@ -39,7 +39,7 @@ export function Preview({
             <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
                 notes={midiTrackNotes}
-                trackPosition={trackPosition}
+                midiTrackCurrentTime={midiTrackCurrentTime}
                 midiTrackInfos={midiTrackInfos}
                 setActiveNotes={setActiveNotes}
                 activeNotes={activeNotes}
