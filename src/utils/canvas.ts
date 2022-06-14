@@ -84,13 +84,18 @@ export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
 
 export function getNotesCoordinates(
     canvasWidth: number,
+    canvasHeight: number,
     notes: MidiJsonNote[],
     heightPerBeat: number,
-    midiInfos: MidiTrackInfos
+    midiTrackInfos: MidiTrackInfos
 ) {
-    let notesCoordinates: NoteCoordinates[] = []
     let deltaAcc = 0
     let notesBeingProcessed: NoteCoordinates[] = []
+    const { ticksPerBeat, trackDuration, msPerBeat } = midiTrackInfos
+    const nbBeatsPerCanvas = canvasHeight / heightPerBeat
+    const msPerCanvas = msPerBeat * nbBeatsPerCanvas
+    const nbCanvasInTrack = Math.round(trackDuration / msPerCanvas) + 1
+    let notesCoordinates: NoteCoordinates[][] = Array(nbCanvasInTrack).fill([])
 
     notes.forEach((note, index) => {
         deltaAcc = deltaAcc + note.delta
@@ -106,7 +111,7 @@ export function getNotesCoordinates(
             const nbPreviousWhiteKeys = previousKeys.filter((note) => !note.includes('#')).length
             const margin = !isBlackKey ? widthWhiteKey / 4 : widthWhiteKey / 2
             const x = nbPreviousWhiteKeys * widthWhiteKey - margin
-            const y = (deltaAcc / midiInfos.ticksPerBeat) * heightPerBeat
+            const y = (deltaAcc / midiTrackInfos.ticksPerBeat) * heightPerBeat
 
             const note: NoteCoordinates = {
                 w,
@@ -126,13 +131,16 @@ export function getNotesCoordinates(
 
             if (noteOnIndex) {
                 const note = { ...notesBeingProcessed[noteOnIndex] }
-                note.duration = ((deltaAcc - note.h) / midiInfos.ticksPerBeat) * midiInfos.msPerBeat
-                note.h = ((deltaAcc - note.h) / midiInfos.ticksPerBeat) * heightPerBeat
-                notesCoordinates.push(note)
+                note.duration = ((deltaAcc - note.h) / ticksPerBeat) * msPerBeat
+                note.h = ((deltaAcc - note.h) / ticksPerBeat) * heightPerBeat
+                const startingCanvas = Math.floor(note.y / canvasHeight)
+                const endingCanvas = Math.floor((note.y + note.h) / canvasHeight)
                 notesBeingProcessed.splice(noteOnIndex, 1)
+                for (let i = startingCanvas; i <= endingCanvas; i++) {
+                    notesCoordinates[i] = [...notesCoordinates[i], note]
+                }
             }
         }
     })
-
     return notesCoordinates
 }

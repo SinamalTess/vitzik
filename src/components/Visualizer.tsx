@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {
-    convertCanvasRectToRect,
-    getNotesCoordinates,
-    isEven,
-    isOverlapping,
-    roundRect,
-} from '../utils'
+import { getNotesCoordinates, isEven, roundRect } from '../utils'
 import './Visualizer.scss'
 import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
 import isEqual from 'lodash.isequal'
@@ -29,7 +23,7 @@ interface VisualizerProps {
     midiTrackCurrentTime: number
     heightPerBeat?: number
     audioPlayerState: AudioPlayerState
-    setActiveNotes: (notes: ActiveNote[]) => void
+    onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
 
 export function Visualizer({
@@ -40,10 +34,10 @@ export function Visualizer({
     heightPerBeat = 100,
     midiTrackInfos,
     audioPlayerState,
-    setActiveNotes,
+    onChangeActiveNotes,
 }: VisualizerProps) {
     const visualizerRef = useRef<HTMLDivElement>(null)
-    const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[]>([])
+    const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[][]>([])
     const [indexCanvas, setIndexCanvas] = useState<number>(0)
 
     const width = visualizerRef?.current?.clientWidth ?? 0
@@ -53,7 +47,7 @@ export function Visualizer({
 
     useEffect(() => {
         if (!midiTrackInfos) return
-        const coordinates = getNotesCoordinates(width, notes, heightPerBeat, midiTrackInfos)
+        const coordinates = getNotesCoordinates(width, height, notes, heightPerBeat, midiTrackInfos)
         setNotesCoordinates(coordinates)
     }, [midiTrackInfos])
 
@@ -125,24 +119,17 @@ export function Visualizer({
 
     function drawNotes(
         ctx: CanvasRenderingContext2D,
-        notesCoordinates: NoteCoordinates[],
+        notesCoordinates: NoteCoordinates[][],
         canvasIndex: number
     ) {
         const canvasOffset = ctx.canvas.height
-        const canvas = {
-            x1: 0,
-            x2: ctx.canvas.width,
-            y1: canvasIndex * canvasOffset,
-            y2: canvasIndex * canvasOffset + canvasOffset,
-        }
 
-        notesCoordinates.forEach(({ x, y, w, h }) => {
-            const note = convertCanvasRectToRect({ x, y, h, w })
-            if (isOverlapping(note, canvas)) {
+        if (notesCoordinates[canvasIndex] && notesCoordinates[canvasIndex].length) {
+            notesCoordinates[canvasIndex].forEach(({ x, y, w, h }) => {
                 const yComputed = y - canvasIndex * canvasOffset
                 roundRect(ctx, x, yComputed, w, h, 5, true, false)
-            }
-        })
+            })
+        }
     }
 
     function calcTop(canvasIndex: number): string {
@@ -171,18 +158,21 @@ export function Visualizer({
         if (!midiTrackInfos) return
 
         const heightDuration = (midiTrackCurrentTime / midiTrackInfos.msPerBeat) * heightPerBeat
-        const activeKeys = notesCoordinates
-            .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
-            .map(({ name, velocity, id, duration, key }) => ({
-                name,
-                velocity,
-                duration,
-                id,
-                key,
-            }))
 
-        if (!isEqual(activeKeys, activeNotes)) {
-            setActiveNotes(activeKeys)
+        if (notesCoordinates[indexCanvas] && notesCoordinates[indexCanvas].length) {
+            const activeKeys = notesCoordinates[indexCanvas]
+                .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
+                .map(({ name, velocity, id, duration, key }) => ({
+                    name,
+                    velocity,
+                    duration,
+                    id,
+                    key,
+                }))
+
+            if (!isEqual(activeKeys, activeNotes)) {
+                onChangeActiveNotes(activeKeys)
+            }
         }
     }
 
