@@ -1,8 +1,9 @@
 import { RangeSlider } from './generics/RangeSlider'
 import { SoundController } from './SoundController'
 import { PlayerController } from './PlayerController'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { msToMinAndSec } from '../utils'
+import { usePrevious } from '../hooks'
 
 export type AudioPlayerState = 'pending' | 'playing' | 'rewinding' | 'paused' | 'seeking'
 
@@ -25,17 +26,17 @@ export function AudioPlayer({
 }: AudioPlayerProps) {
     const currentTime = msToMinAndSec(midiTrackCurrentTime)
     const totalTime = msToMinAndSec(midiTrackDuration)
+    const prevMidiTrackCurrentTime = usePrevious(midiTrackCurrentTime) ?? 0
 
-    function handleChange(midiTrackNextTime: number) {
-        if (midiTrackNextTime < midiTrackCurrentTime) {
-            handleRewind(midiTrackNextTime)
+    useEffect(() => {
+        if (midiTrackCurrentTime <= prevMidiTrackCurrentTime) {
+            onChangeAudioPlayerState('rewinding')
         } else {
-            handleSeeking(midiTrackNextTime)
+            onChangeAudioPlayerState('seeking')
         }
-    }
+    }, [midiTrackCurrentTime])
 
-    function handleRewind(midiTrackCurrentTime: number) {
-        onChangeAudioPlayerState('rewinding')
+    function handleChange(midiTrackCurrentTime: number) {
         onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
     }
 
@@ -46,11 +47,6 @@ export function AudioPlayer({
 
     function handlePause() {
         onChangeAudioPlayerState('paused')
-    }
-
-    function handleSeeking(midiTrackCurrentTime: number) {
-        onChangeAudioPlayerState('seeking')
-        onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
     }
 
     return (
