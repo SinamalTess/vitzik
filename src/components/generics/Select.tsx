@@ -9,7 +9,7 @@ interface SelectProps {
 
 export function Select({ name, onChange, children }: SelectProps) {
     return (
-        <select name={name} onChange={onChange}>
+        <select name={name} onChange={onChange} className="mg-sm">
             {children}
         </select>
     )

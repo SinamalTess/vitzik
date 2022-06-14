@@ -28,8 +28,8 @@ export function Settings({
         <div className="settings">
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
-            <MidiInputSelector onChangeActiveNotes={onChangeActiveNotes} />
             <InstrumentSelector onChange={onChangeInstrument} />
+            <MidiInputSelector onChangeActiveNotes={onChangeActiveNotes} />
         </div>
     )
 }

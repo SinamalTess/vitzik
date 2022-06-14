@@ -3,6 +3,7 @@
 .btn-group {
     background-color: map-get($theme-colors, 'secondary');
     border-radius: 5px;
+    display: inline-flex;
     > .btn {
         border: none;
         border-radius: 0;

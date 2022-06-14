@@ -54,7 +54,7 @@ export function AudioPlayer({
     }
 
     return (
-        <>
+        <div className="audioplayer">
             {currentTime}
             <RangeSlider
                 value={midiTrackCurrentTime}
@@ -68,6 +68,6 @@ export function AudioPlayer({
                 midiTrackDuration={midiTrackDuration}
                 onPause={handlePause}
             />
-        </>
+        </div>
     )
 }

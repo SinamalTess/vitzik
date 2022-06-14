@@ -12,16 +12,16 @@ export function MusicSystemSelector({ musicSystem, onChange }: MusicSystemSelect
     return (
         <ButtonGroup>
             <Button onClick={() => onChange('syllabic')} active={musicSystem === 'syllabic'}>
-                Syllabic
+                Si
             </Button>
             <Button
                 onClick={() => onChange('alphabetical')}
                 active={musicSystem === 'alphabetical'}
             >
-                Alphabetical
+                B
             </Button>
             <Button onClick={() => onChange('german')} active={musicSystem === 'german'}>
-                German
+                H
             </Button>
         </ButtonGroup>
     )

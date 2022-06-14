@@ -47,7 +47,7 @@ function App() {
 
     return (
         <div className="container">
-            <div className="item">
+            <div className="item topbar">
                 {isMidiImported ? (
                     <AudioPlayer
                         isMute={isMute}
@@ -57,7 +57,9 @@ function App() {
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                     />
-                ) : null}
+                ) : (
+                    <div> </div>
+                )}
                 <Settings
                     appMode={appMode}
                     musicSystem={musicSystem}
