@@ -1,35 +1,34 @@
 import React from 'react'
 import { MusicSystemSelector } from './MusicSystemSelector'
-import { MidiInputSelector, onChangeMidiInput } from './MidiInputSelector'
+import { MidiInputSelector } from './MidiInputSelector'
 import './Settings.scss'
 import { Instrument, MusicSystem } from '../types'
 import { AppMode, ModeSelector } from './ModeSelector'
 import { InstrumentSelector } from './InstrumentSelector'
+import { ActiveNote } from '../App'
 
 interface SettingsProps {
-    midiInputs: MIDIInput[]
     appMode: AppMode
     musicSystem: MusicSystem
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
-    onChangeMidiInput: onChangeMidiInput
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: (instrument: Instrument) => void
+    onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
 }
 
 export function Settings({
-    midiInputs,
     appMode,
     musicSystem,
     onChangeMusicSystem,
-    onChangeMidiInput,
     onChangeAppMode,
     onChangeInstrument,
+    onChangeActiveNotes,
 }: SettingsProps) {
     return (
         <div className="settings">
             <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
-            <MidiInputSelector midiInputs={midiInputs} onChange={onChangeMidiInput} />
+            <MidiInputSelector onChangeActiveNotes={onChangeActiveNotes} />
             <InstrumentSelector onChange={onChangeInstrument} />
         </div>
     )

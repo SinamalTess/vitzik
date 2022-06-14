@@ -1,6 +1,6 @@
 import './App.scss'
-import React, { useEffect, useMemo, useState } from 'react'
-import { getMidiInfos, keyToNote } from './utils'
+import React, { useMemo, useState } from 'react'
+import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, Instrument, MusicSystem } from './types'
@@ -22,7 +22,6 @@ export interface ActiveNote {
 //TODO: create error on unused imports
 
 function App() {
-    const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [isMute, setIsMute] = useState<boolean>(false)
@@ -38,62 +37,6 @@ function App() {
     const midiTrackDuration = midiInfos?.trackDuration ?? 0
     const midiTrackInfos = midiInfos
     const isMidiImported = midiTrack !== null
-
-    useEffect(() => {
-        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
-    }, [])
-
-    function onMIDISuccess(midiAccess: MIDIAccess) {
-        const inputs: MIDIInput[] = Array.from(midiAccess.inputs.values())
-
-        setMidiInputs(inputs)
-
-        if (inputs[0]) {
-            inputs[0].onmidimessage = getMIDIMessage
-        }
-    }
-
-    function onMIDIFailure(msg: string) {
-        console.error('Failed to get MIDI access - ' + msg)
-    }
-
-    function handleChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
-        const selectedInput = event.target.value // TODO: can be improved by directly passing value ?
-        const input = midiInputs.find((e) => e.id === selectedInput)
-        if (input) {
-            input.onmidimessage = getMIDIMessage
-        }
-    }
-
-    function removeNote(note: ActiveNote) {
-        const noteIndex = activeNotes.findIndex((key) => key === note)
-        if (noteIndex) {
-            setActiveNotes((notes) => notes.filter((currentNote) => currentNote.name !== note.name))
-        }
-    }
-
-    function getMIDIMessage(message: any) {
-        // TODO: have a more precise type
-        const key = message.data[1]
-        const command = message.data[0]
-        const name = keyToNote(message.data[1])
-        const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
-
-        const note = {
-            name,
-            velocity,
-            key,
-        }
-
-        switch (command) {
-            case 144: // noteOn
-                velocity > 0 ? setActiveNotes((notes) => [...notes, note]) : removeNote(note)
-                break
-            case 128: // noteOff
-                removeNote(note)
-                break
-        }
-    }
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         setMidiTrackTitle(title)
@@ -117,17 +60,15 @@ function App() {
                 ) : null}
                 <Settings
                     appMode={appMode}
-                    midiInputs={midiInputs}
                     musicSystem={musicSystem}
-                    onChangeMidiInput={handleChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstrument}
+                    onChangeActiveNotes={setActiveNotes}
                 />
             </div>
             <div className="item">
                 <Preview
-                    setActiveNotes={setActiveNotes}
                     appMode={appMode}
                     notes={activeNotes}
                     midiTrackCurrentTime={midiTrackCurrentTime}
@@ -135,8 +76,9 @@ function App() {
                     midiTrackTitle={midiTrackTitle}
                     midiTrackInfos={midiTrackInfos}
                     activeNotes={activeNotes}
-                    onMidiImport={handleMidiImport}
                     audioPlayerState={audioPlayerState}
+                    onChangeActiveNotes={setActiveNotes}
+                    onMidiImport={handleMidiImport}
                 />
             </div>
             <div className="item">
