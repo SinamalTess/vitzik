@@ -7,7 +7,7 @@ import { AlphabeticalNote, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState } from './components/AudioPlayer'
+import { AudioPlayer, AudioPlayerState } from './components/AudioPlayer'
 
 export interface ActiveNote {
     name: AlphabeticalNote
@@ -105,21 +105,24 @@ function App() {
     return (
         <div className="container">
             <div className="item">
+                {isMidiImported ? (
+                    <AudioPlayer
+                        isMute={isMute}
+                        toggleSound={setIsMute}
+                        midiTrackCurrentTime={midiTrackCurrentTime}
+                        midiTrackDuration={midiTrackDuration}
+                        onChangeAudioPlayerState={setAudioPlayerState}
+                        onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
+                    />
+                ) : null}
                 <Settings
                     appMode={appMode}
-                    toggleSound={setIsMute}
-                    isMute={isMute}
-                    isMidiImported={isMidiImported}
                     midiInputs={midiInputs}
                     musicSystem={musicSystem}
-                    midiTrackCurrentTime={midiTrackCurrentTime}
-                    midiTrackDuration={midiTrackDuration}
                     onChangeMidiInput={handleChangeMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstrument}
-                    onChangeAudioPlayerState={setAudioPlayerState}
-                    onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                 />
             </div>
             <div className="item">
