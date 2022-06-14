@@ -1,37 +1,46 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from './generics/Button'
+import workerInterval from '../workers/workerInterval'
 
 interface PlayerControllerProps {
     midiTrackDuration: number
-    onPlay: (midiTrackCurrentTime: number) => void
+    onPlay: any // TODO: fix this
     onPause: () => void
+}
+
+function WebWorker(worker: any): Worker {
+    const code = worker.toString()
+    const blob = new Blob(['(' + code + ')()'])
+    return new Worker(URL.createObjectURL(blob))
 }
 
 export function PlayerController({ onPlay, midiTrackDuration, onPause }: PlayerControllerProps) {
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
+    let worker: Worker
 
     useEffect(() => {
-        let timer: NodeJS.Timeout | undefined
         if (isPlaying) {
-            timer = setInterval(() => {
-                // @ts-ignore
-                onPlay((midiTrackCurrentTime: number) => {
-                    if (midiTrackCurrentTime >= midiTrackDuration) {
-                        clearInterval(timer)
-                        setIsPlaying(false)
-                        return 0
-                    }
-                    return midiTrackCurrentTime + 10
-                })
-            }, 10)
+            startWorker()
         } else {
+            worker?.terminate()
             onPause()
         }
         return () => {
-            clearInterval(timer)
+            worker?.terminate()
             onPause()
         }
     }, [isPlaying])
+
+    function startWorker() {
+        worker = WebWorker(workerInterval)
+        worker.onmessage = (message) => {
+            const interval = message.data.interval
+            const setMidiTrackCurrentTime = onPlay()
+            setMidiTrackCurrentTime(
+                (midiTrackCurrentTime: number) => midiTrackCurrentTime + interval
+            )
+        }
+    }
 
     function onClick() {
         if (midiTrackDuration) {

@@ -57,6 +57,7 @@ export function Keyboard({
                 const gain = normalizeVelocity(0, 1, velocity)
                 if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
                     instrumentPlayer?.play(key.toString(), undefined, {
+                        //TODO: use audiocontext clock
                         gain,
                         duration: msToSec(duration ?? 0),
                     })

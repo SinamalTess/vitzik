@@ -39,9 +39,9 @@ export function AudioPlayer({
         onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
     }
 
-    function handlePlay(midiTrackCurrentTime: number) {
+    function handlePlay() {
         onChangeAudioPlayerState('playing')
-        onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
+        return onChangeMidiTrackCurrentTime
     }
 
     function handlePause() {
