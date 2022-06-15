@@ -21,7 +21,7 @@ interface PianoProps {
     audioPlayerState: AudioPlayerState
 }
 
-export const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
+const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
     instrument.replace(/ /g, '_').toLowerCase() as InstrumentName
 
 const normalizeVelocity = (val: number, max: number, min: number): number =>

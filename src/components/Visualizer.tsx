@@ -1,20 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { isEven, keyToNote, drawRoundRect } from '../utils'
 import './Visualizer.scss'
-import {
-    isHTMLCanvasElement,
-    isNoteOffEvent,
-    isNoteOnEvent,
-    MidiJsonNote,
-    NoteCoordinates,
-} from '../types'
+import { AlphabeticalNote, CanvasRectangle, MidiJsonNote } from '../types'
 import isEqual from 'lodash.isequal'
 import { ActiveNote } from '../App'
 import { AudioPlayerState } from './AudioPlayer'
-import { IMidiFile } from 'midi-json-parser-worker'
+import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent, TMidiEvent } from 'midi-json-parser-worker'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/const'
 
 //TODO: draw vertical lines to see notes better
+
+interface NoteCoordinates extends CanvasRectangle {
+    name: AlphabeticalNote
+    key: number
+    velocity: number
+    duration: number // ms
+    id?: number
+}
+
+const isNoteOnEvent = (note: TMidiEvent): note is IMidiNoteOnEvent => 'noteOn' in note
+const isNoteOffEvent = (note: TMidiEvent): note is IMidiNoteOffEvent => 'noteOff' in note
+
+const isHTMLCanvasElement = (element: ChildNode): element is HTMLCanvasElement =>
+    element.nodeName === 'CANVAS'
 
 const getKey = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
