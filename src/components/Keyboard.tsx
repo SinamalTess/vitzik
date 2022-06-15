@@ -6,7 +6,6 @@ import Soundfont, { InstrumentName } from 'soundfont-player'
 import {
     isSpecialKey as checkIsSpecialKey,
     msToSec,
-    normalizeInstrumentName,
     noteToKey,
     translateNoteToMusicSystem,
 } from '../utils'
