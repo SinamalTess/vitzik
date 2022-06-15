@@ -36,17 +36,22 @@ export function PlayButton({ onPlay, midiTrackDuration, onPause }: PlayerControl
         worker.onmessage = (message) => {
             const interval = message.data.interval
             const setMidiTrackCurrentTime = onPlay()
-            setMidiTrackCurrentTime(
-                (midiTrackCurrentTime: number) => midiTrackCurrentTime + interval
-            )
+            setMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
+                if (midiTrackCurrentTime > midiTrackDuration) {
+                    worker.terminate()
+                    onPause()
+                    return 0
+                }
+                return midiTrackCurrentTime + interval
+            })
         }
     }
 
-    function onClick() {
+    function handleClick() {
         if (midiTrackDuration) {
             setIsPlaying((isPlaying) => !isPlaying)
         }
     }
 
-    return <Button onClick={onClick}> {isPlaying ? 'Pause' : 'Play'} </Button>
+    return <Button onClick={handleClick}> {isPlaying ? 'Pause' : 'Play'} </Button>
 }
