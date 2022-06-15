@@ -143,6 +143,79 @@ function getNotesPosition(
     return notesCoordinates
 }
 
+function drawNotes(
+    ctx: CanvasRenderingContext2D,
+    notesCoordinates: NoteCoordinates[][],
+    canvasIndex: number
+) {
+    const canvasOffset = ctx.canvas.height
+
+    if (notesCoordinates[canvasIndex] && notesCoordinates[canvasIndex].length) {
+        notesCoordinates[canvasIndex].forEach(({ x, y, w, h }) => {
+            const yComputed = y - canvasIndex * canvasOffset
+            drawRoundRect(ctx, x, yComputed, w, h, 5, true, false)
+        })
+    }
+}
+
+function drawInitialState(
+    canvasChildren: never[] | NodeListOf<ChildNode>,
+    color: string,
+    notesCoordinates: NoteCoordinates[][],
+    width: number,
+    height: number
+) {
+    canvasChildren.forEach((child, index) => {
+        if (isHTMLCanvasElement(child)) {
+            child.width = width
+            child.height = height
+            const ctx = child.getContext('2d')
+
+            if (ctx) {
+                ctx.fillStyle = color
+                drawNotes(ctx, notesCoordinates, index)
+            }
+        }
+    })
+}
+
+function reDrawCanvas(canvas: ChildNode, index: number, notesCoordinates: NoteCoordinates[][]) {
+    if (isHTMLCanvasElement(canvas)) {
+        const ctx = canvas.getContext('2d')
+
+        if (ctx) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+            drawNotes(ctx, notesCoordinates, index)
+        }
+    }
+}
+
+function drawForward(
+    canvasChildren: never[] | NodeListOf<ChildNode>,
+    indexCanvas: number,
+    notesCoordinates: NoteCoordinates[][]
+) {
+    const isIndexEven = isEven(indexCanvas)
+    const canvasToRedraw = isIndexEven ? 1 : 0
+    if (canvasChildren[canvasToRedraw]) {
+        reDrawCanvas(canvasChildren[canvasToRedraw], indexCanvas + 1, notesCoordinates)
+    }
+}
+
+function reDrawCurrentState(
+    canvasChildren: never[] | NodeListOf<ChildNode>,
+    indexCanvas: number,
+    notesCoordinates: NoteCoordinates[][]
+) {
+    const isIndexEven = isEven(indexCanvas)
+    const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
+    const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
+    canvasChildren.forEach((child, i) => {
+        const index = i === 0 ? canvas0 : canvas1
+        reDrawCanvas(child, index, notesCoordinates)
+    })
+}
+
 export interface MidiTrackInfos {
     ticksPerBeat: number
     msPerBeat: number
@@ -177,7 +250,6 @@ export function Visualizer({
     const width = visualizerRef?.current?.clientWidth ?? 0
     const height = visualizerRef?.current?.clientHeight ?? 0
     const canvasChildren = visualizerRef?.current?.childNodes ?? []
-    const isIndexEven = isEven(indexCanvas)
 
     useEffect(() => {
         if (!midiTrackInfos || !midiTrack) return
@@ -197,102 +269,23 @@ export function Visualizer({
 
     useEffect(() => {
         if (indexCanvas === 0) {
-            drawInitialState()
+            drawInitialState(canvasChildren, color, notesCoordinates, width, height)
         } else {
             switch (audioPlayerState) {
                 case 'playing':
-                    drawForward()
+                    drawForward(canvasChildren, indexCanvas, notesCoordinates)
                     break
                 case 'rewinding':
-                    reDrawCurrentState()
+                    reDrawCurrentState(canvasChildren, indexCanvas, notesCoordinates)
                     break
                 case 'seeking':
-                    reDrawCurrentState()
+                    reDrawCurrentState(canvasChildren, indexCanvas, notesCoordinates)
                     break
                 default:
                     break
             }
         }
     }, [indexCanvas, audioPlayerState])
-
-    function drawInitialState() {
-        canvasChildren.forEach((child, index) => {
-            if (isHTMLCanvasElement(child)) {
-                child.width = width
-                child.height = height
-                const ctx = child.getContext('2d')
-
-                if (ctx) {
-                    ctx.fillStyle = color
-                    drawNotes(ctx, notesCoordinates, index)
-                }
-            }
-        })
-    }
-
-    function drawForward() {
-        const canvasToRedraw = isIndexEven ? 1 : 0
-        if (canvasChildren[canvasToRedraw]) {
-            reDrawCanvas(canvasChildren[canvasToRedraw], indexCanvas + 1)
-        }
-    }
-
-    function reDrawCurrentState() {
-        const canvas1 = isIndexEven ? indexCanvas + 1 : indexCanvas
-        const canvas0 = isIndexEven ? indexCanvas : indexCanvas + 1
-        canvasChildren.forEach((child, i) => {
-            const index = i === 0 ? canvas0 : canvas1
-            reDrawCanvas(child, index)
-        })
-    }
-
-    function reDrawCanvas(canvas: ChildNode, index: number) {
-        if (isHTMLCanvasElement(canvas)) {
-            const ctx = canvas.getContext('2d')
-
-            if (ctx) {
-                ctx.clearRect(0, 0, width, height)
-                drawNotes(ctx, notesCoordinates, index)
-            }
-        }
-    }
-
-    function drawNotes(
-        ctx: CanvasRenderingContext2D,
-        notesCoordinates: NoteCoordinates[][],
-        canvasIndex: number
-    ) {
-        const canvasOffset = ctx.canvas.height
-
-        if (notesCoordinates[canvasIndex] && notesCoordinates[canvasIndex].length) {
-            notesCoordinates[canvasIndex].forEach(({ x, y, w, h }) => {
-                const yComputed = y - canvasIndex * canvasOffset
-                drawRoundRect(ctx, x, yComputed, w, h, 5, true, false)
-            })
-        }
-    }
-
-    function calcTop(canvasIndex: number): string {
-        if (midiTrackInfos && visualizerRef.current) {
-            const { msPerBeat } = midiTrackInfos
-            const nbBeatsPassed = midiTrackCurrentTime / msPerBeat
-            const heightDuration = nbBeatsPassed * heightPerBeat
-            const nbCanvasPassed = heightDuration / height
-            const index = Math.floor(heightDuration / height)
-            const percentageTop = Math.round((nbCanvasPassed % 1) * 100)
-            const percentageFirstCanvas = `${100 - percentageTop}%`
-            const percentageSecondCanvas = `-${percentageTop}%`
-            if (index !== indexCanvas) {
-                setIndexCanvas(() => index)
-            }
-            if (canvasIndex === 0) {
-                return isIndexEven ? percentageSecondCanvas : percentageFirstCanvas
-            } else {
-                return isIndexEven ? percentageFirstCanvas : percentageSecondCanvas
-            }
-        }
-        return '0px'
-    }
 
     function getActiveNotes(midiTrackCurrentTime: number) {
         if (!midiTrackInfos) return
@@ -314,6 +307,30 @@ export function Visualizer({
                 onChangeActiveNotes(activeKeys)
             }
         }
+    }
+
+    function calcTop(canvasIndex: number): string {
+        if (midiTrackInfos && visualizerRef.current) {
+            const { msPerBeat } = midiTrackInfos
+            const nbBeatsPassed = midiTrackCurrentTime / msPerBeat
+            const heightDuration = nbBeatsPassed * heightPerBeat
+            const nbCanvasPassed = heightDuration / height
+            const index = Math.floor(heightDuration / height)
+            const percentageTop = Math.round((nbCanvasPassed % 1) * 100)
+            const percentageFirstCanvas = `${100 - percentageTop}%`
+            const percentageSecondCanvas = `-${percentageTop}%`
+            const isIndexEven = isEven(indexCanvas)
+
+            if (index !== indexCanvas) {
+                setIndexCanvas(() => index)
+            }
+            if (canvasIndex === 0) {
+                return isIndexEven ? percentageSecondCanvas : percentageFirstCanvas
+            } else {
+                return isIndexEven ? percentageFirstCanvas : percentageSecondCanvas
+            }
+        }
+        return '0px'
     }
 
     return (

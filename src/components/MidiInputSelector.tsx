@@ -10,6 +10,10 @@ interface MidiInputSelectorProps {
     onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
 }
 
+function onMIDIFailure(msg: string) {
+    console.error('Failed to get MIDI access - ' + msg)
+}
+
 export function MidiInputSelector({ onChangeActiveNotes }: MidiInputSelectorProps) {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
 
@@ -25,10 +29,6 @@ export function MidiInputSelector({ onChangeActiveNotes }: MidiInputSelectorProp
         if (inputs[0]) {
             inputs[0].onmidimessage = getMIDIMessage
         }
-    }
-
-    function onMIDIFailure(msg: string) {
-        console.error('Failed to get MIDI access - ' + msg)
     }
 
     function removeNote(note: ActiveNote) {
