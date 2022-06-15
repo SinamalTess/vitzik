@@ -19,7 +19,6 @@ export interface ActiveNote {
 
 //TODO: add error boundary
 //TODO: check accessibility
-//TODO: create error on unused imports
 
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
@@ -32,10 +31,9 @@ function App() {
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('pending')
 
-    const midiInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
-    const midiTrackNotes = midiInfos?.notes ?? []
-    const midiTrackDuration = midiInfos?.trackDuration ?? 0
-    const midiTrackInfos = midiInfos
+    const midiTrackInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
+    const midiTrackNotes = midiTrackInfos?.notes ?? []
+    const midiTrackDuration = midiTrackInfos?.trackDuration ?? 0
     const isMidiImported = midiTrack !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
@@ -51,14 +49,14 @@ function App() {
                 {isMidiImported ? (
                     <AudioPlayer
                         isMute={isMute}
-                        toggleSound={setIsMute}
+                        onToggleSound={setIsMute}
                         midiTrackCurrentTime={midiTrackCurrentTime}
                         midiTrackDuration={midiTrackDuration}
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                     />
                 ) : (
-                    <div> </div>
+                    <div /> // Renders an empty space to avoid jumps in UI
                 )}
                 <Settings
                     appMode={appMode}

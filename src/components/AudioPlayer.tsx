@@ -11,7 +11,7 @@ interface AudioPlayerProps {
     midiTrackCurrentTime: number
     midiTrackDuration: number
     isMute: boolean
-    toggleSound: (isSoundOn: boolean) => void
+    onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
     onChangeMidiTrackCurrentTime: (midiTrackCurrentTime: number) => void
 }
@@ -20,7 +20,7 @@ export function AudioPlayer({
     midiTrackCurrentTime,
     midiTrackDuration,
     isMute,
-    toggleSound,
+    onToggleSound,
     onChangeAudioPlayerState,
     onChangeMidiTrackCurrentTime,
 }: AudioPlayerProps) {
@@ -58,7 +58,7 @@ export function AudioPlayer({
                 onChange={handleChange}
             />
             {totalTime}
-            <SoundController isMute={isMute} toggleSound={toggleSound} />
+            <SoundController isMute={isMute} onToggleSound={onToggleSound} />
             <PlayerController
                 onPlay={handlePlay}
                 midiTrackDuration={midiTrackDuration}
