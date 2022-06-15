@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { getNotesCoordinates, isEven, roundRect } from '../utils'
 import './Visualizer.scss'
-import { MidiJsonNote, isHTMLCanvasElement, NoteCoordinates } from '../types'
+import { isHTMLCanvasElement, NoteCoordinates } from '../types'
 import isEqual from 'lodash.isequal'
 import { ActiveNote } from '../App'
 import { AudioPlayerState } from './AudioPlayer'
+import { IMidiFile } from 'midi-json-parser-worker'
 
 //TODO: draw vertical lines to see notes better
 
@@ -12,25 +13,24 @@ export interface MidiTrackInfos {
     ticksPerBeat: number
     msPerBeat: number
     trackDuration: number
-    notes: MidiJsonNote[]
 }
 
 interface VisualizerProps {
     activeNotes: ActiveNote[]
-    notes: MidiJsonNote[]
     color?: string
-    midiTrackInfos: MidiTrackInfos | null
     midiTrackCurrentTime: number
+    midiTrack: IMidiFile | null
     heightPerBeat?: number
+    midiTrackInfos: MidiTrackInfos | null
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
 
 export function Visualizer({
     activeNotes,
-    notes,
     color = '#00E2DC',
     midiTrackCurrentTime,
+    midiTrack,
     heightPerBeat = 100,
     midiTrackInfos,
     audioPlayerState,
@@ -46,9 +46,15 @@ export function Visualizer({
     const isIndexEven = isEven(indexCanvas)
 
     useEffect(() => {
-        if (!midiTrackInfos) return
-        const coordinates = getNotesCoordinates(width, height, notes, heightPerBeat, midiTrackInfos)
-        setNotesCoordinates(coordinates)
+        if (!midiTrackInfos || !midiTrack) return
+        const coordinates = getNotesCoordinates(
+            width,
+            height,
+            midiTrack,
+            heightPerBeat,
+            midiTrackInfos
+        )
+        setNotesCoordinates(coordinates[coordinates.length - 1]) //TODO: once we support multitracking remove this
     }, [midiTrackInfos])
 
     useEffect(() => {

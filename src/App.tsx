@@ -32,7 +32,6 @@ function App() {
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('pending')
 
     const midiTrackInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
-    const midiTrackNotes = midiTrackInfos?.notes ?? []
     const midiTrackDuration = midiTrackInfos?.trackDuration ?? 0
     const isMidiImported = midiTrack !== null
 
@@ -72,8 +71,8 @@ function App() {
                     appMode={appMode}
                     notes={activeNotes}
                     midiTrackCurrentTime={midiTrackCurrentTime}
-                    midiTrackNotes={midiTrackNotes}
                     midiTrackTitle={midiTrackTitle}
+                    midiTrack={midiTrack}
                     midiTrackInfos={midiTrackInfos}
                     activeNotes={activeNotes}
                     audioPlayerState={audioPlayerState}

@@ -1,7 +1,7 @@
-import { midiJsonToNotes } from './midi'
+import { getAllNotes } from './midi'
 import { IMidiFile } from 'midi-json-parser-worker'
 
-describe('midiJsonToNotes()', () => {
+describe('getAllNotes()', () => {
     const midiJson: IMidiFile = {
         tracks: [
             [
@@ -37,7 +37,7 @@ describe('midiJsonToNotes()', () => {
         format: 0,
     }
     test('converts a midi json input to an array of notes', () => {
-        expect(midiJsonToNotes(midiJson)).toStrictEqual([
+        expect(getAllNotes(midiJson)).toStrictEqual([
             {
                 delta: 0,
                 channel: 0,

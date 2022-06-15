@@ -4,7 +4,7 @@ import { Instrument, MidiJsonNote } from '../types'
 import { InstrumentName } from 'soundfont-player'
 
 // TODO: we should use only one track here
-export const midiJsonToNotes = (midiJson: IMidiFile): MidiJsonNote[] => {
+export const getAllNotes = (midiJson: IMidiFile): MidiJsonNote[] => {
     let notesArr: MidiJsonNote[] = []
     midiJson.tracks.forEach((track) => {
         const notes = track.filter(
@@ -69,14 +69,12 @@ export const getMsPerBeat = (midiJson: IMidiFile): number => {
 export const getMidiInfos = (midiJson: IMidiFile | null): MidiTrackInfos | null => {
     if (!midiJson) return null
 
-    const notes = midiJsonToNotes(midiJson)
-    const nbTicks = notes.reduce((acc, nextNote) => acc + nextNote.delta, 0)
+    const nbTicks = midiJson.tracks[0].reduce((acc, nextEvent) => acc + nextEvent.delta, 0) //TODO: check if all track last the same
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
     const msPerBeat = getMsPerBeat(midiJson)
 
     return {
-        notes,
         msPerBeat,
         ticksPerBeat,
         trackDuration: nbBeats * msPerBeat,

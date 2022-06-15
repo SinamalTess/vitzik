@@ -109,6 +109,7 @@ export function Keyboard({
                         onMouseUp={handleMouseUp}
                         className={`
                             ${keyClassName} 
+                            ${noteToKey(key)} 
                             ${key} ${isActive ? `${keyClassName}--active` : ''}`}
                     >
                         <span style={styleKeyName}>{keyTranslated}</span>

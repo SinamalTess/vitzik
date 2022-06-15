@@ -4,34 +4,34 @@ import { MidiImporter, OnMidiImport } from './MidiImporter'
 import { MidiTrackInfos, Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
-import { MidiJsonNote } from '../types'
 import { ActiveNote } from '../App'
 import { AudioPlayerState } from './AudioPlayer'
+import { IMidiFile } from 'midi-json-parser-worker'
 
 interface PreviewProps {
     appMode: AppMode
     notes: ActiveNote[]
-    midiTrackCurrentTime: number
-    midiTrackNotes: MidiJsonNote[]
-    midiTrackTitle: string
+    midiTrack: IMidiFile | null
     midiTrackInfos: MidiTrackInfos | null
-    onMidiImport: OnMidiImport
-    onChangeActiveNotes: (notes: ActiveNote[]) => void
+    midiTrackTitle: string
+    midiTrackCurrentTime: number
     activeNotes: ActiveNote[]
     audioPlayerState: AudioPlayerState
+    onChangeActiveNotes: (notes: ActiveNote[]) => void
+    onMidiImport: OnMidiImport
 }
 
 export function Preview({
     appMode,
     notes,
-    midiTrackNotes,
+    midiTrack,
+    midiTrackInfos,
     midiTrackTitle,
     midiTrackCurrentTime,
-    midiTrackInfos,
-    onMidiImport,
-    onChangeActiveNotes,
     activeNotes,
     audioPlayerState,
+    onMidiImport,
+    onChangeActiveNotes,
 }: PreviewProps) {
     const staffNotes = notes.map((note) => note.name)
     return appMode === 'learning' ? (
@@ -41,7 +41,7 @@ export function Preview({
             <MidiTrackTitle midiTrackTitle={midiTrackTitle} />
             <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
-                notes={midiTrackNotes}
+                midiTrack={midiTrack}
                 midiTrackCurrentTime={midiTrackCurrentTime}
                 midiTrackInfos={midiTrackInfos}
                 onChangeActiveNotes={onChangeActiveNotes}

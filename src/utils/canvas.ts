@@ -1,5 +1,6 @@
 import {
     CanvasRectangle,
+    isNoteOffEvent,
     isNoteOnEvent,
     MidiJsonNote,
     NoteCoordinates,
@@ -9,6 +10,7 @@ import {
 import { keyToNote } from './notes'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from './const'
 import { MidiTrackInfos } from '../components/Visualizer'
+import { IMidiFile } from 'midi-json-parser-worker'
 
 interface Radius {
     tl: number
@@ -75,6 +77,22 @@ export const roundRect = (
     }
 }
 
+function getKey(note: MidiJsonNote) {
+    if (isNoteOnEvent(note)) {
+        return note.noteOn.noteNumber
+    } else {
+        return note.noteOff.noteNumber
+    }
+}
+
+function getVelocity(note: MidiJsonNote) {
+    if (isNoteOnEvent(note)) {
+        return note.noteOn.velocity
+    } else {
+        return note.noteOff.velocity
+    }
+}
+
 export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
     x1: rect.x,
     x2: rect.x + rect.w,
@@ -85,62 +103,75 @@ export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
 export function getNotesCoordinates(
     canvasWidth: number,
     canvasHeight: number,
-    notes: MidiJsonNote[],
+    midiTrack: IMidiFile,
     heightPerBeat: number,
     midiTrackInfos: MidiTrackInfos
 ) {
-    let deltaAcc = 0
     let notesBeingProcessed: NoteCoordinates[] = []
     const { ticksPerBeat, trackDuration, msPerBeat } = midiTrackInfos
+    const { tracks } = midiTrack
     const nbBeatsPerCanvas = canvasHeight / heightPerBeat
     const msPerCanvas = msPerBeat * nbBeatsPerCanvas
-    const nbCanvasInTrack = Math.round(trackDuration / msPerCanvas) + 1
-    let notesCoordinates: NoteCoordinates[][] = Array(nbCanvasInTrack).fill([])
+    let notesCoordinates: NoteCoordinates[][][] = []
 
-    notes.forEach((note, index) => {
-        deltaAcc = deltaAcc + note.delta
-        const key = isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
-        const noteName = keyToNote(key)
-        const velocity = isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
+    tracks.forEach((track) => {
+        let deltaAcc = 0
+        const nbCanvasInTrack = Math.ceil(trackDuration / msPerCanvas)
+        let notesCoordinatesInTrack: NoteCoordinates[][] = Array(nbCanvasInTrack).fill([])
 
-        if (isNoteOnEvent(note)) {
-            const isBlackKey = noteName.includes('#')
-            const widthWhiteKey = canvasWidth / NB_WHITE_PIANO_KEYS
-            const w = isBlackKey ? widthWhiteKey / 2 : widthWhiteKey
-            const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
-            const nbPreviousWhiteKeys = previousKeys.filter((note) => !note.includes('#')).length
-            const margin = !isBlackKey ? widthWhiteKey / 4 : widthWhiteKey / 2
-            const x = nbPreviousWhiteKeys * widthWhiteKey - margin
-            const y = (deltaAcc / midiTrackInfos.ticksPerBeat) * heightPerBeat
+        track.forEach((event, index) => {
+            deltaAcc = deltaAcc + event.delta
 
-            const note: NoteCoordinates = {
-                w,
-                h: deltaAcc,
-                x,
-                y,
-                name: noteName,
-                key,
-                velocity,
-                duration: 0,
-                id: index,
-            }
+            if (isNoteOnEvent(event)) {
+                const key = getKey(event)
+                const noteName = keyToNote(key)
+                const velocity = getVelocity(event)
+                const isBlackKey = noteName.includes('#')
+                const widthWhiteKey = canvasWidth / NB_WHITE_PIANO_KEYS
+                const w = isBlackKey ? widthWhiteKey / 2 : widthWhiteKey
+                const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
+                const nbPreviousWhiteKeys = previousKeys.filter(
+                    (note) => !note.includes('#')
+                ).length
+                const margin = !isBlackKey ? widthWhiteKey / 4 : widthWhiteKey / 2
+                const x = nbPreviousWhiteKeys * widthWhiteKey - margin
+                const y = (deltaAcc / midiTrackInfos.ticksPerBeat) * heightPerBeat
 
-            notesBeingProcessed.push(note)
-        } else {
-            const noteOnIndex = notesBeingProcessed.findIndex((note, i) => note.key === key)
+                const note: NoteCoordinates = {
+                    w,
+                    h: deltaAcc,
+                    x,
+                    y,
+                    name: noteName,
+                    key,
+                    velocity,
+                    duration: 0,
+                    id: index,
+                }
 
-            if (noteOnIndex) {
-                const note = { ...notesBeingProcessed[noteOnIndex] }
-                note.duration = ((deltaAcc - note.h) / ticksPerBeat) * msPerBeat
-                note.h = ((deltaAcc - note.h) / ticksPerBeat) * heightPerBeat
-                const startingCanvas = Math.floor(note.y / canvasHeight)
-                const endingCanvas = Math.floor((note.y + note.h) / canvasHeight)
-                notesBeingProcessed.splice(noteOnIndex, 1)
-                for (let i = startingCanvas; i <= endingCanvas; i++) {
-                    notesCoordinates[i] = [...notesCoordinates[i], note]
+                notesBeingProcessed.push(note)
+            } else if (
+                isNoteOffEvent(event) ||
+                (isNoteOnEvent(event) && event.noteOn.velocity === 0)
+            ) {
+                const key = getKey(event)
+                const noteOnIndex = notesBeingProcessed.findIndex((note, i) => note.key === key)
+                if (noteOnIndex !== -1) {
+                    const note = { ...notesBeingProcessed[noteOnIndex] }
+                    note.duration = ((deltaAcc - note.h) / ticksPerBeat) * msPerBeat
+                    note.h = ((deltaAcc - note.h) / ticksPerBeat) * heightPerBeat
+                    const startingCanvas = Math.floor(note.y / canvasHeight) // arrays start at 0, so we use floor to get number below
+                    const endingCanvas = Math.floor((note.y + note.h) / canvasHeight)
+                    notesBeingProcessed.splice(noteOnIndex, 1)
+                    for (let i = startingCanvas; i <= endingCanvas; i++) {
+                        notesCoordinatesInTrack[i] = [...notesCoordinatesInTrack[i], note]
+                    }
                 }
             }
-        }
+        })
+
+        notesCoordinates.push(notesCoordinatesInTrack)
     })
+
     return notesCoordinates
 }
