@@ -1,6 +1,6 @@
 import { RangeSlider } from './generics/RangeSlider'
 import { SoundController } from './SoundController'
-import { PlayerController } from './PlayerController'
+import { PlayButton } from './PlayButton'
 import React, { useEffect } from 'react'
 import { msToMinAndSec } from '../utils'
 import { usePrevious } from '../hooks'
@@ -59,7 +59,7 @@ export function AudioPlayer({
             />
             {totalTime}
             <SoundController isMute={isMute} onToggleSound={onToggleSound} />
-            <PlayerController
+            <PlayButton
                 onPlay={handlePlay}
                 midiTrackDuration={midiTrackDuration}
                 onPause={handlePause}

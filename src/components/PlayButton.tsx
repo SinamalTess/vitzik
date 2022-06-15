@@ -14,7 +14,7 @@ function WebWorker(worker: any): Worker {
     return new Worker(URL.createObjectURL(blob))
 }
 
-export function PlayerController({ onPlay, midiTrackDuration, onPause }: PlayerControllerProps) {
+export function PlayButton({ onPlay, midiTrackDuration, onPause }: PlayerControllerProps) {
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     let worker: Worker
 
