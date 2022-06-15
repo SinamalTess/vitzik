@@ -7,5 +7,9 @@ interface SoundControllerProps {
 }
 
 export function SoundController({ isMute, onToggleSound }: SoundControllerProps) {
-    return <Button onClick={() => onToggleSound(!isMute)} icon="volume" active={!isMute}></Button>
+    function handleOnClick() {
+        onToggleSound(!isMute)
+    }
+
+    return <Button onClick={handleOnClick} icon="volume" active={!isMute}></Button>
 }

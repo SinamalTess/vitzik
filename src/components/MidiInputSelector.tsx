@@ -61,7 +61,7 @@ export function MidiInputSelector({ onChangeActiveNotes }: MidiInputSelectorProp
     }
 
     function handleChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
-        const selectedInput = event.target.value // TODO: can be improved by directly passing value ?
+        const selectedInput = event.target.value
         const input = midiInputs.find((e) => e.id === selectedInput)
         if (input) {
             input.onmidimessage = getMIDIMessage
