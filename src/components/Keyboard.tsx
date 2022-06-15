@@ -2,14 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import './Keyboard.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote, Instrument, MusicSystem } from '../types'
-import Soundfont from 'soundfont-player'
+import Soundfont, { InstrumentName } from 'soundfont-player'
 import {
     isSpecialKey as checkIsSpecialKey,
     msToSec,
     normalizeInstrumentName,
-    normalizeVelocity,
     noteToKey,
-    translateNote,
+    translateNoteToMusicSystem,
 } from '../utils'
 import { ActiveNote } from '../App'
 import { AudioPlayerState } from './AudioPlayer'
@@ -22,6 +21,12 @@ interface PianoProps {
     onKeyPressed: (note: ActiveNote[]) => void
     audioPlayerState: AudioPlayerState
 }
+
+export const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
+    instrument.replace(/ /g, '_').toLowerCase() as InstrumentName
+
+const normalizeVelocity = (val: number, max: number, min: number): number =>
+    (val - min) / (max - min)
 
 export function Keyboard({
     activeKeys,
@@ -99,7 +104,9 @@ export function Keyboard({
                 const isActive = activeKeys.find((currentKey) => currentKey.name === key)
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
-                    musicSystem !== 'alphabetical' ? translateNote(key, musicSystem) : key
+                    musicSystem !== 'alphabetical'
+                        ? translateNoteToMusicSystem(key, musicSystem)
+                        : key
 
                 return (
                     <li

@@ -1,24 +1,9 @@
 import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
 import { MidiTrackInfos } from '../components/Visualizer'
-import { Instrument, MidiJsonNote } from '../types'
-import { InstrumentName } from 'soundfont-player'
 
-// TODO: we should use only one track here
-export const getAllNotes = (midiJson: IMidiFile): MidiJsonNote[] => {
-    let notesArr: MidiJsonNote[] = []
-    midiJson.tracks.forEach((track) => {
-        const notes = track.filter(
-            (event) => event.hasOwnProperty('noteOn') || event.hasOwnProperty('noteOff')
-        ) as MidiJsonNote[]
-        if (notes.length) {
-            notesArr.push(...notes)
-        }
-    })
+export const getFormat = (midiJson: IMidiFile): number => midiJson.format
 
-    return notesArr
-}
-
-export const getTicksPerBeat = (midiJson: IMidiFile) => {
+export function getTicksPerBeat(midiJson: IMidiFile) {
     const { division } = midiJson
     const value = Math.sign(division)
     const isTickPerBeat = value === 0 || value === 1
@@ -34,9 +19,7 @@ export const getTicksPerBeat = (midiJson: IMidiFile) => {
     return division
 }
 
-export const getFormat = (midiJson: IMidiFile): number => midiJson.format
-
-export const getMsPerBeat = (midiJson: IMidiFile): number => {
+export function getMsPerBeat(midiJson: IMidiFile): number {
     const format = getFormat(midiJson)
     const defaultTempo = 60000 / 120 // 120 beats per minute is the default value
     switch (format) {
@@ -66,7 +49,7 @@ export const getMsPerBeat = (midiJson: IMidiFile): number => {
     }
 }
 
-export const getMidiInfos = (midiJson: IMidiFile | null): MidiTrackInfos | null => {
+export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null {
     if (!midiJson) return null
 
     const nbTicks = midiJson.tracks[0].reduce((acc, nextEvent) => acc + nextEvent.delta, 0) //TODO: check if all track last the same
@@ -79,11 +62,4 @@ export const getMidiInfos = (midiJson: IMidiFile | null): MidiTrackInfos | null 
         ticksPerBeat,
         trackDuration: nbBeats * msPerBeat,
     }
-}
-
-export const normalizeVelocity = (val: number, max: number, min: number): number =>
-    (val - min) / (max - min)
-
-export const normalizeInstrumentName = (instrument: Instrument): InstrumentName => {
-    return instrument.replace(/ /g, '_').toLowerCase() as InstrumentName
 }

@@ -1,3 +1,1 @@
-export function isEven(number: number): boolean {
-    return number % 2 == 0
-}
+export const isEven = (number: number) => number % 2 === 0
