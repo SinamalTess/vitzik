@@ -9,6 +9,8 @@ export const noteToKey = (note: AlphabeticalNote): number =>
 
 export const isSpecialKey = (note: AlphabeticalNote) => note.includes('C') || note.includes('F')
 
+export const isBlackKey = (note: AlphabeticalNote) => note.includes('#')
+
 export const translateNoteToMusicSystem = (note: Note, musicSystem: MusicSystem): Note => {
     for (const currentMusicSystem in NOTES) {
         const notes = [...NOTES[currentMusicSystem as MusicSystem]]
