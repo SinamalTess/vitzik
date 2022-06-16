@@ -40,33 +40,18 @@ export function Keyboard({
     const notesAlreadyPlayed: React.MutableRefObject<any[]> = useRef([])
 
     useEffect(() => {
-        const ac = new AudioContext()
-        const SoundfontInstrument = normalizeInstrumentName(instrument)
-        Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
-            .then((instrumentPlayer) => {
-                setInstrumentPlayer(instrumentPlayer)
-            })
-            .catch((error) => {
-                console.error(`Failed to start the piano audio ${error}`)
-            })
-        return () => {
-            ac.close()
+        if (isMute || audioPlayerState !== 'playing') return
+        const ac = startInstrument()
+
+        return function cleanup() {
+            ac.close().then(() => setInstrumentPlayer(null))
         }
-    }, [instrument])
+    }, [instrument, isMute, audioPlayerState])
 
     useEffect(() => {
         if (isMute || !activeKeys.length || !instrumentPlayer) return
         activeKeys.forEach((note) => {
-            const { velocity, id, duration, key } = note
-            const gain = normalizeVelocity(0, 1, velocity)
-            if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
-                instrumentPlayer?.play(key.toString(), undefined, {
-                    //TODO: use audiocontext clock
-                    gain,
-                    duration: msToSec(duration ?? 0),
-                })
-                notesAlreadyPlayed.current.push(note)
-            }
+            playNote(note)
         })
     }, [activeKeys, instrumentPlayer, isMute])
 
@@ -75,6 +60,33 @@ export function Keyboard({
             notesAlreadyPlayed.current = []
         }
     }, [audioPlayerState])
+
+    function startInstrument() {
+        const ac = new AudioContext()
+        const SoundfontInstrument = normalizeInstrumentName(instrument)
+        Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
+            .then((instrumentPlayer) => {
+                setInstrumentPlayer(instrumentPlayer)
+            })
+            .catch(() => {
+                console.error(`Failed to start the instrument ${instrument} audio`)
+            })
+        return ac
+    }
+
+    function playNote(note: ActiveNote) {
+        if (!instrumentPlayer) return
+        const { velocity, id, duration, key } = note
+        const gain = normalizeVelocity(0, 1, velocity)
+        if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
+            instrumentPlayer.play(key.toString(), undefined, {
+                //TODO: use audiocontext clock
+                gain,
+                duration: msToSec(duration ?? 0),
+            })
+            notesAlreadyPlayed.current.push(note)
+        }
+    }
 
     function handleMouseDown(note: AlphabeticalNote) {
         onKeyPressed([
