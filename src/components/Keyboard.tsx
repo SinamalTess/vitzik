@@ -4,7 +4,7 @@ import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { AlphabeticalNote, Instrument, MusicSystem } from '../types'
 import Soundfont, { InstrumentName } from 'soundfont-player'
 import {
-    isSpecialKey as checkIsSpecialKey,
+    isSpecialNote as checkIsSpecialNote,
     msToSec,
     noteToKey,
     translateNoteToMusicSystem,
@@ -35,7 +35,7 @@ export function Keyboard({
     onKeyPressed,
     audioPlayerState,
 }: PianoProps) {
-    const keys = NOTES.alphabetical
+    const notes = NOTES.alphabetical
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const notesAlreadyPlayed: React.MutableRefObject<any[]> = useRef([])
 
@@ -92,30 +92,30 @@ export function Keyboard({
 
     return (
         <ul className="keyboard">
-            {keys.map((key, index) => {
-                const isBlackKey = key.includes('#')
-                const isSpecialKey = checkIsSpecialKey(key)
+            {notes.map((note, index) => {
+                const isBlackKey = note.includes('#')
+                const isSpecialNote = checkIsSpecialNote(note)
                 const keyClassName = isBlackKey ? 'keyboard__blackkey' : 'keyboard__whitekey'
                 const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
-                const margin = isBlackKey || !isSpecialKey ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
+                const margin = isBlackKey || !isSpecialNote ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
                 const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`
-                const isActive = activeKeys.find((currentKey) => currentKey.name === key)
+                const isActive = activeKeys.find((currentKey) => currentKey.name === note)
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
                     musicSystem !== 'alphabetical'
-                        ? translateNoteToMusicSystem(key, musicSystem)
-                        : key
+                        ? translateNoteToMusicSystem(note, musicSystem)
+                        : note
 
                 return (
                     <li
-                        key={key}
+                        key={note}
                         style={{ width, margin }}
-                        onMouseDown={() => handleMouseDown(key)}
+                        onMouseDown={() => handleMouseDown(note)}
                         onMouseUp={handleMouseUp}
                         className={`
                             ${keyClassName} 
-                            ${noteToKey(key)} 
-                            ${key} ${isActive ? `${keyClassName}--active` : ''}`}
+                            ${noteToKey(note)} 
+                            ${note} ${isActive ? `${keyClassName}--active` : ''}`}
                     >
                         <span style={styleKeyName}>{keyTranslated}</span>
                     </li>

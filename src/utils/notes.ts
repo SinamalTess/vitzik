@@ -7,7 +7,7 @@ export const keyToNote = (key: number): AlphabeticalNote =>
 export const noteToKey = (note: AlphabeticalNote): number =>
     NOTES.alphabetical.findIndex((currentNote) => currentNote === note) + MIDI_PIANO_KEYS_OFFSET
 
-export const isSpecialKey = (note: AlphabeticalNote) => note.includes('C') || note.includes('F')
+export const isSpecialNote = (note: AlphabeticalNote) => note.includes('C') || note.includes('F')
 
 export const isBlackKey = (note: AlphabeticalNote) => note.includes('#')
 
