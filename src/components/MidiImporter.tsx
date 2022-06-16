@@ -5,10 +5,9 @@ import './MidIimporter.scss'
 import { Icon } from './generics/Icon'
 
 interface MidiImporterProps {
-    onMidiImport: OnMidiImport
+    onMidiImport: (title: string, midiJSON: IMidiFile) => void
 }
 
-export type OnMidiImport = (title: string, midiJSON: IMidiFile) => void //TODO: review if to place type inside component or in shared file
 type midiImporterState = 'pending' | 'error' | 'dragging'
 
 function getFiles(event: DragEvent) {

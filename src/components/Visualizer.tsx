@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { isEven, keyToNote, drawRoundRect, isBlackKey as checkIsBlackKey } from '../utils'
 import './Visualizer.scss'
-import { AlphabeticalNote, CanvasRectangle, MidiJsonNote } from '../types'
+import { AlphabeticalNote, AudioPlayerState, CanvasRectangle, MidiJsonNote } from '../types'
 import isEqual from 'lodash.isequal'
 import { ActiveNote } from '../App'
-import { AudioPlayerState } from './AudioPlayer'
 import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent, TMidiEvent } from 'midi-json-parser-worker'
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/const'
 
@@ -22,6 +21,23 @@ interface PartialNote {
     key: number
     velocity: number
     name: AlphabeticalNote
+}
+
+export interface MidiTrackInfos {
+    ticksPerBeat: number
+    msPerBeat: number
+    trackDuration: number
+}
+
+interface VisualizerProps {
+    activeNotes: ActiveNote[]
+    color?: string
+    midiTrackCurrentTime: number
+    midiTrack: IMidiFile | null
+    heightPerBeat?: number
+    midiTrackInfos: MidiTrackInfos | null
+    audioPlayerState: AudioPlayerState
+    onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
 
 const isNoteOnEvent = (note: TMidiEvent): note is IMidiNoteOnEvent => 'noteOn' in note
@@ -214,23 +230,6 @@ function reDrawCurrentState(
         const index = i === 0 ? canvas0 : canvas1
         reDrawCanvas(child, index, notesCoordinates)
     })
-}
-
-export interface MidiTrackInfos {
-    ticksPerBeat: number
-    msPerBeat: number
-    trackDuration: number
-}
-
-interface VisualizerProps {
-    activeNotes: ActiveNote[]
-    color?: string
-    midiTrackCurrentTime: number
-    midiTrack: IMidiFile | null
-    heightPerBeat?: number
-    midiTrackInfos: MidiTrackInfos | null
-    audioPlayerState: AudioPlayerState
-    onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
 
 export function Visualizer({

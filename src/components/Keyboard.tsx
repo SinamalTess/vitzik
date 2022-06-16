@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './Keyboard.scss'
 import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
-import { AlphabeticalNote, Instrument, MusicSystem } from '../types'
+import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from '../types'
 import Soundfont, { InstrumentName } from 'soundfont-player'
 import {
     isSpecialNote as checkIsSpecialNote,
@@ -10,7 +10,6 @@ import {
     translateNoteToMusicSystem,
 } from '../utils'
 import { ActiveNote } from '../App'
-import { AudioPlayerState } from './AudioPlayer'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
@@ -79,8 +78,7 @@ export function Keyboard({
         const { velocity, id, duration, key } = note
         const gain = normalizeVelocity(0, 1, velocity)
         if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
-            instrumentPlayer.play(key.toString(), undefined, {
-                //TODO: use audiocontext clock
+            instrumentPlayer.play(key.toString(), 0, {
                 gain,
                 duration: msToSec(duration ?? 0),
             })

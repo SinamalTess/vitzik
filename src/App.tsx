@@ -3,11 +3,11 @@ import React, { useMemo, useState } from 'react'
 import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
-import { AlphabeticalNote, Instrument, MusicSystem } from './types'
+import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayer, AudioPlayerState } from './components/AudioPlayer'
+import { AudioPlayer } from './components/AudioPlayer'
 
 export interface ActiveNote {
     name: AlphabeticalNote

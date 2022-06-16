@@ -5,8 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { msToMinAndSec } from '../utils'
 import { usePrevious } from '../hooks'
 import workerInterval from '../workers/workerInterval'
-
-export type AudioPlayerState = 'playing' | 'rewinding' | 'paused' | 'seeking'
+import { AudioPlayerState } from '../types'
 
 interface AudioPlayerProps {
     midiTrackCurrentTime: number

@@ -1,12 +1,12 @@
 import { Staff } from './Staff'
 import { MidiTrackTitle } from './MidiTrackTitle'
-import { MidiImporter, OnMidiImport } from './MidiImporter'
+import { MidiImporter } from './MidiImporter'
 import { MidiTrackInfos, Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
 import { ActiveNote } from '../App'
-import { AudioPlayerState } from './AudioPlayer'
 import { IMidiFile } from 'midi-json-parser-worker'
+import { AudioPlayerState } from '../types'
 
 interface PreviewProps {
     appMode: AppMode
@@ -18,7 +18,7 @@ interface PreviewProps {
     activeNotes: ActiveNote[]
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: (notes: ActiveNote[]) => void
-    onMidiImport: OnMidiImport
+    onMidiImport: (title: string, midiJSON: IMidiFile) => void
 }
 
 export function Preview({

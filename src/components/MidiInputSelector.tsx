@@ -6,6 +6,8 @@ import { ActiveNote } from '../App'
 
 //TODO: align the icon and animation + color
 
+const isMidiMessageEvent = (event: Event): event is MIDIMessageEvent => 'data' in event
+
 interface MidiInputSelectorProps {
     onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
 }
@@ -37,8 +39,9 @@ export function MidiInputSelector({ onChangeActiveNotes }: MidiInputSelectorProp
         )
     }
 
-    function getMIDIMessage(message: any) {
-        // TODO: have a more precise type
+    function getMIDIMessage(message: Event) {
+        if (!isMidiMessageEvent(message)) return
+
         const key = message.data[1]
         const command = message.data[0]
         const name = keyToNote(message.data[1])

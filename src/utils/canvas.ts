@@ -7,6 +7,9 @@ interface Radius {
     bl: number
 }
 
+const isRadius = (value: any): value is Radius =>
+    'tl' in value && 'tr' in value && 'br' in value && 'bl' in value
+
 export const isContainedBy = (rectA: Rectangle, rectB: Rectangle): boolean =>
     rectA.x1 <= rectB.x1 && rectA.y1 <= rectB.y1 && rectA.x2 >= rectB.x2 && rectA.y2 >= rectB.y2
 
@@ -46,28 +49,28 @@ export function drawRoundRect(
     fill = false,
     stroke = true
 ) {
-    //TODO: enforce type instead of using a let variable
-    let normalizedRadius = { tl: 0, tr: 0, br: 0, bl: 0 }
     if (typeof radius === 'number') {
-        normalizedRadius = { tl: radius, tr: radius, br: radius, bl: radius }
+        radius = { tl: radius, tr: radius, br: radius, bl: radius }
     } else {
-        normalizedRadius = { ...normalizedRadius, ...radius }
+        radius = { ...{ tl: 0, tr: 0, br: 0, bl: 0 }, ...radius }
     }
-    ctx.beginPath()
-    ctx.moveTo(x + normalizedRadius.tl, y)
-    ctx.lineTo(x + w - normalizedRadius.tr, y)
-    ctx.quadraticCurveTo(x + w, y, x + w, y + normalizedRadius.tr)
-    ctx.lineTo(x + w, y + h - normalizedRadius.br)
-    ctx.quadraticCurveTo(x + w, y + h, x + w - normalizedRadius.br, y + h)
-    ctx.lineTo(x + normalizedRadius.bl, y + h)
-    ctx.quadraticCurveTo(x, y + h, x, y + h - normalizedRadius.bl)
-    ctx.lineTo(x, y + normalizedRadius.tl)
-    ctx.quadraticCurveTo(x, y, x + normalizedRadius.tl, y)
-    ctx.closePath()
-    if (fill) {
-        ctx.fill()
-    }
-    if (stroke) {
-        ctx.stroke()
+    if (isRadius(radius)) {
+        ctx.beginPath()
+        ctx.moveTo(x + radius.tl, y)
+        ctx.lineTo(x + w - radius.tr, y)
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radius.tr)
+        ctx.lineTo(x + w, y + h - radius.br)
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radius.br, y + h)
+        ctx.lineTo(x + radius.bl, y + h)
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radius.bl)
+        ctx.lineTo(x, y + radius.tl)
+        ctx.quadraticCurveTo(x, y, x + radius.tl, y)
+        ctx.closePath()
+        if (fill) {
+            ctx.fill()
+        }
+        if (stroke) {
+            ctx.stroke()
+        }
     }
 }
