@@ -18,21 +18,21 @@ export function RangeSlider({
     min = 0,
     max = 100,
 }: RangeSliderPros) {
-    function handleOnMouseUp(event: React.MouseEvent<HTMLInputElement>) {
+    function handleMouseUp(event: React.MouseEvent<HTMLInputElement>) {
         if (onMouseUp) {
             //@ts-ignore
             onMouseUp(parseInt(event.target.value))
         }
     }
 
-    function handleOnMouseDown(event: React.MouseEvent<HTMLInputElement>) {
+    function handleMouseDown(event: React.MouseEvent<HTMLInputElement>) {
         if (onMouseDown) {
             //@ts-ignore
             onMouseDown(parseInt(event.target.value))
         }
     }
 
-    function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         onChange(parseInt(event.target.value))
     }
 
@@ -42,9 +42,9 @@ export function RangeSlider({
             min={min}
             max={max}
             value={value}
-            onChange={handleOnChange}
-            onMouseUp={handleOnMouseUp}
-            onMouseDown={handleOnMouseDown}
+            onChange={handleChange}
+            onMouseUp={handleMouseUp}
+            onMouseDown={handleMouseDown}
         />
     )
 }
