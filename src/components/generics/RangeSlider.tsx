@@ -3,19 +3,48 @@ import './RangeSlider.scss'
 
 interface RangeSliderPros {
     value: string | number
-    onChange: (value: number) => void
     min?: number
     max?: number
+    onMouseUp?: (value: number) => void
+    onMouseDown?: (value: number) => void
+    onChange: (value: number) => void
 }
 
-export function RangeSlider({ value, onChange, min = 0, max = 100 }: RangeSliderPros) {
+export function RangeSlider({
+    value,
+    onChange,
+    onMouseUp,
+    onMouseDown,
+    min = 0,
+    max = 100,
+}: RangeSliderPros) {
+    function handleOnMouseUp(event: React.MouseEvent<HTMLInputElement>) {
+        if (onMouseUp) {
+            //@ts-ignore
+            onMouseUp(parseInt(event.target.value))
+        }
+    }
+
+    function handleOnMouseDown(event: React.MouseEvent<HTMLInputElement>) {
+        if (onMouseDown) {
+            //@ts-ignore
+            onMouseDown(parseInt(event.target.value))
+        }
+    }
+
+    function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
+        onChange(parseInt(event.target.value))
+    }
+
     return (
         <input
             type="range"
             min={min}
             max={max}
             value={value}
-            onChange={(event) => onChange(parseInt(event.target.value))}
+            onChange={handleOnChange}
+            onMouseUp={handleOnMouseUp}
+            onMouseDown={handleOnMouseDown}
         />
     )
 }

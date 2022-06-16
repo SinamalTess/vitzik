@@ -44,7 +44,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         window.addEventListener('drop', handleDrop)
         window.addEventListener('dragleave', handleDragLeave)
 
-        return function () {
+        return function cleanup() {
             window.removeEventListener('dragover', handleDragOver)
             window.removeEventListener('drop', handleDrop)
             window.removeEventListener('dragleave', handleDragLeave)

@@ -55,21 +55,20 @@ export function Keyboard({
     }, [instrument])
 
     useEffect(() => {
-        if (!isMute && activeKeys.length) {
-            activeKeys.forEach((note) => {
-                const { velocity, id, duration, key } = note
-                const gain = normalizeVelocity(0, 1, velocity)
-                if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
-                    instrumentPlayer?.play(key.toString(), undefined, {
-                        //TODO: use audiocontext clock
-                        gain,
-                        duration: msToSec(duration ?? 0),
-                    })
-                    notesAlreadyPlayed.current.push(note)
-                }
-            })
-        }
-    }, [activeKeys])
+        if (isMute || !activeKeys.length || !instrumentPlayer) return
+        activeKeys.forEach((note) => {
+            const { velocity, id, duration, key } = note
+            const gain = normalizeVelocity(0, 1, velocity)
+            if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
+                instrumentPlayer?.play(key.toString(), undefined, {
+                    //TODO: use audiocontext clock
+                    gain,
+                    duration: msToSec(duration ?? 0),
+                })
+                notesAlreadyPlayed.current.push(note)
+            }
+        })
+    }, [activeKeys, instrumentPlayer, isMute])
 
     useEffect(() => {
         if (audioPlayerState === 'rewinding') {

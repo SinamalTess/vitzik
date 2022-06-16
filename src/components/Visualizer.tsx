@@ -285,7 +285,7 @@ export function Visualizer({
                     break
             }
         }
-    }, [indexCanvas, audioPlayerState])
+    }, [indexCanvas, audioPlayerState, notesCoordinates])
 
     function getActiveNotes(midiTrackCurrentTime: number) {
         if (!midiTrackInfos) return
