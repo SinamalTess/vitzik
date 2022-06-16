@@ -14,7 +14,7 @@ interface AudioPlayerProps {
     isMute: boolean
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
-    onChangeMidiTrackCurrentTime: (midiTrackCurrentTime: number) => void
+    onChangeMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 function WebWorker(worker: any): Worker {
@@ -37,38 +37,41 @@ export function AudioPlayer({
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [isSearching, setIsSearching] = useState<boolean>(false)
-    let worker: Worker
 
     useEffect(() => {
+        let worker: Worker = WebWorker(workerInterval)
+
+        function startWorker() {
+            worker.postMessage('start')
+            worker.onmessage = (message) => {
+                if (message.data.hasOwnProperty('interval')) {
+                    const interval = message.data.interval
+                    const setMidiTrackCurrentTime = handlePlay()
+                    setMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
+                        if (midiTrackCurrentTime > midiTrackDuration) {
+                            worker.terminate()
+                            setIsPlaying(false)
+                            handlePause()
+                            return 0
+                        }
+                        return midiTrackCurrentTime + interval
+                    })
+                }
+            }
+        }
+
         if (isPlaying && !isSearching) {
             startWorker()
         } else {
-            worker?.terminate()
+            worker.terminate()
             handlePause()
         }
+
         return () => {
-            worker?.terminate()
+            worker.terminate()
             handlePause()
         }
     }, [isPlaying, isSearching])
-
-    function startWorker() {
-        worker = WebWorker(workerInterval)
-        worker.onmessage = (message) => {
-            const interval = message.data.interval
-            const setMidiTrackCurrentTime = handlePlay()
-            // @ts-ignore
-            setMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
-                if (midiTrackCurrentTime > midiTrackDuration) {
-                    worker.terminate()
-                    setIsPlaying(false)
-                    handlePause()
-                    return 0
-                }
-                return midiTrackCurrentTime + interval
-            })
-        }
-    }
 
     function handleChange(midiTrackCurrentTime: number) {
         if (midiTrackCurrentTime <= prevMidiTrackCurrentTime) {
@@ -89,9 +92,7 @@ export function AudioPlayer({
     }
 
     function handleClick() {
-        if (midiTrackDuration) {
-            setIsPlaying((isPlaying) => !isPlaying)
-        }
+        setIsPlaying((isPlaying) => !isPlaying)
     }
 
     function handleMouseDown() {
