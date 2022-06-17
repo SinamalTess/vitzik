@@ -1,12 +1,12 @@
 import { Staff } from './Staff'
 import { MidiTrackTitle } from './MidiTrackTitle'
 import { MidiImporter } from './MidiImporter'
-import { MidiTrackInfos, Visualizer } from './Visualizer'
+import { Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
 import { ActiveNote } from '../App'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState } from '../types'
+import { AudioPlayerState, MidiTrackInfos } from '../types'
 
 interface PreviewProps {
     appMode: AppMode

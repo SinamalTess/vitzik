@@ -1,5 +1,5 @@
 import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
-import { MidiTrackInfos } from '../components/Visualizer'
+import { MidiTrackInfos } from '../types'
 
 export const getFormat = (midiJson: IMidiFile): number => midiJson.format
 
