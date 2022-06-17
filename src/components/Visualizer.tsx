@@ -238,7 +238,7 @@ export function Visualizer({
             })
         } else {
             if (audioPlayerState === 'playing') {
-                const sectionToRedraw: SectionName = isIndexEven ? 'firstSection' : 'secondSection'
+                const sectionToRedraw: SectionName = isIndexEven ? 'secondSection' : 'firstSection'
                 const indexToDrawCopy = { ...indexToDraw }
                 indexToDrawCopy[sectionToRedraw] = indexSectionPlaying + 1
                 setIndexToDraw(indexToDrawCopy)
