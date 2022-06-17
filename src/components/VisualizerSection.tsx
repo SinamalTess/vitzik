@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { drawRoundRect } from '../utils'
 import { AlphabeticalNote, CanvasRectangle } from '../types'
+import './VisualizerSection.scss'
 
 interface NoteCoordinates extends CanvasRectangle {
     name: AlphabeticalNote
@@ -91,7 +92,7 @@ export function VisualizerSection({
     return (
         <canvas
             ref={refCanvas}
-            className={`visualizer__canvas visualizer__canvas--${index}`}
+            className={`visualizer__section visualizer__section--${index}`}
             style={{ transform: `scaleY(-1) translateY(${top})` }}
         ></canvas>
     )

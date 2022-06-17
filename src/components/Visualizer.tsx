@@ -8,6 +8,7 @@ import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent, TMidiEvent } from 'midi
 import { MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTES } from '../utils/const'
 import { VisualizerSection } from './VisualizerSection'
 import { MidiTrackInfos } from '../types'
+import { VisualizerTracks } from './VisualizerTracks'
 
 //TODO: draw vertical lines to see notes better
 
@@ -266,6 +267,7 @@ export function Visualizer({
                     color={color}
                 />
             ))}
+            <VisualizerTracks height={height} width={width} />
         </div>
     )
 }
