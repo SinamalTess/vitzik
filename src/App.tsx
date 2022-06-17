@@ -8,6 +8,7 @@ import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
+import { InstrumentPlayer } from './components/InstrumentPlayer'
 
 export interface ActiveNote {
     name: AlphabeticalNote
@@ -82,12 +83,15 @@ function App() {
             </div>
             <div className="item">
                 <Keyboard
-                    instrument={instrument}
                     activeKeys={activeNotes}
-                    isMute={isMute}
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
+                />
+                <InstrumentPlayer
+                    isMute={isMute}
                     audioPlayerState={audioPlayerState}
+                    activeKeys={activeNotes}
+                    instrument={instrument}
                 />
             </div>
         </div>

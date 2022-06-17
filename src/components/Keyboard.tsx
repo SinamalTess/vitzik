@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import './Keyboard.scss'
 import { NOTES } from '../utils/const'
-import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from '../types'
-import Soundfont, { InstrumentName } from 'soundfont-player'
+import { AlphabeticalNote, MusicSystem } from '../types'
 import {
     getWidthKeys,
     isSpecialNote as checkIsSpecialNote,
-    msToSec,
     noteToKey,
     translateNoteToMusicSystem,
 } from '../utils'
@@ -14,18 +12,9 @@ import { ActiveNote } from '../App'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
-    isMute: boolean
     musicSystem: MusicSystem
-    instrument: Instrument
     onKeyPressed: (note: ActiveNote[]) => void
-    audioPlayerState: AudioPlayerState
 }
-
-const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
-    instrument.replace(/ /g, '_').toLowerCase() as InstrumentName
-
-const normalizeVelocity = (val: number, max: number, min: number): number =>
-    (val - min) / (max - min)
 
 function getStyles(note: AlphabeticalNote) {
     const isBlackKey = note.includes('#')
@@ -40,65 +29,8 @@ function getStyles(note: AlphabeticalNote) {
     }
 }
 
-export function Keyboard({
-    activeKeys,
-    isMute,
-    musicSystem,
-    instrument,
-    onKeyPressed,
-    audioPlayerState,
-}: PianoProps) {
+export function Keyboard({ activeKeys, musicSystem, onKeyPressed }: PianoProps) {
     const notes = NOTES.alphabetical
-    const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
-    const notesAlreadyPlayed: React.MutableRefObject<any[]> = useRef([])
-
-    useEffect(() => {
-        if (isMute || audioPlayerState !== 'playing') return
-        const ac = startInstrument()
-
-        return function cleanup() {
-            ac.close().then(() => setInstrumentPlayer(null))
-        }
-    }, [instrument, isMute, audioPlayerState])
-
-    useEffect(() => {
-        if (isMute || !activeKeys.length || !instrumentPlayer) return
-        activeKeys.forEach((note) => {
-            playNote(note)
-        })
-    }, [activeKeys, instrumentPlayer, isMute])
-
-    useEffect(() => {
-        if (audioPlayerState === 'rewinding' || audioPlayerState === 'stopped') {
-            notesAlreadyPlayed.current = []
-        }
-    }, [audioPlayerState])
-
-    function startInstrument() {
-        const ac = new AudioContext()
-        const SoundfontInstrument = normalizeInstrumentName(instrument)
-        Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
-            .then((instrumentPlayer) => {
-                setInstrumentPlayer(instrumentPlayer)
-            })
-            .catch(() => {
-                console.error(`Failed to start the instrument ${instrument} audio`)
-            })
-        return ac
-    }
-
-    function playNote(note: ActiveNote) {
-        if (!instrumentPlayer) return
-        const { velocity, id, duration, key } = note
-        const gain = normalizeVelocity(0, 1, velocity)
-        if (!notesAlreadyPlayed.current.find((note) => note.id === id)) {
-            instrumentPlayer.play(key.toString(), 0, {
-                gain,
-                duration: msToSec(duration ?? 0),
-            })
-            notesAlreadyPlayed.current.push(note)
-        }
-    }
 
     function handleMouseDown(note: AlphabeticalNote) {
         onKeyPressed([
