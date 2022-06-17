@@ -45,12 +45,10 @@ export function AudioPlayer({
             worker.onmessage = (message) => {
                 if (message.data.hasOwnProperty('interval')) {
                     const interval = message.data.interval
-                    const setMidiTrackCurrentTime = handlePlay()
-                    setMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
+                    onChangeMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
                         if (midiTrackCurrentTime > midiTrackDuration) {
                             worker.terminate()
                             setIsPlaying(false)
-                            handlePause()
                             return 0
                         }
                         return midiTrackCurrentTime + interval
@@ -63,31 +61,31 @@ export function AudioPlayer({
             startWorker()
         } else {
             worker.terminate()
-            handlePause()
         }
 
-        return () => {
+        return function cleanup() {
             worker.terminate()
-            handlePause()
         }
     }, [isPlaying, isSearching])
 
-    function handleChange(midiTrackCurrentTime: number) {
-        if (midiTrackCurrentTime <= prevMidiTrackCurrentTime) {
-            onChangeAudioPlayerState('rewinding')
+    useEffect(() => {
+        if (isPlaying && !isSearching) {
+            onChangeAudioPlayerState('playing')
         } else {
-            onChangeAudioPlayerState('seeking')
+            if (midiTrackCurrentTime === 0) {
+                onChangeAudioPlayerState('stopped')
+            } else if (midiTrackCurrentTime > prevMidiTrackCurrentTime) {
+                onChangeAudioPlayerState('seeking')
+            } else if (midiTrackCurrentTime < prevMidiTrackCurrentTime) {
+                onChangeAudioPlayerState('rewinding')
+            } else {
+                onChangeAudioPlayerState('paused')
+            }
         }
+    }, [midiTrackCurrentTime, isPlaying, isSearching])
+
+    function handleChange(midiTrackCurrentTime: number) {
         onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
-    }
-
-    function handlePlay() {
-        onChangeAudioPlayerState('playing')
-        return onChangeMidiTrackCurrentTime
-    }
-
-    function handlePause() {
-        onChangeAudioPlayerState('paused')
     }
 
     function handleClick() {

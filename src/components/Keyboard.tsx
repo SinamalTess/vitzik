@@ -69,7 +69,7 @@ export function Keyboard({
     }, [activeKeys, instrumentPlayer, isMute])
 
     useEffect(() => {
-        if (audioPlayerState === 'rewinding') {
+        if (audioPlayerState === 'rewinding' || audioPlayerState === 'stopped') {
             notesAlreadyPlayed.current = []
         }
     }, [audioPlayerState])

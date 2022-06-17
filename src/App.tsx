@@ -29,7 +29,7 @@ function App() {
     const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
     const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
-    const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('paused')
+    const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
 
     const midiTrackInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
     const midiTrackDuration = midiTrackInfos?.trackDuration ?? 0

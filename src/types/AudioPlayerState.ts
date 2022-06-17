@@ -1,1 +1,1 @@
-export type AudioPlayerState = 'playing' | 'rewinding' | 'paused' | 'seeking'
+export type AudioPlayerState = 'stopped' | 'playing' | 'rewinding' | 'paused' | 'seeking'
