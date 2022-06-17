@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './Keyboard.scss'
-import { NOTES, NB_WHITE_PIANO_KEYS } from '../utils/const'
+import { NOTES } from '../utils/const'
 import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from '../types'
 import Soundfont, { InstrumentName } from 'soundfont-player'
 import {
+    getWidthKeys,
     isSpecialNote as checkIsSpecialNote,
     msToSec,
     noteToKey,
@@ -25,6 +26,19 @@ const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
 
 const normalizeVelocity = (val: number, max: number, min: number): number =>
     (val - min) / (max - min)
+
+function getStyles(note: AlphabeticalNote) {
+    const isBlackKey = note.includes('#')
+    const isSpecialNote = checkIsSpecialNote(note)
+    const { widthWhiteKey, widthBlackKey } = getWidthKeys(100)
+    const margin = isBlackKey || !isSpecialNote ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
+    const width = isBlackKey ? `${widthBlackKey}%` : `${widthWhiteKey}%`
+
+    return {
+        margin,
+        width,
+    }
+}
 
 export function Keyboard({
     activeKeys,
@@ -102,19 +116,16 @@ export function Keyboard({
 
     return (
         <ul className="keyboard">
-            {notes.map((note, index) => {
+            {notes.map((note) => {
                 const isBlackKey = note.includes('#')
-                const isSpecialNote = checkIsSpecialNote(note)
-                const keyClassName = isBlackKey ? 'keyboard__blackkey' : 'keyboard__whitekey'
-                const widthWhiteKey = 100 / NB_WHITE_PIANO_KEYS
-                const margin = isBlackKey || !isSpecialNote ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
-                const width = isBlackKey ? `${widthWhiteKey / 2}%` : `${widthWhiteKey}%`
                 const isActive = activeKeys.find((currentKey) => currentKey.name === note)
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
                     musicSystem !== 'alphabetical'
                         ? translateNoteToMusicSystem(note, musicSystem)
                         : note
+                const keyClassName = isBlackKey ? 'keyboard__blackkey' : 'keyboard__whitekey'
+                const { width, margin } = getStyles(note)
 
                 return (
                     <li

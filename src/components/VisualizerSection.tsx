@@ -14,7 +14,6 @@ interface NoteCoordinates extends CanvasRectangle {
 export interface VisualizerSectionProps {
     index: number
     indexToDraw: number
-    indexCanvasPlaying: number
     height: number
     width: number
     top: string

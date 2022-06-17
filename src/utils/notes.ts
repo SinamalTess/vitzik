@@ -7,10 +7,6 @@ export const keyToNote = (key: number): AlphabeticalNote =>
 export const noteToKey = (note: AlphabeticalNote): number =>
     NOTES.alphabetical.findIndex((currentNote) => currentNote === note) + MIDI_PIANO_KEYS_OFFSET
 
-export const isSpecialNote = (note: AlphabeticalNote) => note.includes('C') || note.includes('F')
-
-export const isBlackKey = (note: AlphabeticalNote) => note.includes('#')
-
 export const translateNoteToMusicSystem = (note: Note, musicSystem: MusicSystem): Note => {
     for (const currentMusicSystem in NOTES) {
         const notes = [...NOTES[currentMusicSystem as MusicSystem]]
