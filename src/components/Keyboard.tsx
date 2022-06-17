@@ -29,7 +29,11 @@ function getStyles(note: AlphabeticalNote) {
     }
 }
 
-export function Keyboard({ activeKeys, musicSystem, onKeyPressed }: PianoProps) {
+export const Keyboard = React.memo(function Keyboard({
+    activeKeys,
+    musicSystem,
+    onKeyPressed,
+}: PianoProps) {
     const notes = NOTES.alphabetical
 
     function handleMouseDown(note: AlphabeticalNote) {
@@ -76,4 +80,4 @@ export function Keyboard({ activeKeys, musicSystem, onKeyPressed }: PianoProps) 
             })}
         </ul>
     )
-}
+})
