@@ -15,7 +15,7 @@ export interface ButtonProps {
 }
 
 export function Button({
-    onClick,
+    onClick = () => {},
     disable = false,
     active = false,
     icon,
