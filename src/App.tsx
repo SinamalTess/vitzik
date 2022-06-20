@@ -91,6 +91,7 @@ function App() {
                     audioPlayerState={audioPlayerState}
                     activeKeys={activeNotes}
                     instrument={instrument}
+                    midiFile={midiFile}
                 />
             </div>
         </div>

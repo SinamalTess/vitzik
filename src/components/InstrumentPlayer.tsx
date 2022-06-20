@@ -3,12 +3,14 @@ import Soundfont, { InstrumentName, Player } from 'soundfont-player'
 import { ActiveNote } from '../App'
 import { msToSec } from '../utils'
 import { AudioPlayerState, Instrument } from '../types'
+import { IMidiFile } from 'midi-json-parser-worker'
 
 interface InstrumentPlayerProps {
     isMute: boolean
     instrument: Instrument
     audioPlayerState: AudioPlayerState
     activeKeys: ActiveNote[]
+    midiFile: IMidiFile | null
 }
 
 const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
@@ -34,12 +36,27 @@ export function InstrumentPlayer({
     instrument,
     audioPlayerState,
     activeKeys,
+    midiFile,
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const notesAlreadyPlayed: React.MutableRefObject<ActiveNote[]> = useRef([])
 
     useEffect(() => {
         if (isMute || audioPlayerState !== 'playing') return
+
+        function startInstrument() {
+            const ac = new AudioContext()
+            const SoundfontInstrument = normalizeInstrumentName(instrument)
+            Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
+                .then((instrumentPlayer) => {
+                    setInstrumentPlayer(instrumentPlayer)
+                })
+                .catch(() => {
+                    console.error(`Failed to start the instrument ${instrument} audio`)
+                })
+            return ac
+        }
+
         const ac = startInstrument()
 
         return function cleanup() {
@@ -60,18 +77,9 @@ export function InstrumentPlayer({
         }
     }, [audioPlayerState])
 
-    function startInstrument() {
-        const ac = new AudioContext()
-        const SoundfontInstrument = normalizeInstrumentName(instrument)
-        Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
-            .then((instrumentPlayer) => {
-                setInstrumentPlayer(instrumentPlayer)
-            })
-            .catch(() => {
-                console.error(`Failed to start the instrument ${instrument} audio`)
-            })
-        return ac
-    }
+    useEffect(() => {
+        notesAlreadyPlayed.current = []
+    }, [midiFile])
 
     return null
 }
