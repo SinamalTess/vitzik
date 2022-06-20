@@ -2,8 +2,8 @@ import React from 'react'
 import { Button } from './generics/Button'
 
 interface PlayerControllerProps {
-    onClick: () => void
     isPlaying: boolean
+    onClick: () => void
 }
 
 export function PlayButton({ onClick, isPlaying }: PlayerControllerProps) {
