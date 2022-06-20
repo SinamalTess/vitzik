@@ -7,6 +7,7 @@ import { AppMode } from './ModeSelector'
 import { ActiveNote } from '../App'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayerState, MidiInfos } from '../types'
+import { ErrorBoundary } from './generics/ErrorBoundary'
 
 interface PreviewProps {
     appMode: AppMode
@@ -37,7 +38,7 @@ export function Preview({
     return appMode === 'learning' ? (
         <Staff notes={staffNotes} />
     ) : (
-        <>
+        <ErrorBoundary>
             <MidiTrackTitle midiTrackTitle={midiTrackTitle} />
             <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
@@ -48,6 +49,6 @@ export function Preview({
                 activeNotes={activeNotes}
                 audioPlayerState={audioPlayerState}
             />
-        </>
+        </ErrorBoundary>
     )
 }

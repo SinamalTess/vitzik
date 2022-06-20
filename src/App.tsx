@@ -18,7 +18,6 @@ export interface ActiveNote {
     key: number
 }
 
-//TODO: add error boundary
 //TODO: check accessibility
 
 function App() {
