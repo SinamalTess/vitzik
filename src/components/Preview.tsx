@@ -6,13 +6,13 @@ import React from 'react'
 import { AppMode } from './ModeSelector'
 import { ActiveNote } from '../App'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState, MidiTrackInfos } from '../types'
+import { AudioPlayerState, MidiInfos } from '../types'
 
 interface PreviewProps {
     appMode: AppMode
     notes: ActiveNote[]
-    midiTrack: IMidiFile | null
-    midiTrackInfos: MidiTrackInfos | null
+    midiFile: IMidiFile | null
+    midiInfos: MidiInfos | null
     midiTrackTitle: string
     midiTrackCurrentTime: number
     activeNotes: ActiveNote[]
@@ -24,8 +24,8 @@ interface PreviewProps {
 export function Preview({
     appMode,
     notes,
-    midiTrack,
-    midiTrackInfos,
+    midiFile,
+    midiInfos,
     midiTrackTitle,
     midiTrackCurrentTime,
     activeNotes,
@@ -41,9 +41,9 @@ export function Preview({
             <MidiTrackTitle midiTrackTitle={midiTrackTitle} />
             <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
-                midiTrack={midiTrack}
+                midiFile={midiFile}
                 midiTrackCurrentTime={midiTrackCurrentTime}
-                midiTrackInfos={midiTrackInfos}
+                midiInfos={midiInfos}
                 onChangeActiveNotes={onChangeActiveNotes}
                 activeNotes={activeNotes}
                 audioPlayerState={audioPlayerState}

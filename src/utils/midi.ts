@@ -1,5 +1,5 @@
 import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
-import { MidiTrackInfos } from '../types'
+import { MidiInfos } from '../types'
 
 export const getFormat = (midiJson: IMidiFile): number => midiJson.format
 
@@ -49,7 +49,7 @@ export function getMsPerBeat(midiJson: IMidiFile): number {
     }
 }
 
-export function getMidiInfos(midiJson: IMidiFile | null): MidiTrackInfos | null {
+export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
     if (!midiJson) return null
 
     const nbTicks = midiJson.tracks[0].reduce((acc, nextEvent) => acc + nextEvent.delta, 0) //TODO: check if all track last the same

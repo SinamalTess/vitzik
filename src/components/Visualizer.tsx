@@ -5,7 +5,7 @@ import {
     AlphabeticalNote,
     AudioPlayerState,
     MidiJsonNote,
-    MidiTrackInfos,
+    MidiInfos,
     NoteCoordinates,
 } from '../types'
 import isEqual from 'lodash.isequal'
@@ -25,9 +25,9 @@ interface VisualizerProps {
     activeNotes: ActiveNote[]
     color?: string
     midiTrackCurrentTime: number
-    midiTrack: IMidiFile | null
+    midiFile: IMidiFile | null
     heightPerBeat?: number
-    midiTrackInfos: MidiTrackInfos | null
+    midiInfos: MidiInfos | null
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
@@ -87,7 +87,7 @@ function getNoteCoordinates(
 
 function getActiveNotes(
     midiTrackCurrentTime: number,
-    midiTrackInfos: MidiTrackInfos | null,
+    midiTrackInfos: MidiInfos | null,
     heightPerBeat: number,
     notesCoordinates: NoteCoordinates[][],
     indexSectionPlaying: number
@@ -119,7 +119,7 @@ function getNotesPosition(
     },
     midiTrack: IMidiFile,
     heightPerBeat: number,
-    midiTrackInfos: MidiTrackInfos
+    midiTrackInfos: MidiInfos
 ) {
     const { ticksPerBeat, trackDuration, msPerBeat } = midiTrackInfos
     const { w, h } = containerDimensions
@@ -188,9 +188,9 @@ export function Visualizer({
     activeNotes,
     color = '#00E2DC',
     midiTrackCurrentTime,
-    midiTrack,
+    midiFile,
     heightPerBeat = 100,
-    midiTrackInfos,
+    midiInfos,
     audioPlayerState,
     onChangeActiveNotes,
 }: VisualizerProps) {
@@ -206,20 +206,20 @@ export function Visualizer({
     const height = visualizerRef?.current?.clientHeight ?? 0
 
     useEffect(() => {
-        if (!midiTrackInfos || !midiTrack) return
+        if (!midiInfos || !midiFile) return
         const coordinates = getNotesPosition(
             { w: width, h: height },
-            midiTrack,
+            midiFile,
             heightPerBeat,
-            midiTrackInfos
+            midiInfos
         )
         setNotesCoordinates(coordinates[coordinates.length - 1]) //TODO: once we support multitracking remove this
-    }, [midiTrackInfos])
+    }, [midiInfos])
 
     useEffect(() => {
         const activeKeys = getActiveNotes(
             midiTrackCurrentTime,
-            midiTrackInfos,
+            midiInfos,
             heightPerBeat,
             notesCoordinates,
             indexSectionPlaying
@@ -252,8 +252,8 @@ export function Visualizer({
     }, [indexSectionPlaying, audioPlayerState, notesCoordinates])
 
     function calcTop(sectionName: SectionName) {
-        if (!midiTrackInfos) return '0px'
-        const { msPerBeat } = midiTrackInfos
+        if (!midiInfos) return '0px'
+        const { msPerBeat } = midiInfos
         const nbBeatsPassed = midiTrackCurrentTime / msPerBeat
         const heightDuration = nbBeatsPassed * heightPerBeat
         const nbSectionPassed = heightDuration / height

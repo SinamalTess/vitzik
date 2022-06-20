@@ -27,18 +27,18 @@ function App() {
     const [isMute, setIsMute] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [midiTrackCurrentTime, setMidiTrackCurrentTime] = useState<number>(0)
-    const [midiTrackTitle, setMidiTrackTitle] = useState<string>('')
-    const [midiTrack, setMidiTrack] = useState<IMidiFile | null>(null)
+    const [midiTitle, setMidiTitle] = useState<string>('')
+    const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
 
-    const midiTrackInfos = useMemo(() => getMidiInfos(midiTrack), [midiTrack])
-    const midiTrackDuration = midiTrackInfos?.trackDuration ?? 0
-    const isMidiImported = midiTrack !== null
+    const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
+    const midiTrackDuration = midiInfos?.trackDuration ?? 0
+    const isMidiImported = midiFile !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
-        setMidiTrackTitle(title)
-        setMidiTrack(midiJSON)
+        setMidiTitle(title)
+        setMidiFile(midiJSON)
         console.log(midiJSON)
         setMidiTrackCurrentTime(0)
     }
@@ -72,9 +72,9 @@ function App() {
                     appMode={appMode}
                     notes={activeNotes}
                     midiTrackCurrentTime={midiTrackCurrentTime}
-                    midiTrackTitle={midiTrackTitle}
-                    midiTrack={midiTrack}
-                    midiTrackInfos={midiTrackInfos}
+                    midiTrackTitle={midiTitle}
+                    midiFile={midiFile}
+                    midiInfos={midiInfos}
                     activeNotes={activeNotes}
                     audioPlayerState={audioPlayerState}
                     onChangeActiveNotes={setActiveNotes}

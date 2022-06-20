@@ -1,4 +1,4 @@
-export interface MidiTrackInfos {
+export interface MidiInfos {
     ticksPerBeat: number
     msPerBeat: number
     trackDuration: number
