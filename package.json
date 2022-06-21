@@ -29,6 +29,14 @@
       "react-scripts jest --findRelatedTests"
     ]
   },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/src/stories",
+      "/src/types",
+      "/src/reportWebVitals.js",
+      "/src/utils/const"
+    ]
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
