@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event'
 describe('ModeSelector', () => {
     const onChange = jest.fn()
 
-    test('calls onChange() callback with "learning" mode', () => {
+    it('calls onChange() callback with "learning" mode', () => {
         render(<ModeSelector appMode={'import'} onChange={onChange}></ModeSelector>)
         const button = screen.getByText(/learning/i)
         userEvent.click(button)
@@ -14,7 +14,7 @@ describe('ModeSelector', () => {
         expect(onChange).toHaveBeenCalledWith('learning')
     })
 
-    test('calls onChange() callback with "import" mode', () => {
+    it('calls onChange() callback with "import" mode', () => {
         render(<ModeSelector appMode={'learning'} onChange={onChange}></ModeSelector>)
         const button = screen.getByText(/import/i)
         userEvent.click(button)

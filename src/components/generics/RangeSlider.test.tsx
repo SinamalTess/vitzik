@@ -3,7 +3,7 @@ import React from 'react'
 import { RangeSlider } from './RangeSlider'
 
 describe('RangeSlider', () => {
-    test('returns the current value to onChange() callback', () => {
+    it('returns the current value to onChange() callback', () => {
         const onChange = jest.fn()
         render(<RangeSlider onChange={onChange} value={30}></RangeSlider>)
         const input = screen.getByRole('slider')

@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event'
 describe('MusicSystemSelector', () => {
     const onChange = jest.fn()
 
-    test('calls onChange() callback with "syllabic" mode', () => {
+    it('calls onChange() callback with "syllabic" mode', () => {
         render(
             <MusicSystemSelector
                 musicSystem={'alphabetical'}
@@ -19,7 +19,7 @@ describe('MusicSystemSelector', () => {
         expect(onChange).toHaveBeenCalledWith('syllabic')
     })
 
-    test('calls onChange() callback with "german" mode', () => {
+    it('calls onChange() callback with "german" mode', () => {
         render(
             <MusicSystemSelector
                 musicSystem={'alphabetical'}
@@ -32,7 +32,7 @@ describe('MusicSystemSelector', () => {
         expect(onChange).toHaveBeenCalledWith('german')
     })
 
-    test('calls onChange() callback with "alphabetical" mode', () => {
+    it('calls onChange() callback with "alphabetical" mode', () => {
         render(
             <MusicSystemSelector musicSystem={'german'} onChange={onChange}></MusicSystemSelector>
         )

@@ -3,7 +3,7 @@ import React from 'react'
 import { MidiTitle } from './MidiTitle'
 
 describe('MidiTitle', () => {
-    test('normalizes the title of the midi file', () => {
+    it('normalizes the title of the midi file', () => {
         render(<MidiTitle midiTitle={'MyMidiFile.midi'}></MidiTitle>)
 
         expect(screen.getByText('MyMidiFile')).toBeDefined()

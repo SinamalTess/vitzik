@@ -37,7 +37,7 @@ describe('VisualizerSection', () => {
         })
     })
 
-    test('renders a canvas properly', () => {
+    it('renders a canvas properly', () => {
         render(
             <VisualizerSection
                 notesCoordinates={notesCoordinates}

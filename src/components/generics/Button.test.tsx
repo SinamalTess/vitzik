@@ -3,7 +3,7 @@ import React from 'react'
 import { Button } from './Button'
 
 describe('Button', () => {
-    test('displays inner text', () => {
+    it('displays inner text', () => {
         render(<Button>Click me</Button>)
 
         expect(screen.getByRole('button')).toHaveTextContent('Click me')

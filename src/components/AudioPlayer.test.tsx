@@ -24,7 +24,7 @@ describe('AudioPlayer', () => {
     window.Worker = Worker
     window.URL.createObjectURL = jest.fn()
 
-    test('returns the proper audio player state', () => {
+    it('returns the proper audio player state', () => {
         const props = {
             midiTrackCurrentTime: 0,
             midiTrackDuration: 100,
