@@ -5,7 +5,7 @@ import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../utils/const'
 import { ActiveNote } from '../App'
 
 describe('Keyboard', () => {
-    it('renders the proper number of keys', () => {
+    it('should render the proper number of keys', () => {
         render(<Keyboard activeKeys={[]} onKeyPressed={() => {}}></Keyboard>)
         const blackKeys = screen.getAllByText(/#/)
         const whiteKeys = screen.getAllByText(/[A-G]\d/)
@@ -14,7 +14,7 @@ describe('Keyboard', () => {
         expect(whiteKeys).toHaveLength(NB_WHITE_PIANO_KEYS)
     })
 
-    it('highlights active keys', () => {
+    it('should highlight the active keys', () => {
         const whiteKey: ActiveNote = {
             name: 'A0',
             velocity: 100,

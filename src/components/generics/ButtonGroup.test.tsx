@@ -4,7 +4,7 @@ import { ButtonGroup } from './ButtonGroup'
 import { Button } from './Button'
 
 describe('ButtonGroup', () => {
-    it('passes provided size to children <Button />', () => {
+    it('should pass provided size to children <Button />', () => {
         render(
             <ButtonGroup size={'sm'}>
                 <Button>Hello</Button>

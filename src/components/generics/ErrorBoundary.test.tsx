@@ -13,7 +13,7 @@ describe('ErrorBoundary', () => {
         jest.spyOn(console, 'error').mockImplementation(() => {})
     })
 
-    it('catch and display errors', () => {
+    it('should catch and display errors', () => {
         render(
             <ErrorBoundary>
                 <BrokenComponent />

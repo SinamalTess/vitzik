@@ -3,7 +3,7 @@ import React from 'react'
 import { InstrumentSelector } from './InstrumentSelector'
 
 describe('InstrumentSelector', () => {
-    it('returns the selected instrument to onChange() callback', () => {
+    it('should return the selected instrument to onChange() callback', () => {
         const onChange = jest.fn()
         render(<InstrumentSelector onChange={onChange}></InstrumentSelector>)
         const select = screen.getByRole('combobox')
