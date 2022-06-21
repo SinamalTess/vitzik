@@ -26,12 +26,12 @@ describe('AudioPlayer', () => {
 
     it('returns the proper audio player state', () => {
         const props = {
-            midiTrackCurrentTime: 0,
+            midiCurrentTime: 0,
             midiTrackDuration: 100,
             isMute: true,
             onToggleSound: () => {},
             onChangeAudioPlayerState: jest.fn(),
-            onChangeMidiTrackCurrentTime: () => {},
+            onChangeMidiCurrentTime: () => {},
         }
 
         const { rerender } = render(<AudioPlayer {...props}></AudioPlayer>)
@@ -39,11 +39,11 @@ describe('AudioPlayer', () => {
 
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('stopped')
 
-        rerender(<AudioPlayer {...props} midiTrackCurrentTime={20}></AudioPlayer>)
+        rerender(<AudioPlayer {...props} midiCurrentTime={20}></AudioPlayer>)
 
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('seeking')
 
-        rerender(<AudioPlayer {...props} midiTrackCurrentTime={5}></AudioPlayer>)
+        rerender(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
 
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('rewinding')
 

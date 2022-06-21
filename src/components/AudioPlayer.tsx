@@ -9,12 +9,12 @@ import { AudioPlayerState } from '../types'
 import './AudioPlayer.scss'
 
 interface AudioPlayerProps {
-    midiTrackCurrentTime: number
+    midiCurrentTime: number
     midiTrackDuration: number
     isMute: boolean
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
-    onChangeMidiTrackCurrentTime: React.Dispatch<React.SetStateAction<number>>
+    onChangeMidiCurrentTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 function WebWorker(worker: any): Worker {
@@ -24,16 +24,16 @@ function WebWorker(worker: any): Worker {
 }
 
 export function AudioPlayer({
-    midiTrackCurrentTime,
+    midiCurrentTime,
     midiTrackDuration,
     isMute,
     onToggleSound,
     onChangeAudioPlayerState,
-    onChangeMidiTrackCurrentTime,
+    onChangeMidiCurrentTime,
 }: AudioPlayerProps) {
-    const currentTime = msToMinAndSec(midiTrackCurrentTime)
+    const currentTime = msToMinAndSec(midiCurrentTime)
     const totalTime = msToMinAndSec(midiTrackDuration)
-    const prevMidiTrackCurrentTime = usePrevious(midiTrackCurrentTime) ?? 0
+    const prevMidiCurrentTime = usePrevious(midiCurrentTime) ?? 0
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -46,13 +46,13 @@ export function AudioPlayer({
             worker.onmessage = (message) => {
                 if (message.data.hasOwnProperty('interval')) {
                     const interval = message.data.interval
-                    onChangeMidiTrackCurrentTime((midiTrackCurrentTime: number) => {
-                        if (midiTrackCurrentTime > midiTrackDuration) {
+                    onChangeMidiCurrentTime((midiCurrentTime: number) => {
+                        if (midiCurrentTime > midiTrackDuration) {
                             worker.terminate()
                             setIsPlaying(false)
                             return 0
                         }
-                        return midiTrackCurrentTime + interval
+                        return midiCurrentTime + interval
                     })
                 }
             }
@@ -73,20 +73,20 @@ export function AudioPlayer({
         if (isPlaying && !isSearching) {
             onChangeAudioPlayerState('playing')
         } else {
-            if (midiTrackCurrentTime === 0) {
+            if (midiCurrentTime === 0) {
                 onChangeAudioPlayerState('stopped')
-            } else if (midiTrackCurrentTime > prevMidiTrackCurrentTime) {
+            } else if (midiCurrentTime > prevMidiCurrentTime) {
                 onChangeAudioPlayerState('seeking')
-            } else if (midiTrackCurrentTime < prevMidiTrackCurrentTime) {
+            } else if (midiCurrentTime < prevMidiCurrentTime) {
                 onChangeAudioPlayerState('rewinding')
             } else {
                 onChangeAudioPlayerState('paused')
             }
         }
-    }, [midiTrackCurrentTime, isPlaying, isSearching])
+    }, [midiCurrentTime, isPlaying, isSearching])
 
-    function handleChange(midiTrackCurrentTime: number) {
-        onChangeMidiTrackCurrentTime(midiTrackCurrentTime)
+    function handleChange(midiCurrentTime: number) {
+        onChangeMidiCurrentTime(midiCurrentTime)
     }
 
     function handleClick() {
@@ -105,7 +105,7 @@ export function AudioPlayer({
         <div className="audioplayer">
             {currentTime}
             <RangeSlider
-                value={midiTrackCurrentTime}
+                value={midiCurrentTime}
                 max={midiTrackDuration}
                 onChange={handleChange}
                 onMouseDown={handleMouseDown}

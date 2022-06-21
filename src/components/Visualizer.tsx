@@ -32,7 +32,7 @@ interface PartialNote {
 interface VisualizerProps {
     activeNotes: ActiveNote[]
     color?: string
-    midiTrackCurrentTime: number
+    midiCurrentTime: number
     midiFile: IMidiFile | null
     heightPerBeat?: number
     midiInfos: MidiInfos | null
@@ -194,7 +194,7 @@ function getNotesPosition(
 
 export function Visualizer({
     activeNotes,
-    midiTrackCurrentTime,
+    midiCurrentTime,
     midiFile,
     heightPerBeat = 100,
     midiInfos,
@@ -243,7 +243,7 @@ export function Visualizer({
 
     useEffect(() => {
         const activeKeys = getActiveNotes(
-            midiTrackCurrentTime,
+            midiCurrentTime,
             midiInfos,
             heightPerBeat,
             notesCoordinates,
@@ -252,7 +252,7 @@ export function Visualizer({
         if (!isEqual(activeKeys, activeNotes)) {
             onChangeActiveNotes(activeKeys)
         }
-    }, [midiTrackCurrentTime])
+    }, [midiCurrentTime])
 
     useEffect(() => {
         const isIndexEven = isEven(indexSectionPlaying)
@@ -279,7 +279,7 @@ export function Visualizer({
     function calcTop(sectionName: SectionName) {
         if (!midiInfos) return '0px'
         const { msPerBeat } = midiInfos
-        const nbBeatsPassed = midiTrackCurrentTime / msPerBeat
+        const nbBeatsPassed = midiCurrentTime / msPerBeat
         const heightDuration = nbBeatsPassed * heightPerBeat
         const nbSectionPassed = heightDuration / height
         const percentageTop = +((nbSectionPassed % 1) * 100).toFixed(2)

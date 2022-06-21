@@ -13,7 +13,7 @@ interface PreviewProps {
     notes: ActiveNote[]
     midiFile: IMidiFile | null
     midiInfos: MidiInfos | null
-    midiTrackCurrentTime: number
+    midiCurrentTime: number
     activeNotes: ActiveNote[]
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: (notes: ActiveNote[]) => void
@@ -25,7 +25,7 @@ export function Preview({
     notes,
     midiFile,
     midiInfos,
-    midiTrackCurrentTime,
+    midiCurrentTime,
     activeNotes,
     audioPlayerState,
     onMidiImport,
@@ -39,7 +39,7 @@ export function Preview({
             <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
                 midiFile={midiFile}
-                midiTrackCurrentTime={midiTrackCurrentTime}
+                midiCurrentTime={midiCurrentTime}
                 midiInfos={midiInfos}
                 onChangeActiveNotes={onChangeActiveNotes}
                 activeNotes={activeNotes}

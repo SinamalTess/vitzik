@@ -27,7 +27,7 @@ function App() {
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [isMute, setIsMute] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [midiTrackCurrentTime, setMidiTrackCurrentTime] = useState<number>(0)
+    const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
@@ -44,7 +44,7 @@ function App() {
         setMidiTitle(title)
         setMidiFile(midiJSON)
         console.log(midiJSON)
-        setMidiTrackCurrentTime(0)
+        setMidiCurrentTime(0)
         setChannelInstruments(initialChannelInstruments)
     }
 
@@ -55,10 +55,10 @@ function App() {
                     <AudioPlayer
                         isMute={isMute}
                         onToggleSound={setIsMute}
-                        midiTrackCurrentTime={midiTrackCurrentTime}
+                        midiCurrentTime={midiCurrentTime}
                         midiTrackDuration={midiTrackDuration}
                         onChangeAudioPlayerState={setAudioPlayerState}
-                        onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
+                        onChangeMidiCurrentTime={setMidiCurrentTime}
                     />
                 ) : null}
                 <Settings
@@ -76,7 +76,7 @@ function App() {
                 <Preview
                     appMode={appMode}
                     notes={activeNotes}
-                    midiTrackCurrentTime={midiTrackCurrentTime}
+                    midiCurrentTime={midiCurrentTime}
                     midiFile={midiFile}
                     midiInfos={midiInfos}
                     activeNotes={activeNotes}
