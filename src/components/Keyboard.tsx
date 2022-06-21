@@ -12,7 +12,7 @@ import { ActiveNote } from '../App'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
-    musicSystem: MusicSystem
+    musicSystem?: MusicSystem
     onKeyPressed: (note: ActiveNote[]) => void
 }
 
@@ -31,7 +31,7 @@ function getStyles(note: AlphabeticalNote) {
 
 export const Keyboard = React.memo(function Keyboard({
     activeKeys,
-    musicSystem,
+    musicSystem = 'alphabetical',
     onKeyPressed,
 }: PianoProps) {
     const notes = NOTES.alphabetical
@@ -68,6 +68,7 @@ export const Keyboard = React.memo(function Keyboard({
                         key={note}
                         style={{ width, margin }}
                         onMouseDown={() => handleMouseDown(note)}
+                        data-testid={note}
                         onMouseUp={handleMouseUp}
                         className={`
                             ${keyClassName} 
