@@ -27,7 +27,7 @@ describe('AudioPlayer', () => {
     it('returns the proper audio player state', () => {
         const props = {
             midiCurrentTime: 0,
-            midiTrackDuration: 100,
+            midiDuration: 100,
             isMute: true,
             onToggleSound: () => {},
             onChangeAudioPlayerState: jest.fn(),

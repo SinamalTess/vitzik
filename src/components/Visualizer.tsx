@@ -129,12 +129,12 @@ function getNotesPosition(
     heightPerBeat: number,
     midiTrackInfos: MidiInfos
 ) {
-    const { ticksPerBeat, trackDuration, msPerBeat } = midiTrackInfos
+    const { ticksPerBeat, midiDuration, msPerBeat } = midiTrackInfos
     const { w, h } = containerDimensions
     const { tracks } = midiTrack
     const nbBeatsPerSection = h / heightPerBeat
     const msPerSection = msPerBeat * nbBeatsPerSection
-    const nbSectionInTrack = Math.ceil(trackDuration / msPerSection)
+    const nbSectionInTrack = Math.ceil(midiDuration / msPerSection)
     let notesCoordinates: NoteCoordinates[][][] = []
 
     tracks.forEach((track) => {

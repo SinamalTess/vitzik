@@ -10,7 +10,7 @@ import './AudioPlayer.scss'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
-    midiTrackDuration: number
+    midiDuration: number
     isMute: boolean
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
@@ -25,14 +25,14 @@ function WebWorker(worker: any): Worker {
 
 export function AudioPlayer({
     midiCurrentTime,
-    midiTrackDuration,
+    midiDuration,
     isMute,
     onToggleSound,
     onChangeAudioPlayerState,
     onChangeMidiCurrentTime,
 }: AudioPlayerProps) {
     const currentTime = msToMinAndSec(midiCurrentTime)
-    const totalTime = msToMinAndSec(midiTrackDuration)
+    const totalTime = msToMinAndSec(midiDuration)
     const prevMidiCurrentTime = usePrevious(midiCurrentTime) ?? 0
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -47,7 +47,7 @@ export function AudioPlayer({
                 if (message.data.hasOwnProperty('interval')) {
                     const interval = message.data.interval
                     onChangeMidiCurrentTime((midiCurrentTime: number) => {
-                        if (midiCurrentTime > midiTrackDuration) {
+                        if (midiCurrentTime > midiDuration) {
                             worker.terminate()
                             setIsPlaying(false)
                             return 0
@@ -106,7 +106,7 @@ export function AudioPlayer({
             {currentTime}
             <RangeSlider
                 value={midiCurrentTime}
-                max={midiTrackDuration}
+                max={midiDuration}
                 onChange={handleChange}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}

@@ -35,7 +35,7 @@ function App() {
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
 
     const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
-    const midiTrackDuration = midiInfos?.trackDuration ?? 0
+    const midiDuration = midiInfos?.midiDuration ?? 0
     const playableTracksIndexes = midiInfos?.playableTracksIndexes ?? []
     const initialChannelInstruments = midiInfos?.initialChannelInstruments ?? new Map()
     const isMidiImported = midiFile !== null
@@ -56,7 +56,7 @@ function App() {
                         isMute={isMute}
                         onToggleSound={setIsMute}
                         midiCurrentTime={midiCurrentTime}
-                        midiTrackDuration={midiTrackDuration}
+                        midiDuration={midiDuration}
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiCurrentTime={setMidiCurrentTime}
                     />

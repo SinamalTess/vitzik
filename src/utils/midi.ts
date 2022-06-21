@@ -114,7 +114,7 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
     return {
         msPerBeat,
         ticksPerBeat,
-        trackDuration: nbBeats * msPerBeat,
+        midiDuration: nbBeats * msPerBeat,
         format,
         initialChannelInstruments,
         playableTracksIndexes,
