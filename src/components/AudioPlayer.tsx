@@ -6,6 +6,7 @@ import { msToMinAndSec } from '../utils'
 import { usePrevious } from '../hooks'
 import workerInterval from '../workers/workerInterval'
 import { AudioPlayerState } from '../types'
+import './AudioPlayer.scss'
 
 interface AudioPlayerProps {
     midiTrackCurrentTime: number

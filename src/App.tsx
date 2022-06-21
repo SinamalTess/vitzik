@@ -54,9 +54,7 @@ function App() {
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiTrackCurrentTime={setMidiTrackCurrentTime}
                     />
-                ) : (
-                    <div /> // Renders an empty space to avoid jumps in UI
-                )}
+                ) : null}
                 <Settings
                     appMode={appMode}
                     musicSystem={musicSystem}

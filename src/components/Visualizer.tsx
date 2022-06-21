@@ -201,9 +201,27 @@ export function Visualizer({
         firstSection: 0,
         secondSection: 1,
     })
+    const [dimensions, setDimensions] = React.useState({
+        height: window.innerHeight,
+        width: window.innerWidth,
+    })
 
-    const width = visualizerRef?.current?.clientWidth ?? 0
-    const height = visualizerRef?.current?.clientHeight ?? 0
+    const { width, height } = dimensions
+
+    React.useEffect(() => {
+        function handleResize() {
+            setDimensions({
+                height: visualizerRef?.current?.clientHeight ?? 0,
+                width: visualizerRef?.current?.clientWidth ?? 0,
+            })
+        }
+
+        window.addEventListener('resize', handleResize)
+
+        return function cleanup() {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
 
     useEffect(() => {
         if (!midiInfos || !midiFile) return
@@ -214,7 +232,7 @@ export function Visualizer({
             midiInfos
         )
         setNotesCoordinates(coordinates[coordinates.length - 1]) //TODO: once we support multitracking remove this
-    }, [midiInfos])
+    }, [midiInfos, width, height, midiFile, heightPerBeat])
 
     useEffect(() => {
         const activeKeys = getActiveNotes(

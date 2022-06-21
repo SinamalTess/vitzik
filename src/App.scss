@@ -19,9 +19,6 @@
         'main'
         'piano';
     .topbar {
-        display: grid;
-        grid-template-columns: 50% 50%;
-        grid-template-rows: 100%;
         height: 100%;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
     }
