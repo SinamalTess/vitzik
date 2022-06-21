@@ -16,9 +16,8 @@ export function Icon({ name, children, size = 'md' }: IconProps) {
     const style = typeof size === 'number' ? { fontSize: size + 'px' } : {}
 
     return (
+        // TODO: check if this is the proper usage of aria-label
         <span className={className} style={style} aria-label={`icon-${name}`}>
-            {' '}
-            // TODO: check if this is the proper usage
             {children}
         </span>
     )
