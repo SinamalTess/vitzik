@@ -13,15 +13,25 @@ describe('Keyboard', () => {
         expect(blackKeys).toHaveLength(NB_BLACK_PIANO_KEYS)
         expect(whiteKeys).toHaveLength(NB_WHITE_PIANO_KEYS)
     })
-    test('highlight active keys', () => {
-        const note: ActiveNote = {
+
+    test('highlights active keys', () => {
+        const whiteKey: ActiveNote = {
             name: 'A0',
             velocity: 100,
             key: 21,
         }
-        render(<Keyboard activeKeys={[note]} onKeyPressed={() => {}}></Keyboard>)
-        const relatedKey = screen.getByTestId(/A0/)
 
-        expect(relatedKey).toHaveClass('keyboard__whitekey--active')
+        const blackKey: ActiveNote = {
+            name: 'A#0/Bb0',
+            velocity: 100,
+            key: 23,
+        }
+
+        render(<Keyboard activeKeys={[whiteKey, blackKey]} onKeyPressed={() => {}}></Keyboard>)
+        const correspondingWhiteKey = screen.getByTestId(/A0/)
+        const correspondingBlackKey = screen.getByTestId(/A#0\/Bb0/)
+
+        expect(correspondingWhiteKey).toHaveClass('keyboard__whitekey--active')
+        expect(correspondingBlackKey).toHaveClass('keyboard__blackkey--active')
     })
 })
