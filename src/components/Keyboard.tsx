@@ -67,13 +67,14 @@ export const Keyboard = React.memo(function Keyboard({
                     <li
                         key={note}
                         style={{ width, margin }}
-                        onMouseDown={() => handleMouseDown(note)}
                         data-testid={note}
-                        onMouseUp={handleMouseUp}
                         className={`
                             ${keyClassName} 
                             ${noteToKey(note)} 
-                            ${note} ${isActive ? `${keyClassName}--active` : ''}`}
+                            ${note} ${isActive ? `${keyClassName}--active` : ''}
+                        `}
+                        onMouseDown={() => handleMouseDown(note)}
+                        onMouseUp={handleMouseUp}
                     >
                         <span style={styleKeyName}>{keyTranslated}</span>
                     </li>

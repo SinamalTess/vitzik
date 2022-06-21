@@ -1,7 +1,15 @@
-import { IMidiFile, IMidiSetTempoEvent } from 'midi-json-parser-worker'
+import {
+    IMidiFile,
+    IMidiNoteOffEvent,
+    IMidiNoteOnEvent,
+    IMidiSetTempoEvent,
+    TMidiEvent,
+} from 'midi-json-parser-worker'
 import { MidiInfos } from '../types'
 
 export const getFormat = (midiJson: IMidiFile): number => midiJson.format
+export const isNoteOnEvent = (note: TMidiEvent): note is IMidiNoteOnEvent => 'noteOn' in note
+export const isNoteOffEvent = (note: TMidiEvent): note is IMidiNoteOffEvent => 'noteOff' in note
 
 export function getTicksPerBeat(midiJson: IMidiFile) {
     const { division } = midiJson

@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useMemo, useState } from 'react'
-import { getMidiInfos } from './utils'
+import { getMidiInfos, isNoteOnEvent } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from './types'
@@ -18,6 +18,23 @@ export interface ActiveNote {
     key: number
 }
 
+function getPlayableTracks(midiFile: IMidiFile | null) {
+    if (!midiFile) return []
+
+    const { tracks } = midiFile
+
+    let playableTracksIndexes: number[] = []
+
+    tracks.forEach((track, index) => {
+        const isPlayableTrack = track.some((event) => isNoteOnEvent(event))
+        if (isPlayableTrack) {
+            playableTracksIndexes.push(index)
+        }
+    })
+
+    return playableTracksIndexes
+}
+
 //TODO: check accessibility
 
 function App() {
@@ -33,6 +50,7 @@ function App() {
 
     const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
     const midiTrackDuration = midiInfos?.trackDuration ?? 0
+    const playableTracksIndexes = getPlayableTracks(midiFile)
     const isMidiImported = midiFile !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
@@ -58,6 +76,7 @@ function App() {
                 <Settings
                     appMode={appMode}
                     musicSystem={musicSystem}
+                    playableTracksIndexes={playableTracksIndexes}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstrument}

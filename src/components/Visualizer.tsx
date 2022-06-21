@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { getWidthKeys, isBlackKey as checkIsBlackKey, isEven, keyToNote } from '../utils'
+import {
+    getWidthKeys,
+    isBlackKey as checkIsBlackKey,
+    isEven,
+    isNoteOnEvent,
+    isNoteOffEvent,
+    keyToNote,
+} from '../utils'
 import './Visualizer.scss'
 import {
     AlphabeticalNote,
@@ -10,7 +17,7 @@ import {
 } from '../types'
 import isEqual from 'lodash.isequal'
 import { ActiveNote } from '../App'
-import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent, TMidiEvent } from 'midi-json-parser-worker'
+import { IMidiFile } from 'midi-json-parser-worker'
 import { MIDI_PIANO_KEYS_OFFSET, NOTES } from '../utils/const'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerTracks } from './VisualizerTracks'
@@ -38,9 +45,6 @@ interface IndexToDraw {
 }
 
 type SectionName = keyof IndexToDraw
-
-const isNoteOnEvent = (note: TMidiEvent): note is IMidiNoteOnEvent => 'noteOn' in note
-const isNoteOffEvent = (note: TMidiEvent): note is IMidiNoteOffEvent => 'noteOff' in note
 
 const getKey = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
