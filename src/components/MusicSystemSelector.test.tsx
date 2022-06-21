@@ -15,6 +15,7 @@ describe('MusicSystemSelector', () => {
         )
         const button = screen.getByText(/Si/i)
         userEvent.click(button)
+
         expect(onChange).toHaveBeenCalledWith('syllabic')
     })
 
@@ -27,6 +28,7 @@ describe('MusicSystemSelector', () => {
         )
         const button = screen.getByText(/H/i)
         userEvent.click(button)
+
         expect(onChange).toHaveBeenCalledWith('german')
     })
 
@@ -36,6 +38,7 @@ describe('MusicSystemSelector', () => {
         )
         const button = screen.getByText(/B/i)
         userEvent.click(button)
+
         expect(onChange).toHaveBeenCalledWith('alphabetical')
     })
 })

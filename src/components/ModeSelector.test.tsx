@@ -10,6 +10,7 @@ describe('ModeSelector', () => {
         render(<ModeSelector appMode={'import'} onChange={onChange}></ModeSelector>)
         const button = screen.getByText(/learning/i)
         userEvent.click(button)
+
         expect(onChange).toHaveBeenCalledWith('learning')
     })
 
@@ -17,6 +18,7 @@ describe('ModeSelector', () => {
         render(<ModeSelector appMode={'learning'} onChange={onChange}></ModeSelector>)
         const button = screen.getByText(/import/i)
         userEvent.click(button)
+
         expect(onChange).toHaveBeenCalledWith('import')
     })
 })

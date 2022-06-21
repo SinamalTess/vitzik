@@ -91,6 +91,7 @@ export function VisualizerSection({
     return (
         <canvas
             ref={refCanvas}
+            data-testid={`visualizer__section--${index}`}
             className={`visualizer__section visualizer__section--${index}`}
             style={{ transform: `scaleY(-1) translateY(${top})` }}
         ></canvas>

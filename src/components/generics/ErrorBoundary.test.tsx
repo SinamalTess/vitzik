@@ -22,6 +22,7 @@ describe('ErrorBoundary', () => {
 
         const text = screen.getByText(/something went wrong/i)
         const error = screen.getByText(/this component is broken/i)
+
         expect(text).toBeVisible()
         expect(error).toBeVisible()
     })

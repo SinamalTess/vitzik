@@ -21,6 +21,7 @@ describe('Keyboard', () => {
         }
         render(<Keyboard activeKeys={[note]} onKeyPressed={() => {}}></Keyboard>)
         const relatedKey = screen.getByTestId(/A0/)
+
         expect(relatedKey).toHaveClass('keyboard__whitekey--active')
     })
 })

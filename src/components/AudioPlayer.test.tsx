@@ -36,16 +36,25 @@ describe('AudioPlayer', () => {
 
         const { rerender } = render(<AudioPlayer {...props}></AudioPlayer>)
         const { onChangeAudioPlayerState } = props
+
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('stopped')
+
         rerender(<AudioPlayer {...props} midiTrackCurrentTime={20}></AudioPlayer>)
+
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('seeking')
+
         rerender(<AudioPlayer {...props} midiTrackCurrentTime={5}></AudioPlayer>)
+
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('rewinding')
+
         const playButton = screen.getByText('Play')
         userEvent.click(playButton)
+
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('playing')
+
         const pauseButton = screen.getByText('Pause')
         userEvent.click(pauseButton)
+
         expect(onChangeAudioPlayerState).toHaveBeenCalledWith('paused')
     })
 })
