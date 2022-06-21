@@ -17,7 +17,9 @@ export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
         <div className="midifile-infos pd-md">
             <MidiTitle midiTitle={midiTitle} />
             <span>Ticks per beat : {ticksPerBeat}</span>
-            <span>Format: {format}</span>
+            <span>Format : {format}</span>
+            <span>Ms per beat : {msPerBeat}</span>
+            <span>Playable tracks : {playableTracksIndexes.length}</span>
             <ul>
                 {channelInstruments.map(([channel, instrument]) => (
                     <li style={{ color: CHANNElS_COLORS[channel] }}>
@@ -25,8 +27,6 @@ export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
                     </li>
                 ))}
             </ul>
-            <span>Ms per beat: {msPerBeat}</span>
-            <span>{playableTracksIndexes}</span>
         </div>
     )
 }
