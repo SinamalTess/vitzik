@@ -19,12 +19,14 @@ describe('Keyboard', () => {
             name: 'A0',
             velocity: 100,
             key: 21,
+            channel: 0,
         }
 
         const blackKey: ActiveNote = {
             name: 'A#0/Bb0',
             velocity: 100,
             key: 23,
+            channel: 0,
         }
 
         render(<Keyboard activeKeys={[whiteKey, blackKey]} onKeyPressed={() => {}}></Keyboard>)

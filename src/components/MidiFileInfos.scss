@@ -1,0 +1,11 @@
+@import '../style/vars';
+
+.midifile-infos {
+    position: absolute;
+    background-color: map-get($theme-colors, 'secondary');
+    z-index: 1;
+    border-radius: 5px;
+    span {
+        display: block;
+    }
+}

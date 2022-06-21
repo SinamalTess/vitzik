@@ -24,6 +24,7 @@ const notesCoordinates: NoteCoordinates[][] = [
             h: 10,
             x: 10,
             y: 5,
+            channel: 0,
         },
     ],
 ]
@@ -44,7 +45,6 @@ describe('VisualizerSection', () => {
                 width={100}
                 height={50}
                 index={0}
-                color={'red'}
                 top={'0%'}
             ></VisualizerSection>
         )

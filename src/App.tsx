@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useMemo, useState } from 'react'
-import { getMidiInfos, isNoteOnEvent } from './utils'
+import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
 import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from './types'
@@ -9,6 +9,7 @@ import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
+import { MidiFileInfos } from './components/MidiFileInfos'
 
 export interface ActiveNote {
     name: AlphabeticalNote
@@ -16,23 +17,7 @@ export interface ActiveNote {
     id?: number
     duration?: number
     key: number
-}
-
-function getPlayableTracks(midiFile: IMidiFile | null) {
-    if (!midiFile) return []
-
-    const { tracks } = midiFile
-
-    let playableTracksIndexes: number[] = []
-
-    tracks.forEach((track, index) => {
-        const isPlayableTrack = track.some((event) => isNoteOnEvent(event))
-        if (isPlayableTrack) {
-            playableTracksIndexes.push(index)
-        }
-    })
-
-    return playableTracksIndexes
+    channel: number
 }
 
 //TODO: check accessibility
@@ -46,11 +31,13 @@ function App() {
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
+    const [channelInstruments, setChannelInstruments] = useState<Map<number, string> | null>(null)
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
 
     const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
     const midiTrackDuration = midiInfos?.trackDuration ?? 0
-    const playableTracksIndexes = getPlayableTracks(midiFile)
+    const playableTracksIndexes = midiInfos?.playableTracksIndexes ?? []
+    const initialChannelInstruments = midiInfos?.initialChannelInstruments ?? new Map()
     const isMidiImported = midiFile !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
@@ -58,6 +45,7 @@ function App() {
         setMidiFile(midiJSON)
         console.log(midiJSON)
         setMidiTrackCurrentTime(0)
+        setChannelInstruments(initialChannelInstruments)
     }
 
     return (
@@ -84,11 +72,11 @@ function App() {
                 />
             </div>
             <div className="item">
+                {midiInfos ? <MidiFileInfos midiInfos={midiInfos} midiTitle={midiTitle} /> : null}
                 <Preview
                     appMode={appMode}
                     notes={activeNotes}
                     midiTrackCurrentTime={midiTrackCurrentTime}
-                    midiTrackTitle={midiTitle}
                     midiFile={midiFile}
                     midiInfos={midiInfos}
                     activeNotes={activeNotes}

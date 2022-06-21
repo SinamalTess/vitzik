@@ -26,6 +26,7 @@ interface PartialNote {
     key: number
     velocity: number
     name: AlphabeticalNote
+    channel: number
 }
 
 interface VisualizerProps {
@@ -53,6 +54,7 @@ const getVelocity = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
 
 function getNoteInfos(note: MidiJsonNote): PartialNote {
+    const { channel } = note
     const key = getKey(note)
     const name = keyToNote(key)
     const velocity = getVelocity(note)
@@ -61,6 +63,7 @@ function getNoteInfos(note: MidiJsonNote): PartialNote {
         key,
         name,
         velocity,
+        channel,
     }
 }
 
@@ -104,12 +107,13 @@ function getActiveNotes(
     if (notesCoordinates[indexSectionPlaying] && notesCoordinates[indexSectionPlaying].length) {
         return notesCoordinates[indexSectionPlaying]
             .filter((note) => note.y <= heightDuration && note.y + note.h >= heightDuration)
-            .map(({ name, velocity, id, duration, key }) => ({
+            .map(({ name, velocity, id, duration, key, channel }) => ({
                 name,
                 velocity,
                 duration,
                 id,
                 key,
+                channel,
             }))
     }
 
@@ -190,7 +194,6 @@ function getNotesPosition(
 
 export function Visualizer({
     activeNotes,
-    color = '#00E2DC',
     midiTrackCurrentTime,
     midiFile,
     heightPerBeat = 100,
@@ -307,7 +310,6 @@ export function Visualizer({
                     top={calcTop(name)}
                     height={height}
                     width={width}
-                    color={color}
                 />
             ))}
             <VisualizerTracks height={height} width={width} />

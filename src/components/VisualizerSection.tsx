@@ -1,15 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { drawRoundRect } from '../utils'
-import { AlphabeticalNote, CanvasRectangle } from '../types'
+import { NoteCoordinates } from '../types'
 import './VisualizerSection.scss'
-
-interface NoteCoordinates extends CanvasRectangle {
-    name: AlphabeticalNote
-    key: number
-    velocity: number
-    duration: number // milliseconds
-    id?: number
-}
+import { CHANNElS_COLORS } from '../utils/const/channel_colors'
 
 export interface VisualizerSectionProps {
     index: number
@@ -17,7 +10,6 @@ export interface VisualizerSectionProps {
     height: number
     width: number
     top: string
-    color: string
     notesCoordinates: NoteCoordinates[][]
     showCanvasNumbers?: boolean
 }
@@ -43,8 +35,9 @@ function drawNotes(
     const canvasOffset = ctx.canvas.height
 
     if (notesCoordinates[indexToDraw] && notesCoordinates[indexToDraw].length) {
-        notesCoordinates[indexToDraw].forEach(({ x, y, w, h }) => {
+        notesCoordinates[indexToDraw].forEach(({ x, y, w, h, channel }) => {
             const yComputed = y - indexToDraw * canvasOffset
+            ctx.fillStyle = CHANNElS_COLORS[channel]
             drawRoundRect(ctx, x, yComputed, w, h, 5, true, false)
         })
     }
@@ -55,7 +48,6 @@ export function VisualizerSection({
     indexToDraw,
     height,
     width,
-    color,
     top,
     notesCoordinates,
     showCanvasNumbers = true,
@@ -82,7 +74,7 @@ export function VisualizerSection({
                 ctx.fillStyle = color
             }
         }
-        configureCanvas(color)
+        configureCanvas(CHANNElS_COLORS[0])
         if (width && height) {
             drawNotes(ctx, notesCoordinates, indexToDraw)
         }

@@ -1,5 +1,4 @@
 import { Staff } from './Staff'
-import { MidiTrackTitle } from './MidiTrackTitle'
 import { MidiImporter } from './MidiImporter'
 import { Visualizer } from './Visualizer'
 import React from 'react'
@@ -14,7 +13,6 @@ interface PreviewProps {
     notes: ActiveNote[]
     midiFile: IMidiFile | null
     midiInfos: MidiInfos | null
-    midiTrackTitle: string
     midiTrackCurrentTime: number
     activeNotes: ActiveNote[]
     audioPlayerState: AudioPlayerState
@@ -27,7 +25,6 @@ export function Preview({
     notes,
     midiFile,
     midiInfos,
-    midiTrackTitle,
     midiTrackCurrentTime,
     activeNotes,
     audioPlayerState,
@@ -39,7 +36,6 @@ export function Preview({
         <Staff notes={staffNotes} />
     ) : (
         <ErrorBoundary>
-            <MidiTrackTitle midiTrackTitle={midiTrackTitle} />
             <MidiImporter onMidiImport={onMidiImport} />
             <Visualizer
                 midiFile={midiFile}

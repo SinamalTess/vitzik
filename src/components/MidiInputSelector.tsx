@@ -51,6 +51,7 @@ export function MidiInputSelector({ onChangeActiveNotes }: MidiInputSelectorProp
             name,
             velocity,
             key,
+            channel: 16, // TODO: check if not provided
         }
 
         switch (command) {

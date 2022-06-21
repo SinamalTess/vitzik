@@ -42,6 +42,7 @@ export const Keyboard = React.memo(function Keyboard({
                 name: note,
                 velocity: 100,
                 key: noteToKey(note),
+                channel: 16,
             },
         ])
     }

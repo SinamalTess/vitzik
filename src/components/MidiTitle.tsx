@@ -1,8 +1,8 @@
 import React from 'react'
-import './MidiTrackTitle.scss'
+import './MidiTitle.scss'
 
 interface MidiTrackInfosPros {
-    midiTrackTitle: string
+    midiTitle: string
 }
 
 function normalizeTitle(title: string) {
@@ -14,10 +14,10 @@ function normalizeTitle(title: string) {
     return normalizedTitle
 }
 
-export function MidiTrackTitle({ midiTrackTitle }: MidiTrackInfosPros) {
+export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
     return (
         <div className="track">
-            <p className="track__title">{normalizeTitle(midiTrackTitle)}</p>
+            <p className="track__title">{normalizeTitle(midiTitle)}</p>
         </div>
     )
 }

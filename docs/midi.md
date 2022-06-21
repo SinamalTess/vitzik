@@ -32,6 +32,12 @@ A number between `0` to `2`.
 - `1` = multiple track file format
 - `2` = multiple song file format (i.e., a series of type 0 files)
 
+A type 0 file contains the entire performance, merged onto a single track.
+
+While type 1 files may contain any number of tracks that are performed synchronously.
+
+Type 2 files are rarely used and store multiple arrangements, with each arrangement having its own track and intended to be played in sequence.
+
 #### tracks
 
 ### Vocabulary
@@ -63,3 +69,9 @@ Time signatures consist of two elements:
 ### Delta
 
 Tells how many ticks have passed since the last message.
+
+### Channels
+
+The MIDI protocol handles up to 16 different MIDI channels. Each channel has its own status, for instance the current instrument defined, the notes that are currently playing, as well as other values like the volume, the panoramic,...
+
+By using different MIDI channels, you can define a specific instrument for each.
