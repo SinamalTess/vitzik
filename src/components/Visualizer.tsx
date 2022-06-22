@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     getWidthKeys,
     isBlackKey as checkIsBlackKey,
@@ -21,6 +21,7 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import { MIDI_PIANO_KEYS_OFFSET, NOTES } from '../utils/const'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerTracks } from './VisualizerTracks'
+import { WithContainerDimensions } from './hocs/WithContainerDimensions'
 
 interface PartialNote {
     key: number
@@ -31,13 +32,14 @@ interface PartialNote {
 
 interface VisualizerProps {
     activeNotes: ActiveNote[]
-    color?: string
     midiCurrentTime: number
     midiFile: IMidiFile | null
     heightPerBeat?: number
     midiInfos: MidiInfos | null
     audioPlayerState: AudioPlayerState
     activeTracks: number[]
+    height?: number
+    width?: number
     onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
 
@@ -193,128 +195,112 @@ function getNotesPosition(
     return notesCoordinates
 }
 
-export function Visualizer({
-    activeNotes,
-    midiCurrentTime,
-    midiFile,
-    heightPerBeat = 100,
-    midiInfos,
-    audioPlayerState,
-    activeTracks,
-    onChangeActiveNotes,
-}: VisualizerProps) {
-    const visualizerRef = useRef<HTMLDivElement>(null)
-    const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[][]>([])
-    const [indexSectionPlaying, setIndexSectionPlaying] = useState<number>(0)
-    const [indexToDraw, setIndexToDraw] = useState<IndexToDraw>({
-        firstSection: 0,
-        secondSection: 1,
-    })
-    const [dimensions, setDimensions] = React.useState({
-        height: window.innerHeight,
-        width: window.innerWidth,
-    })
+export const Visualizer = WithContainerDimensions(
+    ({
+        activeNotes,
+        midiCurrentTime,
+        midiFile,
+        heightPerBeat = 100,
+        midiInfos,
+        audioPlayerState,
+        activeTracks,
+        height = 0,
+        width = 0,
+        onChangeActiveNotes,
+    }: VisualizerProps) => {
+        const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[][]>([])
+        const [indexSectionPlaying, setIndexSectionPlaying] = useState<number>(0)
+        const [indexToDraw, setIndexToDraw] = useState<IndexToDraw>({
+            firstSection: 0,
+            secondSection: 1,
+        })
 
-    const { width, height } = dimensions
+        useEffect(() => {
+            if (!midiInfos || !midiFile || !activeTracks.length) return
+            const coordinates = getNotesPosition(
+                { w: width, h: height },
+                midiFile,
+                heightPerBeat,
+                midiInfos
+            )
+            setNotesCoordinates(coordinates[activeTracks[0]]) //TODO: once we support multitracking remove this
+        }, [midiInfos, width, height, midiFile, heightPerBeat, activeTracks])
 
-    React.useEffect(() => {
-        function handleResize() {
-            setDimensions({
-                height: visualizerRef?.current?.clientHeight ?? 0,
-                width: visualizerRef?.current?.clientWidth ?? 0,
-            })
-        }
+        useEffect(() => {
+            const activeKeys = getActiveNotes(
+                midiCurrentTime,
+                midiInfos,
+                heightPerBeat,
+                notesCoordinates,
+                indexSectionPlaying
+            )
+            if (!isEqual(activeKeys, activeNotes)) {
+                onChangeActiveNotes(activeKeys)
+            }
+        }, [midiCurrentTime])
 
-        window.addEventListener('resize', handleResize)
-
-        return function cleanup() {
-            window.removeEventListener('resize', handleResize)
-        }
-    }, [])
-
-    useEffect(() => {
-        if (!midiInfos || !midiFile || !activeTracks.length) return
-        const coordinates = getNotesPosition(
-            { w: width, h: height },
-            midiFile,
-            heightPerBeat,
-            midiInfos
-        )
-        setNotesCoordinates(coordinates[activeTracks[0]]) //TODO: once we support multitracking remove this
-    }, [midiInfos, width, height, midiFile, heightPerBeat, activeTracks])
-
-    useEffect(() => {
-        const activeKeys = getActiveNotes(
-            midiCurrentTime,
-            midiInfos,
-            heightPerBeat,
-            notesCoordinates,
-            indexSectionPlaying
-        )
-        if (!isEqual(activeKeys, activeNotes)) {
-            onChangeActiveNotes(activeKeys)
-        }
-    }, [midiCurrentTime])
-
-    useEffect(() => {
-        const isIndexEven = isEven(indexSectionPlaying)
-        if (indexSectionPlaying === 0) {
-            setIndexToDraw({
-                firstSection: 0,
-                secondSection: 1,
-            })
-        } else {
-            if (audioPlayerState === 'playing') {
-                const sectionToRedraw: SectionName = isIndexEven ? 'secondSection' : 'firstSection'
-                const indexToDrawCopy = { ...indexToDraw }
-                indexToDrawCopy[sectionToRedraw] = indexSectionPlaying + 1
-                setIndexToDraw(indexToDrawCopy)
-            } else if (audioPlayerState === 'rewinding' || audioPlayerState === 'seeking') {
+        useEffect(() => {
+            const isIndexEven = isEven(indexSectionPlaying)
+            if (indexSectionPlaying === 0) {
                 setIndexToDraw({
-                    firstSection: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
-                    secondSection: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
+                    firstSection: 0,
+                    secondSection: 1,
                 })
+            } else {
+                if (audioPlayerState === 'playing') {
+                    const sectionToRedraw: SectionName = isIndexEven
+                        ? 'secondSection'
+                        : 'firstSection'
+                    const indexToDrawCopy = { ...indexToDraw }
+                    indexToDrawCopy[sectionToRedraw] = indexSectionPlaying + 1
+                    setIndexToDraw(indexToDrawCopy)
+                } else if (audioPlayerState === 'rewinding' || audioPlayerState === 'seeking') {
+                    setIndexToDraw({
+                        firstSection: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
+                        secondSection: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
+                    })
+                }
+            }
+        }, [indexSectionPlaying, audioPlayerState, notesCoordinates])
+
+        function calcTop(sectionName: SectionName) {
+            if (!midiInfos) return '0px'
+            const { msPerBeat } = midiInfos
+            const nbBeatsPassed = midiCurrentTime / msPerBeat
+            const heightDuration = nbBeatsPassed * heightPerBeat
+            const nbSectionPassed = heightDuration / height
+            const percentageTop = +((nbSectionPassed % 1) * 100).toFixed(2)
+            const percentageFirstSection = `${100 - percentageTop}%`
+            const percentageSecondSection = `-${percentageTop}%`
+            const isIndexEven = isEven(indexSectionPlaying)
+            const index = Math.floor(heightDuration / height)
+
+            if (index !== indexSectionPlaying) {
+                setIndexSectionPlaying(() => index)
+            }
+
+            if (sectionName === 'firstSection') {
+                return isIndexEven ? percentageSecondSection : percentageFirstSection
+            } else {
+                return isIndexEven ? percentageFirstSection : percentageSecondSection
             }
         }
-    }, [indexSectionPlaying, audioPlayerState, notesCoordinates])
 
-    function calcTop(sectionName: SectionName) {
-        if (!midiInfos) return '0px'
-        const { msPerBeat } = midiInfos
-        const nbBeatsPassed = midiCurrentTime / msPerBeat
-        const heightDuration = nbBeatsPassed * heightPerBeat
-        const nbSectionPassed = heightDuration / height
-        const percentageTop = +((nbSectionPassed % 1) * 100).toFixed(2)
-        const percentageFirstSection = `${100 - percentageTop}%`
-        const percentageSecondSection = `-${percentageTop}%`
-        const isIndexEven = isEven(indexSectionPlaying)
-        const index = Math.floor(heightDuration / height)
-
-        if (index !== indexSectionPlaying) {
-            setIndexSectionPlaying(() => index)
-        }
-
-        if (sectionName === 'firstSection') {
-            return isIndexEven ? percentageSecondSection : percentageFirstSection
-        } else {
-            return isIndexEven ? percentageFirstSection : percentageSecondSection
-        }
+        return (
+            <div className="visualizer">
+                {(['firstSection', 'secondSection'] as SectionName[]).map((name, index) => (
+                    <VisualizerSection
+                        index={index}
+                        key={name}
+                        indexToDraw={indexToDraw[name]}
+                        notesCoordinates={notesCoordinates}
+                        top={calcTop(name)}
+                        height={height}
+                        width={width}
+                    />
+                ))}
+                <VisualizerTracks height={height} width={width} />
+            </div>
+        )
     }
-
-    return (
-        <div className="visualizer" ref={visualizerRef}>
-            {(['firstSection', 'secondSection'] as SectionName[]).map((name, index) => (
-                <VisualizerSection
-                    index={index}
-                    key={name}
-                    indexToDraw={indexToDraw[name]}
-                    notesCoordinates={notesCoordinates}
-                    top={calcTop(name)}
-                    height={height}
-                    width={width}
-                />
-            ))}
-            <VisualizerTracks height={height} width={width} />
-        </div>
-    )
-}
+)
