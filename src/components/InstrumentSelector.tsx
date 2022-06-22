@@ -20,7 +20,7 @@ export const InstrumentSelector = React.memo(function InstrumentSelector({
     }
 
     return (
-        <Select name="instruments" onChange={handleChange}>
+        <Select onChange={handleChange}>
             {MIDI_INSTRUMENTS.map((instrument) => (
                 <option value={instrument} key={instrument}>
                     {instrument}

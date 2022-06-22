@@ -73,7 +73,7 @@ export function MidiInputSelector({ onChangeActiveNotes }: MidiInputSelectorProp
     }
 
     return midiInputs.length ? (
-        <Select name="midiInputs" onChange={handleChangeMidiInput}>
+        <Select onChange={handleChangeMidiInput}>
             {midiInputs.map((midiInput) => (
                 <option
                     value={midiInput.id}

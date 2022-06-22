@@ -16,7 +16,7 @@ export function MidiTrackSelector({
         onChangeActiveTracks([parseInt(value)])
     }
     return (
-        <Select name={'midi_tracks'} onChange={handleChange}>
+        <Select onChange={handleChange}>
             {playableTracksIndexes.map((track) => (
                 <option key={track} value={track}>
                     {track}
