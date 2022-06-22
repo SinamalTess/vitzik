@@ -12,7 +12,8 @@ import { largestNum } from './maths'
 
 //TODO: try to minimize number of loops
 
-export const getFormat = (midiJson: IMidiFile): number => midiJson.format
+type EventType = 'setTempo' | 'noteOn' | 'noteOff'
+
 export const isNoteOnEvent = (note: TMidiEvent): note is IMidiNoteOnEvent => 'noteOn' in note
 export const isNoteOffEvent = (note: TMidiEvent): note is IMidiNoteOffEvent => 'noteOff' in note
 export const isProgramChangeEvent = (event: TMidiEvent): event is IMidiProgramChangeEvent =>
@@ -20,10 +21,15 @@ export const isProgramChangeEvent = (event: TMidiEvent): event is IMidiProgramCh
 export const isSetTempoEvent = (event: TMidiEvent): event is IMidiSetTempoEvent =>
     'setTempo' in event
 
+const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
+
+export const getFormat = (midiJson: IMidiFile): number => midiJson.format
+
+const getNbTicks = (track: TMidiEvent[]) =>
+    track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
+
 const programNumberToInstrument = (programNumber: number): Instrument =>
     MIDI_INSTRUMENTS[programNumber]
-
-type EventType = 'setTempo' | 'noteOn' | 'noteOff'
 
 export function getTicksPerBeat(midiJson: IMidiFile) {
     const { division } = midiJson
@@ -41,7 +47,7 @@ export function getTicksPerBeat(midiJson: IMidiFile) {
     }
 }
 
-function getAllEvents(track: TMidiEvent[], eventType: EventType) {
+function getAllEventsOfType(track: TMidiEvent[], eventType: EventType) {
     switch (eventType) {
         case 'setTempo':
             return track.filter((event) => isSetTempoEvent(event))
@@ -55,7 +61,7 @@ function getAllEvents(track: TMidiEvent[], eventType: EventType) {
 }
 
 function getLastTempoValue(track: TMidiEvent[]) {
-    const setTempoEvents = getAllEvents(track, 'setTempo') as IMidiSetTempoEvent[]
+    const setTempoEvents = getAllEventsOfType(track, 'setTempo') as IMidiSetTempoEvent[]
 
     if (setTempoEvents.length > 1) {
         const lastSetTempo = setTempoEvents[setTempoEvents.length - 1]
@@ -93,8 +99,7 @@ function getPlayableTracks(midiFile: IMidiFile | null) {
     let playableTracksIndexes: number[] = []
 
     tracks.forEach((track, index) => {
-        const isPlayableTrack = track.some((event) => isNoteOnEvent(event))
-        if (isPlayableTrack) {
+        if (isTrackPlayable(track)) {
             playableTracksIndexes.push(index)
         }
     })
@@ -119,13 +124,8 @@ function getInitialChannelInstruments(midiJson: IMidiFile) {
     return channels
 }
 
-function getNbTicks(track: TMidiEvent[]) {
-    return track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
-}
-
 export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
     if (!midiJson) return null
-
     const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicks(track)))
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
