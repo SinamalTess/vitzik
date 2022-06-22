@@ -75,3 +75,7 @@ Tells how many ticks have passed since the last message.
 The MIDI protocol handles up to 16 different MIDI channels. Each channel has its own status, for instance the current instrument defined, the notes that are currently playing, as well as other values like the volume, the panoramic,...
 
 By using different MIDI channels, you can define a specific instrument for each.
+
+# Links
+
+- http://midi.teragonaudio.com/tech/midifile/ppqn.htm
