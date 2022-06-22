@@ -14,9 +14,9 @@ import {
     MidiJsonNote,
     MidiInfos,
     NoteCoordinates,
+    ActiveNote,
 } from '../types'
 import isEqual from 'lodash.isequal'
-import { ActiveNote } from '../App'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MIDI_PIANO_KEYS_OFFSET, NOTES } from '../utils/const'
 import { VisualizerSection } from './VisualizerSection'

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { Keyboard } from './Keyboard'
 import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../utils/const'
-import { ActiveNote } from '../App'
+import { ActiveNote } from '../types'
 
 describe('Keyboard', () => {
     it('should render the proper number of keys', () => {

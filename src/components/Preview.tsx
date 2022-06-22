@@ -3,9 +3,8 @@ import { MidiImporter } from './MidiImporter'
 import { Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
-import { ActiveNote } from '../App'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState, MidiInfos } from '../types'
+import { AudioPlayerState, MidiInfos, ActiveNote } from '../types'
 import { ErrorBoundary } from './generics/ErrorBoundary'
 
 interface PreviewProps {

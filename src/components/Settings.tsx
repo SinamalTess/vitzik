@@ -2,10 +2,9 @@ import React from 'react'
 import { MusicSystemSelector } from './MusicSystemSelector'
 import { MidiInputSelector } from './MidiInputSelector'
 import './Settings.scss'
-import { Instrument, MusicSystem } from '../types'
+import { Instrument, MusicSystem, ActiveNote } from '../types'
 import { AppMode, ModeSelector } from './ModeSelector'
 import { InstrumentSelector } from './InstrumentSelector'
-import { ActiveNote } from '../App'
 import { MidiTrackSelector } from './MidiTrackSelector'
 
 interface SettingsProps {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Icon } from './generics/Icon'
 import { Select } from './generics/Select'
 import { keyToNote } from '../utils'
-import { ActiveNote } from '../App'
+import { ActiveNote } from '../types'
 
 //TODO: align the icon and animation + color
 

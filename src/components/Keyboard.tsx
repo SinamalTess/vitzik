@@ -1,14 +1,13 @@
 import React from 'react'
 import './Keyboard.scss'
 import { NOTES } from '../utils/const'
-import { AlphabeticalNote, MusicSystem } from '../types'
+import { AlphabeticalNote, MusicSystem, ActiveNote } from '../types'
 import {
     getWidthKeys,
     isSpecialNote as checkIsSpecialNote,
     noteToKey,
     translateNoteToMusicSystem,
 } from '../utils'
-import { ActiveNote } from '../App'
 
 interface PianoProps {
     activeKeys: ActiveNote[]

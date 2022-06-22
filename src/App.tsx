@@ -3,22 +3,13 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
-import { AlphabeticalNote, AudioPlayerState, Instrument, MusicSystem } from './types'
+import { ActiveNote, AudioPlayerState, Instrument, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiFileInfos } from './components/MidiFileInfos'
-
-export interface ActiveNote {
-    name: AlphabeticalNote
-    velocity: number
-    id?: number
-    duration?: number
-    key: number
-    channel: number
-}
 
 //TODO: check accessibility
 

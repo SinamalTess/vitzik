@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Soundfont, { InstrumentName, Player } from 'soundfont-player'
-import { ActiveNote } from '../App'
 import { msToSec } from '../utils'
-import { AudioPlayerState, Instrument } from '../types'
+import { AudioPlayerState, Instrument, ActiveNote } from '../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 
 interface InstrumentPlayerProps {
