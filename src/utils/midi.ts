@@ -8,6 +8,7 @@ import {
 import { Instrument, MidiInfos } from '../types'
 import { IMidiProgramChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { MIDI_INSTRUMENTS } from './const'
+import { largestNum } from './maths'
 
 //TODO: try to minimize number of loops
 
@@ -118,10 +119,14 @@ function getInitialChannelInstruments(midiJson: IMidiFile) {
     return channels
 }
 
+function getNbTicks(track: TMidiEvent[]) {
+    return track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
+}
+
 export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
     if (!midiJson) return null
 
-    const nbTicks = midiJson.tracks[0].reduce((acc, nextEvent) => acc + nextEvent.delta, 0) //TODO: check if all track last the same
+    const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicks(track)))
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
     const msPerBeat = getMsPerBeat(midiJson)

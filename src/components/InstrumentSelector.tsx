@@ -15,8 +15,12 @@ interface InstrumentSelectorProps {
 export const InstrumentSelector = React.memo(function InstrumentSelector({
     onChange,
 }: InstrumentSelectorProps) {
+    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        onChange(event.target.value as Instrument)
+    }
+
     return (
-        <Select name="instruments" onChange={(event) => onChange(event.target.value)}>
+        <Select name="instruments" onChange={handleChange}>
             {MIDI_INSTRUMENTS.map((instrument) => (
                 <option value={instrument} key={instrument}>
                     {instrument}

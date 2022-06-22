@@ -12,20 +12,24 @@ interface SettingsProps {
     appMode: AppMode
     musicSystem: MusicSystem
     playableTracksIndexes: number[]
+    activeTracks: number[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: (instrument: Instrument) => void
     onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
+    onChangeActiveTracks: (activeTracks: number[]) => void
 }
 
 export function Settings({
     appMode,
     musicSystem,
     playableTracksIndexes,
+    activeTracks,
     onChangeMusicSystem,
     onChangeAppMode,
     onChangeInstrument,
     onChangeActiveNotes,
+    onChangeActiveTracks,
 }: SettingsProps) {
     return (
         <div className="settings">
@@ -34,7 +38,11 @@ export function Settings({
             <InstrumentSelector onChange={onChangeInstrument} />
             <MidiInputSelector onChangeActiveNotes={onChangeActiveNotes} />
             {playableTracksIndexes.length > 1 ? (
-                <MidiTrackSelector playableTracksIndexes={playableTracksIndexes} />
+                <MidiTrackSelector
+                    activeTracks={activeTracks}
+                    playableTracksIndexes={playableTracksIndexes}
+                    onChangeActiveTracks={onChangeActiveTracks}
+                />
             ) : null}
         </div>
     )

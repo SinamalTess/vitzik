@@ -22,7 +22,10 @@ export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
             <span>Playable tracks : {playableTracksIndexes.length}</span>
             <ul>
                 {channelInstruments.map(([channel, instrument]) => (
-                    <li style={{ color: CHANNElS_COLORS[channel] }}>
+                    <li
+                        style={{ color: CHANNElS_COLORS[channel] }}
+                        key={`${instrument}-${channel}`}
+                    >
                         {channel} : {instrument}
                     </li>
                 ))}

@@ -37,6 +37,7 @@ interface VisualizerProps {
     heightPerBeat?: number
     midiInfos: MidiInfos | null
     audioPlayerState: AudioPlayerState
+    activeTracks: number[]
     onChangeActiveNotes: (notes: ActiveNote[]) => void
 }
 
@@ -158,7 +159,7 @@ function getNotesPosition(
                 const note: NoteCoordinates = {
                     ...noteCoordinates,
                     ...midiNote,
-                    duration: 0, // to be replaced once the noteOff event is received
+                    duration: 0, // is replaced by the actual value after the noteOff event is received
                     id: index,
                 }
 
@@ -199,6 +200,7 @@ export function Visualizer({
     heightPerBeat = 100,
     midiInfos,
     audioPlayerState,
+    activeTracks,
     onChangeActiveNotes,
 }: VisualizerProps) {
     const visualizerRef = useRef<HTMLDivElement>(null)
@@ -231,15 +233,15 @@ export function Visualizer({
     }, [])
 
     useEffect(() => {
-        if (!midiInfos || !midiFile) return
+        if (!midiInfos || !midiFile || !activeTracks.length) return
         const coordinates = getNotesPosition(
             { w: width, h: height },
             midiFile,
             heightPerBeat,
             midiInfos
         )
-        setNotesCoordinates(coordinates[coordinates.length - 1]) //TODO: once we support multitracking remove this
-    }, [midiInfos, width, height, midiFile, heightPerBeat])
+        setNotesCoordinates(coordinates[activeTracks[0]]) //TODO: once we support multitracking remove this
+    }, [midiInfos, width, height, midiFile, heightPerBeat, activeTracks])
 
     useEffect(() => {
         const activeKeys = getActiveNotes(

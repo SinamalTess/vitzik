@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
@@ -33,6 +33,7 @@ function App() {
     const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
     const [channelInstruments, setChannelInstruments] = useState<Map<number, string> | null>(null)
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
+    const [activeTracks, setActiveTracks] = useState<number[]>([])
 
     const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
     const midiDuration = midiInfos?.midiDuration ?? 0
@@ -44,9 +45,15 @@ function App() {
         setMidiTitle(title)
         setMidiFile(midiJSON)
         console.log(midiJSON)
+    }
+
+    useEffect(() => {
+        if (!midiInfos) return
         setMidiCurrentTime(0)
         setChannelInstruments(initialChannelInstruments)
-    }
+        console.log(playableTracksIndexes)
+        setActiveTracks([playableTracksIndexes[0]]) // should support array for later
+    }, [midiInfos])
 
     return (
         <div className="container">
@@ -65,10 +72,12 @@ function App() {
                     appMode={appMode}
                     musicSystem={musicSystem}
                     playableTracksIndexes={playableTracksIndexes}
+                    activeTracks={activeTracks}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstrument}
                     onChangeActiveNotes={setActiveNotes}
+                    onChangeActiveTracks={setActiveTracks}
                 />
             </div>
             <div className="item">
@@ -81,8 +90,9 @@ function App() {
                     midiInfos={midiInfos}
                     activeNotes={activeNotes}
                     audioPlayerState={audioPlayerState}
-                    onChangeActiveNotes={setActiveNotes}
+                    activeTracks={activeTracks}
                     onMidiImport={handleMidiImport}
+                    onChangeActiveNotes={setActiveNotes}
                 />
             </div>
             <div className="item">

@@ -2,7 +2,7 @@ import React, { OptionHTMLAttributes, ReactElement } from 'react'
 import './Select.scss'
 
 interface SelectProps {
-    onChange: (event: any) => void
+    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
     name: string
     children: ReactElement<OptionHTMLAttributes<HTMLOptionElement>>[]
 }

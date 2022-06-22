@@ -57,7 +57,7 @@ export function VisualizerSection({
     const ctx = canvasRef?.getContext('2d')
 
     useEffect(() => {
-        if (ctx) {
+        if (ctx && notesCoordinates) {
             clearCanvas(ctx)
             drawNotes(ctx, notesCoordinates, indexToDraw)
             if (showCanvasNumbers) {

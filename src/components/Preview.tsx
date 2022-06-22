@@ -15,6 +15,7 @@ interface PreviewProps {
     midiInfos: MidiInfos | null
     midiCurrentTime: number
     activeNotes: ActiveNote[]
+    activeTracks: number[]
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: (notes: ActiveNote[]) => void
     onMidiImport: (title: string, midiJSON: IMidiFile) => void
@@ -27,6 +28,7 @@ export function Preview({
     midiInfos,
     midiCurrentTime,
     activeNotes,
+    activeTracks,
     audioPlayerState,
     onMidiImport,
     onChangeActiveNotes,
@@ -41,9 +43,10 @@ export function Preview({
                 midiFile={midiFile}
                 midiCurrentTime={midiCurrentTime}
                 midiInfos={midiInfos}
-                onChangeActiveNotes={onChangeActiveNotes}
                 activeNotes={activeNotes}
                 audioPlayerState={audioPlayerState}
+                activeTracks={activeTracks}
+                onChangeActiveNotes={onChangeActiveNotes}
             />
         </ErrorBoundary>
     )

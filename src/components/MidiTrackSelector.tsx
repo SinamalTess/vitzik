@@ -3,13 +3,24 @@ import { Select } from './generics/Select'
 
 interface MidiTrackSelectorProps {
     playableTracksIndexes: number[]
+    activeTracks: number[]
+    onChangeActiveTracks: (activeTracks: number[]) => void
 }
 
-export function MidiTrackSelector({ playableTracksIndexes }: MidiTrackSelectorProps) {
+export function MidiTrackSelector({
+    playableTracksIndexes,
+    onChangeActiveTracks,
+}: MidiTrackSelectorProps) {
+    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        const { value } = event.target
+        onChangeActiveTracks([parseInt(value)])
+    }
     return (
-        <Select name={'midi_tracks'} onChange={() => {}}>
+        <Select name={'midi_tracks'} onChange={handleChange}>
             {playableTracksIndexes.map((track) => (
-                <option key={track}>{track}</option>
+                <option key={track} value={track}>
+                    {track}
+                </option>
             ))}
         </Select>
     )
