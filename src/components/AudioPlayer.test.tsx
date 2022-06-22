@@ -1,17 +1,19 @@
-import { screen, render } from '@testing-library/react'
+import { screen, render, fireEvent } from '@testing-library/react'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
 import userEvent from '@testing-library/user-event'
 
+const terminate = jest.fn()
+
 class Worker {
     private url: string
-    private onmessage: () => void
-    private terminate: () => void
+    onmessage: () => void
+    terminate: () => void
 
     constructor(stringUrl: string) {
         this.url = stringUrl
         this.onmessage = () => {}
-        this.terminate = () => {}
+        this.terminate = terminate
     }
 
     postMessage() {
@@ -24,37 +26,71 @@ describe('AudioPlayer', () => {
     window.Worker = Worker
     window.URL.createObjectURL = jest.fn()
 
-    it('should return the proper audio player state', () => {
-        const props = {
-            midiCurrentTime: 0,
-            midiDuration: 100,
-            isMute: true,
-            onToggleSound: () => {},
-            onChangeAudioPlayerState: jest.fn(),
-            onChangeMidiCurrentTime: () => {},
-        }
+    const props = {
+        midiCurrentTime: 0,
+        midiDuration: 100,
+        isMute: true,
+        onToggleSound: () => {},
+        onChangeAudioPlayerState: jest.fn(),
+        onChangeMidiCurrentTime: () => {},
+    }
 
-        const { rerender } = render(<AudioPlayer {...props}></AudioPlayer>)
-        const { onChangeAudioPlayerState } = props
+    const { onChangeAudioPlayerState } = props
 
-        expect(onChangeAudioPlayerState).toHaveBeenCalledWith('stopped')
+    describe(`State`, () => {
+        it('should set the state to "stopped" when the cursor position is at 0', () => {
+            render(<AudioPlayer {...props}></AudioPlayer>)
+            expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('stopped')
+        })
 
-        rerender(<AudioPlayer {...props} midiCurrentTime={20}></AudioPlayer>)
+        it('should set the state to "seeking" when the user is moving the cursor forward', () => {
+            const { rerender } = render(<AudioPlayer {...props}></AudioPlayer>)
+            rerender(<AudioPlayer {...props} midiCurrentTime={20}></AudioPlayer>)
 
-        expect(onChangeAudioPlayerState).toHaveBeenCalledWith('seeking')
+            expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('seeking')
+        })
 
-        rerender(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
+        it('should set the state to "rewinding" when the user is moving the cursor backward', () => {
+            const { rerender } = render(<AudioPlayer {...props} midiCurrentTime={25}></AudioPlayer>)
+            rerender(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
 
-        expect(onChangeAudioPlayerState).toHaveBeenCalledWith('rewinding')
+            expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('rewinding')
+        })
 
-        const playButton = screen.getByText('Play')
-        userEvent.click(playButton)
+        it('should set the state to "playing" when the Play button is clicked', () => {
+            render(<AudioPlayer {...props}></AudioPlayer>)
+            clickPlay()
 
-        expect(onChangeAudioPlayerState).toHaveBeenCalledWith('playing')
+            expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('playing')
+        })
 
-        const pauseButton = screen.getByText('Pause')
-        userEvent.click(pauseButton)
+        it('should set the state to "paused" when the Paused button is clicked', () => {
+            render(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
+            clickPlay()
+            clickPause()
 
-        expect(onChangeAudioPlayerState).toHaveBeenCalledWith('paused')
+            expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('paused')
+        })
+    })
+
+    describe('Worker', () => {
+        it('should stop the worker when the user is moving the player cursor', () => {
+            render(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
+            const audioPlayer = screen.getByRole('slider')
+            clickPlay()
+            fireEvent.change(audioPlayer, { target: { value: 50 } })
+
+            expect(terminate).toHaveBeenCalled()
+        })
     })
 })
+
+const clickPlay = () => {
+    const playButton = screen.getByText('Play')
+    userEvent.click(playButton)
+}
+
+const clickPause = () => {
+    const pauseButton = screen.getByText('Pause')
+    userEvent.click(pauseButton)
+}
