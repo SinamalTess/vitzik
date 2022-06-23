@@ -4,9 +4,10 @@ import './Tooltip.scss'
 
 interface TooltipProps {
     children: ReactNode
+    arrow?: boolean
 }
 
-export function Tooltip({ children }: TooltipProps) {
+export function Tooltip({ children, arrow = true }: TooltipProps) {
     const [referenceElement, setReferenceElement] = useState<HTMLSpanElement | null>(null)
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
@@ -22,12 +23,15 @@ export function Tooltip({ children }: TooltipProps) {
 
             <div
                 className={'tooltip'}
+                role="tooltip"
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
             >
                 {children.map((child, index) => (index === 0 ? null : child))}
-                <div ref={setArrowElement} style={styles.arrow} />
+                {arrow ? (
+                    <div ref={setArrowElement} style={styles.arrow} className={'tooltip__arrow'} />
+                ) : null}
             </div>
         </>
     )
