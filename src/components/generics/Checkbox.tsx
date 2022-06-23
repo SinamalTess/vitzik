@@ -1,17 +1,16 @@
-import { ReactElement } from 'react'
+import { ReactNode } from 'react'
 import React from 'react'
 
-interface CheckBoxProps {
-    children: ReactElement<Text>[]
+interface CheckboxProps {
+    children: ReactNode
     value: string
-    checked: boolean
-    onChange: (value: string) => void
+    checked?: boolean
+    onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function CheckBox({ children, value, checked, onChange }: CheckBoxProps) {
+export function Checkbox({ children, value, checked = false, onChange }: CheckboxProps) {
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const { value } = event.target
-        onChange(value)
+        onChange(event)
     }
 
     return (

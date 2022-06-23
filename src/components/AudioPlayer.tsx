@@ -102,7 +102,7 @@ export function AudioPlayer({
     }
 
     return (
-        <div className="audioplayer">
+        <div className="audio-player">
             {currentTime}
             <RangeSlider
                 value={midiCurrentTime}

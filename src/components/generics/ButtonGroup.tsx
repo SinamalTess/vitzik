@@ -1,14 +1,14 @@
-import { ReactElement } from 'react'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import './ButtonGroup.scss'
 import { CSSSpacingSize } from '../../types'
 
 interface ButtonGroupProps {
-    children: ReactElement[]
+    children: ReactNode
     size?: CSSSpacingSize
 }
 
 export function ButtonGroup({ children, size = 'md' }: ButtonGroupProps) {
+    if (!children || !Array.isArray(children)) return null
     return (
         <div className="btn-group mg-sm" role="group">
             {children.map((child, index) =>

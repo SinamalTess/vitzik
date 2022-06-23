@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import './Button.scss'
 import { Icon, IconName } from './Icon'
 import { CSSSpacingSize, CSSColor } from '../../types'
@@ -8,7 +8,7 @@ export interface ButtonProps {
     disable?: boolean
     active?: boolean
     icon?: IconName
-    children?: string | string[]
+    children?: ReactNode
     size?: CSSSpacingSize
     color?: CSSColor
     outline?: boolean

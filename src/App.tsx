@@ -42,7 +42,6 @@ function App() {
         if (!midiInfos) return
         setMidiCurrentTime(0)
         setChannelInstruments(initialChannelInstruments)
-        console.log(playableTracksIndexes)
         setActiveTracks([playableTracksIndexes[0]]) // should support array for later
     }, [midiInfos])
 

@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 
 export interface ListItemProps {
-    children: ReactNode[]
+    children: ReactNode
     style?: React.CSSProperties
 }
 

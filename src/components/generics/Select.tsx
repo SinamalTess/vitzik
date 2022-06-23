@@ -1,9 +1,9 @@
-import React, { OptionHTMLAttributes, ReactElement } from 'react'
+import React, { ReactNode } from 'react'
 import './Select.scss'
 
 interface SelectProps {
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
-    children: ReactElement<OptionHTMLAttributes<HTMLOptionElement>>[]
+    children: ReactNode
 }
 
 export function Select({ onChange, children }: SelectProps) {

@@ -39,6 +39,7 @@ export function RangeSlider({
     return (
         <input
             type="range"
+            className={'range-slider'}
             min={min}
             max={max}
             value={value}

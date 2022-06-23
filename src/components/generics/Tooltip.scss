@@ -1,0 +1,7 @@
+@use 'sass:map';
+@import '../../style/vars';
+
+.tooltip {
+    background-color: map.get($theme-colors, 'secondary');
+    z-index: 10;
+}

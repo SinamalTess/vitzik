@@ -16,7 +16,7 @@ interface SettingsProps {
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: (instrument: Instrument) => void
     onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
-    onChangeActiveTracks: (activeTracks: number[]) => void
+    onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 export function Settings({
