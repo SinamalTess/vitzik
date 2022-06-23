@@ -67,7 +67,7 @@ export function AudioPlayer({
         return function cleanup() {
             worker.terminate()
         }
-    }, [isPlaying, isSearching])
+    }, [isPlaying, isSearching, midiDuration])
 
     useEffect(() => {
         if (isPlaying && !isSearching) {
