@@ -3,6 +3,8 @@ import { MidiInfos } from '../types'
 import './MidiFileInfos.scss'
 import { MidiTitle } from './MidiTitle'
 import { CHANNElS_COLORS } from '../utils/const/channel_colors'
+import { List } from './generics/List'
+import { ListItem } from './generics/ListItem'
 
 interface MidiInfosProps {
     midiInfos: MidiInfos
@@ -20,16 +22,16 @@ export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
             <span>Format : {format}</span>
             <span>Ms per beat : {msPerBeat}</span>
             <span>Playable tracks : {playableTracksIndexes.length}</span>
-            <ul>
+            <List>
                 {channelInstruments.map(([channel, instrument]) => (
-                    <li
+                    <ListItem
                         style={{ color: CHANNElS_COLORS[channel] }}
                         key={`${instrument}-${channel}`}
                     >
                         {channel} : {instrument}
-                    </li>
+                    </ListItem>
                 ))}
-            </ul>
+            </List>
         </div>
     )
 }
