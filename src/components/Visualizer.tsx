@@ -3,18 +3,18 @@ import {
     getWidthKeys,
     isBlackKey as checkIsBlackKey,
     isEven,
-    isNoteOnEvent,
     isNoteOffEvent,
+    isNoteOnEvent,
     keyToNote,
 } from '../utils'
 import './Visualizer.scss'
 import {
+    ActiveNote,
     AlphabeticalNote,
     AudioPlayerState,
-    MidiJsonNote,
     MidiInfos,
+    MidiJsonNote,
     NoteCoordinates,
-    ActiveNote,
 } from '../types'
 import isEqual from 'lodash.isequal'
 import { IMidiFile } from 'midi-json-parser-worker'
@@ -195,6 +195,25 @@ function getNotesPosition(
     return notesCoordinates
 }
 
+function mergeNotesCoordinates(activeTracks: number[], coordinates: NoteCoordinates[][][]) {
+    const coordinatesActiveTracks = activeTracks.map((track) => coordinates[track])
+    const nbCoordinates = coordinatesActiveTracks[0].length
+    return coordinatesActiveTracks.reduce(
+        (previousCoordinatesActiveTrack, currentCoordinatesActiveTrack, currentIndex) => {
+            let hello = []
+
+            for (let i = 0; i < nbCoordinates; i++) {
+                hello.push(
+                    previousCoordinatesActiveTrack[i].concat(currentCoordinatesActiveTrack[i])
+                )
+            }
+
+            return hello
+        },
+        Array(nbCoordinates).fill([])
+    )
+}
+
 export const Visualizer = WithContainerDimensions(
     ({
         activeNotes,
@@ -216,14 +235,17 @@ export const Visualizer = WithContainerDimensions(
         })
 
         useEffect(() => {
-            if (!midiInfos || !midiFile || !activeTracks.length) return
+            if (!midiInfos || !midiFile || !activeTracks.length || !midiFile) return
             const coordinates = getNotesPosition(
                 { w: width, h: height },
                 midiFile,
                 heightPerBeat,
                 midiInfos
             )
-            setNotesCoordinates(coordinates[activeTracks[0]]) //TODO: once we support multitracking remove this
+
+            const mergedCoordinatesActiveTracks = mergeNotesCoordinates(activeTracks, coordinates)
+
+            setNotesCoordinates(mergedCoordinatesActiveTracks)
         }, [midiInfos, width, height, midiFile, heightPerBeat, activeTracks])
 
         useEffect(() => {
