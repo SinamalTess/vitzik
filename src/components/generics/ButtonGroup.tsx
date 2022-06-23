@@ -1,11 +1,10 @@
-import { ButtonProps } from './Button'
 import { ReactElement } from 'react'
 import React from 'react'
 import './ButtonGroup.scss'
 import { CSSSpacingSize } from '../../types'
 
 interface ButtonGroupProps {
-    children: ReactElement<ButtonProps>[]
+    children: ReactElement[]
     size?: CSSSpacingSize
 }
 
