@@ -15,9 +15,15 @@ export function MidiTrackSelector({
     onChangeActiveTracks,
     activeTracks,
 }: MidiTrackSelectorProps) {
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const { value } = event.target
-        const track = parseInt(value)
+    const allChecked = activeTracks.length === playableTracksIndexes.length
+
+    function selectAllPlayableTracks() {
+        onChangeActiveTracks([...playableTracksIndexes])
+    }
+    function unselectAllPlayableTracks() {
+        onChangeActiveTracks([])
+    }
+    function selectTrack(track: number) {
         const existingTrackIndex = activeTracks.findIndex((activeTrack) => activeTrack === track)
         if (existingTrackIndex >= 0) {
             const newActiveTracks = [...activeTracks]
@@ -28,9 +34,26 @@ export function MidiTrackSelector({
         }
     }
 
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const { value } = event.target
+        const track = parseInt(value)
+        if (value === 'all' && !allChecked) {
+            selectAllPlayableTracks()
+        } else if (value === 'all') {
+            unselectAllPlayableTracks()
+        } else {
+            selectTrack(track)
+        }
+    }
+
     return (
         <Dropdown open={false}>
             <DropdownToggle>{`(${playableTracksIndexes.length}) Tracks`}</DropdownToggle>
+            <DropdownItem>
+                <Checkbox value={'all'} onChange={handleChange} checked={allChecked}>
+                    {allChecked ? 'Unselect All' : 'Select all'}
+                </Checkbox>
+            </DropdownItem>
             {playableTracksIndexes.map((track) => {
                 const checked = activeTracks.some((activeTrack) => activeTrack === track)
                 return (
