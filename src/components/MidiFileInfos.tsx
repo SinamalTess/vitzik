@@ -12,8 +12,7 @@ interface MidiInfosProps {
 }
 
 export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
-    const { ticksPerBeat, format, initialChannelInstruments, msPerBeat } = midiInfos
-    const channelInstruments = Array.from(initialChannelInstruments)
+    const { ticksPerBeat, format, initialInstruments, msPerBeat } = midiInfos
     return (
         <div className="midifile-infos pd-md">
             <MidiTitle midiTitle={midiTitle} />
@@ -21,12 +20,12 @@ export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
             <span>Format : {format}</span>
             <span>Ms per beat : {msPerBeat}</span>
             <List>
-                {channelInstruments.map(([channel, instrument]) => (
+                {initialInstruments.map(({ channel, name }) => (
                     <ListItem
                         style={{ color: CHANNElS_COLORS[channel] }}
-                        key={`${instrument}-${channel}`}
+                        key={`${name}-${channel}`}
                     >
-                        {channel} : {instrument}
+                        {channel} : {name}
                     </ListItem>
                 ))}
             </List>

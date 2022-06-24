@@ -5,7 +5,7 @@ import {
     IMidiSetTempoEvent,
     TMidiEvent,
 } from 'midi-json-parser-worker'
-import { Instrument, MidiInfos } from '../types'
+import { Instrument, InstrumentUserFriendlyName, MidiInfos } from '../types'
 import { IMidiProgramChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { MIDI_INSTRUMENTS } from './const'
 import { largestNum } from './maths'
@@ -28,7 +28,7 @@ export const getFormat = (midiJson: IMidiFile): number => midiJson.format
 const getNbTicks = (track: TMidiEvent[]) =>
     track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
 
-const programNumberToInstrument = (programNumber: number): Instrument =>
+const programNumberToInstrument = (programNumber: number): InstrumentUserFriendlyName =>
     MIDI_INSTRUMENTS[programNumber]
 
 export function getTicksPerBeat(midiJson: IMidiFile) {
@@ -107,21 +107,25 @@ function getPlayableTracks(midiFile: IMidiFile | null) {
     return playableTracksIndexes
 }
 
-function getInitialChannelInstruments(midiJson: IMidiFile) {
+function getInitialInstruments(midiJson: IMidiFile) {
     const { tracks } = midiJson
-    let channels = new Map()
+    let instruments: Instrument[] = []
     tracks.forEach((track) => {
         track.forEach((event) => {
             if (isProgramChangeEvent(event)) {
                 const { channel } = event
                 const { programNumber } = event.programChange
-                if (!channels.has(channel)) {
-                    channels.set(channel, programNumberToInstrument(programNumber))
+                if (!instruments.find((instrument) => instrument.channel === channel)) {
+                    instruments.push({
+                        channel,
+                        name: programNumberToInstrument(programNumber),
+                        index: programNumber,
+                    })
                 }
             }
         })
     })
-    return channels
+    return instruments
 }
 
 export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
@@ -131,7 +135,7 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
     const nbBeats = nbTicks / ticksPerBeat
     const msPerBeat = getMsPerBeat(midiJson)
     const format = getFormat(midiJson)
-    const initialChannelInstruments = getInitialChannelInstruments(midiJson)
+    const initialInstruments = getInitialInstruments(midiJson)
     const playableTracksIndexes = getPlayableTracks(midiJson)
 
     return {
@@ -139,7 +143,7 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
         ticksPerBeat,
         midiDuration: nbBeats * msPerBeat,
         format,
-        initialChannelInstruments,
+        initialInstruments,
         playableTracksIndexes,
     }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import Soundfont, { InstrumentName, Player } from 'soundfont-player'
+import Soundfont, { Player, InstrumentName } from 'soundfont-player'
 import { msToSec } from '../utils'
-import { AudioPlayerState, Instrument, ActiveNote } from '../types'
+import { AudioPlayerState, ActiveNote, InstrumentUserFriendlyName } from '../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
     MIDI_INSTRUMENTS,
@@ -12,7 +12,7 @@ import {
 
 interface InstrumentPlayerProps {
     isMute: boolean
-    instrument: Instrument
+    instrument: InstrumentUserFriendlyName
     audioPlayerState: AudioPlayerState
     activeKeys: ActiveNote[]
     midiFile: IMidiFile | null
@@ -22,7 +22,10 @@ type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
 
 const soundfont = 'MusyngKite'
 
-const normalizeInstrumentName = (instrument: Instrument, soundfont: SoundFont): InstrumentName => {
+const normalizeInstrumentName = (
+    instrument: InstrumentUserFriendlyName,
+    soundfont: SoundFont
+): InstrumentName => {
     const InstrumentIndex = MIDI_INSTRUMENTS.findIndex(
         (midiInstrument) => midiInstrument === instrument
     )
@@ -67,8 +70,8 @@ export function InstrumentPlayer({
 
         function startInstrument() {
             const ac = new AudioContext()
-            const SoundfontInstrument = normalizeInstrumentName(instrument, soundfont)
-            Soundfont.instrument(ac, SoundfontInstrument, { soundfont })
+            const soundfontInstrument = normalizeInstrumentName(instrument, soundfont)
+            Soundfont.instrument(ac, soundfontInstrument, { soundfont })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
                 })

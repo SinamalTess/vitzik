@@ -13,6 +13,12 @@ import { MidiFileInfos } from './components/MidiFileInfos'
 
 //TODO: check accessibility
 
+const userInstrument: Instrument = {
+    name: 'Acoustic Grand Keyboard',
+    channel: 16,
+    index: 1,
+}
+
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
@@ -21,15 +27,14 @@ function App() {
     const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
-    const [instrument, setInstrument] = useState<Instrument>('Acoustic Grand Keyboard')
-    const [channelInstruments, setChannelInstruments] = useState<Map<number, string> | null>(null)
+    const [instruments, setInstruments] = useState<Instrument[]>([userInstrument])
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [activeTracks, setActiveTracks] = useState<number[]>([])
 
     const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
     const midiDuration = midiInfos?.midiDuration ?? 0
     const playableTracksIndexes = midiInfos?.playableTracksIndexes ?? []
-    const initialChannelInstruments = midiInfos?.initialChannelInstruments ?? new Map()
+    const initialInstruments = midiInfos?.initialInstruments ?? []
     const isMidiImported = midiFile !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
@@ -41,8 +46,11 @@ function App() {
     useEffect(() => {
         if (!midiInfos) return
         setMidiCurrentTime(0)
-        setChannelInstruments(initialChannelInstruments)
-        setActiveTracks([playableTracksIndexes[0]]) // should support array for later
+        setInstruments((instruments) => [...instruments, ...initialInstruments])
+        setActiveTracks([playableTracksIndexes[0]])
+        return function cleanup() {
+            setInstruments([userInstrument])
+        }
     }, [midiInfos])
 
     return (
@@ -65,7 +73,7 @@ function App() {
                     activeTracks={activeTracks}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
-                    onChangeInstrument={setInstrument}
+                    onChangeInstrument={setInstruments}
                     onChangeActiveNotes={setActiveNotes}
                     onChangeActiveTracks={setActiveTracks}
                 />
@@ -91,13 +99,17 @@ function App() {
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
                 />
-                <InstrumentPlayer
-                    isMute={isMute}
-                    audioPlayerState={audioPlayerState}
-                    activeKeys={activeNotes}
-                    instrument={instrument}
-                    midiFile={midiFile}
-                />
+                <>
+                    {instruments.map(({ channel, name }) => (
+                        <InstrumentPlayer
+                            isMute={isMute}
+                            audioPlayerState={audioPlayerState}
+                            activeKeys={activeNotes.filter((note) => note.channel === channel)}
+                            instrument={name}
+                            midiFile={midiFile}
+                        />
+                    ))}
+                </>
             </div>
         </div>
     )

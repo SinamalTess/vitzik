@@ -14,7 +14,7 @@ interface SettingsProps {
     activeTracks: number[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
-    onChangeInstrument: (instrument: Instrument) => void
+    onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
 }

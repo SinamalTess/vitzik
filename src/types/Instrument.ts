@@ -1,3 +1,9 @@
 import { MIDI_INSTRUMENTS } from '../utils/const'
 
-export type Instrument = typeof MIDI_INSTRUMENTS[number]
+export type InstrumentUserFriendlyName = typeof MIDI_INSTRUMENTS[number]
+
+export interface Instrument {
+    name: InstrumentUserFriendlyName
+    index: number
+    channel: number
+}
