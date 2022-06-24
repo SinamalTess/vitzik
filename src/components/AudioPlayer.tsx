@@ -85,8 +85,9 @@ export function AudioPlayer({
         }
     }, [midiCurrentTime, isPlaying, isSearching])
 
-    function handleChange(midiCurrentTime: number) {
-        onChangeMidiCurrentTime(midiCurrentTime)
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const { value } = event.target
+        onChangeMidiCurrentTime(parseInt(value))
     }
 
     function handleClick() {

@@ -5,9 +5,9 @@ interface RangeSliderPros {
     value: string | number
     min?: number
     max?: number
-    onMouseUp?: (value: number) => void
-    onMouseDown?: (value: number) => void
-    onChange: (value: number) => void
+    onMouseUp?: (event: React.MouseEvent<HTMLInputElement>) => void
+    onMouseDown?: (event: React.MouseEvent<HTMLInputElement>) => void
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export function RangeSlider({
@@ -20,20 +20,18 @@ export function RangeSlider({
 }: RangeSliderPros) {
     function handleMouseUp(event: React.MouseEvent<HTMLInputElement>) {
         if (onMouseUp) {
-            //@ts-ignore
-            onMouseUp(parseInt(event.target.value))
+            onMouseUp(event)
         }
     }
 
     function handleMouseDown(event: React.MouseEvent<HTMLInputElement>) {
         if (onMouseDown) {
-            //@ts-ignore
-            onMouseDown(parseInt(event.target.value))
+            onMouseDown(event)
         }
     }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        onChange(parseInt(event.target.value))
+        onChange(event)
     }
 
     return (
