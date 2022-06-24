@@ -3,6 +3,12 @@ import Soundfont, { InstrumentName, Player } from 'soundfont-player'
 import { msToSec } from '../utils'
 import { AudioPlayerState, Instrument, ActiveNote } from '../types'
 import { IMidiFile } from 'midi-json-parser-worker'
+import {
+    MIDI_INSTRUMENTS,
+    MIDI_INSTRUMENTS_FATBOY,
+    MIDI_INSTRUMENTS_FLUIDR3_GM,
+    MIDI_INSTRUMENTS_MUSYNGKITE,
+} from '../utils/const'
 
 interface InstrumentPlayerProps {
     isMute: boolean
@@ -12,8 +18,24 @@ interface InstrumentPlayerProps {
     midiFile: IMidiFile | null
 }
 
-const normalizeInstrumentName = (instrument: Instrument): InstrumentName =>
-    instrument.replace(/ /g, '_').toLowerCase() as InstrumentName
+type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
+
+const soundfont = 'MusyngKite'
+
+const normalizeInstrumentName = (instrument: Instrument, soundfont: SoundFont): InstrumentName => {
+    const InstrumentIndex = MIDI_INSTRUMENTS.findIndex(
+        (midiInstrument) => midiInstrument === instrument
+    )
+
+    switch (soundfont) {
+        case 'FatBoy':
+            return MIDI_INSTRUMENTS_FATBOY[InstrumentIndex] as InstrumentName
+        case 'FluidR3_GM':
+            return MIDI_INSTRUMENTS_FLUIDR3_GM[InstrumentIndex] as InstrumentName
+        case 'MusyngKite':
+            return MIDI_INSTRUMENTS_MUSYNGKITE[InstrumentIndex] as InstrumentName
+    }
+}
 
 const normalizeVelocity = (val: number, max: number, min: number): number =>
     (val - min) / (max - min)
@@ -45,8 +67,8 @@ export function InstrumentPlayer({
 
         function startInstrument() {
             const ac = new AudioContext()
-            const SoundfontInstrument = normalizeInstrumentName(instrument)
-            Soundfont.instrument(ac, SoundfontInstrument, { soundfont: 'FluidR3_GM' })
+            const SoundfontInstrument = normalizeInstrumentName(instrument, soundfont)
+            Soundfont.instrument(ac, SoundfontInstrument, { soundfont })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
                 })
