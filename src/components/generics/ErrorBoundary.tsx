@@ -1,4 +1,5 @@
 import React, { ErrorInfo, ReactNode } from 'react'
+import './ErrorBoundary.scss'
 
 interface ErrorBoundaryProps {
     children?: ReactNode
@@ -34,12 +35,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         if (this.state.hasError) {
             // You can render any custom fallback UI
             return (
-                <>
+                <div className={'error-boundary'}>
                     <h1>Something went wrong.</h1>
                     {this.state.error?.message}
                     <br />
                     {this.state.error?.stack}
-                </>
+                </div>
             )
         }
 
