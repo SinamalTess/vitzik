@@ -2,21 +2,34 @@ import { ReactNode } from 'react'
 import React from 'react'
 
 interface CheckboxProps {
-    children: ReactNode
+    children?: ReactNode
     value: string
     checked?: boolean
     onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
+    disabled?: boolean
 }
 
-export function Checkbox({ children, value, checked = false, onChange }: CheckboxProps) {
+export function Checkbox({
+    children,
+    value,
+    checked = false,
+    disabled = false,
+    onChange,
+}: CheckboxProps) {
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         onChange(event)
     }
 
     return (
-        <>
-            <input type="checkbox" value={value} checked={checked} onChange={handleChange} />
-            <label>{children}</label>
-        </>
+        <span className={'checkbox'}>
+            <input
+                type="checkbox"
+                value={value}
+                checked={checked}
+                disabled={disabled}
+                onChange={handleChange}
+            />
+            {children ? <label>{children}</label> : null}
+        </span>
     )
 }

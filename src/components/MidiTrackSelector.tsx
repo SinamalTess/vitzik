@@ -20,9 +20,11 @@ export function MidiTrackSelector({
     function selectAllPlayableTracks() {
         onChangeActiveTracks([...playableTracksIndexes])
     }
+
     function unselectAllPlayableTracks() {
         onChangeActiveTracks([])
     }
+
     function selectTrack(track: number) {
         const existingTrackIndex = activeTracks.findIndex((activeTrack) => activeTrack === track)
         if (existingTrackIndex >= 0) {
