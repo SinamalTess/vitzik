@@ -123,7 +123,7 @@ function getActiveNotes(
     return []
 }
 
-function getNotesPosition(
+export function getNotesPosition(
     containerDimensions: {
         w: number
         h: number
@@ -195,20 +195,18 @@ function getNotesPosition(
     return notesCoordinates
 }
 
-function mergeNotesCoordinates(activeTracks: number[], coordinates: NoteCoordinates[][][]) {
+export function mergeNotesCoordinates(activeTracks: number[], coordinates: NoteCoordinates[][][]) {
     const coordinatesActiveTracks = activeTracks.map((track) => coordinates[track])
     const nbCoordinates = coordinatesActiveTracks[0].length
     return coordinatesActiveTracks.reduce(
-        (previousCoordinatesActiveTrack, currentCoordinatesActiveTrack, currentIndex) => {
-            let hello = []
+        (previousCoordinatesActiveTrack, currentCoordinatesActiveTrack) => {
+            let acc = []
 
             for (let i = 0; i < nbCoordinates; i++) {
-                hello.push(
-                    previousCoordinatesActiveTrack[i].concat(currentCoordinatesActiveTrack[i])
-                )
+                acc.push(previousCoordinatesActiveTrack[i].concat(currentCoordinatesActiveTrack[i]))
             }
 
-            return hello
+            return acc
         },
         Array(nbCoordinates).fill([])
     )

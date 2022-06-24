@@ -1,4 +1,4 @@
-import { CanvasRectangle, Point, Rectangle } from '../types'
+import { Point, Rectangle } from '../types'
 
 interface Radius {
     tl: number
@@ -31,13 +31,6 @@ export const isPointInRect = (
 
     return point.x >= rect.x1 && point.x <= rect.x2 && point.y >= rect.y1 && point.y <= rect.y2
 }
-
-export const convertCanvasRectToRect = (rect: CanvasRectangle): Rectangle => ({
-    x1: rect.x,
-    x2: rect.x + rect.w,
-    y1: rect.y,
-    y2: rect.y + rect.h,
-})
 
 export function drawRoundRect(
     ctx: CanvasRenderingContext2D,
