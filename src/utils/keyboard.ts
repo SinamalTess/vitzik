@@ -1,7 +1,7 @@
 import { AlphabeticalNote } from '../types'
 import { NB_WHITE_PIANO_KEYS } from './const'
 
-export const isBlackKey = (note: AlphabeticalNote) => note.includes('#')
+export const isBlackKey = (note: AlphabeticalNote) => note?.includes('#')
 
 export const isSpecialNote = (note: AlphabeticalNote) => note.includes('C') || note.includes('F')
 

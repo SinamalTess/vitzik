@@ -1,7 +1,7 @@
 import { AlphabeticalNote, MusicSystem, Note } from '../types'
 import { MIDI_PIANO_KEYS_OFFSET, NOTES } from './const'
 
-export const keyToNote = (key: number): AlphabeticalNote =>
+export const keyToNote = (key: number): AlphabeticalNote | undefined =>
     NOTES.alphabetical[key - MIDI_PIANO_KEYS_OFFSET]
 
 export const noteToKey = (note: AlphabeticalNote): number =>

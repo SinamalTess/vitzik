@@ -26,7 +26,7 @@ import { WithContainerDimensions } from './hocs/WithContainerDimensions'
 interface PartialNote {
     key: number
     velocity: number
-    name: AlphabeticalNote
+    name?: AlphabeticalNote
     channel: number
 }
 
@@ -78,20 +78,36 @@ function getNoteCoordinates(
     heightPerBeat: number
 ) {
     const { name, key } = note
-    const isBlackKey = checkIsBlackKey(name)
-    const { widthWhiteKey, widthBlackKey } = getWidthKeys(containerWidth)
-    const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
-    const nbPreviousWhiteKeys = previousKeys.filter((note) => !checkIsBlackKey(note)).length
-    const margin = isBlackKey ? widthBlackKey : widthWhiteKey / 4
-    const w = isBlackKey ? widthBlackKey : widthWhiteKey
     const y = (deltaAcc / ticksPerBeat) * heightPerBeat
-    const x = nbPreviousWhiteKeys * widthWhiteKey - margin
+    /*
+        Some notes don't have associated names because they are just frequencies.
+        See : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+        We won't render them visually, but they need to be played.
+        Therefore, we pass a 'width' and 'x' of 0 --> to skip rendering
+        But the 'y' and 'h' must be correct --> to play at the right timing
+    */
+    if (name) {
+        const isBlackKey = checkIsBlackKey(name)
+        const { widthWhiteKey, widthBlackKey } = getWidthKeys(containerWidth)
+        const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
+        const nbPreviousWhiteKeys = previousKeys.filter((note) => !checkIsBlackKey(note)).length
+        const margin = isBlackKey ? widthBlackKey : widthWhiteKey / 4
+        const w = isBlackKey ? widthBlackKey : widthWhiteKey
+        const x = nbPreviousWhiteKeys * widthWhiteKey - margin
 
-    return {
-        w,
-        y,
-        h: deltaAcc, // temporary value, should be replaced once the noteOffEvent is sent
-        x,
+        return {
+            w,
+            y,
+            h: deltaAcc, // temporary value, should be replaced once the noteOffEvent is sent
+            x,
+        }
+    } else {
+        return {
+            w: 0,
+            y,
+            h: deltaAcc,
+            x: 0,
+        }
     }
 }
 
@@ -150,6 +166,7 @@ export function getNotesPosition(
 
             if (isNoteOnEvent(event)) {
                 const midiNote = getNoteInfos(event)
+                console.log(midiNote)
                 const noteCoordinates = getNoteCoordinates(
                     midiNote,
                     deltaAcc,

@@ -4,7 +4,7 @@ import { Visualizer } from './Visualizer'
 import React from 'react'
 import { AppMode } from './ModeSelector'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState, MidiInfos, ActiveNote } from '../types'
+import { AudioPlayerState, MidiInfos, ActiveNote, AlphabeticalNote } from '../types'
 import { ErrorBoundary } from './generics/ErrorBoundary'
 
 interface PreviewProps {
@@ -32,7 +32,9 @@ export function Preview({
     onMidiImport,
     onChangeActiveNotes,
 }: PreviewProps) {
-    const staffNotes = notes.map((note) => note.name)
+    const staffNotes = notes
+        .filter((note) => !note.name)
+        .map((note) => note.name) as AlphabeticalNote[]
     return appMode === 'learning' ? (
         <Staff notes={staffNotes} />
     ) : (
