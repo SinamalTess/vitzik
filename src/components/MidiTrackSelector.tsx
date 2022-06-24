@@ -30,7 +30,7 @@ export function MidiTrackSelector({
 
     return (
         <Dropdown open={false}>
-            <DropdownToggle>Tracks</DropdownToggle>
+            <DropdownToggle>{`(${playableTracksIndexes.length}) Tracks`}</DropdownToggle>
             {playableTracksIndexes.map((track) => {
                 const checked = activeTracks.some((activeTrack) => activeTrack === track)
                 return (
