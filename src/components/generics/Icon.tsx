@@ -1,6 +1,7 @@
 import React from 'react'
 import { CSSSpacingSize } from '../../types'
 import './Icon.scss'
+import clsx from 'clsx'
 
 export type IconName = 'volume' | 'frequency' | 'infos' | 'midi'
 
@@ -11,8 +12,12 @@ interface IconProps {
 }
 
 export function Icon({ name, children, size = 'md' }: IconProps) {
-    const sizeClass = typeof size === 'string' ? `icon-${size}` : ''
-    const className = `icon icon-${name} ${sizeClass}`
+    const className = clsx(
+        'icon',
+        { [`icon-${name}`]: name },
+        { [`icon-${size}`]: typeof size === 'string' }
+    )
+
     const style = typeof size === 'number' ? { fontSize: size + 'px' } : {}
 
     return (

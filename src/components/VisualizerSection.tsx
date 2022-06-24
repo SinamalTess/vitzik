@@ -3,6 +3,7 @@ import { drawRoundRect } from '../utils'
 import { NoteCoordinates } from '../types'
 import './VisualizerSection.scss'
 import { CHANNElS_COLORS } from '../utils/const/channel_colors'
+import clsx from 'clsx'
 
 export interface VisualizerSectionProps {
     index: number
@@ -80,11 +81,13 @@ export function VisualizerSection({
         }
     }, [width, height, ctx])
 
+    const className = clsx('visualizer__section', [`visualizer__section--${index}`])
+
     return (
         <canvas
             ref={refCanvas}
             data-testid={`visualizer__section--${index}`}
-            className={`visualizer__section visualizer__section--${index}`}
+            className={className}
             style={{ transform: `scaleY(-1) translateY(${top})` }}
         ></canvas>
     )

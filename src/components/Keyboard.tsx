@@ -8,6 +8,7 @@ import {
     noteToKey,
     translateNoteToMusicSystem,
 } from '../utils'
+import clsx from 'clsx'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
@@ -60,19 +61,22 @@ export const Keyboard = React.memo(function Keyboard({
                     musicSystem !== 'alphabetical'
                         ? translateNoteToMusicSystem(note, musicSystem)
                         : note
-                const keyClassName = isBlackKey ? 'keyboard__blackkey' : 'keyboard__whitekey'
                 const { width, margin } = getStyles(note)
+                const className = clsx(
+                    { ['keyboard__blackkey']: isBlackKey },
+                    { ['keyboard__whitekey']: !isBlackKey },
+                    { [`keyboard__blackkey--active`]: isActive && isBlackKey },
+                    { [`keyboard__whitekey--active`]: isActive && !isBlackKey },
+                    [`${noteToKey(note)}`],
+                    [`${note}`]
+                )
 
                 return (
                     <li
                         key={note}
                         style={{ width, margin }}
                         data-testid={note}
-                        className={`
-                            ${keyClassName} 
-                            ${noteToKey(note)} 
-                            ${note} ${isActive ? `${keyClassName}--active` : ''}
-                        `}
+                        className={className}
                         onMouseDown={() => handleMouseDown(note)}
                         onMouseUp={handleMouseUp}
                     >

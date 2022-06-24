@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import './Button.scss'
 import { Icon, IconName } from './Icon'
 import { CSSSpacingSize, CSSColor } from '../../types'
+import clsx from 'clsx'
 
 export interface ButtonProps {
     disabled?: boolean
@@ -23,9 +24,13 @@ export function Button({
     outline = false,
     onClick = () => {},
 }: ButtonProps) {
-    const className = `btn btn--${size} pd-${size} ${active ? 'btn--active' : ''} ${
-        outline ? 'btn--outline' : ''
-    }`
+    const className = clsx(
+        'btn',
+        { [`btn--${size}`]: size },
+        { [`pd-${size}`]: size },
+        { 'btn--active': active },
+        { 'btn--outline': outline }
+    )
 
     return (
         <button disabled={disabled} className={className} onClick={onClick}>
