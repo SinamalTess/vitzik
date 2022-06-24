@@ -20,7 +20,7 @@ export function Dropdown({ children }: DropdownProps) {
     )[0]
 
     return (
-        <Tooltip>
+        <Tooltip arrow={false} referenceWidth>
             <Button>{dropdownToggle}</Button>
             {dropdownItems.map((dropdownItem: ReactNode) => dropdownItem)}
         </Tooltip>
