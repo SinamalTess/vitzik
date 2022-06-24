@@ -16,11 +16,10 @@ interface InstrumentPlayerProps {
     audioPlayerState: AudioPlayerState
     activeKeys: ActiveNote[]
     midiFile: IMidiFile | null
+    soundfont?: SoundFont
 }
 
 type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
-
-const soundfont = 'MusyngKite'
 
 const normalizeInstrumentName = (
     instrument: InstrumentUserFriendlyName,
@@ -46,7 +45,8 @@ const normalizeVelocity = (val: number, max: number, min: number): number =>
 function playNote(note: ActiveNote, notesAlreadyPlayed: ActiveNote[], instrumentPlayer: Player) {
     const { velocity, id, duration, key } = note
     const gain = normalizeVelocity(0, 1, velocity)
-    if (!notesAlreadyPlayed.find((note) => note.id === id)) {
+    const isNoteAlreadyPlayed = notesAlreadyPlayed.find((note) => note.id === id)
+    if (!isNoteAlreadyPlayed) {
         instrumentPlayer.play(key.toString(), 0, {
             gain,
             duration: msToSec(duration ?? 0),
@@ -61,6 +61,7 @@ export function InstrumentPlayer({
     audioPlayerState,
     activeKeys,
     midiFile,
+    soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const notesAlreadyPlayed: React.MutableRefObject<ActiveNote[]> = useRef([])
@@ -86,7 +87,7 @@ export function InstrumentPlayer({
         return function cleanup() {
             ac.close().then(() => setInstrumentPlayer(null))
         }
-    }, [instrument, isMute, audioPlayerState])
+    }, [instrument, isMute, audioPlayerState, soundfont])
 
     useEffect(() => {
         if (isMute || !activeKeys.length || !instrumentPlayer) return

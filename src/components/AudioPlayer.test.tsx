@@ -21,6 +21,16 @@ class Worker {
     }
 }
 
+const clickPlay = () => {
+    const playButton = screen.getByText('Play')
+    userEvent.click(playButton)
+}
+
+const clickPause = () => {
+    const pauseButton = screen.getByText('Pause')
+    userEvent.click(pauseButton)
+}
+
 describe('AudioPlayer', () => {
     // @ts-ignore
     window.Worker = Worker
@@ -84,13 +94,3 @@ describe('AudioPlayer', () => {
         })
     })
 })
-
-const clickPlay = () => {
-    const playButton = screen.getByText('Play')
-    userEvent.click(playButton)
-}
-
-const clickPause = () => {
-    const pauseButton = screen.getByText('Pause')
-    userEvent.click(pauseButton)
-}
