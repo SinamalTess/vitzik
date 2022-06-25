@@ -9,6 +9,7 @@ import {
     translateNoteToMusicSystem,
 } from '../utils'
 import clsx from 'clsx'
+import { CHANNElS_COLORS } from '../utils/const/channel_colors'
 
 interface PianoProps {
     activeKeys: ActiveNote[]
@@ -35,6 +36,7 @@ export const Keyboard = React.memo(function Keyboard({
     onKeyPressed,
 }: PianoProps) {
     const notes = NOTES.alphabetical
+    const activeKeysReversed = [...activeKeys].reverse()
 
     function handleMouseDown(note: AlphabeticalNote) {
         onKeyPressed([
@@ -55,7 +57,14 @@ export const Keyboard = React.memo(function Keyboard({
         <ul className="keyboard">
             {notes.map((note) => {
                 const isBlackKey = note.includes('#')
-                const isActive = activeKeys.find((currentKey) => currentKey.name === note)
+                /*
+                    Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
+                    So we pick the last active key because this is the one on top in the Visualizer.
+                */
+                const lastActiveKey = activeKeysReversed.find(
+                    (currentKey) => currentKey.name === note
+                )
+                const isActive = Boolean(lastActiveKey)
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
                     musicSystem !== 'alphabetical'
@@ -74,7 +83,11 @@ export const Keyboard = React.memo(function Keyboard({
                 return (
                     <li
                         key={note}
-                        style={{ width, margin }}
+                        style={{
+                            width,
+                            margin,
+                            background: lastActiveKey ? CHANNElS_COLORS[lastActiveKey.channel] : '',
+                        }}
                         data-testid={note}
                         className={className}
                         onMouseDown={() => handleMouseDown(note)}
