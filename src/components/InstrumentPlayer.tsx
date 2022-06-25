@@ -67,7 +67,7 @@ export function InstrumentPlayer({
     const notesAlreadyPlayed: React.MutableRefObject<ActiveNote[]> = useRef([])
 
     useEffect(() => {
-        if (isMute || audioPlayerState !== 'playing') return
+        if (isMute) return
 
         function startInstrument() {
             const ac = new AudioContext()
@@ -87,7 +87,7 @@ export function InstrumentPlayer({
         return function cleanup() {
             ac.close().then(() => setInstrumentPlayer(null))
         }
-    }, [instrument, isMute, audioPlayerState, soundfont])
+    }, [instrument, isMute, soundfont])
 
     useEffect(() => {
         if (isMute || !activeKeys.length || !instrumentPlayer) return
