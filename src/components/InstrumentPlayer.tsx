@@ -44,7 +44,7 @@ const normalizeVelocity = (val: number, max: number, min: number): number =>
 
 function playNote(note: ActiveNote, notesAlreadyPlayed: ActiveNote[], instrumentPlayer: Player) {
     const { velocity, id, duration, key } = note
-    const gain = normalizeVelocity(0, 1, velocity)
+    const gain = normalizeVelocity(velocity, 127, 0)
     const isNoteAlreadyPlayed = notesAlreadyPlayed.find((note) => note.id === id)
     if (!isNoteAlreadyPlayed) {
         instrumentPlayer.play(key.toString(), 0, {
