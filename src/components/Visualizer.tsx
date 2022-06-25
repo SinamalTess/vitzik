@@ -166,7 +166,6 @@ export function getNotesPosition(
 
             if (isNoteOnEvent(event)) {
                 const midiNote = getNoteInfos(event)
-                console.log(midiNote)
                 const noteCoordinates = getNoteCoordinates(
                     midiNote,
                     deltaAcc,
@@ -250,7 +249,7 @@ export const Visualizer = WithContainerDimensions(
         })
 
         useEffect(() => {
-            if (!midiInfos || !midiFile || !activeTracks.length || !midiFile) return
+            if (!midiInfos || !midiFile || !activeTracks.length) return
             const coordinates = getNotesPosition(
                 { w: width, h: height },
                 midiFile,
