@@ -102,6 +102,7 @@ function App() {
                 <>
                     {instruments.map(({ channel, name }) => (
                         <InstrumentPlayer
+                            key={`${name}-${channel}`}
                             isMute={isMute}
                             audioPlayerState={audioPlayerState}
                             activeKeys={activeNotes.filter((note) => note.channel === channel)}
