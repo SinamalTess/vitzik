@@ -47,7 +47,7 @@ function App() {
         if (!midiInfos) return
         setMidiCurrentTime(0)
         setInstruments((instruments) => [...instruments, ...initialInstruments])
-        setActiveTracks([playableTracksIndexes[0]])
+        setActiveTracks([...playableTracksIndexes])
         return function cleanup() {
             setInstruments([userInstrument])
         }
@@ -100,16 +100,19 @@ function App() {
                     onKeyPressed={setActiveNotes}
                 />
                 <>
-                    {instruments.map(({ channel, name }) => (
-                        <InstrumentPlayer
-                            key={`${name}-${channel}`}
-                            isMute={isMute}
-                            audioPlayerState={audioPlayerState}
-                            activeKeys={activeNotes.filter((note) => note.channel === channel)}
-                            instrument={name}
-                            midiFile={midiFile}
-                        />
-                    ))}
+                    {instruments.map(({ channel, name }) => {
+                        const activeKeys = activeNotes.filter((note) => note.channel === channel)
+                        return (
+                            <InstrumentPlayer
+                                key={`${name}-${channel}`}
+                                isMute={isMute}
+                                audioPlayerState={audioPlayerState}
+                                activeKeys={activeKeys}
+                                instrument={name}
+                                midiFile={midiFile}
+                            />
+                        )
+                    })}
                 </>
             </div>
         </div>
