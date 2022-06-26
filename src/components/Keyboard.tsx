@@ -40,6 +40,7 @@ export const Keyboard = React.memo(function Keyboard({
 
     function handleMouseDown(note: AlphabeticalNote) {
         onKeyPressed([
+            ...activeKeys,
             {
                 name: note,
                 velocity: 100,
@@ -49,8 +50,15 @@ export const Keyboard = React.memo(function Keyboard({
         ])
     }
 
-    function handleMouseUp() {
-        onKeyPressed([])
+    function handleMouseUp(note: AlphabeticalNote) {
+        const activeKeysCopy = [...activeKeys]
+        const noteIndex = activeKeysCopy.findIndex(
+            (activeKey) => activeKey.name === note && activeKey.channel === 16
+        )
+        if (noteIndex) {
+            activeKeysCopy.splice(noteIndex, 1)
+            onKeyPressed(activeKeysCopy)
+        }
     }
 
     return (
@@ -91,7 +99,7 @@ export const Keyboard = React.memo(function Keyboard({
                         data-testid={note}
                         className={className}
                         onMouseDown={() => handleMouseDown(note)}
-                        onMouseUp={handleMouseUp}
+                        onMouseUp={() => handleMouseUp(note)}
                     >
                         <span style={styleKeyName}>{keyTranslated}</span>
                     </li>
