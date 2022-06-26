@@ -58,14 +58,11 @@ export function MidiTrackSelector({
             </DropdownItem>
             {playableTracksIndexes.map((track) => {
                 const checked = activeTracks.some((activeTrack) => activeTrack === track)
+                const trackString = track.toString()
                 return (
                     <DropdownItem key={track}>
-                        <Checkbox
-                            value={track.toString()}
-                            onChange={handleChange}
-                            checked={checked}
-                        >
-                            {track}
+                        <Checkbox value={trackString} onChange={handleChange} checked={checked}>
+                            {trackString}
                         </Checkbox>
                     </DropdownItem>
                 )

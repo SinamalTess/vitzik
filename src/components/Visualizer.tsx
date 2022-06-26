@@ -249,17 +249,25 @@ export const Visualizer = WithContainerDimensions(
         })
 
         useEffect(() => {
-            if (!midiInfos || !midiFile || !activeTracks.length) return
-            const coordinates = getNotesPosition(
-                { w: width, h: height },
-                midiFile,
-                heightPerBeat,
-                midiInfos
-            )
+            if (!midiInfos || !midiFile) return
+            if (!activeTracks || !activeTracks.length) {
+                setNotesCoordinates([[]])
+                return
+            } else {
+                const coordinates = getNotesPosition(
+                    { w: width, h: height },
+                    midiFile,
+                    heightPerBeat,
+                    midiInfos
+                )
 
-            const mergedCoordinatesActiveTracks = mergeNotesCoordinates(activeTracks, coordinates)
+                const mergedCoordinatesActiveTracks = mergeNotesCoordinates(
+                    activeTracks,
+                    coordinates
+                )
 
-            setNotesCoordinates(mergedCoordinatesActiveTracks)
+                setNotesCoordinates(mergedCoordinatesActiveTracks)
+            }
         }, [midiInfos, width, height, midiFile, heightPerBeat, activeTracks])
 
         useEffect(() => {
