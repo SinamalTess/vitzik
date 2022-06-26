@@ -13,12 +13,18 @@ export function Dropdown({ children, open = false }: DropdownProps) {
 
     if (!children || !Array.isArray(children)) return null
 
-    const flatChildren = children.flat(1)
+    /*
+        Some children might be nested in others.
+        We flatten all arrays of children to make sure we inspect all of them.
+        Infinity is ok to use here.
+        See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat#flattening_nested_arrays
+    */
+    const allChildren = children.flat(Infinity)
 
-    const dropdownItems = flatChildren.filter(
+    const dropdownItems = allChildren.filter(
         (child) => child.type && child.type.name === 'DropdownItem'
     )
-    const dropdownToggle = flatChildren.filter(
+    const dropdownToggle = allChildren.filter(
         (child) => child.type && child.type.name === 'DropdownToggle'
     )[0]
 
