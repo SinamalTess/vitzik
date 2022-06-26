@@ -91,32 +91,25 @@ function getMsPerBeat(midiJson: IMidiFile): number {
     }
 }
 
-function getPlayableTracks(midiFile: IMidiFile | null) {
-    if (!midiFile) return []
-
-    const { tracks } = midiFile
+export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
+    if (!midiJson) return null
 
     let playableTracksIndexes: number[] = []
+    let initialInstruments: Instrument[] = []
 
-    tracks.forEach((track, index) => {
+    midiJson.tracks.forEach((track, index) => {
         if (isTrackPlayable(track)) {
             playableTracksIndexes.push(index)
         }
-    })
-
-    return playableTracksIndexes
-}
-
-function getInitialInstruments(midiJson: IMidiFile) {
-    const { tracks } = midiJson
-    let instruments: Instrument[] = []
-    tracks.forEach((track) => {
         track.forEach((event) => {
             if (isProgramChangeEvent(event)) {
                 const { channel } = event
                 const { programNumber } = event.programChange
-                if (!instruments.find((instrument) => instrument.channel === channel)) {
-                    instruments.push({
+                const isChannelFound = initialInstruments.find(
+                    (instrument) => instrument.channel === channel
+                )
+                if (!isChannelFound) {
+                    initialInstruments.push({
                         channel,
                         name: programNumberToInstrument(programNumber),
                         index: programNumber,
@@ -125,18 +118,12 @@ function getInitialInstruments(midiJson: IMidiFile) {
             }
         })
     })
-    return instruments
-}
 
-export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
-    if (!midiJson) return null
     const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicks(track)))
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
     const msPerBeat = getMsPerBeat(midiJson)
     const format = getFormat(midiJson)
-    const initialInstruments = getInitialInstruments(midiJson)
-    const playableTracksIndexes = getPlayableTracks(midiJson)
 
     return {
         msPerBeat,
