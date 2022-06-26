@@ -281,7 +281,7 @@ export const Visualizer = WithContainerDimensions(
             if (!isEqual(activeKeys, activeNotes)) {
                 onChangeActiveNotes(activeKeys)
             }
-        }, [midiCurrentTime])
+        }, [midiCurrentTime, notesCoordinates])
 
         useEffect(() => {
             const isIndexEven = isEven(indexSectionPlaying)
