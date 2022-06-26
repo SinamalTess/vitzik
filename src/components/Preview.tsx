@@ -17,6 +17,7 @@ interface PreviewProps {
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: (notes: ActiveNote[]) => void
+    onChangeTimeToNextNote: (timeToNextNote: number | null) => void
     onMidiImport: (title: string, midiJSON: IMidiFile) => void
 }
 
@@ -31,6 +32,7 @@ export function Preview({
     audioPlayerState,
     onMidiImport,
     onChangeActiveNotes,
+    onChangeTimeToNextNote,
 }: PreviewProps) {
     const staffNotes = notes
         .filter((note) => !note.name)
@@ -48,6 +50,7 @@ export function Preview({
                 audioPlayerState={audioPlayerState}
                 activeTracks={activeTracks}
                 onChangeActiveNotes={onChangeActiveNotes}
+                onChangeTimeToNextNote={onChangeTimeToNextNote}
             />
         </ErrorBoundary>
     )

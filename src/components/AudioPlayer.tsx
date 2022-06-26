@@ -12,9 +12,11 @@ interface AudioPlayerProps {
     midiCurrentTime: number
     midiDuration: number
     isMute: boolean
+    isPlaying: boolean
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
     onChangeMidiCurrentTime: React.Dispatch<React.SetStateAction<number>>
+    onPlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function WebWorker(worker: any): Worker {
@@ -27,15 +29,16 @@ export function AudioPlayer({
     midiCurrentTime,
     midiDuration,
     isMute,
+    isPlaying,
     onToggleSound,
     onChangeAudioPlayerState,
     onChangeMidiCurrentTime,
+    onPlay,
 }: AudioPlayerProps) {
     const currentTime = msToMinAndSec(midiCurrentTime)
     const totalTime = msToMinAndSec(midiDuration)
     const prevMidiCurrentTime = usePrevious(midiCurrentTime) ?? 0
 
-    const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [isSearching, setIsSearching] = useState<boolean>(false)
 
     useEffect(() => {
@@ -49,7 +52,7 @@ export function AudioPlayer({
                     onChangeMidiCurrentTime((midiCurrentTime: number) => {
                         if (midiCurrentTime > midiDuration) {
                             worker.terminate()
-                            setIsPlaying(false)
+                            onPlay(false)
                             return 0
                         }
                         return midiCurrentTime + interval
@@ -91,7 +94,7 @@ export function AudioPlayer({
     }
 
     function handleClick() {
-        setIsPlaying((isPlaying) => !isPlaying)
+        onPlay((isPlaying) => !isPlaying)
     }
 
     function handleMouseDown() {

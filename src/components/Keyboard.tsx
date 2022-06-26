@@ -6,6 +6,7 @@ import {
     getWidthKeys,
     isSpecialNote as checkIsSpecialNote,
     noteToKey,
+    removeNotesFromActiveKeys,
     translateNoteToMusicSystem,
 } from '../utils'
 import clsx from 'clsx'
@@ -15,13 +16,7 @@ interface KeyboardProps {
     activeKeys: ActiveNote[]
     musicSystem?: MusicSystem
     onKeyPressed: (note: ActiveNote[]) => void
-}
-
-interface KeyboardNote {
-    name: AlphabeticalNote
-    velocity: number
-    key: number
-    channel: number
+    onAllMidiKeysPlayed?: () => void
 }
 
 function getStyles(note: AlphabeticalNote) {
@@ -37,30 +32,16 @@ function getStyles(note: AlphabeticalNote) {
     }
 }
 
-function removeNotesFromActiveKeys(
-    activeKeys: ActiveNote[],
-    notes: { name: AlphabeticalNote; channel: number }[]
-) {
-    const activeKeysCopy = [...activeKeys]
-    notes.forEach(({ channel, name }) => {
-        const noteIndex = activeKeysCopy.findIndex(
-            (activeKey) => activeKey.name === name && activeKey.channel === channel
-        )
-        if (noteIndex >= 0) {
-            activeKeysCopy.splice(noteIndex, 1)
-        }
-    })
-    return activeKeysCopy
-}
-
 export const Keyboard = React.memo(function Keyboard({
     activeKeys,
     musicSystem = 'alphabetical',
     onKeyPressed,
+    onAllMidiKeysPlayed,
 }: KeyboardProps) {
     const activeKeysReversed = [...activeKeys].reverse()
     const keyboardChannel = 16
     const keyboardVelocity = 100
+
     const notes = NOTES.alphabetical.map((noteName) => ({
         name: noteName,
         velocity: keyboardVelocity,
@@ -68,28 +49,39 @@ export const Keyboard = React.memo(function Keyboard({
         channel: keyboardChannel,
     }))
 
-    function addNoteToActiveKeys(note: KeyboardNote) {
+    function addNoteToActiveKeys(note: ActiveNote) {
         return [...activeKeys, note]
     }
 
-    function handleMouseDown(note: KeyboardNote) {
+    function handleMouseDown(note: ActiveNote) {
         const activeKeysCopy = addNoteToActiveKeys(note)
         onKeyPressed(activeKeysCopy)
     }
 
-    function handleMouseUp(note: KeyboardNote) {
+    function handleMouseUp(note: ActiveNote) {
         const { name, channel } = note
-        const isNoteFoundInMidi = activeKeys.find(
+        const midiActiveNotes = activeKeys.filter(
             (activeKey) => activeKey.name === name && activeKey.channel !== channel
         )
-        if (isNoteFoundInMidi?.name) {
-            const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [
-                { name, channel },
-                { name: isNoteFoundInMidi.name, channel: isNoteFoundInMidi.channel },
-            ])
+        const lastMidiNote = midiActiveNotes.at(-1)
+        /*
+            We don't want to remove all the activeNotes from the midi file with the same name.
+            Sometimes the same note is hit at the same time but on different channels.
+            We only remove the last note found and this is on purpose.
+        */
+        if (lastMidiNote) {
+            const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [note, lastMidiNote])
+            const isAllNotesPlayed = activeKeysCopy.length === 0
+            if (isAllNotesPlayed && onAllMidiKeysPlayed) {
+                onAllMidiKeysPlayed()
+            }
             onKeyPressed(activeKeysCopy)
         } else {
-            const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [{ name, channel }])
+            const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [note])
+            const isAllNotesPlayed = activeKeysCopy.length === 0
+            if (isAllNotesPlayed && onAllMidiKeysPlayed) {
+                onAllMidiKeysPlayed()
+            }
             onKeyPressed(activeKeysCopy)
         }
     }

@@ -1,14 +1,16 @@
 import React from 'react'
 import { MusicSystemSelector } from './MusicSystemSelector'
-import { MidiInputSelector } from './MidiInputSelector'
 import './Settings.scss'
-import { Instrument, MusicSystem, ActiveNote } from '../types'
+import { Instrument, MusicSystem, ActiveNote, MidiMode } from '../types'
 import { AppMode, ModeSelector } from './ModeSelector'
 import { InstrumentSelector } from './InstrumentSelector'
 import { MidiTrackSelector } from './MidiTrackSelector'
+import { MidiInputSelector } from './MidiInputSelector'
+import { Button } from './generics/Button'
 
 interface SettingsProps {
     appMode: AppMode
+    midiMode: MidiMode
     musicSystem: MusicSystem
     playableTracksIndexes: number[]
     activeTracks: number[]
@@ -17,25 +19,36 @@ interface SettingsProps {
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
+    onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
+    onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
 }
 
 export function Settings({
     appMode,
+    midiMode,
     musicSystem,
     playableTracksIndexes,
     activeTracks,
     onChangeMusicSystem,
     onChangeAppMode,
     onChangeInstrument,
-    onChangeActiveNotes,
     onChangeActiveTracks,
+    onMidiInputChange,
+    onMidiModeChange,
 }: SettingsProps) {
+    function handleClick() {
+        onMidiModeChange((midiMode) => {
+            switch (midiMode) {
+                case 'autoplay':
+                    return 'wait'
+                case 'wait':
+                    return 'autoplay'
+            }
+        })
+    }
+
     return (
         <div className="settings">
-            <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
-            <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
-            <InstrumentSelector onChange={onChangeInstrument} />
-            <MidiInputSelector onChangeActiveNotes={onChangeActiveNotes} />
             {playableTracksIndexes.length > 1 ? (
                 <MidiTrackSelector
                     activeTracks={activeTracks}
@@ -43,6 +56,11 @@ export function Settings({
                     onChangeActiveTracks={onChangeActiveTracks}
                 />
             ) : null}
+            <Button onClick={handleClick}>{midiMode}</Button>
+            <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
+            <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
+            <InstrumentSelector onChange={onChangeInstrument} />
+            <MidiInputSelector onMidiInputChange={onMidiInputChange} />
         </div>
     )
 }

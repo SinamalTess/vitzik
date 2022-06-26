@@ -3,13 +3,14 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
-import { ActiveNote, AudioPlayerState, Instrument, MusicSystem } from './types'
+import { ActiveNote, AudioPlayerState, Instrument, MidiMode, MusicSystem } from './types'
 import { AppMode } from './components/ModeSelector'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiFileInfos } from './components/MidiFileInfos'
+import { MidiMessageManager } from './components/MidiMessageManager'
 
 //TODO: check accessibility
 
@@ -21,14 +22,18 @@ const userInstrument: Instrument = {
 
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
+    const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [isMute, setIsMute] = useState<boolean>(false)
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
     const [midiTitle, setMidiTitle] = useState<string>('')
+    const [midiInput, setMidiInput] = useState<MIDIInput | null>(null)
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [instruments, setInstruments] = useState<Instrument[]>([userInstrument])
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
+    const [isPlaying, setIsPlaying] = useState<boolean>(false)
+    const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [activeTracks, setActiveTracks] = useState<number[]>([])
 
     const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
@@ -42,6 +47,23 @@ function App() {
         setMidiFile(midiJSON)
         console.log(midiJSON)
     }
+
+    function handleAllMidiKeysPlayed() {
+        if (timeToNextNote && midiMode === 'wait') {
+            setIsPlaying(true)
+        }
+    }
+
+    useEffect(() => {
+        if (
+            timeToNextNote &&
+            isPlaying &&
+            midiCurrentTime >= timeToNextNote &&
+            midiMode === 'wait'
+        ) {
+            setIsPlaying(false)
+        }
+    }, [midiCurrentTime, isPlaying, midiMode])
 
     useEffect(() => {
         if (!midiInfos) return
@@ -59,23 +81,34 @@ function App() {
                 {isMidiImported ? (
                     <AudioPlayer
                         isMute={isMute}
+                        isPlaying={isPlaying}
                         onToggleSound={setIsMute}
                         midiCurrentTime={midiCurrentTime}
                         midiDuration={midiDuration}
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiCurrentTime={setMidiCurrentTime}
+                        onPlay={setIsPlaying}
                     />
                 ) : null}
                 <Settings
                     appMode={appMode}
+                    midiMode={midiMode}
                     musicSystem={musicSystem}
                     playableTracksIndexes={playableTracksIndexes}
                     activeTracks={activeTracks}
+                    onMidiInputChange={setMidiInput}
                     onChangeAppMode={setAppMode}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setInstruments}
                     onChangeActiveNotes={setActiveNotes}
                     onChangeActiveTracks={setActiveTracks}
+                    onMidiModeChange={setMidiMode}
+                />
+                <MidiMessageManager
+                    midiInput={midiInput}
+                    activeNotes={activeNotes}
+                    onChangeActiveNotes={setActiveNotes}
+                    onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                 />
             </div>
             <div className="item">
@@ -91,6 +124,7 @@ function App() {
                     activeTracks={activeTracks}
                     onMidiImport={handleMidiImport}
                     onChangeActiveNotes={setActiveNotes}
+                    onChangeTimeToNextNote={setTimeToNextNote}
                 />
             </div>
             <div className="item">
@@ -98,6 +132,7 @@ function App() {
                     activeKeys={activeNotes}
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
+                    onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                 />
                 <>
                     {instruments.map(({ channel, name }) => {
