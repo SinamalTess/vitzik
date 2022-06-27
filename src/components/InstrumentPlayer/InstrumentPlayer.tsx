@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Soundfont, { Player, InstrumentName } from 'soundfont-player'
 import { msToSec } from '../../utils'
-import { AudioPlayerState, ActiveNote, InstrumentUserFriendlyName } from '../../types'
+import {
+    AudioPlayerState,
+    MidiVisualizerActiveNote,
+    InstrumentUserFriendlyName,
+    ActiveNote,
+    isMidiVisualizerActiveNote,
+} from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
     MIDI_INSTRUMENTS,
@@ -42,16 +48,29 @@ const normalizeInstrumentName = (
 const normalizeVelocity = (val: number, max: number, min: number): number =>
     (val - min) / (max - min)
 
-function playNote(note: ActiveNote, notesAlreadyPlayed: ActiveNote[], instrumentPlayer: Player) {
-    const { velocity, id, duration, key } = note
+function playNote(
+    note: ActiveNote,
+    notesAlreadyPlayed: MidiVisualizerActiveNote[],
+    instrumentPlayer: Player
+) {
+    const { velocity, key } = note
     const gain = normalizeVelocity(velocity, 127, 0)
-    const isNoteAlreadyPlayed = notesAlreadyPlayed.find((note) => note.id === id)
-    if (!isNoteAlreadyPlayed) {
+    if (isMidiVisualizerActiveNote(note)) {
+        const { id, duration } = note
+        const gain = normalizeVelocity(velocity, 127, 0)
+        const isNoteAlreadyPlayed = notesAlreadyPlayed.find((note) => note.id === id)
+        if (!isNoteAlreadyPlayed) {
+            instrumentPlayer.play(key.toString(), 0, {
+                gain,
+                duration: msToSec(duration),
+            })
+            notesAlreadyPlayed.push(note)
+        }
+    } else {
         instrumentPlayer.play(key.toString(), 0, {
             gain,
-            duration: msToSec(duration ?? 0),
+            duration: msToSec(0),
         })
-        notesAlreadyPlayed.push(note)
     }
 }
 
@@ -64,7 +83,7 @@ export function InstrumentPlayer({
     soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
-    const notesAlreadyPlayed: React.MutableRefObject<ActiveNote[]> = useRef([])
+    const notesAlreadyPlayed: React.MutableRefObject<MidiVisualizerActiveNote[]> = useRef([])
 
     useEffect(() => {
         if (isMute) return

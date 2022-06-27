@@ -6,11 +6,11 @@ import {
     TMidiEvent,
 } from 'midi-json-parser-worker'
 import {
-    ActiveNote,
     Instrument,
     InstrumentUserFriendlyName,
     MidiInfos,
     MidiJsonNote,
+    MidiInputActiveNote,
 } from '../types'
 import { IMidiProgramChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { MIDI_INSTRUMENTS } from './const'
@@ -42,7 +42,7 @@ export const getKey = (note: MidiJsonNote) =>
 export const getVelocity = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
 
-export const getNoteMetas = (note: MidiJsonNote): ActiveNote => {
+export const getNoteMetas = (note: MidiJsonNote): MidiInputActiveNote => {
     const { channel } = note
     const key = getKey(note)
     const name = keyToNote(key)

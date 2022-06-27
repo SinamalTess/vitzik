@@ -1,4 +1,4 @@
-import { ActiveNote, AlphabeticalNote } from '../types'
+import { AlphabeticalNote, ActiveNote } from '../types'
 import { NB_WHITE_PIANO_KEYS } from './const'
 
 export const isBlackKey = (note: AlphabeticalNote) => note?.includes('#')

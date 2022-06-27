@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
-import { ActiveNote, AudioPlayerState, Instrument, MidiMode, MusicSystem, AppMode } from './types'
+import { AudioPlayerState, Instrument, MidiMode, MusicSystem, AppMode, ActiveNote } from './types'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
@@ -117,7 +117,6 @@ function App() {
                 {midiInfos ? <MidiFileInfos midiInfos={midiInfos} midiTitle={midiTitle} /> : null}
                 <Preview
                     appMode={appMode}
-                    notes={activeNotes}
                     midiCurrentTime={midiCurrentTime}
                     midiFile={midiFile}
                     midiInfos={midiInfos}

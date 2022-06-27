@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { Keyboard } from './Keyboard'
 import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../utils/const'
-import { ActiveNote } from '../../types'
+import { MidiInputActiveNote } from '../../types'
 
 describe('Keyboard', () => {
     it('should render the proper number of keys', () => {
@@ -15,14 +15,14 @@ describe('Keyboard', () => {
     })
 
     it('should highlight the active keys', () => {
-        const whiteKey: ActiveNote = {
+        const whiteKey: MidiInputActiveNote = {
             name: 'A0',
             velocity: 100,
             key: 21,
             channel: 0,
         }
 
-        const blackKey: ActiveNote = {
+        const blackKey: MidiInputActiveNote = {
             name: 'A#0/Bb0',
             velocity: 100,
             key: 23,

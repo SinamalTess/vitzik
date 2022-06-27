@@ -1,4 +1,10 @@
-import { ActiveNote, AudioPlayerState, MidiInfos, NoteCoordinates } from '../../types'
+import {
+    MidiVisualizerActiveNote,
+    AudioPlayerState,
+    MidiInfos,
+    MidiVisualizerNoteCoordinates,
+    MidiInputActiveNote,
+} from '../../types'
 import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from '../../utils/const'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
@@ -11,7 +17,7 @@ import {
     isBlackKey as checkIsBlackKey,
 } from '../../utils'
 
-interface PartialNote extends NoteCoordinates {
+interface PartialNote extends MidiVisualizerNoteCoordinates {
     deltaAcc: number
 }
 
@@ -117,12 +123,15 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         super(heightPerBeat, midiInfos, containerDimensions)
     }
 
-    static getNoteId = (trackIndex: number, note: ActiveNote) =>
+    static getNoteId = (trackIndex: number, note: MidiInputActiveNote) =>
         `${trackIndex}-${note.channel}-${note.name}`
 
-    static mergeNotesCoordinates(activeTracks: number[], coordinates: NoteCoordinates[][][]) {
-        if (!activeTracks.length || !coordinates.length) return [[]]
-        const coordinatesActiveTracks = activeTracks.map((track) => coordinates[track])
+    static mergeNotesCoordinates(
+        activeTracks: number[],
+        noteCoordinates: MidiVisualizerNoteCoordinates[][][]
+    ) {
+        if (!activeTracks.length || !noteCoordinates.length) return [[]]
+        const coordinatesActiveTracks = activeTracks.map((track) => noteCoordinates[track])
         const nbCoordinates = coordinatesActiveTracks[0].length
         return coordinatesActiveTracks.reduce(
             (previousCoordinatesActiveTrack, currentCoordinatesActiveTrack) => {
@@ -140,7 +149,9 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         )
     }
 
-    static noteCoordinatesToActiveNotes = (noteCoordinates: NoteCoordinates[]): ActiveNote[] =>
+    static noteCoordinatesToActiveNotes = (
+        noteCoordinates: MidiVisualizerNoteCoordinates[]
+    ): MidiVisualizerActiveNote[] =>
         noteCoordinates.map(({ name, velocity, id, duration, key, channel }) => ({
             name,
             velocity,
@@ -150,7 +161,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
             channel,
         }))
 
-    getNotePartialCoordinates(note: ActiveNote, deltaAcc: number) {
+    getNotePartialCoordinates(note: MidiInputActiveNote, deltaAcc: number) {
         const { name, key } = note
         const y = (deltaAcc / this.ticksPerBeat) * this.heightPerBeat
         /*
@@ -191,22 +202,27 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         const { h } = this.containerDimensions
         const { tracks } = midiFile
 
-        let notesCoordinates: NoteCoordinates[][][] = []
+        let notesCoordinates: MidiVisualizerNoteCoordinates[][][] = []
 
         tracks.forEach((track) => {
             let deltaAcc = 0
             let notesBeingProcessed: PartialNote[] = []
-            let notesCoordinatesInTrack: NoteCoordinates[][] = Array(this.nbSectionInTrack).fill([])
+            let notesCoordinatesInTrack: MidiVisualizerNoteCoordinates[][] = Array(
+                this.nbSectionInTrack
+            ).fill([])
 
             track.forEach((event, index) => {
                 deltaAcc = deltaAcc + event.delta
 
                 if (isNoteOnEvent(event)) {
                     const midiNote = getNoteMetas(event)
-                    const noteCoordinates = this.getNotePartialCoordinates(midiNote, deltaAcc)
+                    const notePartialCoordinates = this.getNotePartialCoordinates(
+                        midiNote,
+                        deltaAcc
+                    )
 
                     notesBeingProcessed.push({
-                        ...noteCoordinates,
+                        ...notePartialCoordinates,
                         ...midiNote,
                         duration: 0, // is replaced by the actual value after the noteOff event is received
                         id: MidiVisualizerCoordinates.getNoteId(index, midiNote),
@@ -241,7 +257,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
     }
 
     getTimeToNextNote(
-        notesCoordinates: NoteCoordinates[][],
+        notesCoordinates: MidiVisualizerNoteCoordinates[][],
         indexSectionPlaying: number,
         midiCurrentTime: number
     ) {
@@ -257,10 +273,10 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
     }
 
     getActiveNotes(
-        notesCoordinates: NoteCoordinates[][],
+        notesCoordinates: MidiVisualizerNoteCoordinates[][],
         indexSectionPlaying: number,
         midiCurrentTime: number
-    ): ActiveNote[] {
+    ): MidiVisualizerActiveNote[] {
         const heightCurrentTime = this.timeToYPosition(midiCurrentTime)
 
         if (notesCoordinates[indexSectionPlaying] && notesCoordinates[indexSectionPlaying].length) {

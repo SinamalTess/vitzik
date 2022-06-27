@@ -1,6 +1,14 @@
-import { ActiveNote, AudioPlayerState } from '../../types'
+import {
+    MidiVisualizerActiveNote,
+    AudioPlayerState,
+    ActiveNote,
+    MidiInputActiveNote,
+    AlphabeticalNote,
+    isMidiVisualizerActiveNote,
+} from '../../types'
 import { keyToNote, removeNotesFromActiveKeys } from '../../utils'
 import React, { useEffect, useRef } from 'react'
+import { MIDI_USER_CHANNEL } from '../../utils/const'
 
 interface MidiMessageManagerProps {
     midiInput: MIDIInput | null
@@ -11,12 +19,10 @@ interface MidiMessageManagerProps {
     onNotePlayed: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const USER_CHANNEL = 16
-
 function getMessage(message: MIDIMessageEvent) {
     const key = message.data[1]
     const command = message.data[0]
-    const name = keyToNote(message.data[1])
+    const name = keyToNote(message.data[1]) as AlphabeticalNote
     const velocity = message.data.length > 2 ? message.data[2] : 0 // a velocity value might not be included with a noteOff command
 
     return {
@@ -25,7 +31,7 @@ function getMessage(message: MIDIMessageEvent) {
             name,
             velocity,
             key,
-            channel: USER_CHANNEL, // TODO: check if not provided
+            channel: MIDI_USER_CHANNEL, // TODO: check if not provided
         },
     }
 }
@@ -38,36 +44,36 @@ export function MidiMessageManager({
     audioPlayerState,
     onNotePlayed,
 }: MidiMessageManagerProps) {
-    const notesAlreadyPlayedRef: React.MutableRefObject<ActiveNote[]> = useRef([])
-    const notesBeingHeldRef: React.MutableRefObject<ActiveNote[]> = useRef([])
+    const notesAlreadyPlayedRef: React.MutableRefObject<MidiVisualizerActiveNote[]> = useRef([])
+    const notesBeingHeldRef: React.MutableRefObject<MidiInputActiveNote[]> = useRef([])
     useEffect(() => {
         if (!midiInput) return
 
-        function removeNote(note: ActiveNote) {
+        function removeNote(note: MidiInputActiveNote) {
             notesBeingHeldRef.current = removeNotesFromActiveKeys(notesBeingHeldRef.current, [note])
             const activeNotesCopy = removeNotesFromActiveKeys(activeNotes, [note])
             onChangeActiveNotes(activeNotesCopy)
         }
 
-        function addNote(activeNote: ActiveNote) {
-            console.log('hello')
-            notesBeingHeldRef.current.push(activeNote)
-            const midiActiveNotes = activeNotes.filter(({ channel }) => channel !== USER_CHANNEL)
+        function addNote(note: MidiInputActiveNote) {
+            notesBeingHeldRef.current.push(note)
+            const midiActiveNotes = activeNotes.filter((activeNote) =>
+                isMidiVisualizerActiveNote(activeNote)
+            ) as MidiVisualizerActiveNote[]
 
             const areAllMidiNotesPlayed = midiActiveNotes.every(
                 (note) =>
                     notesBeingHeldRef.current.find((activeNote) => activeNote.name === note.name) ||
                     notesAlreadyPlayedRef.current.find((activeNote) => activeNote.id === note.id)
             )
-            onChangeActiveNotes([...activeNotes, activeNote])
+            onChangeActiveNotes([...activeNotes, note])
             if (areAllMidiNotesPlayed) {
-                onAllMidiKeysPlayed()
                 notesAlreadyPlayedRef.current =
                     notesAlreadyPlayedRef.current.concat(midiActiveNotes)
                 const ids = midiActiveNotes
                     .filter((id) => Boolean(id))
                     .map(({ id }) => id) as string[]
-                console.log({ ids })
+                onAllMidiKeysPlayed()
                 onNotePlayed((notes) => [...notes, ...ids])
             }
         }

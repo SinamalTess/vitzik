@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import './Visualizer.scss'
-import { ActiveNote, AudioPlayerState, MidiInfos } from '../../types'
+import { AudioPlayerState, MidiInfos, ActiveNote } from '../../types'
 import isEqual from 'lodash.isequal'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
@@ -9,7 +9,6 @@ import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 
 interface VisualizerProps {
-    activeNotes: ActiveNote[]
     midiCurrentTime: number
     midiFile: IMidiFile
     heightPerBeat?: number

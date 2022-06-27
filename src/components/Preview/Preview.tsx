@@ -3,12 +3,11 @@ import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState, MidiInfos, ActiveNote, AlphabeticalNote, AppMode } from '../../types'
+import { AudioPlayerState, MidiInfos, AlphabeticalNote, AppMode, ActiveNote } from '../../types'
 import { ErrorBoundary } from '../generics/ErrorBoundary'
 
 interface PreviewProps {
     appMode: AppMode
-    notes: ActiveNote[]
     midiFile: IMidiFile | null
     midiInfos: MidiInfos | null
     midiCurrentTime: number
@@ -22,7 +21,6 @@ interface PreviewProps {
 
 export function Preview({
     appMode,
-    notes,
     midiFile,
     midiInfos,
     midiCurrentTime,
@@ -33,7 +31,7 @@ export function Preview({
     onChangeActiveNotes,
     onChangeTimeToNextNote,
 }: PreviewProps) {
-    const staffNotes = notes
+    const staffNotes = activeNotes
         .filter((note) => !note.name)
         .map((note) => note.name) as AlphabeticalNote[]
     return appMode === 'learning' ? (
@@ -46,7 +44,6 @@ export function Preview({
                     midiFile={midiFile}
                     midiCurrentTime={midiCurrentTime}
                     midiInfos={midiInfos}
-                    activeNotes={activeNotes}
                     audioPlayerState={audioPlayerState}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}

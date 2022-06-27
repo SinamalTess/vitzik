@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { VisualizerSection } from './VisualizerSection'
 import { render, screen } from '@testing-library/react'
-import { NoteCoordinates } from '../../types'
+import { MidiVisualizerNoteCoordinates } from '../../types'
 import canvasMock from 'jest-canvas-mock'
 
 jest.mock('react', () => {
@@ -13,12 +13,13 @@ jest.mock('react', () => {
     }
 })
 
-const notesCoordinates: NoteCoordinates[] = [
+const notesCoordinates: MidiVisualizerNoteCoordinates[] = [
     {
         duration: 10,
         velocity: 100,
         name: 'A0',
         key: 21,
+        id: '1',
         w: 5,
         h: 10,
         x: 10,

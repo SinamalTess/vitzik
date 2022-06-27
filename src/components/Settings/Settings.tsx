@@ -1,7 +1,14 @@
 import React from 'react'
 import { MusicSystemSelector } from '../MusicSystemSelector'
 import './Settings.scss'
-import { Instrument, MusicSystem, ActiveNote, MidiMode, AppMode } from '../../types'
+import {
+    Instrument,
+    MusicSystem,
+    MidiVisualizerActiveNote,
+    MidiMode,
+    AppMode,
+    ActiveNote,
+} from '../../types'
 import { ModeSelector } from '../ModeSelector'
 import { InstrumentSelector } from '../InstrumentSelector'
 import { MidiTrackSelector } from '../MidiTrackSelector'
@@ -17,7 +24,9 @@ interface SettingsProps {
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
-    onChangeActiveNotes: (activeNotes: (currentActiveNotes: ActiveNote[]) => ActiveNote[]) => void
+    onChangeActiveNotes: (
+        activeNotes: (currentActiveNotes: ActiveNote[]) => MidiVisualizerActiveNote[]
+    ) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>

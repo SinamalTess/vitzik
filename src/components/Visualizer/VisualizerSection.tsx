@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { drawRoundRect } from '../../utils'
-import { NoteCoordinates } from '../../types'
+import { MidiVisualizerNoteCoordinates } from '../../types'
 import './VisualizerSection.scss'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 import clsx from 'clsx'
@@ -11,7 +11,7 @@ interface VisualizerSectionProps {
     height: number
     width: number
     top: string
-    notesCoordinates: NoteCoordinates[] | null | undefined
+    notesCoordinates: MidiVisualizerNoteCoordinates[] | null | undefined
     showCanvasNumbers?: boolean
 }
 
@@ -34,7 +34,10 @@ class MidiVisualizerSection {
         this.ctx.clearRect(0, 0, width, height)
     }
 
-    drawNotes(notesCoordinates: NoteCoordinates[] | null | undefined, indexToDraw: number) {
+    drawNotes(
+        notesCoordinates: MidiVisualizerNoteCoordinates[] | null | undefined,
+        indexToDraw: number
+    ) {
         const canvasOffset = this.ctx.canvas.height
 
         if (notesCoordinates && notesCoordinates.length) {

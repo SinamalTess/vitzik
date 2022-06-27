@@ -3,7 +3,7 @@ import React from 'react'
 import { InstrumentPlayer } from './InstrumentPlayer'
 import * as midiFile from '../../tests/midi1.json'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { ActiveNote } from '../../types'
+import { MidiVisualizerActiveNote } from '../../types'
 import Soundfont from 'soundfont-player'
 import Mock = jest.Mock
 
@@ -13,7 +13,7 @@ jest.mock('soundfont-player', () => ({
 
 describe('InstrumentPlayer', () => {
     const midiJson = midiFile as IMidiFile
-    const activeNote: ActiveNote = {
+    const activeNote: MidiVisualizerActiveNote = {
         name: 'A0',
         velocity: 100,
         id: '1',

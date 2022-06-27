@@ -1,7 +1,14 @@
 import React from 'react'
 import './Keyboard.scss'
 import { NOTE_NAMES } from '../../utils/const'
-import { AlphabeticalNote, MusicSystem, ActiveNote } from '../../types'
+import {
+    AlphabeticalNote,
+    MusicSystem,
+    ActiveNote,
+    MidiInputActiveNote,
+    isMidiVisualizerActiveNote,
+    MidiVisualizerActiveNote,
+} from '../../types'
 import {
     getWidthKeys,
     isSpecialNote as checkIsSpecialNote,
@@ -10,12 +17,12 @@ import {
     translateNoteToMusicSystem,
 } from '../../utils'
 import clsx from 'clsx'
-import { MIDI_CHANNEL_COLORS } from '../../utils/const/midi_channel_colors'
+import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 
 interface KeyboardProps {
     activeKeys: ActiveNote[]
     musicSystem?: MusicSystem
-    onKeyPressed: (note: ActiveNote[]) => void
+    onKeyPressed: (note: MidiInputActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
     notesPlayed: string[]
 }
@@ -51,16 +58,16 @@ export const Keyboard = React.memo(function Keyboard({
         channel: keyboardChannel,
     }))
 
-    function addNoteToActiveKeys(note: ActiveNote) {
+    function addNoteToActiveKeys(note: MidiInputActiveNote) {
         return [...activeKeys, note]
     }
 
-    function handleMouseDown(note: ActiveNote) {
+    function handleMouseDown(note: MidiInputActiveNote) {
         const activeKeysCopy = addNoteToActiveKeys(note)
         onKeyPressed(activeKeysCopy)
     }
 
-    function handleMouseUp(note: ActiveNote) {
+    function handleMouseUp(note: MidiInputActiveNote) {
         const { name, channel } = note
         const midiActiveNotes = activeKeys.filter(
             (activeKey) => activeKey.name === name && activeKey.channel !== channel
@@ -98,8 +105,8 @@ export const Keyboard = React.memo(function Keyboard({
                     So we pick the last active key because this is the one on top in the Visualizer.
                 */
                 const lastActiveKey = activeKeysReversed.find(
-                    (currentKey) => currentKey.name === name
-                )
+                    (activeKey) => isMidiVisualizerActiveNote(activeKey) && activeKey.name === name
+                ) as MidiVisualizerActiveNote
                 const isActive =
                     lastActiveKey && lastActiveKey.id && !notesPlayed.includes(lastActiveKey.id)
                 const styleKeyName = isActive ? { display: 'block' } : {}
