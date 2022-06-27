@@ -17,8 +17,6 @@ import { MIDI_INSTRUMENTS } from './const'
 import { largestNum } from './maths'
 import { keyToNote } from './notes'
 
-//TODO: try to minimize number of loops
-
 type EventType = 'setTempo' | 'noteOn' | 'noteOff'
 
 export const isNoteOnEvent = (note: TMidiEvent): note is IMidiNoteOnEvent => 'noteOn' in note

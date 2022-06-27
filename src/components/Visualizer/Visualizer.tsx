@@ -6,7 +6,7 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerTracks } from './VisualizerTracks'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
-import { MidiVisualizerCoordinates } from '../../utils/MidiVisualizerCoordinates'
+import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 
 interface VisualizerProps {
     activeNotes: ActiveNote[]

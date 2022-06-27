@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { drawRoundRect } from '../../utils'
 import { NoteCoordinates } from '../../types'
 import './VisualizerSection.scss'
-import { MIDI_CHANNEL_COLORS } from '../../utils/const/midi_channel_colors'
+import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 import clsx from 'clsx'
 
 interface VisualizerSectionProps {

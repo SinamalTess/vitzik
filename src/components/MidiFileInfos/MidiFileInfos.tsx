@@ -2,7 +2,7 @@ import React from 'react'
 import { MidiInfos } from '../../types'
 import './MidiFileInfos.scss'
 import { MidiTitle } from '../MidiTitle'
-import { MIDI_CHANNEL_COLORS } from '../../utils/const/midi_channel_colors'
+import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 import { List } from '../generics/List'
 import { ListItem } from '../generics/ListItem'
 

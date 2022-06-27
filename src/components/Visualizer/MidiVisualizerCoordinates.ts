@@ -1,9 +1,15 @@
-import { ActiveNote, AudioPlayerState, MidiInfos, NoteCoordinates } from '../types'
-import { getWidthKeys, isBlackKey as checkIsBlackKey } from './keyboard'
-import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from './const'
+import { ActiveNote, AudioPlayerState, MidiInfos, NoteCoordinates } from '../../types'
+import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from '../../utils/const'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { getKey, getNoteMetas, isNoteOffEvent, isNoteOnEvent } from './midi'
-import { isEven } from './maths'
+import {
+    getKey,
+    getNoteMetas,
+    isNoteOffEvent,
+    isNoteOnEvent,
+    isEven,
+    getWidthKeys,
+    isBlackKey as checkIsBlackKey,
+} from '../../utils'
 
 interface PartialNote extends NoteCoordinates {
     deltaAcc: number
