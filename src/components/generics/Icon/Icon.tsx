@@ -1,8 +1,7 @@
 import React from 'react'
-import { CSSSpacingSize } from '../../../types'
 import './Icon.scss'
 import clsx from 'clsx'
-import { IconName } from '../types'
+import { IconName, CSSSpacingSize } from '../types'
 
 interface IconProps {
     name: IconName

@@ -1,8 +1,7 @@
 import React, { ReactNode } from 'react'
 import './Button.scss'
 import { Icon } from '../Icon'
-import { CSSSpacingSize, CSSColor } from '../../../types'
-import { IconName } from '../types'
+import { CSSSpacingSize, CSSColor, IconName } from '../types'
 import clsx from 'clsx'
 
 interface ButtonProps {

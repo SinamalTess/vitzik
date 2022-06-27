@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import './ButtonGroup.scss'
-import { CSSSpacingSize } from '../../../types'
+import { CSSSpacingSize } from '../types'
 import clsx from 'clsx'
 
 interface ButtonGroupProps {
