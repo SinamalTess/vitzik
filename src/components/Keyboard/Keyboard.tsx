@@ -10,7 +10,7 @@ import {
     translateNoteToMusicSystem,
 } from '../../utils'
 import clsx from 'clsx'
-import { CHANNElS_COLORS } from '../../utils/const/channel_colors'
+import { MIDI_CHANNEL_COLORS } from '../../utils/const/midi_channel_colors'
 
 interface KeyboardProps {
     activeKeys: ActiveNote[]
@@ -125,7 +125,7 @@ export const Keyboard = React.memo(function Keyboard({
                             margin,
                             background:
                                 isActive && lastActiveKey
-                                    ? CHANNElS_COLORS[lastActiveKey.channel]
+                                    ? MIDI_CHANNEL_COLORS[lastActiveKey.channel]
                                     : '',
                         }}
                         data-testid={name}

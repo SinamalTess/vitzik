@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { drawRoundRect } from '../../utils'
 import { NoteCoordinates } from '../../types'
 import './VisualizerSection.scss'
-import { CHANNElS_COLORS } from '../../utils/const/channel_colors'
+import { MIDI_CHANNEL_COLORS } from '../../utils/const/midi_channel_colors'
 import clsx from 'clsx'
 
 interface VisualizerSectionProps {
@@ -40,7 +40,7 @@ class MidiVisualizerSection {
         if (notesCoordinates && notesCoordinates.length) {
             notesCoordinates.forEach(({ x, y, w, h, channel }) => {
                 const yComputed = y - indexToDraw * canvasOffset
-                this.ctx.fillStyle = CHANNElS_COLORS[channel]
+                this.ctx.fillStyle = MIDI_CHANNEL_COLORS[channel]
                 drawRoundRect(this.ctx, x, yComputed, w, h, 5, true, false)
             })
         }
@@ -82,7 +82,7 @@ export function VisualizerSection({
                 ctx.fillStyle = color
             }
         }
-        configureCanvas(CHANNElS_COLORS[0])
+        configureCanvas(MIDI_CHANNEL_COLORS[0])
         if (width && height && midiVisualizerSection) {
             midiVisualizerSection.drawNotes(notesCoordinates, indexToDraw)
         }

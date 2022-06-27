@@ -2,7 +2,7 @@ import React from 'react'
 import { MidiInfos } from '../../types'
 import './MidiFileInfos.scss'
 import { MidiTitle } from '../MidiTitle'
-import { CHANNElS_COLORS } from '../../utils/const/channel_colors'
+import { MIDI_CHANNEL_COLORS } from '../../utils/const/midi_channel_colors'
 import { List } from '../generics/List'
 import { ListItem } from '../generics/ListItem'
 
@@ -22,7 +22,7 @@ export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
             <List>
                 {initialInstruments.map(({ channel, name }) => (
                     <ListItem
-                        style={{ color: CHANNElS_COLORS[channel] }}
+                        style={{ color: MIDI_CHANNEL_COLORS[channel] }}
                         key={`${name}-${channel}`}
                     >
                         {channel} : {name}

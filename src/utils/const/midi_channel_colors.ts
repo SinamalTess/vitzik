@@ -1,4 +1,4 @@
-export const CHANNElS_COLORS = [
+export const MIDI_CHANNEL_COLORS = [
     '#00E2DC',
     '#FDF693',
     '#90F271',
