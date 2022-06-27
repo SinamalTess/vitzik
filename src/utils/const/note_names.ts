@@ -1,4 +1,4 @@
-export const NOTES = {
+export const NOTE_NAMES = {
     alphabetical: [
         'A0',
         'A#0/Bb0',

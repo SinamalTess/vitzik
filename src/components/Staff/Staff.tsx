@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react'
 import Vex from 'vexflow'
 import StaveNote = Vex.Flow.StaveNote
 import Formatter = Vex.Flow.Formatter
-import { NOTES } from '../../utils/const'
+import { NOTE_NAMES } from '../../utils/const'
 import SVGContext = Vex.Flow.SVGContext
 import { AlphabeticalNote } from '../../types'
 
@@ -56,7 +56,7 @@ export function Staff({ notes }: StaffProps) {
             const activeNotes: StaveNote[] = []
 
             notes.forEach((note) => {
-                const isTopNote = NOTES.alphabetical.indexOf(note) >= 39 // middle C4 has index of 39 in NOTES
+                const isTopNote = NOTE_NAMES.alphabetical.indexOf(note) >= 39 // middle C4 has index of 39 in NOTES
                 const noteFormatted = note.substring(0, 1) + '/' + note.substring(1, 2)
 
                 activeNotes.push(

@@ -1,6 +1,6 @@
 import { ActiveNote, AudioPlayerState, MidiInfos, NoteCoordinates } from '../types'
 import { getWidthKeys, isBlackKey as checkIsBlackKey } from './keyboard'
-import { MIDI_PIANO_KEYS_OFFSET, NOTES } from './const'
+import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from './const'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getKey, getNoteMetas, isNoteOffEvent, isNoteOnEvent } from './midi'
 import { isEven } from './maths'
@@ -157,7 +157,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         if (name) {
             const isBlackKey = checkIsBlackKey(name)
             const { widthWhiteKey, widthBlackKey } = getWidthKeys(this.containerDimensions.w)
-            const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
+            const previousKeys = NOTE_NAMES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
             const nbPreviousWhiteKeys = previousKeys.filter((note) => !checkIsBlackKey(note)).length
             const margin = isBlackKey ? widthBlackKey : widthWhiteKey / 4
             const w = isBlackKey ? widthBlackKey : widthWhiteKey

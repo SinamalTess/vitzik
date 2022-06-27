@@ -1,6 +1,6 @@
 import React from 'react'
 import './Keyboard.scss'
-import { NOTES } from '../../utils/const'
+import { NOTE_NAMES } from '../../utils/const'
 import { AlphabeticalNote, MusicSystem, ActiveNote } from '../../types'
 import {
     getWidthKeys,
@@ -44,7 +44,7 @@ export const Keyboard = React.memo(function Keyboard({
     const keyboardChannel = 16
     const keyboardVelocity = 100
 
-    const notes = NOTES.alphabetical.map((noteName) => ({
+    const notes = NOTE_NAMES.alphabetical.map((noteName) => ({
         name: noteName,
         velocity: keyboardVelocity,
         key: noteToKey(noteName),
