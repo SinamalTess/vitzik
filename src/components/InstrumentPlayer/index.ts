@@ -1,0 +1,1 @@
+export { InstrumentPlayer } from './InstrumentPlayer'

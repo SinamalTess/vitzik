@@ -6,9 +6,7 @@ Here are listed the main conventions followed in this project.
 
 ### `/components`
 
-Components should not be nested in their own folder. They all live in the root of the `/components` folder. This is on purpose. For this project I wanted to try something new and avoid too much nesting.
-
-Corresponding `.test.ts` and `.scss` files should also be placed in the root of the `/components` and use the same name as their related component.
+Components files should be wrapper in a folder. Corresponding `.test.ts` and `.scss` files should be placed next to the component file and use the same name.
 
 Component files follow this structure :
 

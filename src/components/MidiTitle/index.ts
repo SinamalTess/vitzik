@@ -1,0 +1,1 @@
+export { MidiTitle } from './MidiTitle'
