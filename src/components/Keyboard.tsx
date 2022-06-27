@@ -17,6 +17,7 @@ interface KeyboardProps {
     musicSystem?: MusicSystem
     onKeyPressed: (note: ActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
+    notesPlayed: string[]
 }
 
 function getStyles(note: AlphabeticalNote) {
@@ -37,6 +38,7 @@ export const Keyboard = React.memo(function Keyboard({
     musicSystem = 'alphabetical',
     onKeyPressed,
     onAllMidiKeysPlayed,
+    notesPlayed,
 }: KeyboardProps) {
     const activeKeysReversed = [...activeKeys].reverse()
     const keyboardChannel = 16
@@ -98,7 +100,8 @@ export const Keyboard = React.memo(function Keyboard({
                 const lastActiveKey = activeKeysReversed.find(
                     (currentKey) => currentKey.name === name
                 )
-                const isActive = Boolean(lastActiveKey)
+                const isActive =
+                    lastActiveKey && lastActiveKey.id && !notesPlayed.includes(lastActiveKey.id)
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
                     musicSystem !== 'alphabetical'
@@ -120,7 +123,10 @@ export const Keyboard = React.memo(function Keyboard({
                         style={{
                             width,
                             margin,
-                            background: lastActiveKey ? CHANNElS_COLORS[lastActiveKey.channel] : '',
+                            background:
+                                isActive && lastActiveKey
+                                    ? CHANNElS_COLORS[lastActiveKey.channel]
+                                    : '',
                         }}
                         data-testid={name}
                         className={className}

@@ -16,7 +16,7 @@ interface PreviewProps {
     activeNotes: ActiveNote[]
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
-    onChangeActiveNotes: (notes: ActiveNote[]) => void
+    onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
     onMidiImport: (title: string, midiJSON: IMidiFile) => void
 }
@@ -42,16 +42,18 @@ export function Preview({
     ) : (
         <ErrorBoundary>
             <MidiImporter onMidiImport={onMidiImport} />
-            <Visualizer
-                midiFile={midiFile}
-                midiCurrentTime={midiCurrentTime}
-                midiInfos={midiInfos}
-                activeNotes={activeNotes}
-                audioPlayerState={audioPlayerState}
-                activeTracks={activeTracks}
-                onChangeActiveNotes={onChangeActiveNotes}
-                onChangeTimeToNextNote={onChangeTimeToNextNote}
-            />
+            {midiInfos && midiFile ? (
+                <Visualizer
+                    midiFile={midiFile}
+                    midiCurrentTime={midiCurrentTime}
+                    midiInfos={midiInfos}
+                    activeNotes={activeNotes}
+                    audioPlayerState={audioPlayerState}
+                    activeTracks={activeTracks}
+                    onChangeActiveNotes={onChangeActiveNotes}
+                    onChangeTimeToNextNote={onChangeTimeToNextNote}
+                />
+            ) : null}
         </ErrorBoundary>
     )
 }

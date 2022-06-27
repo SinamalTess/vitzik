@@ -13,20 +13,18 @@ jest.mock('react', () => {
     }
 })
 
-const notesCoordinates: NoteCoordinates[][] = [
-    [
-        {
-            duration: 10,
-            velocity: 100,
-            name: 'A0',
-            key: 21,
-            w: 5,
-            h: 10,
-            x: 10,
-            y: 5,
-            channel: 0,
-        },
-    ],
+const notesCoordinates: NoteCoordinates[] = [
+    {
+        duration: 10,
+        velocity: 100,
+        name: 'A0',
+        key: 21,
+        w: 5,
+        h: 10,
+        x: 10,
+        y: 5,
+        channel: 0,
+    },
 ]
 
 describe('VisualizerSection', () => {

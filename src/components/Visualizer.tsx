@@ -1,278 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import {
-    getWidthKeys,
-    isBlackKey as checkIsBlackKey,
-    isEven,
-    isNoteOffEvent,
-    isNoteOnEvent,
-    keyToNote,
-} from '../utils'
+import React, { useEffect, useMemo } from 'react'
 import './Visualizer.scss'
-import {
-    ActiveNote,
-    AlphabeticalNote,
-    AudioPlayerState,
-    MidiInfos,
-    MidiJsonNote,
-    NoteCoordinates,
-} from '../types'
+import { ActiveNote, AudioPlayerState, MidiInfos } from '../types'
 import isEqual from 'lodash.isequal'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { MIDI_PIANO_KEYS_OFFSET, NOTES } from '../utils/const'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerTracks } from './VisualizerTracks'
 import { WithContainerDimensions } from './hocs/WithContainerDimensions'
-
-interface PartialNote {
-    key: number
-    velocity: number
-    name?: AlphabeticalNote
-    channel: number
-}
+import { MidiVisualizerCoordinates } from '../utils/MidiVisualizerCoordinates'
 
 interface VisualizerProps {
     activeNotes: ActiveNote[]
     midiCurrentTime: number
-    midiFile: IMidiFile | null
+    midiFile: IMidiFile
     heightPerBeat?: number
-    midiInfos: MidiInfos | null
+    midiInfos: MidiInfos
     audioPlayerState: AudioPlayerState
     activeTracks: number[]
     height?: number
     width?: number
-    onChangeActiveNotes: (notes: ActiveNote[]) => void
+    onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
-}
-
-interface IndexToDraw {
-    firstSection: number
-    secondSection: number
-}
-
-type SectionName = keyof IndexToDraw
-
-const getKey = (note: MidiJsonNote) =>
-    isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
-
-const getVelocity = (note: MidiJsonNote) =>
-    isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
-
-function getNoteInfos(note: MidiJsonNote): PartialNote {
-    const { channel } = note
-    const key = getKey(note)
-    const name = keyToNote(key)
-    const velocity = getVelocity(note)
-
-    return {
-        key,
-        name,
-        velocity,
-        channel,
-    }
-}
-
-function getNoteCoordinates(
-    note: PartialNote,
-    deltaAcc: number,
-    containerWidth: number,
-    ticksPerBeat: number,
-    heightPerBeat: number
-) {
-    const { name, key } = note
-    const y = (deltaAcc / ticksPerBeat) * heightPerBeat
-    /*
-        Some notes don't have associated names because they are just frequencies.
-        See : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
-        We won't render them visually, but they need to be played.
-        Therefore, we pass a 'width' and 'x' of 0 --> to skip rendering
-        But the 'y' and 'h' must be correct --> to play at the right timing
-    */
-    if (name) {
-        const isBlackKey = checkIsBlackKey(name)
-        const { widthWhiteKey, widthBlackKey } = getWidthKeys(containerWidth)
-        const previousKeys = NOTES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
-        const nbPreviousWhiteKeys = previousKeys.filter((note) => !checkIsBlackKey(note)).length
-        const margin = isBlackKey ? widthBlackKey : widthWhiteKey / 4
-        const w = isBlackKey ? widthBlackKey : widthWhiteKey
-        const x = nbPreviousWhiteKeys * widthWhiteKey - margin
-
-        return {
-            w,
-            y,
-            h: deltaAcc, // temporary value, should be replaced once the noteOffEvent is sent
-            x,
-        }
-    } else {
-        return {
-            w: 0,
-            y,
-            h: deltaAcc,
-            x: 0,
-        }
-    }
-}
-
-function noteCoordinatesToActiveNotes(noteCoordinates: NoteCoordinates[]): ActiveNote[] {
-    return noteCoordinates.map(({ name, velocity, id, duration, key, channel }) => ({
-        name,
-        velocity,
-        duration,
-        id,
-        key,
-        channel,
-    }))
-}
-
-function yPositionToTime(y: number, msPerBeat: number, heightPerBeat: number) {
-    return (y / heightPerBeat) * msPerBeat
-}
-
-function timeToYPosition(time: number, msPerBeat: number, heightPerBeat: number) {
-    return (time / msPerBeat) * heightPerBeat
-}
-
-function getActiveNotes(
-    midiTrackCurrentTime: number,
-    midiTrackInfos: MidiInfos | null,
-    heightPerBeat: number,
-    notesCoordinates: NoteCoordinates[][],
-    indexSectionPlaying: number
-): {
-    activeNotes: ActiveNote[]
-    timeToNextNote: number | null
-} {
-    if (!midiTrackInfos)
-        return {
-            activeNotes: [],
-            timeToNextNote: null,
-        }
-
-    const { msPerBeat } = midiTrackInfos
-    let timeToNextNote = null
-    let nextNote = null
-    const heightCurrentTime = timeToYPosition(midiTrackCurrentTime, msPerBeat, heightPerBeat)
-
-    if (notesCoordinates[indexSectionPlaying] && notesCoordinates[indexSectionPlaying].length) {
-        const activeNotesCoordinates = notesCoordinates[indexSectionPlaying].filter(
-            (note) => note.y <= heightCurrentTime && note.y + note.h > heightCurrentTime
-        )
-        nextNote = notesCoordinates[indexSectionPlaying].find((note) => note.y > heightCurrentTime)
-
-        if (!nextNote && notesCoordinates[indexSectionPlaying + 1]) {
-            // Search in the next Section
-            nextNote = notesCoordinates[indexSectionPlaying + 1].find(
-                (note) => note.y > heightCurrentTime
-            )
-        }
-        if (nextNote) {
-            timeToNextNote = yPositionToTime(nextNote.y, msPerBeat, heightPerBeat) ?? null
-        }
-
-        const activeNotes = noteCoordinatesToActiveNotes(activeNotesCoordinates)
-
-        return {
-            activeNotes,
-            timeToNextNote,
-        }
-    }
-    return {
-        activeNotes: [],
-        timeToNextNote: null,
-    }
-}
-
-export function getNotesPosition(
-    containerDimensions: {
-        w: number
-        h: number
-    },
-    midiTrack: IMidiFile,
-    heightPerBeat: number,
-    midiTrackInfos: MidiInfos
-) {
-    const { ticksPerBeat, midiDuration, msPerBeat } = midiTrackInfos
-    const { w, h } = containerDimensions
-    const { tracks } = midiTrack
-    const nbBeatsPerSection = h / heightPerBeat
-    const msPerSection = msPerBeat * nbBeatsPerSection
-    const nbSectionInTrack = Math.ceil(midiDuration / msPerSection)
-    let notesCoordinates: NoteCoordinates[][][] = []
-
-    tracks.forEach((track) => {
-        let deltaAcc = 0
-        let notesBeingProcessed: NoteCoordinates[] = []
-        let notesCoordinatesInTrack: NoteCoordinates[][] = Array(nbSectionInTrack).fill([])
-
-        track.forEach((event, index) => {
-            deltaAcc = deltaAcc + event.delta
-
-            if (isNoteOnEvent(event)) {
-                const midiNote = getNoteInfos(event)
-                const noteCoordinates = getNoteCoordinates(
-                    midiNote,
-                    deltaAcc,
-                    w,
-                    ticksPerBeat,
-                    heightPerBeat
-                )
-
-                const note: NoteCoordinates = {
-                    ...noteCoordinates,
-                    ...midiNote,
-                    duration: 0, // is replaced by the actual value after the noteOff event is received
-                    id: index,
-                }
-
-                notesBeingProcessed.push(note)
-            } else if (
-                isNoteOffEvent(event) ||
-                (isNoteOnEvent(event) && event.noteOn.velocity === 0)
-            ) {
-                const key = getKey(event)
-                const correspondingNoteOnIndex = notesBeingProcessed.findIndex(
-                    (note) => note.key === key
-                )
-                if (correspondingNoteOnIndex !== -1) {
-                    const note = { ...notesBeingProcessed[correspondingNoteOnIndex] }
-                    const nbBeatsInNote = (deltaAcc - note.h) / ticksPerBeat
-                    note.duration = nbBeatsInNote * msPerBeat
-                    note.h = nbBeatsInNote * heightPerBeat
-                    const startingSection = Math.floor(note.y / h) // arrays start at 0, so we use floor to get number below
-                    const endingSection = Math.floor((note.y + note.h) / h)
-                    notesBeingProcessed.splice(correspondingNoteOnIndex, 1)
-                    for (let i = startingSection; i <= endingSection; i++) {
-                        notesCoordinatesInTrack[i] = [...notesCoordinatesInTrack[i], note]
-                    }
-                }
-            }
-        })
-
-        notesCoordinates.push(notesCoordinatesInTrack)
-    })
-
-    return notesCoordinates
-}
-
-export function mergeNotesCoordinates(activeTracks: number[], coordinates: NoteCoordinates[][][]) {
-    const coordinatesActiveTracks = activeTracks.map((track) => coordinates[track])
-    const nbCoordinates = coordinatesActiveTracks[0].length
-    return coordinatesActiveTracks.reduce(
-        (previousCoordinatesActiveTrack, currentCoordinatesActiveTrack) => {
-            let acc = []
-
-            for (let i = 0; i < nbCoordinates; i++) {
-                acc.push(previousCoordinatesActiveTrack[i].concat(currentCoordinatesActiveTrack[i]))
-            }
-
-            return acc
-        },
-        Array(nbCoordinates).fill([])
-    )
 }
 
 export const Visualizer = WithContainerDimensions(
     ({
-        activeNotes,
         midiCurrentTime,
         midiFile,
         heightPerBeat = 100,
@@ -284,105 +35,67 @@ export const Visualizer = WithContainerDimensions(
         onChangeActiveNotes,
         onChangeTimeToNextNote,
     }: VisualizerProps) => {
-        const [notesCoordinates, setNotesCoordinates] = useState<NoteCoordinates[][]>([])
-        const [indexSectionPlaying, setIndexSectionPlaying] = useState<number>(0)
-        const [indexToDraw, setIndexToDraw] = useState<IndexToDraw>({
-            firstSection: 0,
-            secondSection: 1,
+        const midiVisualizerCoordinates = new MidiVisualizerCoordinates(heightPerBeat, midiInfos, {
+            w: width,
+            h: height,
         })
 
+        const indexSectionPlaying = useMemo(
+            () => midiVisualizerCoordinates.getIndexSectionPlaying(midiCurrentTime),
+            [midiCurrentTime]
+        )
+
+        const allNotesCoordinates = useMemo(
+            () => midiVisualizerCoordinates.getNotesCoordinates(midiFile),
+            [heightPerBeat, midiInfos, width, height]
+        )
+
+        const notesCoordinates = useMemo(
+            () =>
+                MidiVisualizerCoordinates.mergeNotesCoordinates(activeTracks, allNotesCoordinates),
+            [allNotesCoordinates, activeTracks]
+        )
+
+        const indexToDraw = useMemo(
+            () => midiVisualizerCoordinates.getIndexToDraw(midiCurrentTime, audioPlayerState),
+            [indexSectionPlaying, audioPlayerState]
+        )
+
         useEffect(() => {
-            if (!midiInfos || !midiFile) return
-            if (!activeTracks || !activeTracks.length) {
-                setNotesCoordinates([[]])
-                return
-            } else {
-                const coordinates = getNotesPosition(
-                    { w: width, h: height },
-                    midiFile,
-                    heightPerBeat,
-                    midiInfos
-                )
-
-                const mergedCoordinatesActiveTracks = mergeNotesCoordinates(
-                    activeTracks,
-                    coordinates
-                )
-
-                setNotesCoordinates(mergedCoordinatesActiveTracks)
-            }
-        }, [midiInfos, width, height, midiFile, heightPerBeat, activeTracks])
-
-        useEffect(() => {
-            const { activeNotes: newActiveNotes, timeToNextNote } = getActiveNotes(
-                midiCurrentTime,
-                midiInfos,
-                heightPerBeat,
+            const newActiveNotes = midiVisualizerCoordinates.getActiveNotes(
                 notesCoordinates,
-                indexSectionPlaying
+                indexSectionPlaying,
+                midiCurrentTime
             )
 
-            if (!isEqual(newActiveNotes, activeNotes)) {
-                onChangeActiveNotes(newActiveNotes)
-                onChangeTimeToNextNote(timeToNextNote)
-            }
-        }, [midiCurrentTime, notesCoordinates])
+            const timeToNextNote = midiVisualizerCoordinates.getTimeToNextNote(
+                notesCoordinates,
+                indexSectionPlaying,
+                midiCurrentTime
+            )
 
-        useEffect(() => {
-            const isIndexEven = isEven(indexSectionPlaying)
-            if (indexSectionPlaying === 0) {
-                setIndexToDraw({
-                    firstSection: 0,
-                    secondSection: 1,
-                })
-            } else {
-                if (audioPlayerState === 'playing') {
-                    const sectionToRedraw: SectionName = isIndexEven
-                        ? 'secondSection'
-                        : 'firstSection'
-                    const indexToDrawCopy = { ...indexToDraw }
-                    indexToDrawCopy[sectionToRedraw] = indexSectionPlaying + 1
-                    setIndexToDraw(indexToDrawCopy)
-                } else if (audioPlayerState === 'rewinding' || audioPlayerState === 'seeking') {
-                    setIndexToDraw({
-                        firstSection: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
-                        secondSection: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
-                    })
+            onChangeActiveNotes((activeNotes: ActiveNote[]) => {
+                if (!isEqual(newActiveNotes, activeNotes)) {
+                    onChangeTimeToNextNote(timeToNextNote)
+                    return newActiveNotes
+                } else {
+                    return activeNotes
                 }
-            }
-        }, [indexSectionPlaying, audioPlayerState, notesCoordinates])
-
-        function calcTop(sectionName: SectionName) {
-            if (!midiInfos) return '0px'
-            const { msPerBeat } = midiInfos
-            const heightDuration = timeToYPosition(midiCurrentTime, msPerBeat, heightPerBeat)
-            const nbSectionPassed = heightDuration / height
-            const percentageTop = +((nbSectionPassed % 1) * 100).toFixed(2)
-            const percentageFirstSection = `${100 - percentageTop}%`
-            const percentageSecondSection = `-${percentageTop}%`
-            const isIndexEven = isEven(indexSectionPlaying)
-            const index = Math.floor(heightDuration / height)
-
-            if (index !== indexSectionPlaying) {
-                setIndexSectionPlaying(() => index)
-            }
-
-            if (sectionName === 'firstSection') {
-                return isIndexEven ? percentageSecondSection : percentageFirstSection
-            } else {
-                return isIndexEven ? percentageFirstSection : percentageSecondSection
-            }
-        }
+            })
+        }, [midiCurrentTime, notesCoordinates])
 
         return (
             <div className="visualizer">
-                {(['firstSection', 'secondSection'] as SectionName[]).map((name, index) => (
+                {midiVisualizerCoordinates.getSectionNames().map((name, index) => (
                     <VisualizerSection
                         index={index}
                         key={name}
                         indexToDraw={indexToDraw[name]}
-                        notesCoordinates={notesCoordinates}
-                        top={calcTop(name)}
+                        notesCoordinates={notesCoordinates[indexToDraw[name]]}
+                        top={midiVisualizerCoordinates.getPercentageTopSection(
+                            name,
+                            midiCurrentTime
+                        )}
                         height={height}
                         width={width}
                     />

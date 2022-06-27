@@ -5,10 +5,17 @@ import {
     IMidiSetTempoEvent,
     TMidiEvent,
 } from 'midi-json-parser-worker'
-import { Instrument, InstrumentUserFriendlyName, MidiInfos } from '../types'
+import {
+    ActiveNote,
+    Instrument,
+    InstrumentUserFriendlyName,
+    MidiInfos,
+    MidiJsonNote,
+} from '../types'
 import { IMidiProgramChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { MIDI_INSTRUMENTS } from './const'
 import { largestNum } from './maths'
+import { keyToNote } from './notes'
 
 //TODO: try to minimize number of loops
 
@@ -30,6 +37,26 @@ const getNbTicks = (track: TMidiEvent[]) =>
 
 const programNumberToInstrument = (programNumber: number): InstrumentUserFriendlyName =>
     MIDI_INSTRUMENTS[programNumber]
+
+export const getKey = (note: MidiJsonNote) =>
+    isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
+
+export const getVelocity = (note: MidiJsonNote) =>
+    isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
+
+export const getNoteMetas = (note: MidiJsonNote): ActiveNote => {
+    const { channel } = note
+    const key = getKey(note)
+    const name = keyToNote(key)
+    const velocity = getVelocity(note)
+
+    return {
+        key,
+        name,
+        velocity,
+        channel,
+    }
+}
 
 export function getTicksPerBeat(midiJson: IMidiFile) {
     const { division } = midiJson

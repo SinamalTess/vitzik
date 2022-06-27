@@ -9,6 +9,7 @@ import {
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
 } from '../utils/const'
+import isEqual from 'lodash.isequal'
 
 interface InstrumentPlayerProps {
     isMute: boolean
@@ -97,10 +98,14 @@ export function InstrumentPlayer({
     }, [activeKeys, instrumentPlayer, isMute])
 
     useEffect(() => {
-        if (audioPlayerState === 'rewinding' || audioPlayerState === 'stopped') {
+        if (audioPlayerState === 'rewinding') {
             notesAlreadyPlayed.current = []
+        } else if (audioPlayerState === 'stopped') {
+            notesAlreadyPlayed.current = []
+        } else if (audioPlayerState === 'paused') {
+            instrumentPlayer?.stop(0)
         }
-    }, [audioPlayerState])
+    }, [audioPlayerState, instrumentPlayer])
 
     useEffect(() => {
         notesAlreadyPlayed.current = []

@@ -16,7 +16,7 @@ describe('InstrumentPlayer', () => {
     const activeNote: ActiveNote = {
         name: 'A0',
         velocity: 100,
-        id: 1,
+        id: '1',
         duration: 25,
         key: 21,
         channel: 0,

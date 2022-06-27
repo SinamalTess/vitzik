@@ -11,36 +11,39 @@ export interface VisualizerSectionProps {
     height: number
     width: number
     top: string
-    notesCoordinates: NoteCoordinates[][]
+    notesCoordinates: NoteCoordinates[] | null | undefined
     showCanvasNumbers?: boolean
 }
 
-function clearCanvas(ctx: CanvasRenderingContext2D) {
-    const { width, height } = ctx.canvas
-    ctx.clearRect(0, 0, width, height)
-}
+class MidiVisualizerSection {
+    private ctx: CanvasRenderingContext2D
 
-function drawNumbers(ctx: CanvasRenderingContext2D, indexToDraw: number, index: number) {
-    const { width, height } = ctx.canvas
-    ctx.font = '30px Arial'
-    ctx.fillText(indexToDraw.toString(), width - 40, height - 20)
-    ctx.fillText(index.toString(), width - 80, height - 20)
-}
+    constructor(ctx: CanvasRenderingContext2D) {
+        this.ctx = ctx
+    }
 
-function drawNotes(
-    ctx: CanvasRenderingContext2D | undefined | null,
-    notesCoordinates: NoteCoordinates[][],
-    indexToDraw: number
-) {
-    if (!ctx) return
-    const canvasOffset = ctx.canvas.height
+    drawNumbers(indexToDraw: number, index: number) {
+        const { width, height } = this.ctx.canvas
+        this.ctx.font = '30px Arial'
+        this.ctx.fillText(indexToDraw.toString(), width - 40, height - 20)
+        this.ctx.fillText(index.toString(), width - 80, height - 20)
+    }
 
-    if (notesCoordinates[indexToDraw] && notesCoordinates[indexToDraw].length) {
-        notesCoordinates[indexToDraw].forEach(({ x, y, w, h, channel }) => {
-            const yComputed = y - indexToDraw * canvasOffset
-            ctx.fillStyle = CHANNElS_COLORS[channel]
-            drawRoundRect(ctx, x, yComputed, w, h, 5, true, false)
-        })
+    clearCanvas() {
+        const { width, height } = this.ctx.canvas
+        this.ctx.clearRect(0, 0, width, height)
+    }
+
+    drawNotes(notesCoordinates: NoteCoordinates[] | null | undefined, indexToDraw: number) {
+        const canvasOffset = this.ctx.canvas.height
+
+        if (notesCoordinates && notesCoordinates.length) {
+            notesCoordinates.forEach(({ x, y, w, h, channel }) => {
+                const yComputed = y - indexToDraw * canvasOffset
+                this.ctx.fillStyle = CHANNElS_COLORS[channel]
+                drawRoundRect(this.ctx, x, yComputed, w, h, 5, true, false)
+            })
+        }
     }
 }
 
@@ -56,16 +59,20 @@ export function VisualizerSection({
     const refCanvas = useRef<HTMLCanvasElement>(null)
     const canvasRef: HTMLCanvasElement | undefined | null = refCanvas.current
     const ctx = canvasRef?.getContext('2d')
+    let midiVisualizerSection: MidiVisualizerSection | null = null
+    if (ctx) {
+        midiVisualizerSection = new MidiVisualizerSection(ctx)
+    }
 
     useEffect(() => {
-        if (ctx && notesCoordinates) {
-            clearCanvas(ctx)
-            drawNotes(ctx, notesCoordinates, indexToDraw)
+        if (midiVisualizerSection && notesCoordinates) {
+            midiVisualizerSection.clearCanvas()
+            midiVisualizerSection.drawNotes(notesCoordinates, indexToDraw)
             if (showCanvasNumbers) {
-                drawNumbers(ctx, indexToDraw, index)
+                midiVisualizerSection.drawNumbers(indexToDraw, index)
             }
         }
-    }, [clearCanvas, indexToDraw, notesCoordinates, showCanvasNumbers])
+    }, [midiVisualizerSection, indexToDraw, notesCoordinates, showCanvasNumbers])
 
     useEffect(() => {
         function configureCanvas(color: string) {
@@ -76,8 +83,8 @@ export function VisualizerSection({
             }
         }
         configureCanvas(CHANNElS_COLORS[0])
-        if (width && height) {
-            drawNotes(ctx, notesCoordinates, indexToDraw)
+        if (width && height && midiVisualizerSection) {
+            midiVisualizerSection.drawNotes(notesCoordinates, indexToDraw)
         }
     }, [width, height, ctx])
 

@@ -22,6 +22,7 @@ const userInstrument: Instrument = {
 
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
+    const [notesPlayed, setNotesPlayed] = useState<string[]>([])
     const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [isMute, setIsMute] = useState<boolean>(false)
@@ -105,10 +106,12 @@ function App() {
                     onMidiModeChange={setMidiMode}
                 />
                 <MidiMessageManager
+                    audioPlayerState={audioPlayerState}
                     midiInput={midiInput}
                     activeNotes={activeNotes}
                     onChangeActiveNotes={setActiveNotes}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
+                    onNotePlayed={setNotesPlayed}
                 />
             </div>
             <div className="item">
@@ -133,6 +136,7 @@ function App() {
                     musicSystem={musicSystem}
                     onKeyPressed={setActiveNotes}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
+                    notesPlayed={notesPlayed}
                 />
                 <>
                     {instruments.map(({ channel, name }) => {

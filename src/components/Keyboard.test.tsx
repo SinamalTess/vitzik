@@ -6,7 +6,7 @@ import { ActiveNote } from '../types'
 
 describe('Keyboard', () => {
     it('should render the proper number of keys', () => {
-        render(<Keyboard activeKeys={[]} onKeyPressed={() => {}}></Keyboard>)
+        render(<Keyboard notesPlayed={[]} activeKeys={[]} onKeyPressed={() => {}}></Keyboard>)
         const blackKeys = screen.getAllByText(/#/)
         const whiteKeys = screen.getAllByText(/[A-G]\d/)
 
@@ -29,7 +29,13 @@ describe('Keyboard', () => {
             channel: 0,
         }
 
-        render(<Keyboard activeKeys={[whiteKey, blackKey]} onKeyPressed={() => {}}></Keyboard>)
+        render(
+            <Keyboard
+                notesPlayed={[]}
+                activeKeys={[whiteKey, blackKey]}
+                onKeyPressed={() => {}}
+            ></Keyboard>
+        )
         const correspondingWhiteKey = screen.getByTestId(/A0/)
         const correspondingBlackKey = screen.getByTestId(/A#0\/Bb0/)
 

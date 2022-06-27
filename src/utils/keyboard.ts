@@ -20,14 +20,9 @@ export const getWidthWhiteKey = (totalWidth: number) => totalWidth / NB_WHITE_PI
 export const getWidthBlackKey = (totalWidth: number) => totalWidth / NB_WHITE_PIANO_KEYS / 2
 
 export function removeNotesFromActiveKeys(activeKeys: ActiveNote[], notes: ActiveNote[]) {
-    const activeKeysCopy = [...activeKeys]
-    notes.forEach(({ channel, name }) => {
-        const noteIndex = activeKeysCopy.findIndex(
-            (activeKey) => activeKey.name === name && activeKey.channel === channel
+    return activeKeys.filter((activeKey) => {
+        return !notes.some(
+            ({ channel, name }) => channel === activeKey.channel && name === activeKey.name
         )
-        if (noteIndex >= 0) {
-            activeKeysCopy.splice(noteIndex, 1)
-        }
     })
-    return activeKeysCopy
 }

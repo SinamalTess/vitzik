@@ -10,6 +10,6 @@ export interface NoteCoordinates extends CanvasRectangle {
     key: number
     velocity: number
     duration: number // milliseconds
-    id?: number
+    id?: string
     channel: number
 }

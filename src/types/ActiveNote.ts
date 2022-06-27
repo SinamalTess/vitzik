@@ -7,7 +7,7 @@ export interface ActiveNote {
     */
     name?: AlphabeticalNote
     velocity: number
-    id?: number
+    id?: string
     duration?: number
     key: number
     channel: number
