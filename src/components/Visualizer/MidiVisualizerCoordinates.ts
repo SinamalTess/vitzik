@@ -130,7 +130,12 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         activeTracks: number[],
         noteCoordinates: MidiVisualizerNoteCoordinates[][][]
     ) {
-        if (!activeTracks.length || !noteCoordinates.length) return [[]]
+        if (
+            !activeTracks.length ||
+            !noteCoordinates.length ||
+            activeTracks.length > noteCoordinates.length
+        )
+            return [[]]
         const coordinatesActiveTracks = activeTracks.map((track) => noteCoordinates[track])
         const nbCoordinates = coordinatesActiveTracks[0].length
         return coordinatesActiveTracks.reduce(
