@@ -266,12 +266,22 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         indexSectionPlaying: number,
         midiCurrentTime: number
     ) {
+        if (!notesCoordinates.length) return 0
         const heightCurrentTime = this.timeToYPosition(midiCurrentTime)
-        let nextNote = notesCoordinates[indexSectionPlaying].find(({ y }) => y > heightCurrentTime)
+
+        const checkNextNotes = (section: MidiVisualizerNoteCoordinates[]) => {
+            const nextNotes = section.filter(({ y }) => y > heightCurrentTime)
+            if (nextNotes.length) {
+                return nextNotes.reduce((prev, current) => (prev.y < current.y ? prev : current))
+            }
+        }
+
+        let nextNote = checkNextNotes(notesCoordinates[indexSectionPlaying])
+
         const nextSection = notesCoordinates[indexSectionPlaying + 1]
 
         if (!nextNote && nextSection) {
-            nextNote = nextSection.find((note) => note.y > heightCurrentTime)
+            nextNote = checkNextNotes(nextSection)
         }
 
         return nextNote ? this.yPositionToTime(nextNote.y) : null // if there is no nextNote we might have reached the end of the song
