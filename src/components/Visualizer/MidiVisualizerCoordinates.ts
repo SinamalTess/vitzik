@@ -1,7 +1,7 @@
 import {
     MidiVisualizerActiveNote,
     AudioPlayerState,
-    MidiInfos,
+    MidiMetas,
     MidiVisualizerNoteCoordinates,
     MidiInputActiveNote,
 } from '../../types'
@@ -32,13 +32,13 @@ export class MidiTimeInfos {
     msPerBeat: number
     midiDuration: number
     ticksPerBeat: number
-    midiInfos: MidiInfos
+    midiMetas: MidiMetas
 
-    constructor(midiInfos: MidiInfos) {
-        this.midiInfos = midiInfos
-        this.msPerBeat = this.midiInfos.msPerBeat
-        this.midiDuration = this.midiInfos.midiDuration
-        this.ticksPerBeat = this.midiInfos.ticksPerBeat
+    constructor(midiMetas: MidiMetas) {
+        this.midiMetas = midiMetas
+        this.msPerBeat = this.midiMetas.msPerBeat
+        this.midiDuration = this.midiMetas.midiDuration
+        this.ticksPerBeat = this.midiMetas.ticksPerBeat
     }
 }
 
@@ -51,10 +51,10 @@ class MidiVisualizerPositions extends MidiTimeInfos {
 
     constructor(
         heightPerBeat: number,
-        midiInfos: MidiInfos,
+        midiMetas: MidiMetas,
         containerDimensions: { h: number; w: number }
     ) {
-        super(midiInfos)
+        super(midiMetas)
 
         this.heightPerBeat = heightPerBeat
         this.containerDimensions = containerDimensions
@@ -117,10 +117,10 @@ class MidiVisualizerPositions extends MidiTimeInfos {
 export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
     constructor(
         heightPerBeat: number,
-        midiInfos: MidiInfos,
+        midiMetas: MidiMetas,
         containerDimensions: { h: number; w: number }
     ) {
-        super(heightPerBeat, midiInfos, containerDimensions)
+        super(heightPerBeat, midiMetas, containerDimensions)
     }
 
     static getNoteId = (trackIndex: number, note: MidiInputActiveNote) =>
@@ -266,7 +266,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         indexSectionPlaying: number,
         midiCurrentTime: number
     ) {
-        if (!notesCoordinates.length) return 0
+        if (!notesCoordinates.length || !notesCoordinates[indexSectionPlaying]) return 0
         const heightCurrentTime = this.timeToYPosition(midiCurrentTime)
 
         const checkNextNotes = (section: MidiVisualizerNoteCoordinates[]) => {

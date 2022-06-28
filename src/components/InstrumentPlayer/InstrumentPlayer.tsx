@@ -96,7 +96,6 @@ export function InstrumentPlayer({
             Soundfont.instrument(ac, soundfontInstrument, { soundfont })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
-                    console.log('ready')
                 })
                 .catch(() => {
                     console.error(`Failed to start the instrument ${instrument} audio`)

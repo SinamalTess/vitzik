@@ -60,14 +60,17 @@ export function VisualizerSection({
     showCanvasNumbers = true,
 }: VisualizerSectionProps) {
     const refCanvas = useRef<HTMLCanvasElement>(null)
-    const canvasRef: HTMLCanvasElement | undefined | null = refCanvas.current
-    const ctx = canvasRef?.getContext('2d')
+    const canvas: HTMLCanvasElement | undefined | null = refCanvas.current
+    const ctx = canvas?.getContext('2d')
     let midiVisualizerSection: MidiVisualizerSection | null = null
     if (ctx) {
         midiVisualizerSection = new MidiVisualizerSection(ctx)
     }
 
     useEffect(() => {
+        if (midiVisualizerSection && !notesCoordinates) {
+            midiVisualizerSection.clearCanvas()
+        }
         if (midiVisualizerSection && notesCoordinates) {
             midiVisualizerSection.clearCanvas()
             midiVisualizerSection.drawNotes(notesCoordinates, indexToDraw)
@@ -79,9 +82,9 @@ export function VisualizerSection({
 
     useEffect(() => {
         function configureCanvas(color: string) {
-            if (canvasRef && ctx) {
-                canvasRef.width = width
-                canvasRef.height = height
+            if (canvas && ctx) {
+                canvas.width = width
+                canvas.height = height
                 ctx.fillStyle = color
             }
         }

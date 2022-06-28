@@ -8,11 +8,17 @@ import {
 import {
     Instrument,
     InstrumentUserFriendlyName,
-    MidiInfos,
+    MidiMetas,
+    TrackMetas,
     MidiJsonNote,
     MidiInputActiveNote,
 } from '../types'
-import { IMidiProgramChangeEvent } from 'midi-json-parser-worker/src/interfaces'
+import {
+    IMidiKeySignatureEvent,
+    IMidiProgramChangeEvent,
+    IMidiTimeSignatureEvent,
+    IMidiTrackNameEvent,
+} from 'midi-json-parser-worker/src/interfaces'
 import { MIDI_INSTRUMENTS } from './const'
 import { largestNum } from './maths'
 import { keyToNote } from './notes'
@@ -25,6 +31,12 @@ export const isProgramChangeEvent = (event: TMidiEvent): event is IMidiProgramCh
     'programChange' in event
 export const isSetTempoEvent = (event: TMidiEvent): event is IMidiSetTempoEvent =>
     'setTempo' in event
+export const isTimeSignatureEvent = (event: TMidiEvent): event is IMidiTimeSignatureEvent =>
+    'timeSignature' in event
+export const isKeySignatureEvent = (event: TMidiEvent): event is IMidiKeySignatureEvent =>
+    'keySignature' in event
+export const isTrackNameEvent = (event: TMidiEvent): event is IMidiTrackNameEvent =>
+    'trackName' in event
 
 const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
 
@@ -85,12 +97,12 @@ function getAllEventsOfType(track: TMidiEvent[], eventType: EventType) {
     }
 }
 
-function getLastTempoValue(track: TMidiEvent[]) {
+function getFirstTempoValue(track: TMidiEvent[]) {
     const setTempoEvents = getAllEventsOfType(track, 'setTempo') as IMidiSetTempoEvent[]
 
     if (setTempoEvents.length > 1) {
-        const lastSetTempo = setTempoEvents[setTempoEvents.length - 1]
-        const { microsecondsPerQuarter } = lastSetTempo.setTempo
+        const firstSetTempo = setTempoEvents[0]
+        const { microsecondsPerQuarter } = firstSetTempo.setTempo
         return Math.round(microsecondsPerQuarter / 1000)
     }
 }
@@ -103,7 +115,7 @@ function getMsPerBeat(midiJson: IMidiFile): number {
         case 0: // TODO: complete this section
             return defaultTempo
         case 1:
-            const msPerBeat = getLastTempoValue(firstTrack)
+            const msPerBeat = getFirstTempoValue(firstTrack)
             if (msPerBeat) {
                 return msPerBeat
             }
@@ -116,17 +128,46 @@ function getMsPerBeat(midiJson: IMidiFile): number {
     }
 }
 
-export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
+export function getMidiMetas(midiJson: IMidiFile | null): MidiMetas | null {
     if (!midiJson) return null
 
     let playableTracksIndexes: number[] = []
     let initialInstruments: Instrument[] = []
+    let trackMetas: TrackMetas = {}
 
     midiJson.tracks.forEach((track, index) => {
         if (isTrackPlayable(track)) {
             playableTracksIndexes.push(index)
         }
         track.forEach((event) => {
+            if (isTrackNameEvent(event)) {
+                const previousNames = trackMetas[index]?.names ? trackMetas[index].names : []
+                trackMetas = {
+                    ...trackMetas,
+                    [index]: {
+                        ...trackMetas[index],
+                        names: [...previousNames, event.trackName],
+                    },
+                }
+            }
+            if (isTimeSignatureEvent(event)) {
+                trackMetas = {
+                    ...trackMetas,
+                    [index]: {
+                        ...trackMetas[index],
+                        timeSignature: event.timeSignature,
+                    },
+                }
+            }
+            if (isKeySignatureEvent(event)) {
+                trackMetas = {
+                    ...trackMetas,
+                    [index]: {
+                        ...trackMetas[index],
+                        keySignature: event.keySignature,
+                    },
+                }
+            }
             if (isProgramChangeEvent(event)) {
                 const { channel } = event
                 const { programNumber } = event.programChange
@@ -144,11 +185,12 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
         })
     })
 
-    const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicks(track)))
+    const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicks(track))) //TODO: this would only work for format 0 and 1
     const ticksPerBeat = getTicksPerBeat(midiJson)
     const nbBeats = nbTicks / ticksPerBeat
     const msPerBeat = getMsPerBeat(midiJson)
     const format = getFormat(midiJson)
+    const beatsPerMin = (1000 * 60) / msPerBeat
 
     return {
         msPerBeat,
@@ -157,5 +199,7 @@ export function getMidiInfos(midiJson: IMidiFile | null): MidiInfos | null {
         format,
         initialInstruments,
         playableTracksIndexes,
+        trackMetas,
+        beatsPerMin,
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { MidiInfos } from '../../types'
+import { MidiMetas } from '../../types'
 import './MidiFileInfos.scss'
 import { MidiTitle } from '../MidiTitle'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
@@ -7,18 +7,19 @@ import { List } from '../generics/List'
 import { ListItem } from '../generics/ListItem'
 
 interface MidiInfosProps {
-    midiInfos: MidiInfos
+    midiMetas: MidiMetas
     midiTitle: string
 }
 
-export function MidiFileInfos({ midiInfos, midiTitle }: MidiInfosProps) {
-    const { ticksPerBeat, format, initialInstruments, msPerBeat } = midiInfos
+export function MidiFileMetas({ midiMetas, midiTitle }: MidiInfosProps) {
+    const { ticksPerBeat, format, initialInstruments, msPerBeat, beatsPerMin } = midiMetas
     return (
         <div className="midifile-infos pd-md">
             <MidiTitle midiTitle={midiTitle} />
             <span>Ticks per beat : {ticksPerBeat}</span>
             <span>Format : {format}</span>
             <span>Ms per beat : {msPerBeat}</span>
+            <span>BPM : {beatsPerMin.toFixed(3)}</span>
             <List>
                 {initialInstruments.map(({ channel, name }) => (
                     <ListItem

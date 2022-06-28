@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { getMidiInfos } from './utils'
+import { getMidiMetas } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
 import { AudioPlayerState, Instrument, MidiMode, MusicSystem, AppMode, ActiveNote } from './types'
@@ -8,7 +8,7 @@ import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
-import { MidiFileInfos } from './components/MidiFileInfos'
+import { MidiFileMetas } from './components/MidiFileInfos'
 import { MidiMessageManager } from './components/MidiMessageManager'
 
 //TODO: check accessibility
@@ -36,10 +36,10 @@ function App() {
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [activeTracks, setActiveTracks] = useState<number[]>([])
 
-    const midiInfos = useMemo(() => getMidiInfos(midiFile), [midiFile])
-    const midiDuration = midiInfos?.midiDuration ?? 0
-    const playableTracksIndexes = midiInfos?.playableTracksIndexes ?? []
-    const initialInstruments = midiInfos?.initialInstruments ?? []
+    const midiMetas = useMemo(() => getMidiMetas(midiFile), [midiFile])
+    const midiDuration = midiMetas?.midiDuration ?? 0
+    const playableTracksIndexes = midiMetas?.playableTracksIndexes ?? []
+    const initialInstruments = midiMetas?.initialInstruments ?? []
     const isMidiImported = midiFile !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
@@ -69,14 +69,14 @@ function App() {
     }, [midiCurrentTime, isPlaying, midiMode])
 
     useEffect(() => {
-        if (!midiInfos) return
+        if (!midiMetas) return
         setMidiCurrentTime(0)
         setInstruments((instruments) => [...instruments, ...initialInstruments])
         setActiveTracks([...playableTracksIndexes])
         return function cleanup() {
             setInstruments([userInstrument])
         }
-    }, [midiInfos])
+    }, [midiMetas])
 
     return (
         <div className="container">
@@ -117,12 +117,12 @@ function App() {
                 />
             </div>
             <div className="item">
-                {midiInfos ? <MidiFileInfos midiInfos={midiInfos} midiTitle={midiTitle} /> : null}
+                {midiMetas ? <MidiFileMetas midiMetas={midiMetas} midiTitle={midiTitle} /> : null}
                 <Preview
                     appMode={appMode}
                     midiCurrentTime={midiCurrentTime}
                     midiFile={midiFile}
-                    midiInfos={midiInfos}
+                    midiMetas={midiMetas}
                     activeNotes={activeNotes}
                     audioPlayerState={audioPlayerState}
                     activeTracks={activeTracks}
