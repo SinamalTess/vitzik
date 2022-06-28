@@ -32,7 +32,12 @@ interface SettingsProps {
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
 }
 
-export function Settings({
+/*
+    This component takes a while to paint.
+    React.memo was used to avoid unnecessary re-renders
+*/
+
+export const Settings = React.memo(function Settings({
     appMode,
     midiMode,
     musicSystem,
@@ -72,4 +77,4 @@ export function Settings({
             <MidiInputSelector onMidiInputChange={onMidiInputChange} />
         </div>
     )
-}
+})

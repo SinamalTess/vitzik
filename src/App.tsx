@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getMidiInfos } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
@@ -48,11 +48,14 @@ function App() {
         console.log(midiJSON)
     }
 
-    function handleAllMidiKeysPlayed() {
-        if (timeToNextNote && midiMode === 'wait') {
-            setIsPlaying(true)
-        }
-    }
+    const handleAllMidiKeysPlayed = useCallback(
+        function handleAllMidiKeysPlayed() {
+            if (timeToNextNote && midiMode === 'wait') {
+                setIsPlaying(true)
+            }
+        },
+        [midiMode, timeToNextNote]
+    )
 
     useEffect(() => {
         if (
@@ -138,14 +141,14 @@ function App() {
                 />
                 <>
                     {instruments.map(({ channel, name }) => {
-                        const activeKeys = activeNotes.filter((note) => note.channel === channel)
                         return (
                             <InstrumentPlayer
                                 key={`${name}-${channel}`}
                                 isMute={isMute}
                                 audioPlayerState={audioPlayerState}
-                                activeKeys={activeKeys}
+                                activeKeys={activeNotes}
                                 instrument={name}
+                                channel={channel}
                                 midiFile={midiFile}
                             />
                         )

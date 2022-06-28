@@ -37,6 +37,7 @@ describe('InstrumentPlayer', () => {
                 isMute={false}
                 instrument={'Acoustic Grand Keyboard'}
                 audioPlayerState={'playing'}
+                channel={0}
             ></InstrumentPlayer>
         )
 
@@ -58,6 +59,7 @@ describe('InstrumentPlayer', () => {
                 instrument={'Acoustic Grand Keyboard'}
                 audioPlayerState={'playing'}
                 soundfont={'FatBoy'}
+                channel={0}
             ></InstrumentPlayer>
         )
 

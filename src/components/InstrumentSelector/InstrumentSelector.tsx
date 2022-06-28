@@ -7,14 +7,7 @@ interface InstrumentSelectorProps {
     onChange: React.Dispatch<React.SetStateAction<Instrument[]>>
 }
 
-/*
-    This component shows a large list that takes a long time to paint.
-    React.memo was used to avoid unnecessary re-renders
-*/
-
-export const InstrumentSelector = React.memo(function InstrumentSelector({
-    onChange,
-}: InstrumentSelectorProps) {
+export function InstrumentSelector({ onChange }: InstrumentSelectorProps) {
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const name = event.target.value as InstrumentUserFriendlyName
         const instrument = {
@@ -43,4 +36,4 @@ export const InstrumentSelector = React.memo(function InstrumentSelector({
             ))}
         </Select>
     )
-})
+}

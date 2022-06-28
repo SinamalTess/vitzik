@@ -23,6 +23,7 @@ interface InstrumentPlayerProps {
     activeKeys: ActiveNote[]
     midiFile: IMidiFile | null
     soundfont?: SoundFont
+    channel: number
 }
 
 type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
@@ -80,6 +81,7 @@ export function InstrumentPlayer({
     audioPlayerState,
     activeKeys,
     midiFile,
+    channel,
     soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
@@ -94,6 +96,7 @@ export function InstrumentPlayer({
             Soundfont.instrument(ac, soundfontInstrument, { soundfont })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
+                    console.log('ready')
                 })
                 .catch(() => {
                     console.error(`Failed to start the instrument ${instrument} audio`)
@@ -109,8 +112,9 @@ export function InstrumentPlayer({
     }, [instrument, isMute, soundfont])
 
     useEffect(() => {
-        if (isMute || !activeKeys.length || !instrumentPlayer) return
-        activeKeys.forEach((note) => {
+        const notes = activeKeys.filter((note) => note.channel === channel)
+        if (isMute || !notes.length || !instrumentPlayer) return
+        notes.forEach((note) => {
             playNote(note, notesAlreadyPlayed.current, instrumentPlayer)
         })
     }, [activeKeys, instrumentPlayer, isMute])
