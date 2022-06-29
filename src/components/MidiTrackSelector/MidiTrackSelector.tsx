@@ -5,20 +5,20 @@ import { DropdownToggle } from '../generics/DropdownToggle'
 import { Checkbox } from '../generics/Checkbox'
 
 interface MidiTrackSelectorProps {
-    playableTracksIndexes: number[]
+    playableTracks: number[]
     activeTracks: number[]
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 export function MidiTrackSelector({
-    playableTracksIndexes,
+    playableTracks,
     onChangeActiveTracks,
     activeTracks,
 }: MidiTrackSelectorProps) {
-    const allChecked = activeTracks.length === playableTracksIndexes.length
+    const allChecked = activeTracks.length === playableTracks.length
 
     function selectAllPlayableTracks() {
-        onChangeActiveTracks([...playableTracksIndexes])
+        onChangeActiveTracks([...playableTracks])
     }
 
     function unselectAllPlayableTracks() {
@@ -50,13 +50,13 @@ export function MidiTrackSelector({
 
     return (
         <Dropdown open={false}>
-            <DropdownToggle>{`(${playableTracksIndexes.length}) Tracks`}</DropdownToggle>
+            <DropdownToggle>{`(${playableTracks.length}) Tracks`}</DropdownToggle>
             <DropdownItem>
                 <Checkbox value={'all'} onChange={handleChange} checked={allChecked}>
                     {allChecked ? 'Unselect All' : 'Select all'}
                 </Checkbox>
             </DropdownItem>
-            {playableTracksIndexes.map((track) => {
+            {playableTracks.map((track) => {
                 const checked = activeTracks.some((activeTrack) => activeTrack === track)
                 const trackString = track.toString()
                 return (

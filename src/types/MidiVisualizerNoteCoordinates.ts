@@ -12,4 +12,5 @@ export interface MidiVisualizerNoteCoordinates extends CanvasRectangle {
     duration: number // milliseconds
     id: string
     channel: number
+    startingTime: number
 }

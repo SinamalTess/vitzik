@@ -15,6 +15,7 @@ export interface MidiVisualizerActiveNote {
     duration: number
     key: number
     channel: number
+    startingTime: number
 }
 
 export type ActiveNote = MidiInputActiveNote | MidiVisualizerActiveNote

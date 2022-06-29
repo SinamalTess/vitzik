@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { drawRoundRect } from '../../utils'
-import { MidiVisualizerNoteCoordinates } from '../../types'
 import './VisualizerSection.scss'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 import clsx from 'clsx'
+import { MidiVisualizerNoteCoordinates } from '../../types'
 
 interface VisualizerSectionProps {
     index: number

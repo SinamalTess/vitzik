@@ -85,20 +85,24 @@ export const Visualizer = WithContainerDimensions(
 
         return (
             <div className="visualizer">
-                {midiVisualizerCoordinates.getSectionNames().map((name, index) => (
-                    <VisualizerSection
-                        index={index}
-                        key={name}
-                        indexToDraw={indexToDraw[name]}
-                        notesCoordinates={notesCoordinates[indexToDraw[name]]}
-                        top={midiVisualizerCoordinates.getPercentageTopSection(
-                            name,
-                            midiCurrentTime
-                        )}
-                        height={height}
-                        width={width}
-                    />
-                ))}
+                {midiVisualizerCoordinates.getSectionNames().map((name, index) => {
+                    const section =
+                        notesCoordinates?.find((section) => indexToDraw[name] in section) ?? []
+                    return (
+                        <VisualizerSection
+                            index={index}
+                            key={name}
+                            indexToDraw={indexToDraw[name]}
+                            notesCoordinates={section ? Object.values(section)[0] : []}
+                            top={midiVisualizerCoordinates.getPercentageTopSection(
+                                name,
+                                midiCurrentTime
+                            )}
+                            height={height}
+                            width={width}
+                        />
+                    )
+                })}
                 <VisualizerTracks height={height} width={width} />
             </div>
         )

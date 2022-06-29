@@ -20,6 +20,7 @@ describe('InstrumentPlayer', () => {
         duration: 25,
         key: 21,
         channel: 0,
+        startingTime: 0,
     }
 
     // @ts-ignore

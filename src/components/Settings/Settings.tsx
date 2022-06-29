@@ -19,7 +19,7 @@ interface SettingsProps {
     appMode: AppMode
     midiMode: MidiMode
     musicSystem: MusicSystem
-    playableTracksIndexes: number[]
+    playableTracks: number[]
     activeTracks: number[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
@@ -41,7 +41,7 @@ export const Settings = React.memo(function Settings({
     appMode,
     midiMode,
     musicSystem,
-    playableTracksIndexes,
+    playableTracks,
     activeTracks,
     onChangeMusicSystem,
     onChangeAppMode,
@@ -63,10 +63,10 @@ export const Settings = React.memo(function Settings({
 
     return (
         <div className="settings">
-            {playableTracksIndexes.length > 1 ? (
+            {playableTracks.length > 1 ? (
                 <MidiTrackSelector
                     activeTracks={activeTracks}
-                    playableTracksIndexes={playableTracksIndexes}
+                    playableTracks={playableTracks}
                     onChangeActiveTracks={onChangeActiveTracks}
                 />
             ) : null}

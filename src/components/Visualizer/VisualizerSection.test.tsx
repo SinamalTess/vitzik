@@ -25,6 +25,7 @@ const notesCoordinates: MidiVisualizerNoteCoordinates[] = [
         x: 10,
         y: 5,
         channel: 0,
+        startingTime: 0,
     },
 ]
 

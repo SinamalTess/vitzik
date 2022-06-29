@@ -1,9 +1,15 @@
 import { Instrument } from './Instrument'
 
-export interface TrackMetas {
-    [key: number]: {
-        names: string[]
+export type MsPerBeat = {
+    timestamp: number
+    value: number
+    delta: number
+}
 
+export interface TrackMetas {
+    [key: string]: {
+        names: string[]
+        nbTicks: number // ticks = delta
         /*
             Time signature is defined as follows:
             4/4 would be four quarter-notes per Bar (MIDI default),
@@ -22,16 +28,16 @@ export interface TrackMetas {
             key: number
             scale: number
         }
+        msPerBeat: MsPerBeat[]
     }
 }
 
 export interface MidiMetas {
     ticksPerBeat: number
-    msPerBeat: number
     midiDuration: number
-    playableTracksIndexes: number[]
+    playableTracks: number[]
     initialInstruments: Instrument[]
     format: number
-    beatsPerMin: number
     trackMetas: TrackMetas
+    allMsPerBeat: MsPerBeat[]
 }
