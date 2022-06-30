@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo } from 'react'
 import './Visualizer.scss'
-import { AudioPlayerState, MidiMetas, ActiveNote } from '../../types'
+import { AudioPlayerState, MidiMetas, ActiveNote, MidiMode } from '../../types'
 import isEqual from 'lodash.isequal'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
-import { VisualizerTracks } from './VisualizerTracks'
+import { VisualizerNotesTracks } from './VisualizerNotesTracks'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 
 interface VisualizerProps {
     midiCurrentTime: number
     midiFile: IMidiFile
-    heightPerBeat?: number
+    midiMode: MidiMode
     midiMetas: MidiMetas
     audioPlayerState: AudioPlayerState
     activeTracks: number[]
@@ -24,8 +24,8 @@ interface VisualizerProps {
 export const Visualizer = WithContainerDimensions(
     ({
         midiCurrentTime,
+        midiMode,
         midiFile,
-        heightPerBeat = 100,
         midiMetas,
         audioPlayerState,
         activeTracks,
@@ -34,7 +34,9 @@ export const Visualizer = WithContainerDimensions(
         onChangeActiveNotes,
         onChangeTimeToNextNote,
     }: VisualizerProps) => {
-        const midiVisualizerCoordinates = new MidiVisualizerCoordinates(heightPerBeat, midiMetas, {
+        if (!height || !width) return null
+
+        const midiVisualizerCoordinates = new MidiVisualizerCoordinates(midiMetas, {
             w: width,
             h: height,
         })
@@ -46,7 +48,7 @@ export const Visualizer = WithContainerDimensions(
 
         const allNotesCoordinates = useMemo(
             () => midiVisualizerCoordinates.getNotesCoordinates(midiFile),
-            [heightPerBeat, midiMetas, width, height]
+            [midiMetas, width, height]
         )
 
         const notesCoordinates = useMemo(
@@ -67,21 +69,19 @@ export const Visualizer = WithContainerDimensions(
                 midiCurrentTime
             )
 
-            const timeToNextNote = midiVisualizerCoordinates.getTimeToNextNote(
-                notesCoordinates,
-                indexSectionPlaying,
-                midiCurrentTime
-            )
+            if (midiMode === 'wait') {
+                const timeToNextNote = midiVisualizerCoordinates.getTimeToNextNote(
+                    notesCoordinates,
+                    indexSectionPlaying,
+                    midiCurrentTime
+                )
+                onChangeTimeToNextNote(timeToNextNote)
+            }
 
             onChangeActiveNotes((activeNotes: ActiveNote[]) => {
-                if (!isEqual(newActiveNotes, activeNotes)) {
-                    onChangeTimeToNextNote(timeToNextNote)
-                    return newActiveNotes
-                } else {
-                    return activeNotes
-                }
+                return isEqual(newActiveNotes, activeNotes) ? activeNotes : newActiveNotes
             })
-        }, [midiCurrentTime, notesCoordinates])
+        }, [midiCurrentTime, notesCoordinates, midiMode])
 
         return (
             <div className="visualizer">
@@ -103,7 +103,7 @@ export const Visualizer = WithContainerDimensions(
                         />
                     )
                 })}
-                <VisualizerTracks height={height} width={width} />
+                <VisualizerNotesTracks height={height} width={width} />
             </div>
         )
     }

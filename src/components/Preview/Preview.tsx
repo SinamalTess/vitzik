@@ -3,11 +3,19 @@ import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState, MidiMetas, AlphabeticalNote, AppMode, ActiveNote } from '../../types'
+import {
+    AudioPlayerState,
+    MidiMetas,
+    AlphabeticalNote,
+    AppMode,
+    ActiveNote,
+    MidiMode,
+} from '../../types'
 import { ErrorBoundary } from '../generics/ErrorBoundary'
 
 interface PreviewProps {
     appMode: AppMode
+    midiMode: MidiMode
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
     midiCurrentTime: number
@@ -21,6 +29,7 @@ interface PreviewProps {
 
 export function Preview({
     appMode,
+    midiMode,
     midiFile,
     midiMetas,
     midiCurrentTime,
@@ -42,6 +51,7 @@ export function Preview({
             {midiMetas && midiFile ? (
                 <Visualizer
                     midiFile={midiFile}
+                    midiMode={midiMode}
                     midiCurrentTime={midiCurrentTime}
                     midiMetas={midiMetas}
                     audioPlayerState={audioPlayerState}

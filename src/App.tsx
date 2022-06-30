@@ -80,7 +80,7 @@ function App() {
         ) {
             setIsPlaying(false)
         }
-    }, [midiCurrentTime, isPlaying, midiMode])
+    }, [midiCurrentTime, isPlaying, midiMode, timeToNextNote])
 
     return (
         <div className="container">
@@ -130,6 +130,7 @@ function App() {
                 ) : null}
                 <Preview
                     appMode={appMode}
+                    midiMode={midiMode}
                     midiCurrentTime={midiCurrentTime}
                     midiFile={midiFile}
                     midiMetas={midiMetas}

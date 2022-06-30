@@ -17,7 +17,6 @@ export interface TrackMetas {
             4/8 would be four eighth-notes per Bar (or 2 quarter notes), and
             2/4 would be two quarter-notes per Bar.
         */
-
         timeSignature?: {
             denominator: number // Bottom number : How many quarter notes there are in a beat
             metronome: number

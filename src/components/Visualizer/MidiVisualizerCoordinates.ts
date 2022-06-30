@@ -79,16 +79,12 @@ class MidiVisualizerPositions extends MidiTimeInfos {
     ratioSection: number
     containerDimensions: { h: number; w: number }
 
-    constructor(
-        heightPerBeat: number,
-        midiMetas: MidiMetas,
-        containerDimensions: { h: number; w: number }
-    ) {
+    constructor(midiMetas: MidiMetas, containerDimensions: { h: number; w: number }) {
         super(midiMetas)
 
-        this.heightPerBeat = heightPerBeat
         this.msPerSection = 500 * 4
         this.ratioSection = containerDimensions.h / this.msPerSection
+        this.heightPerBeat = this.msPerBeat * this.ratioSection
         this.containerDimensions = containerDimensions
     }
 
@@ -141,12 +137,8 @@ class MidiVisualizerPositions extends MidiTimeInfos {
 }
 
 export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
-    constructor(
-        heightPerBeat: number,
-        midiMetas: MidiMetas,
-        containerDimensions: { h: number; w: number }
-    ) {
-        super(heightPerBeat, midiMetas, containerDimensions)
+    constructor(midiMetas: MidiMetas, containerDimensions: { h: number; w: number }) {
+        super(midiMetas, containerDimensions)
     }
 
     static getNoteId = (trackIndex: number, note: MidiInputActiveNote) =>
