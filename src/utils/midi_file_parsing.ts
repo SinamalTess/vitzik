@@ -20,9 +20,9 @@ import {
     isTrackNameEvent,
 } from './midi_events'
 
-const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
+export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
 
-const getNbTicksInTrack = (track: TMidiEvent[]) =>
+export const getNbTicksInTrack = (track: TMidiEvent[]) =>
     track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
 
 export const getFormat = (midiJson: IMidiFile): number => midiJson.format
@@ -86,20 +86,17 @@ function getAllMsPerBeat(trackMetas: TrackMetas) {
     let allMsPerBeat: MsPerBeat[] = []
     for (const i in trackMetas) {
         if (Array.isArray(trackMetas[i].msPerBeat)) {
-            allMsPerBeat = [...allMsPerBeat, ...trackMetas[i].msPerBeat]
+            allMsPerBeat = [...allMsPerBeat, ...(trackMetas[i].msPerBeat as MsPerBeat[])]
         }
     }
 
-    return allMsPerBeat.sort((a, b) => a.delta - b.delta).flat(1) // smallest values first
+    return allMsPerBeat.sort((a, b) => a.delta - b.delta).flat(1) // smallest delta values first
 }
 
-function getMidiDuration(allMsPerBeats: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
-    const lastValue = Math.max(allMsPerBeats.length - 1, 0)
-    const lastMsPerBeatValue = allMsPerBeats[lastValue].value
-    const lastTicks = allMsPerBeats[lastValue].delta
-    const lastTime = allMsPerBeats[lastValue].timestamp
-    const timeRemaining = ((nbTicks - lastTicks) / ticksPerBeat) * lastMsPerBeatValue
-    return lastTime + timeRemaining
+export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
+    const { value, timestamp, delta } = allMsPerBeat[allMsPerBeat.length - 1] // last value
+    const timeLeft = ((nbTicks - delta) / ticksPerBeat) * value
+    return timestamp + timeLeft
 }
 
 export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
@@ -110,78 +107,67 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
 
     midiJson.tracks.forEach((track, index) => {
         let deltaAcc = 0
+
         if (isTrackPlayable(track)) {
             playableTracks.push(index)
         }
-        track.forEach((event) => {
-            deltaAcc = deltaAcc + event.delta
+
+        const addToTrackMetas = (property: any) => {
             trackMetas = {
                 ...trackMetas,
                 [index]: {
                     ...trackMetas[index],
-                    nbTicks: deltaAcc,
+                    ...property,
                 },
             }
+        }
+
+        track.forEach((event) => {
+            deltaAcc = deltaAcc + event.delta
+
+            addToTrackMetas({
+                nbTicks: deltaAcc,
+            })
 
             if (isTrackNameEvent(event)) {
                 const previousNames = trackMetas[index]?.names ? trackMetas[index].names : []
-                trackMetas = {
-                    ...trackMetas,
-                    [index]: {
-                        ...trackMetas[index],
-                        names: [...previousNames, event.trackName],
-                    },
-                }
+                addToTrackMetas({
+                    names: [...(previousNames as string[]), event.trackName],
+                })
             }
             if (isSetTempoEvent(event)) {
                 const { microsecondsPerQuarter } = event.setTempo
 
                 const previousMsPerBeat = trackMetas[index]?.msPerBeat ?? []
                 const currentMsPerBeatValue = microSPerBeatToMsPerBeat(microsecondsPerQuarter)
-                let timestamp = (deltaAcc / ticksPerBeat) * currentMsPerBeatValue
+                let newTimestamp = (deltaAcc / ticksPerBeat) * currentMsPerBeatValue
 
                 if (previousMsPerBeat.length) {
-                    const lastValue = Math.max(previousMsPerBeat.length - 1, 0)
-                    const previousValue = previousMsPerBeat[lastValue].value
-                    const previousDelta = previousMsPerBeat[lastValue].delta
-                    const previousTimestamp = previousMsPerBeat[lastValue].timestamp
-                    timestamp =
-                        ((deltaAcc - previousDelta) / ticksPerBeat) * previousValue +
-                        previousTimestamp
+                    const { value, delta, timestamp } =
+                        previousMsPerBeat[previousMsPerBeat.length - 1]
+                    newTimestamp = ((deltaAcc - delta) / ticksPerBeat) * value + timestamp
                 }
 
-                trackMetas = {
-                    ...trackMetas,
-                    [index]: {
-                        ...trackMetas[index],
-                        msPerBeat: [
-                            ...previousMsPerBeat,
-                            {
-                                value: currentMsPerBeatValue,
-                                timestamp,
-                                delta: deltaAcc,
-                            },
-                        ],
-                    },
-                }
+                addToTrackMetas({
+                    msPerBeat: [
+                        ...previousMsPerBeat,
+                        {
+                            value: currentMsPerBeatValue,
+                            timestamp: newTimestamp,
+                            delta: deltaAcc,
+                        },
+                    ],
+                })
             }
             if (isTimeSignatureEvent(event)) {
-                trackMetas = {
-                    ...trackMetas,
-                    [index]: {
-                        ...trackMetas[index],
-                        timeSignature: event.timeSignature,
-                    },
-                }
+                addToTrackMetas({
+                    timeSignature: event.timeSignature,
+                })
             }
             if (isKeySignatureEvent(event)) {
-                trackMetas = {
-                    ...trackMetas,
-                    [index]: {
-                        ...trackMetas[index],
-                        keySignature: event.keySignature,
-                    },
-                }
+                addToTrackMetas({
+                    keySignature: event.keySignature,
+                })
             }
             if (isProgramChangeEvent(event)) {
                 const { channel } = event

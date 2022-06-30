@@ -8,7 +8,7 @@ export type MsPerBeat = {
 
 export interface TrackMetas {
     [key: string]: {
-        names: string[]
+        names?: string[]
         nbTicks: number // ticks = delta
         /*
             Time signature is defined as follows:
@@ -24,11 +24,11 @@ export interface TrackMetas {
             numerator: number // Top number : Number of beats in a Bar
             thirtyseconds: number
         }
-        keySignature: {
+        keySignature?: {
             key: number
             scale: number
         }
-        msPerBeat: MsPerBeat[]
+        msPerBeat?: MsPerBeat[]
     }
 }
 
