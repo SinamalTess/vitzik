@@ -34,7 +34,7 @@ export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
             appear={isVisible}
             in={isVisible}
             timeout={animationDuration}
-            classNames="my-node"
+            classNames="midi-title"
         >
             <div className="midi-title midi-title--active">
                 <p className="midi-title__text" data-text={title}>

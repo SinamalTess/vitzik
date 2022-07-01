@@ -1,23 +1,6 @@
 @import '../../style/vars';
 @import './glitch';
 
-.my-node-enter,
-.my-node-appear {
-    opacity: 0;
-}
-.my-node-enter-active,
-.my-node-appear-active {
-    opacity: 1;
-    transition: opacity 500ms;
-}
-.my-node-exit {
-    opacity: 1;
-}
-.my-node-exit-active {
-    opacity: 0;
-    transition: opacity 500ms;
-}
-
 .midi-title {
     height: 100%;
     width: 100%;
@@ -28,11 +11,27 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    &-enter,
+    &-appear {
+        opacity: 0;
+    }
+    &-enter-active,
+    &-appear-active {
+        opacity: 1;
+        transition: opacity 500ms;
+    }
+    &-exit {
+        opacity: 1;
+    }
+    &-exit-active {
+        opacity: 0;
+        transition: opacity 500ms;
+    }
     &--active {
         .midi-title__text {
             position: relative;
             color: white;
-            letter-spacing: 0.5em;
+            letter-spacing: 0.15em;
             /* Animation provies a slight random skew. Check bottom of doc
                 for more information on how to random skew. */
             animation: glitch-skew 1s infinite linear alternate-reverse;

@@ -4,6 +4,8 @@ import { Icon } from '../Icon'
 import { CSSSpacingSize, CSSColor, IconName } from '../types'
 import clsx from 'clsx'
 
+type ButtonVariant = 'outlined' | 'filled' | 'link'
+
 interface ButtonProps {
     disabled?: boolean
     active?: boolean
@@ -11,7 +13,7 @@ interface ButtonProps {
     children?: ReactNode
     size?: CSSSpacingSize
     color?: CSSColor
-    outline?: boolean
+    variant?: ButtonVariant
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -21,7 +23,7 @@ export function Button({
     icon,
     children,
     size = 'md',
-    outline = false,
+    variant,
     onClick = () => {},
 }: ButtonProps) {
     const className = clsx(
@@ -29,7 +31,8 @@ export function Button({
         { [`btn--${size}`]: size },
         { [`pd-${size}`]: size },
         { 'btn--active': active },
-        { 'btn--outline': outline }
+        { 'btn--outline': variant === 'outlined' },
+        { 'btn--link': variant === 'link' }
     )
 
     return (
