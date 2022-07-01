@@ -1,0 +1,43 @@
+@mixin glitchCopy {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+// Does the same deal as before, but now only skews. Used for main text.
+@keyframes glitch-skew {
+    $steps: 10;
+    @for $i from 0 through $steps {
+        #{percentage($i*(1/$steps))} {
+            transform: skew((random(10) - 5) + deg);
+        }
+    }
+}
+
+/* Creates an animation with 20 steaps. For each step, it calculates
+        a percentage for the specific step. It then generates a random clip
+        box to be used for the random glitch effect. Also adds a very subtle
+        skew to change the 'thickness' of the glitch.*/
+@keyframes glitch-anim {
+    $steps: 20;
+    @for $i from 0 through $steps {
+        #{percentage($i*(1/$steps))} {
+            clip: rect(random(100) + px, 9999px, random(100) + px, 0);
+            transform: skew((random(100) / 100) + deg);
+        }
+    }
+}
+
+// Same deal, just duplicated for ultra randomness.
+@keyframes glitch-anim2 {
+    $steps: 20;
+    @for $i from 0 through $steps {
+        #{percentage($i*(1/$steps))} {
+            clip: rect(random(100) + px, 9999px, random(100) + px, 0);
+            transform: skew((random(100) / 100) + deg);
+        }
+    }
+}

@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Jura&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Jura', 'Lato', 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    input,
+    textarea,
+    button,
+    select {
+        font-family: 'Jura', 'Lato', 'Segoe UI', 'Roboto', sans-serif;
+    }
+}

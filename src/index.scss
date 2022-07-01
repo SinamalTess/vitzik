@@ -1,15 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
 @import 'style/icons';
 @import 'src/style/vars';
 @import 'src/style/mixins';
-
-body {
-    margin: 0;
-    font-family: 'Lato', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-        'Droid Sans', 'Helvetica Neue', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+@import 'src/style/fonts';
 
 .pd {
     @include addSpacingSizes(padding);

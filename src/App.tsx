@@ -18,6 +18,7 @@ import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiFileMetas } from './components/MidiFileMetas'
 import { MidiMessageManager } from './components/MidiMessageManager'
+import { MidiTitle } from './components/MidiTitle'
 
 //TODO: check accessibility
 
@@ -120,13 +121,12 @@ function App() {
                     onNotePlayed={setNotesPlayed}
                 />
             </div>
-            <div className="item">
+            <div className="item preview">
                 {midiMetas ? (
-                    <MidiFileMetas
-                        midiMetas={midiMetas}
-                        midiTitle={midiTitle}
-                        midiCurrentTime={midiCurrentTime}
-                    />
+                    <>
+                        <MidiFileMetas midiMetas={midiMetas} midiCurrentTime={midiCurrentTime} />
+                        <MidiTitle midiTitle={midiTitle} />
+                    </>
                 ) : null}
                 <Preview
                     appMode={appMode}

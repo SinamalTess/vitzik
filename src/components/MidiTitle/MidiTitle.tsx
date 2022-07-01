@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './MidiTitle.scss'
+import { CSSTransition } from 'react-transition-group'
 
 interface MidiTrackInfosPros {
     midiTitle: string
@@ -15,9 +16,31 @@ function normalizeTitle(title: string) {
 }
 
 export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
+    const [isVisible, setIsVisible] = useState<boolean>(false)
+    const title = normalizeTitle(midiTitle)
+    const animationDuration = 500
+
+    useEffect(() => {
+        setIsVisible(true)
+        const stopAnimation = setTimeout(() => setIsVisible(false), 1000)
+        return function cleanup() {
+            clearTimeout(stopAnimation)
+        }
+    }, [midiTitle])
+
     return (
-        <div className="track">
-            <p className="track__title">{normalizeTitle(midiTitle)}</p>
-        </div>
+        <CSSTransition
+            unmountOnExit
+            appear={isVisible}
+            in={isVisible}
+            timeout={animationDuration}
+            classNames="my-node"
+        >
+            <div className="midi-title midi-title--active">
+                <p className="midi-title__text" data-text={title}>
+                    {title}
+                </p>
+            </div>
+        </CSSTransition>
     )
 }
