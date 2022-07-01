@@ -2,7 +2,7 @@ import { RangeSlider } from '../generics/RangeSlider'
 import { SoundController } from '../SoundController'
 import { PlayButton } from '../PlayButton'
 import React, { useEffect, useState } from 'react'
-import { msToMinAndSec } from '../../utils'
+import { msToMinAndSec, normalizeTitle } from '../../utils'
 import { usePrevious } from '../../hooks'
 import workerInterval from '../../workers/workerInterval'
 import { AudioPlayerState } from '../../types'
@@ -11,6 +11,7 @@ import './AudioPlayer.scss'
 interface AudioPlayerProps {
     midiCurrentTime: number
     midiDuration: number
+    midiTitle?: string
     isMute: boolean
     isPlaying: boolean
     onToggleSound: (isSoundOn: boolean) => void
@@ -30,6 +31,7 @@ export function AudioPlayer({
     midiDuration,
     isMute,
     isPlaying,
+    midiTitle,
     onToggleSound,
     onChangeAudioPlayerState,
     onChangeMidiCurrentTime,
@@ -38,6 +40,7 @@ export function AudioPlayer({
     const currentTime = msToMinAndSec(midiCurrentTime)
     const totalTime = msToMinAndSec(midiDuration)
     const prevMidiCurrentTime = usePrevious(midiCurrentTime) ?? 0
+    const title = normalizeTitle(midiTitle ?? '')
 
     const [isSearching, setIsSearching] = useState<boolean>(false)
 
@@ -107,6 +110,7 @@ export function AudioPlayer({
 
     return (
         <div className="audio-player">
+            {title}
             {currentTime}
             <RangeSlider
                 value={midiCurrentTime}

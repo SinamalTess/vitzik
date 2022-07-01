@@ -92,6 +92,7 @@ function App() {
                         isPlaying={isPlaying}
                         midiCurrentTime={midiCurrentTime}
                         midiDuration={midiDuration}
+                        midiTitle={midiTitle}
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiCurrentTime={setMidiCurrentTime}
                         onPlay={setIsPlaying}
