@@ -44,7 +44,7 @@ class MidiVisualizerSection {
             notesCoordinates.forEach(({ x, y, w, h, channel }) => {
                 const yComputed = y - indexToDraw * canvasOffset
                 this.ctx.fillStyle = MIDI_CHANNEL_COLORS[channel]
-                drawRoundRect(this.ctx, x, yComputed, w, h, 5, true, false)
+                drawRoundRect(this.ctx, x, yComputed, w, h, 7, true, false)
             })
         }
     }

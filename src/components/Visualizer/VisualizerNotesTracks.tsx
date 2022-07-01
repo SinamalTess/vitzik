@@ -19,7 +19,7 @@ function drawLines(
     const { h, w } = containerDimensions
     ctx.canvas.height = h
     ctx.canvas.width = w
-    ctx.fillStyle = '#000'
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)'
 
     const widthWhiteKey = getWidthWhiteKey(w)
     const margin = widthWhiteKey / 4

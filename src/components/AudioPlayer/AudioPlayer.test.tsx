@@ -2,24 +2,7 @@ import { screen, render, fireEvent } from '@testing-library/react'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
 import userEvent from '@testing-library/user-event'
-
-const terminate = jest.fn()
-
-class Worker {
-    private url: string
-    onmessage: () => void
-    terminate: () => void
-
-    constructor(stringUrl: string) {
-        this.url = stringUrl
-        this.onmessage = () => {}
-        this.terminate = terminate
-    }
-
-    postMessage() {
-        this.onmessage()
-    }
-}
+import { Worker, terminate } from '../../tests/mocks/worker'
 
 const clickPlay = () => {
     const playButton = screen.getByText('Play')
@@ -32,10 +15,6 @@ const clickPause = () => {
 }
 
 describe('AudioPlayer', () => {
-    // @ts-ignore
-    window.Worker = Worker
-    window.URL.createObjectURL = jest.fn()
-
     const props = {
         midiCurrentTime: 0,
         midiDuration: 100,

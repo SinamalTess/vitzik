@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { InstrumentPlayer } from './InstrumentPlayer'
 import * as midiFile from '../../tests/midi1.json'
@@ -23,12 +23,7 @@ describe('InstrumentPlayer', () => {
         startingTime: 0,
     }
 
-    // @ts-ignore
-    window.AudioContext = class AudioContext {
-        close = () => new Promise(() => {})
-    }
-
-    it('should load the passed instrument', () => {
+    it('should load the passed instrument', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
 
         render(
@@ -42,14 +37,16 @@ describe('InstrumentPlayer', () => {
             ></InstrumentPlayer>
         )
 
-        expect(Soundfont.instrument).toHaveBeenCalledWith(
-            expect.anything(),
-            'acoustic_grand_piano',
-            expect.anything()
-        )
+        await waitFor(() => {
+            expect(Soundfont.instrument).toHaveBeenCalledWith(
+                expect.anything(),
+                'acoustic_grand_piano',
+                expect.anything()
+            )
+        })
     })
 
-    it('should load the passed soundfont', () => {
+    it('should load the passed soundfont', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
 
         render(
@@ -64,8 +61,14 @@ describe('InstrumentPlayer', () => {
             ></InstrumentPlayer>
         )
 
-        expect(Soundfont.instrument).toHaveBeenCalledWith(expect.anything(), expect.anything(), {
-            soundfont: 'FatBoy',
+        await waitFor(() => {
+            expect(Soundfont.instrument).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.anything(),
+                {
+                    soundfont: 'FatBoy',
+                }
+            )
         })
     })
 })

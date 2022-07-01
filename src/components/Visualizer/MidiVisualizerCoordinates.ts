@@ -90,8 +90,6 @@ class MidiVisualizerPositions extends MidiTimeInfos {
 
     getSectionNames = (): SectionName[] => ['firstSection', 'secondSection']
 
-    yPositionToTime = (y: number) => (y / this.heightPerBeat) * this.msPerBeat
-
     getIndexSectionPlaying = (midiCurrentTime: number) =>
         Math.floor(midiCurrentTime / this.msPerSection)
 
@@ -224,6 +222,27 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         }
     }
 
+    addNoteToSection(
+        note: MidiVisualizerNoteCoordinates,
+        notesCoordinatesInTrack: {
+            [sectionIndex: number]: MidiVisualizerNoteCoordinates[]
+        }[]
+    ) {
+        const startingSection = Math.floor(note.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
+        const endingSection = Math.floor((note.startingTime + note.duration) / this.msPerSection)
+
+        for (let i = startingSection; i <= endingSection; i++) {
+            const indexSection = notesCoordinatesInTrack.findIndex((section) => section[i])
+            if (indexSection >= 0) {
+                notesCoordinatesInTrack[indexSection] = {
+                    [i]: [...notesCoordinatesInTrack[indexSection][i], note],
+                }
+            } else {
+                notesCoordinatesInTrack.push({ [i]: [note] })
+            }
+        }
+    }
+
     getNotesCoordinates(midiFile: IMidiFile) {
         const { tracks } = midiFile
 
@@ -270,24 +289,8 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
                         const note = { ...notesBeingProcessed[correspondingNoteOnIndex] }
                         note.duration = this.deltaToTime(deltaAcc) - note.startingTime
                         note.h = this.ratioSection * note.duration
-                        const startingSection = Math.floor(note.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
-                        const endingSection = Math.floor(
-                            (note.startingTime + note.duration) / this.msPerSection
-                        )
+                        this.addNoteToSection(note, notesCoordinatesInTrack)
                         notesBeingProcessed.splice(correspondingNoteOnIndex, 1)
-
-                        for (let i = startingSection; i <= endingSection; i++) {
-                            const indexSection = notesCoordinatesInTrack.findIndex(
-                                (section) => section[i]
-                            )
-                            if (indexSection >= 0) {
-                                notesCoordinatesInTrack[indexSection] = {
-                                    [i]: [...notesCoordinatesInTrack[indexSection][i], note],
-                                }
-                            } else {
-                                notesCoordinatesInTrack.push({ [i]: [note] })
-                            }
-                        }
                     }
                 }
             })

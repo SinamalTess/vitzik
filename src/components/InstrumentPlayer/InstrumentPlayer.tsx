@@ -106,7 +106,7 @@ export function InstrumentPlayer({
         const ac = startInstrument()
 
         return function cleanup() {
-            ac.close().then(() => setInstrumentPlayer(null))
+            ac.close()
         }
     }, [instrument, isMute, soundfont])
 
