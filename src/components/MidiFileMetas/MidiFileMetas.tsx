@@ -24,7 +24,7 @@ export function MidiFileMetas({ midiMetas, midiCurrentTime }: MidiInfosProps) {
             <span>Ticks per beat : {ticksPerBeat}</span>
             <span>Format : {format}</span>
             <span>Ms per beat : {msPerBeat}</span>
-            <span>BPM : {msPerBeatToBeatPerMin(msPerBeat)}</span>
+            <span>BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
             <List>
                 {initialInstruments.map(({ channel, name }) => (
                     <ListItem
