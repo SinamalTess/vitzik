@@ -102,6 +102,7 @@ function App() {
                 <Settings
                     appMode={appMode}
                     midiMode={midiMode}
+                    isMidiImported={isMidiImported}
                     musicSystem={musicSystem}
                     playableTracks={playableTracks}
                     activeTracks={activeTracks}

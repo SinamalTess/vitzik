@@ -29,4 +29,9 @@
             content: 'd';
         }
     }
+    &-settings {
+        &::before {
+            content: 'e';
+        }
+    }
 }

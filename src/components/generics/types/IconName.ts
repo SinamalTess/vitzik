@@ -1,1 +1,1 @@
-export type IconName = 'volume' | 'frequency' | 'infos' | 'midi'
+export type IconName = 'volume' | 'frequency' | 'infos' | 'midi' | 'settings'

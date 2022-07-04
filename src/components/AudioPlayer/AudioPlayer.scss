@@ -1,5 +1,16 @@
+@use 'sass:map';
+@import './src/style/vars';
+
 .audio-player {
-    display: inline;
+    display: flex;
+    align-items: center;
+    .title {
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: map-get($theme-spacing-sizes, 'md');
+    }
     input {
         width: 500px;
     }

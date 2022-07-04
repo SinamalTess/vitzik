@@ -1,5 +1,5 @@
 import { RangeSlider } from '../generics/RangeSlider'
-import { SoundController } from '../SoundController'
+import { SoundButton } from '../SoundButton'
 import { PlayButton } from '../PlayButton'
 import React, { useEffect, useState } from 'react'
 import { msToMinAndSec, normalizeTitle } from '../../utils'
@@ -110,7 +110,7 @@ export function AudioPlayer({
 
     return (
         <div className="audio-player">
-            {title}
+            <span className={'title'}>{title}</span>
             {currentTime}
             <RangeSlider
                 value={midiCurrentTime}
@@ -120,7 +120,7 @@ export function AudioPlayer({
                 onMouseUp={handleMouseUp}
             />
             {totalTime}
-            <SoundController isMute={isMute} onToggleSound={onToggleSound} />
+            <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
             <PlayButton onClick={handleClick} isPlaying={isPlaying} />
         </div>
     )

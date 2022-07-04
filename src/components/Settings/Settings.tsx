@@ -1,5 +1,4 @@
-import React from 'react'
-import { MusicSystemSelector } from '../MusicSystemSelector'
+import React, { useState } from 'react'
 import './Settings.scss'
 import {
     Instrument,
@@ -10,10 +9,10 @@ import {
     ActiveNote,
 } from '../../types'
 import { ModeSelector } from '../ModeSelector'
-import { InstrumentSelector } from '../InstrumentSelector'
-import { MidiTrackSelector } from '../MidiTrackSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
+import { Switch } from '../generics/Switch'
 import { Button } from '../generics/Button'
+import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
 
 interface SettingsProps {
     appMode: AppMode
@@ -21,6 +20,7 @@ interface SettingsProps {
     musicSystem: MusicSystem
     playableTracks: number[]
     activeTracks: number[]
+    isMidiImported: boolean
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -43,6 +43,7 @@ export const Settings = React.memo(function Settings({
     musicSystem,
     playableTracks,
     activeTracks,
+    isMidiImported,
     onChangeMusicSystem,
     onChangeAppMode,
     onChangeInstrument,
@@ -50,7 +51,9 @@ export const Settings = React.memo(function Settings({
     onMidiInputChange,
     onMidiModeChange,
 }: SettingsProps) {
-    function handleClick() {
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+
+    function handleChange() {
         onMidiModeChange((midiMode) => {
             switch (midiMode) {
                 case 'autoplay':
@@ -61,20 +64,34 @@ export const Settings = React.memo(function Settings({
         })
     }
 
+    function handleClick() {
+        setIsOpen((isOpen) => !isOpen)
+    }
+
+    function handleClose() {
+        setIsOpen(false)
+    }
+
     return (
         <div className="settings">
-            {playableTracks.length > 1 ? (
-                <MidiTrackSelector
-                    activeTracks={activeTracks}
-                    playableTracks={playableTracks}
-                    onChangeActiveTracks={onChangeActiveTracks}
-                />
+            {isMidiImported ? (
+                <Switch isOn={midiMode === 'autoplay'} onChange={handleChange}>
+                    Autoplay
+                </Switch>
             ) : null}
-            <Button onClick={handleClick}>{midiMode}</Button>
-            <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
+            <Button icon={'settings'} onClick={handleClick} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
-            <InstrumentSelector onChange={onChangeInstrument} />
             <MidiInputSelector onMidiInputChange={onMidiInputChange} />
+            <ExtraSettingsPanel
+                musicSystem={musicSystem}
+                activeTracks={activeTracks}
+                isOpen={isOpen}
+                playableTracks={playableTracks}
+                onClose={handleClose}
+                onChangeMusicSystem={onChangeMusicSystem}
+                onChangeActiveTracks={onChangeActiveTracks}
+                onChangeInstrument={onChangeInstrument}
+            />
         </div>
     )
 })

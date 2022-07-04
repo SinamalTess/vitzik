@@ -14,6 +14,7 @@ interface ButtonProps {
     size?: CSSSpacingSize
     color?: CSSColor
     variant?: ButtonVariant
+    className?: string[] | string
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -24,9 +25,11 @@ export function Button({
     children,
     size = 'md',
     variant,
+    className,
     onClick = () => {},
 }: ButtonProps) {
-    const className = clsx(
+    const classNames = clsx(
+        className,
         'btn',
         { [`btn--${size}`]: size },
         { [`pd-${size}`]: size },
@@ -36,7 +39,7 @@ export function Button({
     )
 
     return (
-        <button disabled={disabled} className={className} onClick={onClick}>
+        <button disabled={disabled} className={classNames} onClick={onClick}>
             {icon ? <Icon name={icon} size={size} /> : null}
             {children}
         </button>
