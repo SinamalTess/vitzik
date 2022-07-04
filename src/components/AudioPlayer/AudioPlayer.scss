@@ -8,6 +8,7 @@
         max-width: 150px;
         white-space: nowrap;
         overflow: hidden;
+        font-weight: 700;
         text-overflow: ellipsis;
         padding: map-get($theme-spacing-sizes, 'md');
     }
