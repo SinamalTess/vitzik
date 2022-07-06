@@ -11,6 +11,7 @@ import {
 import { Icon } from '../generics/Icon'
 import { Instrument, TrackMetas } from '../../types'
 import { IconName } from '../generics/types'
+import { Divider } from '../generics/Divider'
 
 interface MidiTrackListProps {
     playableTracks: TrackMetas[]
@@ -96,8 +97,9 @@ export function MidiTrackList({
                                       onClick={() => handleChange(index)}
                                   />
                               </ListItemSecondaryAction>
+                              <Divider orientation="vertical" />
+                              <span>{names?.join('')}</span>
                               <List type="transparent">
-                                  <span>{names?.join('')}</span>
                                   {channels.map((channel) => {
                                       const intrument = getInstrument(channel, initialInstruments)
                                       if (intrument) {
