@@ -21,6 +21,7 @@ interface SettingsProps {
     playableTracks: number[]
     activeTracks: number[]
     isMidiImported: boolean
+    initialInstruments: Instrument[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -44,6 +45,7 @@ export const Settings = React.memo(function Settings({
     playableTracks,
     activeTracks,
     isMidiImported,
+    initialInstruments,
     onChangeMusicSystem,
     onChangeAppMode,
     onChangeInstrument,
@@ -87,6 +89,7 @@ export const Settings = React.memo(function Settings({
                 activeTracks={activeTracks}
                 isOpen={isOpen}
                 playableTracks={playableTracks}
+                initialInstruments={initialInstruments}
                 onClose={handleClose}
                 onChangeMusicSystem={onChangeMusicSystem}
                 onChangeActiveTracks={onChangeActiveTracks}

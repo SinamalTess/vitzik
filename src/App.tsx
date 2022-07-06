@@ -100,6 +100,7 @@ function App() {
                     />
                 ) : null}
                 <Settings
+                    initialInstruments={instruments}
                     appMode={appMode}
                     midiMode={midiMode}
                     isMidiImported={isMidiImported}

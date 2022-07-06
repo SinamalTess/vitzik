@@ -1,0 +1,654 @@
+@font-face {
+    font-family: 'Midi Instruments';
+    src: url('fonts/instruments.woff') format('woff');
+}
+
+// Maps the icons to characters in the font
+.icon {
+    &-instrument {
+        &::before {
+            font-family: 'Midi Instruments', serif;
+            text-transform: none;
+        }
+        &-acoustic-grand-piano {
+            &::before {
+                content: '2';
+            }
+        }
+        &-bright-acoustic-piano {
+            &::before {
+                content: '@';
+            }
+        }
+        &-electric-grand-piano {
+            &::before {
+                content: 'M';
+            }
+        }
+        &-honkytonk-piano {
+            &::before {
+                content: 'g';
+            }
+        }
+        &-electric-piano-1 {
+            &::before {
+                content: 'R';
+            }
+        }
+        &-electric-piano-2 {
+            &::before {
+                content: 'Q';
+            }
+        }
+        &-harpsichord {
+            &::before {
+                content: 'e';
+            }
+        }
+        &-clavinet {
+            &::before {
+                content: 'F';
+            }
+        }
+        &-celesta {
+            &::before {
+                content: 'A';
+            }
+        }
+        &-glockenspiel {
+            &::before {
+                content: '`';
+            }
+        }
+        &-music-box {
+            &::before {
+                content: 't';
+            }
+        }
+        &-vibraphone {
+            &::before {
+                content: '©';
+            }
+        }
+        &-marimba {
+            &::before {
+                content: 'r';
+            }
+        }
+        &-xylophone {
+            &::before {
+                content: '¯';
+            }
+        }
+        &-tubular-bells {
+            &::before {
+                content: '¨';
+            }
+        }
+        &-dulcimer {
+            &::before {
+                content: 'J';
+            }
+        }
+        &-drawbar-organ {
+            &::before {
+                content: 'I';
+            }
+        }
+        &-percussive-organ {
+            &::before {
+                content: '\0084';
+            }
+        }
+        &-rock-organ {
+            &::before {
+                content: '\008a';
+            }
+        }
+        &-church-organ {
+            &::before {
+                content: 'D';
+            }
+        }
+        &-reed-organ {
+            &::before {
+                content: '\0088';
+            }
+        }
+        &-accordion {
+            &::before {
+                content: '0';
+            }
+        }
+        &-harmonica {
+            &::before {
+                content: 'd';
+            }
+        }
+        &-tango-accordion {
+            &::before {
+                content: '\009f';
+            }
+        }
+        &-acoustic-guitar-nylon {
+            &::before {
+                content: '3';
+            }
+        }
+        &-acoustic-guitar-steel {
+            &::before {
+                content: '4';
+            }
+        }
+        &-electric-guitar-jazz {
+            &::before {
+                content: 'O';
+            }
+        }
+        &-electric-guitar-clean {
+            &::before {
+                content: 'N';
+            }
+        }
+        &-electric-guitar-muted {
+            &::before {
+                content: 'P';
+            }
+        }
+        &-overdriven-guitar {
+            &::before {
+                content: 'z';
+            }
+        }
+        &-distortion-guitar {
+            &::before {
+                content: 'H';
+            }
+        }
+        &-guitar-harmonics {
+            &::before {
+                content: 'b';
+            }
+        }
+        &-acoustic-bass {
+            &::before {
+                content: '1';
+            }
+        }
+        &-electric-bass-finger {
+            &::before {
+                content: 'K';
+            }
+        }
+        &-electric-bass-pick {
+            &::before {
+                content: 'L';
+            }
+        }
+        &-fretless-bass {
+            &::before {
+                content: 'W';
+            }
+        }
+        &-slap-bass-1 {
+            &::before {
+                content: '\0090';
+            }
+        }
+        &-slap-bass-2 {
+            &::before {
+                content: '\0091';
+            }
+        }
+        &-synth-bass-1 {
+            &::before {
+                content: '\0096';
+            }
+        }
+        &-synth-bass-2 {
+            &::before {
+                content: '\0097';
+            }
+        }
+        &-violin {
+            &::before {
+                content: '«';
+            }
+        }
+        &-viola {
+            &::before {
+                content: 'ª';
+            }
+        }
+        &-cello {
+            &::before {
+                content: 'B';
+            }
+        }
+        &-contrabass {
+            &::before {
+                content: 'G';
+            }
+        }
+        &-tremolo-strings {
+            &::before {
+                content: '¤';
+            }
+        }
+        &-pizzicato-strings {
+            &::before {
+                content: '\0086';
+            }
+        }
+        &-orchestral-harp {
+            &::before {
+                content: 'y';
+            }
+        }
+        &-timpani {
+            &::before {
+                content: '¢';
+            }
+        }
+        &-string-ensemble-1 {
+            &::before {
+                content: '\0094';
+            }
+        }
+        &-string-ensemble-2 {
+            &::before {
+                content: '\0095';
+            }
+        }
+        &-synth-strings-1 {
+            &::before {
+                content: '\009c';
+            }
+        }
+        &-synth-strings-2 {
+            &::before {
+                content: '\009d';
+            }
+        }
+        &-choir-aahs {
+            &::before {
+                content: 'C';
+            }
+        }
+        &-voice-oohs {
+            &::before {
+                content: '¬';
+            }
+        }
+        &-synth-choir {
+            &::before {
+                content: '\0099';
+            }
+        }
+        &-orchestra-hit {
+            &::before {
+                content: 'x';
+            }
+        }
+        &-trumpet {
+            &::before {
+                content: 'a';
+            }
+        }
+        &-trombone {
+            &::before {
+                content: '¥';
+            }
+        }
+        &-tuba {
+            &::before {
+                content: '§';
+            }
+        }
+        &-muted_trumpet {
+            &::before {
+                content: '¦';
+            }
+        }
+        &-french_horn {
+            &::before {
+                content: 'V';
+            }
+        }
+        &-brass_section {
+            &::before {
+                content: '>';
+            }
+        }
+        &-synth-brass-1 {
+            &::before {
+                content: '\009b';
+            }
+        }
+        &-synth-brass-2 {
+            &::before {
+                content: '\009a';
+            }
+        }
+        &-soprano-sax {
+            &::before {
+                content: '\0092';
+            }
+        }
+        &-alto-sax {
+            &::before {
+                content: '6';
+            }
+        }
+        &-tenor-sax {
+            &::before {
+                content: '¡';
+            }
+        }
+        &-baritone-sax {
+            &::before {
+                content: ':';
+            }
+        }
+        &-oboe {
+            &::before {
+                content: 'v';
+            }
+        }
+        &-english-horn {
+            &::before {
+                content: 'S';
+            }
+        }
+        &-bassoon {
+            &::before {
+                content: ';';
+            }
+        }
+        &-clarinet {
+            &::before {
+                content: 'E';
+            }
+        }
+        &-piccolo {
+            &::before {
+                content: '\0085';
+            }
+        }
+        &-flute {
+            &::before {
+                content: 'U';
+            }
+        }
+        &-recorder {
+            &::before {
+                content: '\0087';
+            }
+        }
+        &-pan-flute {
+            &::before {
+                content: '\0083';
+            }
+        }
+        &-blown-bottle {
+            &::before {
+                content: '=';
+            }
+        }
+        &-shakuhachi {
+            &::before {
+                content: '\008c';
+            }
+        }
+        &-whistle {
+            &::before {
+                content: '\00ad';
+            }
+        }
+        &-ocarina {
+            &::before {
+                content: 'w';
+            }
+        }
+        &-lead-1-square {
+            &::before {
+                content: 'j';
+            }
+        }
+        &-lead-2-sawtooth {
+            &::before {
+                content: 'k';
+            }
+        }
+        &-lead-3-calliope {
+            &::before {
+                content: 'l';
+            }
+        }
+        &-lead-4-chiff {
+            &::before {
+                content: 'm';
+            }
+        }
+        &-lead-5-charang {
+            &::before {
+                content: 'n';
+            }
+        }
+        &-lead-6-voice {
+            &::before {
+                content: 'o';
+            }
+        }
+        &-lead-7-fifths {
+            &::before {
+                content: 'p';
+            }
+        }
+        &-lead-8-bass--lead {
+            &::before {
+                content: 'q';
+            }
+        }
+        &-pad-1-new-age {
+            &::before {
+                content: '{';
+            }
+        }
+        &-pad-2-warm {
+            &::before {
+                content: '|';
+            }
+        }
+        &-pad-3-polysynth {
+            &::before {
+                content: '}';
+            }
+        }
+        &-pad-4-choir {
+            &::before {
+                content: '~';
+            }
+        }
+        &-pad-5-bowed {
+            &::before {
+                content: '\007f';
+            }
+        }
+        &-pad-6-metallic {
+            &::before {
+                content: '\0080';
+            }
+        }
+        &-pad-7-halo {
+            &::before {
+                content: '\0081';
+            }
+        }
+        &-pad-8-sweep {
+            &::before {
+                content: '\0082';
+            }
+        }
+        &-fx-1-rain {
+            &::before {
+                content: 'X';
+            }
+        }
+        &-fx-2-soundtrack {
+            &::before {
+                content: 'Y';
+            }
+        }
+        &-fx-3-crystal {
+            &::before {
+                content: 'Z';
+            }
+        }
+        &-fx-4-atmosphere {
+            &::before {
+                content: '[';
+            }
+        }
+        &-fx-5-brightness {
+            &::before {
+                content: 'a'; // to fix
+            }
+        }
+        &-fx-6-goblins {
+            &::before {
+                content: ']';
+            }
+        }
+        &-fx-7-echoes {
+            &::before {
+                content: '^';
+            }
+        }
+        &-fx-8-scifi {
+            &::before {
+                content: '_';
+            }
+        }
+        &-sitar {
+            &::before {
+                content: '\008f';
+            }
+        }
+        &-banjo {
+            &::before {
+                content: '9';
+            }
+        }
+        &-shamisen {
+            &::before {
+                content: '\008d';
+            }
+        }
+        &-koto {
+            &::before {
+                content: 'i';
+            }
+        }
+        &-kalimba {
+            &::before {
+                content: 'h';
+            }
+        }
+        &-bagpipe {
+            &::before {
+                content: '8';
+            }
+        }
+        &-fiddle {
+            &::before {
+                content: 'T';
+            }
+        }
+        &-shanai {
+            &::before {
+                content: '\008e';
+            }
+        }
+        &-tinkle-bell {
+            &::before {
+                content: '£';
+            }
+        }
+        &-agogo {
+            &::before {
+                content: '5';
+            }
+        }
+        &-steel-drums {
+            &::before {
+                content: '\0093';
+            }
+        }
+        &-woodblock {
+            &::before {
+                content: '®';
+            }
+        }
+        &-taiko-drum {
+            &::before {
+                content: '\009e';
+            }
+        }
+        &-melodic-tom {
+            &::before {
+                content: 's';
+            }
+        }
+        &-synth-drum {
+            &::before {
+                content: '\0098';
+            }
+        }
+        &-reverse-cymbal {
+            &::before {
+                content: '\0089';
+            }
+        }
+        &-guitar-fret-noise {
+            &::before {
+                content: 'a';
+            }
+        }
+        &-breath-noise {
+            &::before {
+                content: '?';
+            }
+        }
+        &-seashore {
+            &::before {
+                content: '\008b';
+            }
+        }
+        &-bird-tweet {
+            &::before {
+                content: '<';
+            }
+        }
+        &-telephone-ring {
+            &::before {
+                content: '\00a0';
+            }
+        }
+        &-helicopter {
+            &::before {
+                content: 'f';
+            }
+        }
+        &-applause {
+            &::before {
+                content: '7';
+            }
+        }
+        &-gunshot {
+            &::before {
+                content: 'c';
+            }
+        }
+    }
+}

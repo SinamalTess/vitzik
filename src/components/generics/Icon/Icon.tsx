@@ -13,6 +13,7 @@ export function Icon({ name, children, size = 'md' }: IconProps) {
     const className = clsx(
         'icon',
         { [`icon-${name}`]: name },
+        { [`icon-instrument`]: name.startsWith('instrument') },
         { [`icon-${size}`]: typeof size === 'string' }
     )
 
