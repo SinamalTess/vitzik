@@ -38,8 +38,8 @@ export function ExtraSettingsPanel({
                         <h4>Main Instrument</h4>
                         <InstrumentSelector onChange={onChangeInstrument} />
                         <h4>File infos</h4>
-                        <span>Ticks per beat : {midiMetas.ticksPerBeat}</span>
-                        <span>Format : {midiMetas.format}</span>
+                        <div>Ticks per beat : {midiMetas.ticksPerBeat}</div>
+                        <div>Format : {midiMetas.format}</div>
                         <h4>Music System</h4>
                         <MusicSystemSelector
                             onChange={onChangeMusicSystem}

@@ -4,7 +4,7 @@
 .tooltip {
     display: none;
     background-color: map-get($theme-colors-variants, 'dark-secondary');
-    z-index: 10;
+    z-index: 4;
 
     [data-popper-placement^='top'] > &__arrow {
         bottom: -4px;
