@@ -2,16 +2,17 @@ import { RangeSlider } from '../generics/RangeSlider'
 import { SoundButton } from '../SoundButton'
 import { PlayButton } from '../PlayButton'
 import React, { useEffect, useState } from 'react'
-import { msToMinAndSec, normalizeTitle } from '../../utils'
+import { msPerBeatToBeatPerMin, msToMinAndSec, normalizeTitle } from '../../utils'
 import { usePrevious } from '../../hooks'
 import workerInterval from '../../workers/workerInterval'
-import { AudioPlayerState } from '../../types'
+import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
+import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
-    midiDuration: number
     midiTitle?: string
+    midiMetas: MidiMetas
     isMute: boolean
     isPlaying: boolean
     onToggleSound: (isSoundOn: boolean) => void
@@ -28,19 +29,24 @@ function WebWorker(worker: any): Worker {
 
 export function AudioPlayer({
     midiCurrentTime,
-    midiDuration,
     isMute,
     isPlaying,
     midiTitle,
+    midiMetas,
     onToggleSound,
     onChangeAudioPlayerState,
     onChangeMidiCurrentTime,
     onPlay,
 }: AudioPlayerProps) {
+    const { midiDuration, allMsPerBeat } = midiMetas
     const currentTime = msToMinAndSec(midiCurrentTime)
     const totalTime = msToMinAndSec(midiDuration)
     const prevMidiCurrentTime = usePrevious(midiCurrentTime) ?? 0
     const title = normalizeTitle(midiTitle ?? '')
+    const msPerBeat = MidiVisualizerCoordinates.getMsPerBeatFromTime(
+        allMsPerBeat,
+        midiCurrentTime
+    ).value
 
     const [isSearching, setIsSearching] = useState<boolean>(false)
 
@@ -122,6 +128,7 @@ export function AudioPlayer({
             {totalTime}
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
             <PlayButton onClick={handleClick} isPlaying={isPlaying} />
+            <span className={'bpm'}>BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
         </div>
     )
 }

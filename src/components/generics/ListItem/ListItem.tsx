@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react'
+import './ListItem.scss'
 
 interface ListItemProps {
     children: ReactNode

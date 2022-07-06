@@ -15,9 +15,17 @@ const clickPause = () => {
 }
 
 describe('AudioPlayer', () => {
+    const midiMetas = {
+        ticksPerBeat: 0,
+        midiDuration: 100,
+        initialInstruments: [],
+        format: 1,
+        tracksMetas: [],
+        allMsPerBeat: [],
+    }
     const props = {
         midiCurrentTime: 0,
-        midiDuration: 100,
+        midiMetas,
         isMute: true,
         isPlaying: false,
         onToggleSound: () => {},

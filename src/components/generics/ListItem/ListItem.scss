@@ -1,0 +1,8 @@
+@use 'sass:map';
+@import 'src/style/vars';
+
+li {
+    align-items: center;
+    display: flex;
+    padding: map-get($theme-spacing-sizes, 'sm');
+}

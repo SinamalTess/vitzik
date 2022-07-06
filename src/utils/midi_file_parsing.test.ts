@@ -28,10 +28,10 @@ describe('getMidiMetas()', () => {
             format: 1,
             initialInstruments: [{ index: 1, name: 'Bright Acoustic Keyboard', channel: 0 }],
             midiDuration: 153042.091796875,
-            playableTracks: [1],
             ticksPerBeat: 1024,
-            trackMetas: {
-                '0': {
+            tracksMetas: [
+                {
+                    index: 0,
                     keySignature: {
                         key: 1,
                         scale: 0,
@@ -55,12 +55,17 @@ describe('getMidiMetas()', () => {
                         numerator: 4,
                         thirtyseconds: 8,
                     },
+                    isPlayable: false,
+                    channels: [],
                 },
-                '1': {
+                {
+                    index: 1,
                     names: ['Piano'],
                     nbTicks: 208895,
+                    isPlayable: false,
+                    channels: [],
                 },
-            },
+            ],
         }
 
         expect(getMidiMetas(midiJson)).toStrictEqual(expectedResult)

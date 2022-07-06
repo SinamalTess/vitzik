@@ -3,12 +3,12 @@
 #root {
     height: 100vh;
     width: 100vw;
+    font-size: map-get($theme-font-sizes, 'md');
+    color: map-get($theme-colors-variants, 'text');
 }
 
 .container {
     background-color: #282c34;
-    font-size: map-get($theme-font-sizes, 'md');
-    color: white;
     display: grid;
     height: 100vh;
     width: 100vw;

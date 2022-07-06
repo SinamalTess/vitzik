@@ -1,1 +1,0 @@
-export { MidiFileMetas } from './MidiFileMetas'

@@ -16,7 +16,6 @@ import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
-import { MidiFileMetas } from './components/MidiFileMetas'
 import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
 
@@ -48,19 +47,23 @@ function App() {
 
     const midiDuration = midiMetas?.midiDuration ?? 0
     const isMidiImported = midiFile !== null
-    const playableTracks = midiMetas?.playableTracks ?? []
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         const metas = getMidiMetas(midiJSON)
+
+        const playableTracks = Array.isArray(metas.tracksMetas)
+            ? metas.tracksMetas.filter((track) => track.isPlayable)
+            : []
 
         setMidiTitle(title)
         setMidiFile(midiJSON)
         setMidiMetas(metas)
         setMidiCurrentTime(0)
         setInstruments([userInstrument, ...metas.initialInstruments])
-        setActiveTracks([...metas.playableTracks])
+        setActiveTracks(playableTracks.map(({ index }) => index))
 
         console.log(midiJSON)
+        console.log(metas)
     }
 
     const handleAllMidiKeysPlayed = useCallback(
@@ -86,13 +89,13 @@ function App() {
     return (
         <div className="container">
             <div className="item topbar">
-                {isMidiImported ? (
+                {midiMetas ? (
                     <AudioPlayer
                         isMute={isMute}
                         isPlaying={isPlaying}
                         midiCurrentTime={midiCurrentTime}
-                        midiDuration={midiDuration}
                         midiTitle={midiTitle}
+                        midiMetas={midiMetas}
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiCurrentTime={setMidiCurrentTime}
                         onPlay={setIsPlaying}
@@ -102,10 +105,10 @@ function App() {
                 <Settings
                     initialInstruments={instruments}
                     appMode={appMode}
+                    midiMetas={midiMetas}
                     midiMode={midiMode}
                     isMidiImported={isMidiImported}
                     musicSystem={musicSystem}
-                    playableTracks={playableTracks}
                     activeTracks={activeTracks}
                     onMidiInputChange={setMidiInput}
                     onChangeAppMode={setAppMode}
@@ -127,7 +130,6 @@ function App() {
             <div className="item preview">
                 {midiMetas ? (
                     <>
-                        <MidiFileMetas midiMetas={midiMetas} midiCurrentTime={midiCurrentTime} />
                         <MidiTitle midiTitle={midiTitle} />
                     </>
                 ) : null}

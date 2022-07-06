@@ -1,5 +1,16 @@
-ul {
+@use 'sass:map';
+@import '../../../style/vars';
+
+.list {
     list-style: none;
     margin: 0;
     padding: 0;
+    &--background {
+        > li:nth-child(odd) {
+            background-color: map-get($theme-colors-variants, 'dark-secondary');
+        }
+        > li:nth-child(even) {
+            background-color: map-get($theme-colors, 'secondary');
+        }
+    }
 }

@@ -7,6 +7,7 @@ import {
     MidiMode,
     AppMode,
     ActiveNote,
+    MidiMetas,
 } from '../../types'
 import { ModeSelector } from '../ModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
@@ -17,8 +18,8 @@ import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
 interface SettingsProps {
     appMode: AppMode
     midiMode: MidiMode
+    midiMetas: MidiMetas | null
     musicSystem: MusicSystem
-    playableTracks: number[]
     activeTracks: number[]
     isMidiImported: boolean
     initialInstruments: Instrument[]
@@ -41,8 +42,8 @@ interface SettingsProps {
 export const Settings = React.memo(function Settings({
     appMode,
     midiMode,
+    midiMetas,
     musicSystem,
-    playableTracks,
     activeTracks,
     isMidiImported,
     initialInstruments,
@@ -85,10 +86,10 @@ export const Settings = React.memo(function Settings({
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector onMidiInputChange={onMidiInputChange} />
             <ExtraSettingsPanel
+                midiMetas={midiMetas}
                 musicSystem={musicSystem}
                 activeTracks={activeTracks}
                 isOpen={isOpen}
-                playableTracks={playableTracks}
                 initialInstruments={initialInstruments}
                 onClose={handleClose}
                 onChangeMusicSystem={onChangeMusicSystem}

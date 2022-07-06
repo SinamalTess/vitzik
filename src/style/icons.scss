@@ -34,4 +34,19 @@
             content: 'e';
         }
     }
+    &-eye-open {
+        &::before {
+            content: 'h';
+        }
+    }
+    &-eye-half-closed {
+        &::before {
+            content: 'g';
+        }
+    }
+    &-eye-closed {
+        &::before {
+            content: 'f';
+        }
+    }
 }

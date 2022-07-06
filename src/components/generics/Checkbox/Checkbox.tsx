@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import React from 'react'
+import './Checkbox.scss'
 
 interface CheckboxProps {
     children?: ReactNode

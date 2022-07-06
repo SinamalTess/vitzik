@@ -1,26 +1,18 @@
 import { SideBar } from '../generics/SideBar'
 import { MusicSystemSelector } from '../MusicSystemSelector'
-import { MidiTrackSelector } from '../MidiTrackSelector'
 import { InstrumentSelector } from '../InstrumentSelector'
 import React from 'react'
-import { Instrument, MusicSystem } from '../../types'
-import { List } from '../generics/List'
-import {
-    MIDI_CHANNEL_COLORS,
-    MIDI_INSTRUMENTS,
-    MIDI_INSTRUMENTS_FLUIDR3_GM,
-} from '../../utils/const'
-import { ListItem } from '../generics/ListItem'
-import { Icon } from '../generics/Icon'
-import { IconName } from '../generics/types'
+import { Instrument, MidiMetas, MusicSystem } from '../../types'
+import './ExtraSettingsPanel.scss'
+import { MidiTrackList } from '../MidiTrackList'
 
 interface ExtraSettingsPanelProps {
     isOpen: boolean
     musicSystem: MusicSystem
-    onClose: () => void
-    playableTracks: number[]
+    midiMetas: MidiMetas | null
     activeTracks: number[]
     initialInstruments: Instrument[]
+    onClose: () => void
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -28,49 +20,42 @@ interface ExtraSettingsPanelProps {
 
 export function ExtraSettingsPanel({
     isOpen,
-    onClose,
     musicSystem,
-    playableTracks,
+    midiMetas,
     activeTracks,
     initialInstruments,
+    onClose,
     onChangeMusicSystem,
     onChangeActiveTracks,
     onChangeInstrument,
 }: ExtraSettingsPanelProps) {
+    const playableTracks = midiMetas?.tracksMetas.filter((track) => track.isPlayable) ?? []
     return (
         <SideBar open={isOpen} onClose={onClose}>
-            <MusicSystemSelector onChange={onChangeMusicSystem} musicSystem={musicSystem} />
-            {playableTracks.length > 1 ? (
-                <MidiTrackSelector
-                    activeTracks={activeTracks}
+            <div className="extra-settings">
+                {midiMetas ? (
+                    <>
+                        <h4>Main Instrument</h4>
+                        <InstrumentSelector onChange={onChangeInstrument} />
+                        <h4>File infos</h4>
+                        <span>Ticks per beat : {midiMetas.ticksPerBeat}</span>
+                        <span>Format : {midiMetas.format}</span>
+                        <h4>Music System</h4>
+                        <MusicSystemSelector
+                            onChange={onChangeMusicSystem}
+                            musicSystem={musicSystem}
+                        />
+                    </>
+                ) : null}
+
+                <h4>Tracks</h4>
+                <MidiTrackList
                     playableTracks={playableTracks}
+                    activeTracks={activeTracks}
+                    initialInstruments={initialInstruments}
                     onChangeActiveTracks={onChangeActiveTracks}
                 />
-            ) : null}
-            <h2>Main Instrument : </h2>
-            <InstrumentSelector onChange={onChangeInstrument} />
-            <h2>Channels : </h2>
-            <List>
-                {initialInstruments.map(({ channel, name }) => {
-                    const InstrumentIndex = MIDI_INSTRUMENTS.findIndex(
-                        (midiInstrument) => midiInstrument === name
-                    )
-                    const iconName =
-                        'instrument-' +
-                        MIDI_INSTRUMENTS_FLUIDR3_GM[InstrumentIndex].toLowerCase().replace(
-                            /_/g,
-                            '-'
-                        )
-                    return (
-                        <ListItem
-                            style={{ color: MIDI_CHANNEL_COLORS[channel] }}
-                            key={`${name}-${channel}`}
-                        >
-                            <Icon size={50} name={iconName as IconName} /> {channel} : {name}
-                        </ListItem>
-                    )
-                })}
-            </List>
+            </div>
         </SideBar>
     )
 }

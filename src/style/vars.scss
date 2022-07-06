@@ -1,9 +1,16 @@
 $theme-colors: (
     'primary': #00e2dc,
-    'secondary': #1c1c1c,
+    'secondary': #282c34,
     'success': #28a745,
     'info': #17a2b8,
+    'disabled': #505050,
     'warning': #ffc107,
+);
+
+$theme-colors-variants: (
+    'dark-secondary': darken(map-get($theme-colors, 'secondary'), 5),
+    'light-secondary': lighten(map-get($theme-colors, 'secondary'), 5),
+    'text': lighten(map-get($theme-colors, 'secondary'), 75),
 );
 
 $theme-font-sizes: (

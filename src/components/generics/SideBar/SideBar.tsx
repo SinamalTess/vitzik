@@ -17,7 +17,7 @@ export function SideBar({ children, open, onClose }: SideBarProps) {
 
     const animationDuration = 300
     const rootNode = document.getElementById('root') ?? document.body
-    const className = clsx('sidebar')
+    const classNames = clsx('sidebar')
 
     useEffect(() => setIsOpen(open), [open])
 
@@ -64,7 +64,7 @@ export function SideBar({ children, open, onClose }: SideBarProps) {
             timeout={animationDuration}
             classNames="sidebar"
         >
-            <div className={className} ref={sidebarRef}>
+            <div className={classNames} ref={sidebarRef}>
                 {children}
             </div>
         </CSSTransition>,

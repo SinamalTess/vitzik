@@ -3,7 +3,7 @@
 
 .tooltip {
     display: none;
-    background-color: map.get($theme-colors, 'secondary');
+    background-color: map-get($theme-colors-variants, 'dark-secondary');
     z-index: 10;
 
     [data-popper-placement^='top'] > &__arrow {

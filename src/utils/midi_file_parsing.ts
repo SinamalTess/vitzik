@@ -91,13 +91,13 @@ export function getInitialMsPerBeat(allMsPerBeats: MsPerBeat[]) {
     }).value
 }
 
-function getAllMsPerBeat(trackMetas: TrackMetas) {
+function getAllMsPerBeat(trackMetas: TrackMetas[]) {
     let allMsPerBeat: MsPerBeat[] = []
-    for (const i in trackMetas) {
-        if (Array.isArray(trackMetas[i].msPerBeat)) {
-            allMsPerBeat = [...allMsPerBeat, ...(trackMetas[i].msPerBeat as MsPerBeat[])]
+    trackMetas.forEach((track) => {
+        if (Array.isArray(track.msPerBeat)) {
+            allMsPerBeat = [...allMsPerBeat, ...(track.msPerBeat as MsPerBeat[])]
         }
-    }
+    })
 
     return allMsPerBeat.sort((a, b) => a.delta - b.delta).flat(1) // smallest delta values first
 }
@@ -109,37 +109,50 @@ export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, tick
 }
 
 export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
-    let playableTracks: number[] = []
     let initialInstruments: Instrument[] = []
-    let trackMetas: TrackMetas = {}
+    let tracksMetas: TrackMetas[] = []
     const ticksPerBeat = getTicksPerBeat(midiJson)
 
     midiJson.tracks.forEach((track, index) => {
         let deltaAcc = 0
-
-        if (isTrackPlayable(track)) {
-            playableTracks.push(index)
+        let trackMetas: TrackMetas = {
+            index,
+            nbTicks: deltaAcc,
+            channels: [],
+            isPlayable: false,
         }
-
         const addToTrackMetas = (property: any) => {
             trackMetas = {
                 ...trackMetas,
-                [index]: {
-                    ...trackMetas[index],
-                    ...property,
-                },
+                ...property,
             }
+        }
+
+        if (isTrackPlayable(track)) {
+            addToTrackMetas({
+                isPlayable: true,
+            })
         }
 
         track.forEach((event) => {
             deltaAcc = deltaAcc + event.delta
+
+            if (isNoteOnEvent(event)) {
+                const previousChannels = trackMetas.channels ? trackMetas.channels : []
+                const hasChannel = previousChannels.some((channel) => channel === event.channel)
+                if (!hasChannel) {
+                    addToTrackMetas({
+                        channels: [...previousChannels, event.channel],
+                    })
+                }
+            }
 
             addToTrackMetas({
                 nbTicks: deltaAcc,
             })
 
             if (isTrackNameEvent(event)) {
-                const previousNames = trackMetas[index]?.names ? trackMetas[index].names : []
+                const previousNames = trackMetas.names ? trackMetas.names : []
                 addToTrackMetas({
                     names: [...(previousNames as string[]), event.trackName],
                 })
@@ -147,7 +160,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             if (isSetTempoEvent(event)) {
                 const { microsecondsPerQuarter } = event.setTempo
 
-                const previousMsPerBeat = trackMetas[index]?.msPerBeat ?? []
+                const previousMsPerBeat = trackMetas.msPerBeat ?? []
                 const currentMsPerBeatValue = microSPerBeatToMsPerBeat(microsecondsPerQuarter)
                 let newTimestamp = (deltaAcc / ticksPerBeat) * currentMsPerBeatValue
 
@@ -193,9 +206,11 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
                 }
             }
         })
+
+        tracksMetas.push(trackMetas)
     })
 
-    const allMsPerBeat = getAllMsPerBeat(trackMetas)
+    const allMsPerBeat = getAllMsPerBeat(tracksMetas)
     const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicksInTrack(track))) //TODO: this would only work for format 0 and 1
 
     return {
@@ -203,8 +218,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
         midiDuration: getMidiDuration(allMsPerBeat, nbTicks, ticksPerBeat),
         format: getFormat(midiJson),
         initialInstruments,
-        playableTracks,
-        trackMetas,
+        tracksMetas,
         allMsPerBeat,
     }
 }

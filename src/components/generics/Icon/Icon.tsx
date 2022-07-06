@@ -5,11 +5,12 @@ import { IconName, CSSSpacingSize } from '../types'
 
 interface IconProps {
     name: IconName
+    color?: string
     children?: string
     size?: CSSSpacingSize | number
 }
 
-export function Icon({ name, children, size = 'md' }: IconProps) {
+export function Icon({ name, children, color, size = 'md' }: IconProps) {
     const className = clsx(
         'icon',
         { [`icon-${name}`]: name },
@@ -17,7 +18,7 @@ export function Icon({ name, children, size = 'md' }: IconProps) {
         { [`icon-${size}`]: typeof size === 'string' }
     )
 
-    const style = typeof size === 'number' ? { fontSize: size + 'px' } : {}
+    const style = typeof size === 'number' ? { fontSize: size + 'px', color } : { color }
 
     return (
         // TODO: check if this is the proper usage of aria-label

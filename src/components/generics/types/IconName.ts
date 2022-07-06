@@ -1,4 +1,7 @@
 export type IconName =
+    | 'eye-open'
+    | 'eye-half-closed'
+    | 'eye-closed'
     | 'volume'
     | 'frequency'
     | 'infos'

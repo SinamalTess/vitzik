@@ -7,7 +7,7 @@
     top: 0;
     transform: translateX(100%);
     position: fixed;
-    background-color: map.get($theme-colors, 'secondary');
+    background-color: map.get($theme-colors-variants, 'light-secondary');
     z-index: 3;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     &-enter,

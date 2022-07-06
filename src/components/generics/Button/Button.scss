@@ -9,12 +9,12 @@
     opacity: 0.75;
     border-radius: 5px;
     text-transform: uppercase;
-    background-color: map.get($theme-colors, 'secondary');
+    background-color: map-get($theme-colors-variants, 'dark-secondary');
     letter-spacing: 1px;
 
     &:hover,
     &:focus {
-        background-color: lighten(map.get($theme-colors, 'secondary'), 10%);
+        background-color: map-get($theme-colors-variants, 'light-secondary');
     }
 
     &--active {
