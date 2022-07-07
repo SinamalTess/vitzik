@@ -20,6 +20,10 @@ $input-width: 500px;
         font-weight: map-get($theme-font-weights, 'bold');
     }
 
+    .bpm {
+        margin: map-get($theme-spacing-sizes, 'md');
+    }
+
     .current-time,
     .total-time {
         margin: map-get($theme-spacing-sizes, 'md');

@@ -9,6 +9,7 @@ import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
 import { Button } from '../generics/Button'
+import { Divider } from '../generics/Divider'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
@@ -132,10 +133,12 @@ export function AudioPlayer({
                 onMouseUp={handleMouseUp}
             />
             <span className="total-time">{totalTime}</span>
-            <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
-            <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
-            <span className={'bpm'}>BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
+            <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
+            <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
+            <Divider orientation="vertical" />
+            <span className="bpm">BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
+            <Divider orientation="vertical" />
         </div>
     )
 }

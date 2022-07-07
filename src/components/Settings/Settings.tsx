@@ -14,7 +14,6 @@ import { MidiInputSelector } from '../MidiInputSelector'
 import { Switch } from '../generics/Switch'
 import { Button } from '../generics/Button'
 import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
-import { Divider } from '../generics/Divider'
 
 interface SettingsProps {
     appMode: AppMode
@@ -83,7 +82,6 @@ export const Settings = React.memo(function Settings({
                     Autoplay
                 </Switch>
             ) : null}
-            <Divider orientation="vertical" />
             <Button icon={'settings'} onClick={handleClick} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector onMidiInputChange={onMidiInputChange} />
