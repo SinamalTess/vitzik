@@ -3,7 +3,7 @@
 $-size: 24px;
 $-line: #505162;
 $-dot: #f7f8ff;
-$-circle: #9ea0be;
+$-circle: #505162;
 $-duration: 0.3s;
 $-text: #9ea0be;
 
@@ -41,7 +41,7 @@ $-text: #9ea0be;
                 // the circle
                 padding-left: 56px;
                 line-height: $-size / 2;
-                color: $-text;
+                color: map-get($theme-colors, 'primary');
                 &:before {
                     content: '';
                     position: absolute;
@@ -72,7 +72,7 @@ $-text: #9ea0be;
                         transform: translateX(
                             $-size * 1.2
                         ); // position of the circle on the z axis when checked
-                        box-shadow: inset 0 0 0 $-size / 2 $-dot;
+                        box-shadow: inset 0 0 0 $-size / 2 white;
                     }
                 }
             }
