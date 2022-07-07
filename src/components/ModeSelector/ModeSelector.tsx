@@ -13,7 +13,7 @@ export function ModeSelector({ onChange, appMode }: ModeSelectorProps) {
 
     return (
         <ButtonGroup>
-            <Button onClick={() => onChange('learning')} active={isLearningMode}>
+            <Button disabled onClick={() => onChange('learning')} active={isLearningMode}>
                 Learning
             </Button>
             <Button onClick={() => onChange('import')} active={!isLearningMode}>

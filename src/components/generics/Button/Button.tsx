@@ -35,7 +35,8 @@ export function Button({
         { [`pd-${size}`]: size },
         { 'btn--active': active },
         { 'btn--outline': variant === 'outlined' },
-        { 'btn--link': variant === 'link' }
+        { 'btn--link': variant === 'link' },
+        { 'btn--disabled': disabled }
     )
 
     return (
