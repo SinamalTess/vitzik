@@ -45,7 +45,6 @@ function App() {
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
 
-    const midiDuration = midiMetas?.midiDuration ?? 0
     const isMidiImported = midiFile !== null
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
@@ -154,6 +153,7 @@ function App() {
                     notesPlayed={notesPlayed}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     onKeyPressed={setActiveNotes}
+                    midiMode={midiMode}
                 />
                 <>
                     {instruments.map(({ channel, name }) => {

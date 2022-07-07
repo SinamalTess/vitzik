@@ -6,8 +6,8 @@ import {
     MusicSystem,
     ActiveNote,
     MidiInputActiveNote,
-    isMidiVisualizerActiveNote,
     MidiVisualizerActiveNote,
+    MidiMode,
 } from '../../types'
 import {
     getWidthKeys,
@@ -22,9 +22,10 @@ import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 interface KeyboardProps {
     activeKeys: ActiveNote[]
     musicSystem?: MusicSystem
+    notesPlayed: string[]
+    midiMode: MidiMode
     onKeyPressed: (note: MidiInputActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
-    notesPlayed: string[]
 }
 
 function getStyles(note: AlphabeticalNote) {
@@ -43,9 +44,10 @@ function getStyles(note: AlphabeticalNote) {
 export const Keyboard = React.memo(function Keyboard({
     activeKeys,
     musicSystem = 'alphabetical',
+    midiMode,
+    notesPlayed,
     onKeyPressed,
     onAllMidiKeysPlayed,
-    notesPlayed,
 }: KeyboardProps) {
     const activeKeysReversed = [...activeKeys].reverse()
     const keyboardChannel = 16
@@ -72,19 +74,22 @@ export const Keyboard = React.memo(function Keyboard({
         const midiActiveNotes = activeKeys.filter(
             (activeKey) => activeKey.name === name && activeKey.channel !== channel
         )
-        const lastMidiNote = midiActiveNotes.at(-1)
         /*
-            We don't want to remove all the activeNotes from the midi file with the same name.
-            Sometimes the same note is hit at the same time but on different channels.
-            We only remove the last note found and this is on purpose.
-        */
+           We don't want to remove all the activeNotes from the midi file with the same name.
+           Sometimes the same note is hit at the same time but on different channels.
+           We only remove the last note found and this is on purpose.
+       */
+        const lastMidiNote = midiActiveNotes.at(-1)
+
         if (lastMidiNote) {
             const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [note, lastMidiNote])
             const isAllNotesPlayed = activeKeysCopy.length === 0
-            if (isAllNotesPlayed && onAllMidiKeysPlayed) {
+            if (isAllNotesPlayed && onAllMidiKeysPlayed && midiMode === 'wait') {
+                onKeyPressed(activeKeysCopy)
                 onAllMidiKeysPlayed()
+            } else {
+                onKeyPressed(removeNotesFromActiveKeys(activeKeys, [note]))
             }
-            onKeyPressed(activeKeysCopy)
         } else {
             const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [note])
             const isAllNotesPlayed = activeKeysCopy.length === 0
@@ -105,10 +110,10 @@ export const Keyboard = React.memo(function Keyboard({
                     So we pick the last active key because this is the one on top in the Visualizer.
                 */
                 const lastActiveKey = activeKeysReversed.find(
-                    (activeKey) => isMidiVisualizerActiveNote(activeKey) && activeKey.name === name
+                    (activeKey) => activeKey.name === name
                 ) as MidiVisualizerActiveNote
-                const isActive =
-                    lastActiveKey && lastActiveKey.id && !notesPlayed.includes(lastActiveKey.id)
+
+                const isActive = Boolean(lastActiveKey)
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const keyTranslated =
                     musicSystem !== 'alphabetical'
@@ -130,10 +135,7 @@ export const Keyboard = React.memo(function Keyboard({
                         style={{
                             width,
                             margin,
-                            background:
-                                isActive && lastActiveKey
-                                    ? MIDI_CHANNEL_COLORS[lastActiveKey.channel]
-                                    : '',
+                            background: isActive ? MIDI_CHANNEL_COLORS[lastActiveKey.channel] : '',
                         }}
                         data-testid={name}
                         className={className}

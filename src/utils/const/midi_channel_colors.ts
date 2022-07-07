@@ -15,4 +15,5 @@ export const MIDI_CHANNEL_COLORS = [
     '#653E0E',
     '#F7D79D',
     '#541077',
+    '#90ef5f',
 ]
