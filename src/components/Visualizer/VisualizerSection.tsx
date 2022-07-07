@@ -24,7 +24,6 @@ const Rectangles = React.memo(function Rectangles({
     height,
     indexToDraw,
 }: RectanglesProps) {
-    console.log(height)
     return (
         <>
             {notesCoordinates.map(({ channel, y, x, w, h, id }) => (

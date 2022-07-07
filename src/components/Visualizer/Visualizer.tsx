@@ -36,19 +36,18 @@ export const Visualizer = WithContainerDimensions(
     }: VisualizerProps) => {
         if (!height || !width) return null
 
-        const midiVisualizerCoordinates = new MidiVisualizerCoordinates(midiMetas, {
-            w: width,
-            h: height,
-        })
-
-        const indexSectionPlaying = useMemo(
-            () => midiVisualizerCoordinates.getIndexSectionPlaying(midiCurrentTime),
-            [midiCurrentTime]
+        const midiVisualizerCoordinates = useMemo(
+            () =>
+                new MidiVisualizerCoordinates(midiMetas, {
+                    w: width,
+                    h: height,
+                }),
+            [height, midiMetas, width]
         )
 
         const allNotesCoordinates = useMemo(
             () => midiVisualizerCoordinates.getNotesCoordinates(midiFile),
-            [midiMetas, width, height]
+            [midiVisualizerCoordinates, midiFile]
         )
 
         const notesCoordinates = useMemo(
@@ -57,9 +56,11 @@ export const Visualizer = WithContainerDimensions(
             [allNotesCoordinates, activeTracks]
         )
 
-        const indexToDraw = useMemo(
-            () => midiVisualizerCoordinates.getIndexToDraw(midiCurrentTime, audioPlayerState),
-            [indexSectionPlaying, audioPlayerState]
+        const indexSectionPlaying =
+            midiVisualizerCoordinates.getIndexSectionPlaying(midiCurrentTime)
+        const indexToDraw = midiVisualizerCoordinates.getIndexToDraw(
+            midiCurrentTime,
+            audioPlayerState
         )
 
         useEffect(() => {
@@ -87,13 +88,17 @@ export const Visualizer = WithContainerDimensions(
             <div className="visualizer">
                 {midiVisualizerCoordinates.getSectionNames().map((name, index) => {
                     const section =
-                        notesCoordinates?.find((section) => indexToDraw[name] in section) ?? []
+                        notesCoordinates?.find((section) =>
+                            section.hasOwnProperty(indexToDraw[name])
+                        ) ?? []
+                    const coordinates =
+                        section && Object.values(section)[0] ? [...Object.values(section)[0]] : []
                     return (
                         <VisualizerSection
                             index={index}
                             key={name}
                             indexToDraw={indexToDraw[name]}
-                            notesCoordinates={section ? Object.values(section)[0] : []}
+                            notesCoordinates={coordinates}
                             top={midiVisualizerCoordinates.getPercentageTopSection(
                                 name,
                                 midiCurrentTime

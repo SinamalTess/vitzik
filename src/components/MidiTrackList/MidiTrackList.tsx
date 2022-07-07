@@ -86,7 +86,7 @@ export function MidiTrackList({
                           (activeTrack) => activeTrack === index
                       )
                       return (
-                          <ListItem>
+                          <ListItem key={index}>
                               <ListItemSecondaryAction>
                                   <span className="track-index">{index}</span>
                                   <Button
@@ -102,7 +102,7 @@ export function MidiTrackList({
                                       const intrument = getInstrument(channel, initialInstruments)
                                       if (intrument) {
                                           return (
-                                              <ListItem>
+                                              <ListItem key={index + channel}>
                                                   <ListItemSecondaryAction>
                                                       <span
                                                           className={`channel channel-${channel}`}

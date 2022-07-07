@@ -154,18 +154,27 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
             return []
         }
 
+        let mergedCoordinates: SectionNoteCoordinates[] = []
+
         const coordinatesActiveTracks = activeTracks.map((track) => noteCoordinates[track]).flat(1)
 
-        return coordinatesActiveTracks.reduce<SectionNoteCoordinates[]>((acc, curr) => {
-            const key = parseInt(Object.keys(curr)[0])
-            const found = acc.find((i) => i[key])
-            if (!found) {
-                acc.push(curr)
+        coordinatesActiveTracks.forEach((section) => {
+            const sectionKey = Object.keys(section)[0]
+            const existingSectionIndex = mergedCoordinates.findIndex((el) =>
+                el.hasOwnProperty(sectionKey)
+            )
+            if (existingSectionIndex >= 0) {
+                const previousValues = Object.values(mergedCoordinates[existingSectionIndex])[0]
+                const currentValues = Object.values(section)[0]
+                mergedCoordinates[existingSectionIndex] = {
+                    [sectionKey]: [...previousValues, ...currentValues],
+                }
             } else {
-                found[key] = [...found[key], ...curr[key]]
+                mergedCoordinates.push(section)
             }
-            return acc
-        }, [])
+        })
+
+        return mergedCoordinates
     }
 
     static noteCoordinatesToActiveNotes = (
