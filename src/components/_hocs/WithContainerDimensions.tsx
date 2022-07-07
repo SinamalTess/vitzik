@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 interface WithParentDimensionsProps {
     height: number
@@ -9,12 +9,12 @@ export function WithContainerDimensions<P>(
     WrappedComponent: React.ComponentType<P & WithParentDimensionsProps>
 ) {
     const ComponentWithContainerDimensions = (props: P) => {
-        const [dimensions, setDimensions] = React.useState({
-            height: window.innerHeight,
-            width: window.innerWidth,
-        })
-
         const ref = useRef<HTMLDivElement>(null)
+
+        const [dimensions, setDimensions] = React.useState({
+            height: 0,
+            width: 0,
+        })
 
         const { width, height } = dimensions
 
@@ -32,7 +32,16 @@ export function WithContainerDimensions<P>(
                 window.removeEventListener('resize', handleResize)
             }
         }, [])
-        // At this point, the props being passed in are the original props the component expects.
+
+        useEffect(() => {
+            if (ref.current) {
+                setDimensions({
+                    height: ref.current.clientHeight,
+                    width: ref.current.clientWidth,
+                })
+            }
+        }, [ref])
+
         return (
             <div ref={ref} style={{ height: '100%', width: '100%' }}>
                 <WrappedComponent {...props} height={height} width={width} />

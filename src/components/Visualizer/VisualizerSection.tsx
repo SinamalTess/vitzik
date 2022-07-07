@@ -1,7 +1,5 @@
-import React, { useEffect, useRef } from 'react'
-import { drawRoundRect } from '../../utils'
+import React from 'react'
 import './VisualizerSection.scss'
-import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 import clsx from 'clsx'
 import { MidiVisualizerNoteCoordinates } from '../../types'
 
@@ -15,40 +13,35 @@ interface VisualizerSectionProps {
     showCanvasNumbers?: boolean
 }
 
-class MidiVisualizerSection {
-    private ctx: CanvasRenderingContext2D
-
-    constructor(ctx: CanvasRenderingContext2D) {
-        this.ctx = ctx
-    }
-
-    drawNumbers(indexToDraw: number, index: number) {
-        const { width, height } = this.ctx.canvas
-        this.ctx.font = '30px Arial'
-        this.ctx.fillText(indexToDraw.toString(), width - 40, height - 20)
-        this.ctx.fillText(index.toString(), width - 80, height - 20)
-    }
-
-    clearCanvas() {
-        const { width, height } = this.ctx.canvas
-        this.ctx.clearRect(0, 0, width, height)
-    }
-
-    drawNotes(
-        notesCoordinates: MidiVisualizerNoteCoordinates[] | null | undefined,
-        indexToDraw: number
-    ) {
-        const canvasOffset = this.ctx.canvas.height
-
-        if (notesCoordinates && notesCoordinates.length) {
-            notesCoordinates.forEach(({ x, y, w, h, channel }) => {
-                const yComputed = y - indexToDraw * canvasOffset
-                this.ctx.fillStyle = MIDI_CHANNEL_COLORS[channel]
-                drawRoundRect(this.ctx, x, yComputed, w, h, 7, true, false)
-            })
-        }
-    }
+interface RectanglesProps {
+    notesCoordinates: MidiVisualizerNoteCoordinates[]
+    height: number
+    indexToDraw: number
 }
+
+const Rectangles = React.memo(function Rectangles({
+    notesCoordinates,
+    height,
+    indexToDraw,
+}: RectanglesProps) {
+    console.log(height)
+    return (
+        <>
+            {notesCoordinates.map(({ channel, y, x, w, h, id }) => (
+                <rect
+                    key={id}
+                    className={`channel-${channel}`}
+                    x={x}
+                    y={y - indexToDraw * height}
+                    rx="5"
+                    ry="5"
+                    width={w}
+                    height={h}
+                />
+            ))}
+        </>
+    )
+})
 
 export function VisualizerSection({
     index,
@@ -57,51 +50,24 @@ export function VisualizerSection({
     width,
     top,
     notesCoordinates,
-    showCanvasNumbers = true,
 }: VisualizerSectionProps) {
-    const refCanvas = useRef<HTMLCanvasElement>(null)
-    const canvas: HTMLCanvasElement | undefined | null = refCanvas.current
-    const ctx = canvas?.getContext('2d')
-    let midiVisualizerSection: MidiVisualizerSection | null = null
-    if (ctx) {
-        midiVisualizerSection = new MidiVisualizerSection(ctx)
-    }
-
-    useEffect(() => {
-        if (midiVisualizerSection && !notesCoordinates) {
-            midiVisualizerSection.clearCanvas()
-        }
-        if (midiVisualizerSection && notesCoordinates) {
-            midiVisualizerSection.clearCanvas()
-            midiVisualizerSection.drawNotes(notesCoordinates, indexToDraw)
-            if (showCanvasNumbers) {
-                midiVisualizerSection.drawNumbers(indexToDraw, index)
-            }
-        }
-    }, [midiVisualizerSection, indexToDraw, notesCoordinates, showCanvasNumbers])
-
-    useEffect(() => {
-        function configureCanvas(color: string) {
-            if (canvas && ctx) {
-                canvas.width = width
-                canvas.height = height
-                ctx.fillStyle = color
-            }
-        }
-        configureCanvas(MIDI_CHANNEL_COLORS[0])
-        if (width && height && midiVisualizerSection) {
-            midiVisualizerSection.drawNotes(notesCoordinates, indexToDraw)
-        }
-    }, [width, height, ctx])
-
     const className = clsx('visualizer__section', [`visualizer__section--${index}`])
 
     return (
-        <canvas
-            ref={refCanvas}
+        <svg
+            width={width}
+            height={height}
             data-testid={`visualizer__section--${index}`}
             className={className}
             style={{ transform: `scaleY(-1) translateY(${top})` }}
-        ></canvas>
+        >
+            {notesCoordinates ? (
+                <Rectangles
+                    notesCoordinates={notesCoordinates}
+                    height={height}
+                    indexToDraw={indexToDraw}
+                />
+            ) : null}
+        </svg>
     )
 }

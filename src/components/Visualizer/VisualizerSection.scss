@@ -1,3 +1,7 @@
+@import 'src/style/mixins';
+@import 'src/style/vars';
+
 .visualizer__section {
-    z-index: 1;
+    position: absolute;
+    @include addChannelColors(fill);
 }
