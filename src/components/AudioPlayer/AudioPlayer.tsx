@@ -122,8 +122,8 @@ export function AudioPlayer({
 
     return (
         <div className="audio-player">
-            <span className={'title'}>{title}</span>
-            {currentTime}
+            <span className="title">{title}</span>
+            <span className="current-time">{currentTime}</span>
             <RangeSlider
                 value={midiCurrentTime}
                 max={midiDuration}
@@ -131,7 +131,7 @@ export function AudioPlayer({
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
             />
-            {totalTime}
+            <span className="total-time">{totalTime}</span>
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
             <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />

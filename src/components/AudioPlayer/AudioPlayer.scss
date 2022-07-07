@@ -20,6 +20,11 @@ $input-width: 500px;
         font-weight: map-get($theme-font-weights, 'bold');
     }
 
+    .current-time,
+    .total-time {
+        margin: map-get($theme-spacing-sizes, 'md');
+    }
+
     input[type='range'] {
         cursor: pointer;
         overflow: hidden;
