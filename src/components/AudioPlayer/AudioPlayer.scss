@@ -13,7 +13,7 @@
     }
     .bpm,
     .title {
-        font-weight: 700;
+        font-weight: map-get($theme-font-weights, 'bold');
     }
     input {
         width: 500px;

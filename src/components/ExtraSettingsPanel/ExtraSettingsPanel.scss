@@ -3,16 +3,4 @@
 
 .extra-settings {
     padding: map-get($theme-spacing-sizes, 'lg');
-    .track-list {
-        .track-index {
-            font-weight: 700;
-            font-size: map-get($theme-font-sizes, 'lg');
-        }
-        .channel {
-            border-radius: 3px;
-            color: map-get($theme-colors-variants, 'dark-secondary');
-            padding: map.get($theme-spacing-sizes, 'sm');
-            font-weight: 700;
-        }
-    }
 }

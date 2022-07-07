@@ -19,9 +19,33 @@ $theme-font-sizes: (
     'lg': 1rem,
 );
 
+$theme-font-weights: (
+    'regular': 400,
+    'bold': 700,
+);
+
 $theme-spacing-sizes: (
     'none': 0,
     'sm': 0.25rem,
     'md': 0.5rem,
     'lg': 1.75rem,
+);
+
+$channel-colors: (
+    '0': #00e2dc,
+    '1': #fdf693,
+    '2': #90f271,
+    '3': #2b4e11,
+    '4': #773406,
+    '5': #d35f03,
+    '6': #6ff4e7,
+    '7': #fd139c,
+    '8': #80e20a,
+    '9': #ed70e4,
+    '10': #6e9274,
+    '11': #f63a0b,
+    '12': #34eb8f,
+    '13': #653e0e,
+    '14': #f7d79d,
+    '15': #541077,
 );

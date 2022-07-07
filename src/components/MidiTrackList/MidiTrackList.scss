@@ -1,0 +1,16 @@
+@import 'src/style/mixins';
+@import 'src/style/vars';
+
+.track-list {
+    .track-index {
+        font-weight: map-get($theme-font-weights, 'bold');
+        font-size: map-get($theme-font-sizes, 'lg');
+    }
+    .channel {
+        border-radius: 3px;
+        color: map-get($theme-colors-variants, 'dark-secondary');
+        padding: map-get($theme-spacing-sizes, 'sm');
+        font-weight: map-get($theme-font-weights, 'bold');
+    }
+    @include addChannelColors(background-color);
+}

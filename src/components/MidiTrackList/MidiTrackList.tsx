@@ -3,15 +3,12 @@ import { ListItem } from '../generics/ListItem'
 import { ListItemSecondaryAction } from '../generics/ListItemSecondaryAction'
 import { Button } from '../generics/Button'
 import { List } from '../generics/List'
-import {
-    MIDI_CHANNEL_COLORS,
-    MIDI_INSTRUMENTS,
-    MIDI_INSTRUMENTS_FLUIDR3_GM,
-} from '../../utils/const'
+import { MIDI_INSTRUMENTS, MIDI_INSTRUMENTS_FLUIDR3_GM } from '../../utils/const'
 import { Icon } from '../generics/Icon'
 import { Instrument, TrackMetas } from '../../types'
 import { IconName } from '../generics/types'
 import { Divider } from '../generics/Divider'
+import './MidiTrackList.scss'
 
 interface MidiTrackListProps {
     playableTracks: TrackMetas[]
@@ -98,7 +95,8 @@ export function MidiTrackList({
                                   />
                               </ListItemSecondaryAction>
                               <Divider orientation="vertical" />
-                              <span>{names?.join('')}</span>
+                              <span className="track-names">{names?.join('')}</span>
+                              <Divider orientation="vertical" />
                               <List type="transparent">
                                   {channels.map((channel) => {
                                       const intrument = getInstrument(channel, initialInstruments)
@@ -107,11 +105,7 @@ export function MidiTrackList({
                                               <ListItem>
                                                   <ListItemSecondaryAction>
                                                       <span
-                                                          style={{
-                                                              backgroundColor:
-                                                                  MIDI_CHANNEL_COLORS[channel],
-                                                          }}
-                                                          className="channel"
+                                                          className={`channel channel-${channel}`}
                                                       >
                                                           CH : {channel}
                                                       </span>
