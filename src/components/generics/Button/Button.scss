@@ -12,6 +12,10 @@
     letter-spacing: 1px;
     font-weight: map-get($theme-font-weights, 'bold');
 
+    &--secondary {
+        color: white;
+    }
+
     &:hover,
     &:focus {
         background-color: map-get($theme-colors-variants, 'light-secondary');

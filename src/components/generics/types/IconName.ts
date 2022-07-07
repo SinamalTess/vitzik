@@ -1,4 +1,5 @@
 export type IconName =
+    | 'stop'
     | 'eye-open'
     | 'eye-half-closed'
     | 'eye-closed'

@@ -36,7 +36,7 @@
     }
     &-eye-open {
         &::before {
-            content: 'h';
+            content: 'f';
         }
     }
     &-eye-half-closed {
@@ -46,7 +46,12 @@
     }
     &-eye-closed {
         &::before {
-            content: 'f';
+            content: 'h';
+        }
+    }
+    &-stop {
+        &::before {
+            content: 'i';
         }
     }
 }

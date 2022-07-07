@@ -8,6 +8,7 @@ import workerInterval from '../../workers/workerInterval'
 import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
+import { Button } from '../generics/Button'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
@@ -102,8 +103,13 @@ export function AudioPlayer({
         onChangeMidiCurrentTime(parseInt(value))
     }
 
-    function handleClick() {
+    function handleClickOnPlay() {
         onPlay((isPlaying) => !isPlaying)
+    }
+
+    function handleClickOnStop() {
+        onPlay(false)
+        onChangeMidiCurrentTime(0)
     }
 
     function handleMouseDown() {
@@ -127,7 +133,8 @@ export function AudioPlayer({
             />
             {totalTime}
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
-            <PlayButton onClick={handleClick} isPlaying={isPlaying} />
+            <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
+            <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
             <span className={'bpm'}>BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
         </div>
     )

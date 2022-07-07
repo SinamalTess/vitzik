@@ -24,6 +24,7 @@ export function Button({
     icon,
     children,
     size = 'md',
+    color = 'primary',
     variant,
     className,
     onClick = () => {},
@@ -36,7 +37,8 @@ export function Button({
         { 'btn--active': active },
         { 'btn--outline': variant === 'outlined' },
         { 'btn--link': variant === 'link' },
-        { 'btn--disabled': disabled }
+        { 'btn--disabled': disabled },
+        { [`btn--${color}`]: color }
     )
 
     return (
