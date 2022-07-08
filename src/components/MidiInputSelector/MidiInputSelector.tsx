@@ -49,7 +49,7 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
         <span className="midi-input--not-found">
             <Tooltip showOnHover>
                 <Icon name="usb">No input found</Icon>
-                <span>Try connecting an instrument to your computer via USB</span>
+                Try connecting an instrument to your computer via USB
             </Tooltip>
         </span>
     )

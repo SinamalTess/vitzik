@@ -43,6 +43,7 @@ export function Tooltip({
 
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
         modifiers: [
+            { name: 'offset', options: { offset: [0, 8] } },
             { name: 'arrow', options: { element: arrowElement } },
             referenceWidth ? referenceWidthModifier : {},
         ],
@@ -50,6 +51,9 @@ export function Tooltip({
     })
 
     if (!children || !Array.isArray(children)) return null
+
+    const referenceChild = children[0]
+    const tooltipChild = children[1]
 
     const hoverProps = showOnHover
         ? {
@@ -66,7 +70,14 @@ export function Tooltip({
 
     return (
         <>
-            {React.cloneElement(children[0], { ref: setReferenceElement, ...hoverProps })}
+            {typeof referenceChild.type === 'function' ? ( // Function components can't have a ref
+                <span ref={setReferenceElement} {...hoverProps}>
+                    {referenceChild}
+                </span>
+            ) : (
+                // If possible we avoid wrapping the component to save some additional DOM elements
+                React.cloneElement(referenceChild, { ref: setReferenceElement, ...hoverProps })
+            )}
 
             <span
                 className={className}
@@ -75,7 +86,7 @@ export function Tooltip({
                 style={styles.popper}
                 {...attributes.popper}
             >
-                {children.map((child, index) => (index === 0 ? null : child))}
+                {tooltipChild}
                 {arrow ? (
                     <div ref={setArrowElement} style={styles.arrow} className={'tooltip__arrow'} />
                 ) : null}

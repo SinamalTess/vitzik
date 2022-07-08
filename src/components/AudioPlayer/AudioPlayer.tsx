@@ -126,7 +126,7 @@ export function AudioPlayer({
         <div className="audio-player">
             <Tooltip showOnHover>
                 <span className="title">{title}</span>
-                <span>{title}</span>
+                {title}
             </Tooltip>
             <span className="current-time">{currentTime}</span>
             <RangeSlider
@@ -141,7 +141,10 @@ export function AudioPlayer({
             <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
             <Divider orientation="vertical" />
-            <span className="bpm">BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
+            <Tooltip showOnHover>
+                <span className="bpm">BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
+                Beats per minute
+            </Tooltip>
             <Divider orientation="vertical" />
         </div>
     )

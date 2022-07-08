@@ -14,6 +14,7 @@ import { MidiInputSelector } from '../MidiInputSelector'
 import { Switch } from '../generics/Switch'
 import { Button } from '../generics/Button'
 import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
+import { Tooltip } from '../generics/Tooltip'
 
 interface SettingsProps {
     appMode: AppMode
@@ -78,9 +79,18 @@ export const Settings = React.memo(function Settings({
     return (
         <div className="settings">
             {isMidiImported ? (
-                <Switch isOn={midiMode === 'autoplay'} onChange={handleChange}>
-                    Autoplay
-                </Switch>
+                <Tooltip showOnHover>
+                    <Switch isOn={midiMode === 'autoplay'} onChange={handleChange}>
+                        Autoplay
+                    </Switch>
+                    <span>
+                        <div>Autoplay ON : Play the song without stopping</div>
+                        <div>
+                            Autoplay OFF : Wait for you to play the right notes before moving
+                            forward
+                        </div>
+                    </span>
+                </Tooltip>
             ) : null}
             <Button icon={'settings'} onClick={handleClick} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
