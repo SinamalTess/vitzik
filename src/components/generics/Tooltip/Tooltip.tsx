@@ -8,10 +8,17 @@ interface TooltipProps {
     children: ReactNode
     arrow?: boolean
     referenceWidth?: boolean
-    show: boolean
+    show?: boolean
+    showOnHover?: boolean
 }
 
-export function Tooltip({ children, arrow = true, referenceWidth = false, show }: TooltipProps) {
+export function Tooltip({
+    children,
+    arrow = true,
+    referenceWidth = false,
+    show,
+    showOnHover,
+}: TooltipProps) {
     /*
         We have to use useMemo to define a custom modifier 
         See this : https://popper.js.org/react-popper/v2/faq/
@@ -28,9 +35,12 @@ export function Tooltip({ children, arrow = true, referenceWidth = false, show }
         }),
         []
     )
+
     const [referenceElement, setReferenceElement] = useState<HTMLSpanElement | null>(null)
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
+    const [isOpen, setOpen] = useState(false)
+
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
         modifiers: [
             { name: 'arrow', options: { element: arrowElement } },
@@ -41,11 +51,24 @@ export function Tooltip({ children, arrow = true, referenceWidth = false, show }
 
     if (!children || !Array.isArray(children)) return null
 
-    const className = clsx('tooltip', { 'tooltip--active': show })
+    const hoverProps = showOnHover
+        ? {
+              onMouseEnter: () => {
+                  setOpen(true)
+              },
+              onMouseLeave: () => {
+                  setOpen(false)
+              },
+          }
+        : {}
+
+    const className = clsx('tooltip', { 'tooltip--active': show || isOpen })
 
     return (
         <>
-            <span ref={setReferenceElement}>{children[0]}</span>
+            <span ref={setReferenceElement} {...hoverProps}>
+                {children[0]}
+            </span>
 
             <div
                 className={className}

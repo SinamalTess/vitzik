@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Icon } from '../generics/Icon'
 import { Select } from '../generics/Select'
+import { Tooltip } from '../generics/Tooltip'
+import './MidiInputSelector.scss'
 
 //TODO: align the icon and animation + color
 
@@ -44,8 +46,11 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
             ))}
         </Select>
     ) : (
-        <>
-            <Icon name="usb">No input found</Icon>
-        </>
+        <span className="midi-input--not-found">
+            <Tooltip showOnHover>
+                <Icon name="usb">No input found</Icon>
+                <span>Try connecting an instrument to your computer via USB</span>
+            </Tooltip>
+        </span>
     )
 }
