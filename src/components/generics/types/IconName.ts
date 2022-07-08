@@ -4,7 +4,7 @@ export type IconName =
     | 'eye-half-closed'
     | 'eye-closed'
     | 'volume'
-    | 'frequency'
+    | 'usb'
     | 'infos'
     | 'midi'
     | 'settings'

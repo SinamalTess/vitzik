@@ -45,7 +45,7 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
         </Select>
     ) : (
         <>
-            <Icon name="frequency">No input found</Icon>
+            <Icon name="usb">No input found</Icon>
         </>
     )
 }
