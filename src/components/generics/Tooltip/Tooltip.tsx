@@ -16,8 +16,8 @@ export function Tooltip({
     children,
     arrow = true,
     referenceWidth = false,
-    show,
-    showOnHover,
+    show = false,
+    showOnHover = false,
 }: TooltipProps) {
     /*
         We have to use useMemo to define a custom modifier 
@@ -41,13 +41,19 @@ export function Tooltip({
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
     const [isOpen, setOpen] = useState(false)
 
+    let modifiers = [
+        { name: 'offset', options: { offset: [0, 8] } },
+        { name: 'arrow', options: { element: arrowElement } },
+    ]
+
+    if (referenceWidth) {
+        // @ts-ignore
+        modifiers.push(referenceWidthModifier)
+    }
+
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
-        modifiers: [
-            { name: 'offset', options: { offset: [0, 8] } },
-            { name: 'arrow', options: { element: arrowElement } },
-            referenceWidth ? referenceWidthModifier : {},
-        ],
-        placement: referenceWidth ? 'bottom-start' : undefined,
+        modifiers,
+        placement: 'bottom',
     })
 
     if (!children || !Array.isArray(children)) return null
