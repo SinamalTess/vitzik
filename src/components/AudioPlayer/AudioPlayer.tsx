@@ -10,6 +10,7 @@ import './AudioPlayer.scss'
 import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
 import { Button } from '../generics/Button'
 import { Divider } from '../generics/Divider'
+import { Tooltip } from '../generics/Tooltip'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
@@ -123,7 +124,10 @@ export function AudioPlayer({
 
     return (
         <div className="audio-player">
-            <span className="title">{title}</span>
+            <Tooltip showOnHover>
+                <span className="title">{title}</span>
+                <span>{title}</span>
+            </Tooltip>
             <span className="current-time">{currentTime}</span>
             <RangeSlider
                 value={midiCurrentTime}

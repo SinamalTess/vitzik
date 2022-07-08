@@ -37,7 +37,7 @@ export function Tooltip({
     )
 
     const [referenceElement, setReferenceElement] = useState<HTMLSpanElement | null>(null)
-    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
+    const [popperElement, setPopperElement] = useState<HTMLSpanElement | null>(null)
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
     const [isOpen, setOpen] = useState(false)
 
@@ -66,11 +66,9 @@ export function Tooltip({
 
     return (
         <>
-            <span ref={setReferenceElement} {...hoverProps}>
-                {children[0]}
-            </span>
+            {React.cloneElement(children[0], { ref: setReferenceElement, ...hoverProps })}
 
-            <div
+            <span
                 className={className}
                 role="tooltip"
                 ref={setPopperElement}
@@ -81,7 +79,7 @@ export function Tooltip({
                 {arrow ? (
                     <div ref={setArrowElement} style={styles.arrow} className={'tooltip__arrow'} />
                 ) : null}
-            </div>
+            </span>
         </>
     )
 }
