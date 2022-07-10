@@ -41,6 +41,8 @@ const microSPerBeatToMsPerBeat = (microsecondsPerQuarter: number) =>
 
 export const msPerBeatToBeatPerMin = (msPerBeat: number) => (1000 * 60) / msPerBeat
 
+export const beatPerMinToMsPerBeat = (beatPerMin: number) => (60 * 1000) / beatPerMin
+
 export const getNoteMetas = (note: MidiJsonNote): MidiInputActiveNote => {
     const { channel } = note
     const key = getKey(note)

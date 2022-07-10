@@ -39,6 +39,7 @@ function App() {
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [activeTracks, setActiveTracks] = useState<number[]>([])
     const [midiMetas, setMidiMetas] = useState<MidiMetas | null>(null)
+    const [midiSpeedFactor, setMidiSpeedFactor] = useState<number>(1)
     const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiInput, setMidiInput] = useState<MIDIInput | null>(null)
@@ -95,10 +96,12 @@ function App() {
                         midiCurrentTime={midiCurrentTime}
                         midiTitle={midiTitle}
                         midiMetas={midiMetas}
+                        midiSpeedFactor={midiSpeedFactor}
                         onChangeAudioPlayerState={setAudioPlayerState}
                         onChangeMidiCurrentTime={setMidiCurrentTime}
                         onPlay={setIsPlaying}
                         onToggleSound={setIsMute}
+                        onChangeMidiSpeedFactor={setMidiSpeedFactor}
                     />
                 ) : null}
                 <Settings

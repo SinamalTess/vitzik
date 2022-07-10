@@ -2,7 +2,7 @@
 @import '../../../style/vars';
 
 .tooltip {
-    display: none;
+    visibility: hidden;
     background-color: map-get($theme-colors-variants, 'dark-secondary');
     padding: map-get($theme-spacing-sizes, 'sm') map-get($theme-spacing-sizes, 'md');
     border-radius: 5px;
@@ -26,23 +26,24 @@
     }
 
     &--active {
-        display: block;
-    }
+        visibility: visible;
+        .tooltip {
+            &__arrow,
+            &__arrow::before {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                background: inherit;
+            }
 
-    &__arrow,
-    &__arrow::before {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: inherit;
-    }
-
-    &__arrow {
-        visibility: hidden;
-        &::before {
-            visibility: visible;
-            content: '';
-            transform: rotate(45deg);
+            &__arrow {
+                visibility: hidden;
+                &::before {
+                    visibility: visible;
+                    content: '';
+                    transform: rotate(45deg);
+                }
+            }
         }
     }
 }

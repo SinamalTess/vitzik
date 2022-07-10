@@ -29,41 +29,41 @@ $input-width: 500px;
         margin: map-get($theme-spacing-sizes, 'md');
     }
 
-    input[type='range'] {
+    .progress-bar {
         cursor: pointer;
         overflow: hidden;
         width: $input-width;
         -webkit-appearance: none;
         background-color: map-get($theme-colors-variants, 'dark-secondary');
-    }
 
-    input[type='range']::-webkit-slider-runnable-track {
-        height: 10px;
-        -webkit-appearance: none;
-        color: map-get($theme-colors-variants, 'dark-secondary');
-        margin-top: -1px;
-    }
+        &::-webkit-slider-runnable-track {
+            height: 10px;
+            -webkit-appearance: none;
+            color: map-get($theme-colors-variants, 'dark-secondary');
+            margin-top: -1px;
+        }
 
-    input[type='range']::-webkit-slider-thumb {
-        width: 5px;
-        -webkit-appearance: none;
-        height: 10px;
-        background: map-get($theme-colors-variants, 'light-secondary');
-        box-shadow: -$input-width 0 0 $input-width map-get($theme-colors, 'primary');
-    }
+        &::-webkit-slider-thumb {
+            width: 5px;
+            -webkit-appearance: none;
+            height: 10px;
+            background: map-get($theme-colors-variants, 'light-secondary');
+            box-shadow: -$input-width 0 0 $input-width map-get($theme-colors, 'primary');
+        }
 
-    /** FF*/
-    input[type='range']::-moz-range-progress {
-        background-color: map-get($theme-colors, 'primary');
-    }
-    input[type='range']::-moz-range-track {
-        background-color: map-get($theme-colors-variants, 'dark-secondary');
-    }
-    /* IE*/
-    input[type='range']::-ms-fill-lower {
-        background-color: map-get($theme-colors, 'primary');
-    }
-    input[type='range']::-ms-fill-upper {
-        background-color: map-get($theme-colors-variants, 'dark-secondary');
+        /** FF*/
+        &::-moz-range-progress {
+            background-color: map-get($theme-colors, 'primary');
+        }
+        &::-moz-range-track {
+            background-color: map-get($theme-colors-variants, 'dark-secondary');
+        }
+        /* IE*/
+        &::-ms-fill-lower {
+            background-color: map-get($theme-colors, 'primary');
+        }
+        &::-ms-fill-upper {
+            background-color: map-get($theme-colors-variants, 'dark-secondary');
+        }
     }
 }

@@ -26,10 +26,12 @@ describe('AudioPlayer', () => {
     const props = {
         midiCurrentTime: 0,
         midiMetas,
+        midiSpeedFactor: 1,
         isMute: true,
         isPlaying: false,
         onToggleSound: () => {},
         onChangeAudioPlayerState: jest.fn(),
+        onChangeMidiSpeedFactor: () => {},
         onChangeMidiCurrentTime: () => {},
         onPlay: () => {},
     }

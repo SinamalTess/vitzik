@@ -40,3 +40,7 @@ export interface MidiMetas {
     tracksMetas: TrackMetas[]
     allMsPerBeat: MsPerBeat[]
 }
+
+export interface MidiUserMetas {
+    msPerBeat: MsPerBeat
+}

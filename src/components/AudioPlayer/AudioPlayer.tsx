@@ -11,16 +11,19 @@ import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinat
 import { Button } from '../generics/Button'
 import { Divider } from '../generics/Divider'
 import { Tooltip } from '../generics/Tooltip'
+import { ButtonGroup } from '../generics/ButtonGroup'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
     midiTitle?: string
     midiMetas: MidiMetas
+    midiSpeedFactor: number
     isMute: boolean
     isPlaying: boolean
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
     onChangeMidiCurrentTime: React.Dispatch<React.SetStateAction<number>>
+    onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onPlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -36,9 +39,11 @@ export function AudioPlayer({
     isPlaying,
     midiTitle,
     midiMetas,
+    midiSpeedFactor,
     onToggleSound,
     onChangeAudioPlayerState,
     onChangeMidiCurrentTime,
+    onChangeMidiSpeedFactor,
     onPlay,
 }: AudioPlayerProps) {
     const { midiDuration, allMsPerBeat } = midiMetas
@@ -52,6 +57,7 @@ export function AudioPlayer({
     ).value
 
     const [isSearching, setIsSearching] = useState<boolean>(false)
+    const [isBPMTooltipOpen, setIsBPMTooltipOpen] = useState<boolean>(false)
 
     useEffect(() => {
         let worker: Worker = WebWorker(workerInterval)
@@ -67,7 +73,7 @@ export function AudioPlayer({
                             onPlay(false)
                             return 0
                         }
-                        return midiCurrentTime + interval
+                        return midiCurrentTime + interval / midiSpeedFactor
                     })
                 }
             }
@@ -82,7 +88,7 @@ export function AudioPlayer({
         return function cleanup() {
             worker.terminate()
         }
-    }, [isPlaying, isSearching, midiDuration])
+    }, [isPlaying, isSearching, midiDuration, midiSpeedFactor])
 
     useEffect(() => {
         if (isPlaying && !isSearching) {
@@ -100,7 +106,7 @@ export function AudioPlayer({
         }
     }, [midiCurrentTime, isPlaying, isSearching])
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    function handleChangeAudioPlayer(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
         onChangeMidiCurrentTime(parseInt(value))
     }
@@ -122,6 +128,17 @@ export function AudioPlayer({
         setIsSearching(false)
     }
 
+    function handleChangeMidiSpeedFactor(value: number) {
+        onChangeMidiSpeedFactor(value)
+    }
+
+    function handleClickBPM() {
+        setIsBPMTooltipOpen((isBPMTooltipOpen) => !isBPMTooltipOpen)
+    }
+
+    const speedFactors = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+    const actualBpm = Math.round(msPerBeatToBeatPerMin(msPerBeat) / midiSpeedFactor)
+
     return (
         <div className="audio-player">
             <Tooltip showOnHover>
@@ -130,9 +147,10 @@ export function AudioPlayer({
             </Tooltip>
             <span className="current-time">{currentTime}</span>
             <RangeSlider
+                className="progress-bar"
                 value={midiCurrentTime}
                 max={midiDuration}
-                onChange={handleChange}
+                onChange={handleChangeAudioPlayer}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
             />
@@ -141,9 +159,23 @@ export function AudioPlayer({
             <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
             <Divider orientation="vertical" />
-            <Tooltip showOnHover>
-                <span className="bpm">BPM : {Math.round(msPerBeatToBeatPerMin(msPerBeat))}</span>
-                Beats per minute
+            <Tooltip show={isBPMTooltipOpen}>
+                <Button onClick={handleClickBPM}> {actualBpm} </Button>
+                <span className="bpm">
+                    BPM :
+                    <ButtonGroup size={'sm'}>
+                        {speedFactors.map((factor, index) => (
+                            <Button
+                                active={factor === midiSpeedFactor}
+                                onClick={() => {
+                                    handleChangeMidiSpeedFactor(factor)
+                                }}
+                            >
+                                x{speedFactors[index]}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                </span>
             </Tooltip>
             <Divider orientation="vertical" />
         </div>
