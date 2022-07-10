@@ -4,7 +4,7 @@ import { PlayButton } from '../PlayButton'
 import React, { useEffect, useState } from 'react'
 import { msPerBeatToBeatPerMin, msToMinAndSec, normalizeTitle } from '../../utils'
 import { usePrevious } from '../../hooks'
-import workerInterval from '../../workers/workerInterval'
+import workerInterval from '../../workers/interval'
 import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
@@ -12,6 +12,7 @@ import { Button } from '../generics/Button'
 import { Divider } from '../generics/Divider'
 import { Tooltip } from '../generics/Tooltip'
 import { ButtonGroup } from '../generics/ButtonGroup'
+import { WebWorker } from '../../workers/WebWorker'
 
 interface AudioPlayerProps {
     midiCurrentTime: number
@@ -25,12 +26,6 @@ interface AudioPlayerProps {
     onChangeMidiCurrentTime: React.Dispatch<React.SetStateAction<number>>
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onPlay: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-function WebWorker(worker: any): Worker {
-    const code = worker.toString()
-    const blob = new Blob(['(' + code + ')()'])
-    return new Worker(URL.createObjectURL(blob))
 }
 
 export function AudioPlayer({

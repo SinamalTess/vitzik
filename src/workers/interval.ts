@@ -6,7 +6,9 @@ export default () => {
     self.onmessage = (message) => {
         if (message.data === 'start') {
             setInterval(() => {
-                postMessage({ interval: interval })
+                postMessage({
+                    interval,
+                })
             }, interval)
         }
     }
