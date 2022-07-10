@@ -8,7 +8,6 @@ interface VisualizerSectionProps {
     indexToDraw: number
     height: number
     width: number
-    top: string
     notesCoordinates: MidiVisualizerNoteCoordinates[] | null | undefined
     showCanvasNumbers?: boolean
 }
@@ -47,7 +46,6 @@ export function VisualizerSection({
     indexToDraw,
     height,
     width,
-    top,
     notesCoordinates,
 }: VisualizerSectionProps) {
     const className = clsx('visualizer__section', [`visualizer__section--${index}`])
@@ -58,7 +56,6 @@ export function VisualizerSection({
             height={height}
             data-testid={`visualizer__section--${index}`}
             className={className}
-            style={{ transform: `scaleY(-1) translateY(${top})` }}
         >
             {notesCoordinates ? (
                 <Rectangles

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import './Visualizer.scss'
 import { AudioPlayerState, MidiMetas, ActiveNote, MidiMode } from '../../types'
 import isEqual from 'lodash.isequal'
@@ -35,6 +35,8 @@ export const Visualizer = WithContainerDimensions(
         onChangeTimeToNextNote,
     }: VisualizerProps) => {
         if (!height || !width) return null
+        const ref = useRef<HTMLDivElement>(null)
+        let animation = useRef<number>(0)
 
         const midiVisualizerCoordinates = useMemo(
             () =>
@@ -58,10 +60,16 @@ export const Visualizer = WithContainerDimensions(
 
         const indexSectionPlaying =
             midiVisualizerCoordinates.getIndexSectionPlaying(midiCurrentTime)
-        const indexToDraw = midiVisualizerCoordinates.getIndexToDraw(
+
+        const indexToDraw: { [key: number]: number } = midiVisualizerCoordinates.getIndexToDraw(
             midiCurrentTime,
             audioPlayerState
         )
+
+        const coordinates = [
+            midiVisualizerCoordinates.getSectionCoordinates(notesCoordinates, indexToDraw[0]),
+            midiVisualizerCoordinates.getSectionCoordinates(notesCoordinates, indexToDraw[1]),
+        ]
 
         useEffect(() => {
             const newActiveNotes = midiVisualizerCoordinates.getActiveNotes(
@@ -84,25 +92,41 @@ export const Visualizer = WithContainerDimensions(
             })
         }, [midiCurrentTime, notesCoordinates, midiMode])
 
+        useEffect(() => {
+            function animationStep(midiCurrentTime: number) {
+                const top = midiVisualizerCoordinates.getPercentageTopSection(midiCurrentTime)
+                const svgs = ref.current?.getElementsByTagName('svg')
+
+                if (svgs) {
+                    svgs[0].style.transform = `scaleY(-1) translateY(${top[0]})`
+                    svgs[1].style.transform = `scaleY(-1) translateY(${top[1]})`
+                }
+
+                animation.current = window.requestAnimationFrame(() =>
+                    animationStep(midiCurrentTime)
+                )
+            }
+
+            animation.current = window.requestAnimationFrame(() => animationStep(midiCurrentTime))
+
+            if (audioPlayerState === 'stopped' || audioPlayerState === 'paused') {
+                cancelAnimationFrame(animation.current)
+            }
+
+            return function cleanup() {
+                cancelAnimationFrame(animation.current)
+            }
+        }, [midiCurrentTime, audioPlayerState, midiVisualizerCoordinates])
+
         return (
-            <div className="visualizer">
-                {midiVisualizerCoordinates.getSectionNames().map((name, index) => {
-                    const section =
-                        notesCoordinates?.find((section) =>
-                            section.hasOwnProperty(indexToDraw[name])
-                        ) ?? []
-                    const coordinates =
-                        section && Object.values(section)[0] ? [...Object.values(section)[0]] : []
+            <div className="visualizer" ref={ref}>
+                {[0, 1].map((index) => {
                     return (
                         <VisualizerSection
                             index={index}
-                            key={name}
-                            indexToDraw={indexToDraw[name]}
-                            notesCoordinates={coordinates}
-                            top={midiVisualizerCoordinates.getPercentageTopSection(
-                                name,
-                                midiCurrentTime
-                            )}
+                            key={index}
+                            indexToDraw={indexToDraw[index]}
+                            notesCoordinates={coordinates[index]}
                             height={height}
                             width={width}
                         />

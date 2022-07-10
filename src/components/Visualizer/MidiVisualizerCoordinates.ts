@@ -23,13 +23,6 @@ interface PartialNote extends MidiVisualizerNoteCoordinates {
     deltaAcc: number
 }
 
-interface IndexToDraw {
-    firstSection: number
-    secondSection: number
-}
-
-type SectionName = keyof IndexToDraw
-
 export class MidiTimeInfos {
     msPerBeat: number
     midiDuration: number
@@ -88,12 +81,10 @@ class MidiVisualizerPositions extends MidiTimeInfos {
         this.containerDimensions = containerDimensions
     }
 
-    getSectionNames = (): SectionName[] => ['firstSection', 'secondSection']
-
     getIndexSectionPlaying = (midiCurrentTime: number) =>
         Math.floor(midiCurrentTime / this.msPerSection)
 
-    getPercentageTopSection(sectionName: SectionName, midiCurrentTime: number) {
+    getPercentageTopSection(midiCurrentTime: number) {
         const exactNbSectionPassed = midiCurrentTime / this.msPerSection
         const percentageTop = +((exactNbSectionPassed % 1) * 100).toFixed(2)
         const percentageFirstSection = `${100 - percentageTop}%`
@@ -101,10 +92,9 @@ class MidiVisualizerPositions extends MidiTimeInfos {
         const sectionPlaying = this.getIndexSectionPlaying(midiCurrentTime)
         const isIndexEven = isEven(sectionPlaying)
 
-        if (sectionName === 'firstSection') {
-            return isIndexEven ? percentageSecondSection : percentageFirstSection
-        } else {
-            return isIndexEven ? percentageFirstSection : percentageSecondSection
+        return {
+            0: isIndexEven ? percentageSecondSection : percentageFirstSection,
+            1: isIndexEven ? percentageFirstSection : percentageSecondSection,
         }
     }
 
@@ -113,21 +103,21 @@ class MidiVisualizerPositions extends MidiTimeInfos {
         const isIndexEven = isEven(indexSectionPlaying)
         if (indexSectionPlaying === 0) {
             return {
-                firstSection: 0,
-                secondSection: 1,
+                0: 0,
+                1: 1,
             }
         } else {
             if (audioPlayerState === 'playing') {
-                const sectionToRedraw: SectionName = isIndexEven ? 'secondSection' : 'firstSection'
+                const sectionToRedraw: number = isIndexEven ? 1 : 0
                 return {
-                    firstSection: indexSectionPlaying,
-                    secondSection: indexSectionPlaying,
+                    0: indexSectionPlaying,
+                    1: indexSectionPlaying,
                     [sectionToRedraw]: indexSectionPlaying + 1,
                 }
             } else {
                 return {
-                    firstSection: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
-                    secondSection: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
+                    0: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
+                    1: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
                 }
             }
         }
@@ -360,6 +350,18 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
             return MidiVisualizerCoordinates.noteCoordinatesToActiveNotes(activeNotesCoordinates)
         }
 
+        return []
+    }
+
+    getSectionCoordinates = (
+        notesCoordinates: SectionNoteCoordinates[] | undefined,
+        indexToDraw: number
+    ) => {
+        if (!notesCoordinates) return []
+        const section = notesCoordinates.find((section) => section.hasOwnProperty(indexToDraw))
+        if (section) {
+            return Object.values(section)[0]
+        }
         return []
     }
 }

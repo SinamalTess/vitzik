@@ -45,7 +45,6 @@ describe('VisualizerSection', () => {
                 width={100}
                 height={50}
                 index={0}
-                top={'0%'}
             ></VisualizerSection>
         )
         const canvas = screen.getByTestId('visualizer__section--0')
