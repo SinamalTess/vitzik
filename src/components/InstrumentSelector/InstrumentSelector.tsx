@@ -1,6 +1,6 @@
 import { Select } from '../generics/Select'
 import React from 'react'
-import { MIDI_INSTRUMENTS } from '../../utils/const'
+import { MIDI_INSTRUMENTS, NOTE_NAMES } from '../../utils/const'
 import { Instrument, InstrumentUserFriendlyName } from '../../types'
 
 interface InstrumentSelectorProps {
@@ -14,6 +14,7 @@ export function InstrumentSelector({ onChange }: InstrumentSelectorProps) {
             name,
             index: MIDI_INSTRUMENTS.findIndex((instrument) => instrument === name),
             channel: 16,
+            notes: NOTE_NAMES.alphabetical as unknown as string[],
         }
 
         onChange((instruments) => {

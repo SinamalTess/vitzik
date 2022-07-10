@@ -9,16 +9,16 @@ import {
 describe('keyToNote()', () => {
     it('should convert MIDI piano key number to an alphabetical note', () => {
         expect(keyToNote(21)).toBe('A0')
-        expect(keyToNote(22)).toBe('A#0/Bb0')
-        expect(keyToNote(42)).toBe('F#2/Gb2')
+        expect(keyToNote(22)).toBe('Bb0')
+        expect(keyToNote(42)).toBe('Gb2')
     })
 })
 
 describe('noteToKey()', () => {
     it('should convert an alphabetical note to a MIDI piano key number', () => {
         expect(noteToKey('A0')).toBe(21)
-        expect(noteToKey('A#0/Bb0')).toBe(22)
-        expect(noteToKey('F#2/Gb2')).toBe(42)
+        expect(noteToKey('Bb0')).toBe(22)
+        expect(noteToKey('Gb2')).toBe(42)
     })
 })
 
@@ -44,7 +44,7 @@ describe('isBlackKey()', () => {
     it('should return `true` if a note corresponds to a black key', () => {
         expect(isBlackKey('A0')).toBe(false)
         expect(isBlackKey('D4')).toBe(false)
-        expect(isBlackKey('A#0/Bb0')).toBe(true)
-        expect(isBlackKey('F#2/Gb2')).toBe(true)
+        expect(isBlackKey('Bb0')).toBe(true)
+        expect(isBlackKey('Gb2')).toBe(true)
     })
 })

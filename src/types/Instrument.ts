@@ -6,4 +6,5 @@ export interface Instrument {
     name: InstrumentUserFriendlyName
     index: number
     channel: number
+    notes: string[]
 }

@@ -142,10 +142,16 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             if (isNoteOnEvent(event)) {
                 const previousChannels = trackMetas.channels ? trackMetas.channels : []
                 const hasChannel = previousChannels.some((channel) => channel === event.channel)
+                const instrument = initialInstruments.find(
+                    ({ channel }) => channel === event.channel
+                )
                 if (!hasChannel) {
                     addToTrackMetas({
                         channels: [...previousChannels, event.channel],
                     })
+                }
+                if (instrument) {
+                    instrument.notes.push(keyToNote(event.noteOn.noteNumber) as string)
                 }
             }
 
@@ -204,6 +210,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
                         channel,
                         name: programNumberToInstrument(programNumber),
                         index: programNumber,
+                        notes: [],
                     })
                 }
             }

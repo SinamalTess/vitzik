@@ -12,6 +12,7 @@ import {
 import {
     getWidthKeys,
     isSpecialNote as checkIsSpecialNote,
+    isBlackKey as checkIsBlackKey,
     noteToKey,
     removeNotesFromActiveKeys,
     translateNoteToMusicSystem,
@@ -29,7 +30,7 @@ interface KeyboardProps {
 }
 
 function getStyles(note: AlphabeticalNote) {
-    const isBlackKey = note.includes('#')
+    const isBlackKey = checkIsBlackKey(note)
     const isSpecialNote = checkIsSpecialNote(note)
     const { widthWhiteKey, widthBlackKey } = getWidthKeys(100)
     const margin = isBlackKey || !isSpecialNote ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
@@ -104,7 +105,7 @@ export const Keyboard = React.memo(function Keyboard({
         <ul className="keyboard">
             {notes.map((note) => {
                 const { name } = note
-                const isBlackKey = name.includes('#')
+                const isBlackKey = checkIsBlackKey(name)
                 /*
                     Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
                     So we pick the last active key because this is the one on top in the Visualizer.

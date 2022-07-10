@@ -1,7 +1,10 @@
 import { AlphabeticalNote, ActiveNote } from '../types'
 import { NB_WHITE_PIANO_KEYS } from './const'
 
-export const isBlackKey = (note: AlphabeticalNote) => note?.includes('#')
+// @ts-ignore
+export const isBlackKey = (name: AlphabeticalNote) =>
+    name.includes('#') ||
+    [...name].some((character) => isNaN(character) && character === character.toLowerCase())
 
 export const isSpecialNote = (note: AlphabeticalNote) => note.includes('C') || note.includes('F')
 

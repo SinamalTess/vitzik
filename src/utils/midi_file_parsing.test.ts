@@ -26,7 +26,9 @@ describe('getMidiMetas()', () => {
                 },
             ],
             format: 1,
-            initialInstruments: [{ index: 1, name: 'Bright Acoustic Keyboard', channel: 0 }],
+            initialInstruments: [
+                { index: 1, name: 'Bright Acoustic Keyboard', channel: 0, notes: [] },
+            ],
             midiDuration: 153042.091796875,
             ticksPerBeat: 1024,
             tracksMetas: [

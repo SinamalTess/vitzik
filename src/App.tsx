@@ -18,6 +18,7 @@ import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
+import { NOTE_NAMES } from './utils/const'
 
 //TODO: check accessibility
 
@@ -25,6 +26,7 @@ const userInstrument: Instrument = {
     name: 'Acoustic Grand Keyboard',
     channel: 16,
     index: 1,
+    notes: NOTE_NAMES.alphabetical as unknown as string[],
 }
 
 function App() {
@@ -159,7 +161,7 @@ function App() {
                     midiMode={midiMode}
                 />
                 <>
-                    {instruments.map(({ channel, name }) => {
+                    {instruments.map(({ channel, name, notes }) => {
                         return (
                             <InstrumentPlayer
                                 key={`${name}-${channel}`}
@@ -167,6 +169,7 @@ function App() {
                                 audioPlayerState={audioPlayerState}
                                 activeKeys={activeNotes}
                                 instrument={name}
+                                notes={notes}
                                 channel={channel}
                                 midiFile={midiFile}
                             />

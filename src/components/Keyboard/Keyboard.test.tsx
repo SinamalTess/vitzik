@@ -30,7 +30,7 @@ describe('Keyboard', () => {
         }
 
         const blackKey: MidiInputActiveNote = {
-            name: 'A#0/Bb0',
+            name: 'Bb0',
             velocity: 100,
             key: 23,
             channel: 0,

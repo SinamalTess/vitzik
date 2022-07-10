@@ -21,6 +21,7 @@ interface InstrumentPlayerProps {
     instrument: InstrumentUserFriendlyName
     audioPlayerState: AudioPlayerState
     activeKeys: ActiveNote[]
+    notes: string[]
     midiFile: IMidiFile | null
     soundfont?: SoundFont
     channel: number
@@ -78,6 +79,7 @@ function playNote(
 export function InstrumentPlayer({
     isMute,
     instrument,
+    notes,
     audioPlayerState,
     activeKeys,
     midiFile,
@@ -93,7 +95,7 @@ export function InstrumentPlayer({
         function startInstrument() {
             const ac = new AudioContext()
             const soundfontInstrument = normalizeInstrumentName(instrument, soundfont)
-            Soundfont.instrument(ac, soundfontInstrument, { soundfont })
+            Soundfont.instrument(ac, soundfontInstrument, { soundfont, notes })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
                 })
