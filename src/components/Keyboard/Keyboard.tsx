@@ -23,7 +23,6 @@ import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 interface KeyboardProps {
     activeKeys: ActiveNote[]
     musicSystem?: MusicSystem
-    notesPlayed: string[]
     midiMode: MidiMode
     onKeyPressed: (note: MidiInputActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
@@ -42,11 +41,10 @@ function getStyles(note: AlphabeticalNote) {
     }
 }
 
-export const Keyboard = React.memo(function Keyboard({
+export function Keyboard({
     activeKeys,
     musicSystem = 'alphabetical',
     midiMode,
-    notesPlayed,
     onKeyPressed,
     onAllMidiKeysPlayed,
 }: KeyboardProps) {
@@ -149,4 +147,4 @@ export const Keyboard = React.memo(function Keyboard({
             })}
         </ul>
     )
-})
+}

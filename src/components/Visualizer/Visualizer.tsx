@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import './Visualizer.scss'
 import { AudioPlayerState, MidiMetas, ActiveNote, MidiMode } from '../../types'
 import isEqual from 'lodash.isequal'
@@ -7,13 +7,13 @@ import { VisualizerSection } from './VisualizerSection'
 import { VisualizerNotesTracks } from './VisualizerNotesTracks'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
+import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 
 interface VisualizerProps {
     midiFile: IMidiFile
     midiMode: MidiMode
     midiMetas: MidiMetas
     audioPlayerState: AudioPlayerState
-    workersChannel: MessageChannel
     activeTracks: number[]
     height?: number
     width?: number
@@ -27,7 +27,6 @@ export const Visualizer = WithContainerDimensions(
         midiFile,
         midiMetas,
         audioPlayerState,
-        workersChannel,
         activeTracks,
         height = 0,
         width = 0,
@@ -37,7 +36,7 @@ export const Visualizer = WithContainerDimensions(
         if (!height || !width) return null
         const ref = useRef<HTMLDivElement>(null)
         let animation = useRef<number>(0)
-        const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
+        const midiCurrentTime = useContext(MidiCurrentTime)
 
         const midiVisualizerCoordinates = useMemo(
             () =>
@@ -101,28 +100,9 @@ export const Visualizer = WithContainerDimensions(
                 }
             }
 
-            function listenToWorker(message: MessageEvent) {
-                if (message.data.code === 'interval') {
-                    const { midiCurrentTime } = message.data
-                    animation.current = window.requestAnimationFrame(animationStep)
-                    updateActiveNotes()
-                    updateTimeToNextNote()
-                    setMidiCurrentTime(midiCurrentTime)
-                }
-            }
-
-            if (audioPlayerState === 'stopped') {
-                animation.current = window.requestAnimationFrame(animationStep)
-                setMidiCurrentTime(0)
-                updateActiveNotes()
-                updateTimeToNextNote()
-            }
-
-            workersChannel.port1.addEventListener('message', listenToWorker)
-
-            return function cleanup() {
-                workersChannel.port1.removeEventListener('message', listenToWorker)
-            }
+            animation.current = window.requestAnimationFrame(animationStep)
+            updateActiveNotes()
+            updateTimeToNextNote()
         }, [
             midiCurrentTime,
             midiMode,
@@ -130,7 +110,6 @@ export const Visualizer = WithContainerDimensions(
             notesCoordinates,
             onChangeActiveNotes,
             onChangeTimeToNextNote,
-            workersChannel.port1,
             audioPlayerState,
         ])
 

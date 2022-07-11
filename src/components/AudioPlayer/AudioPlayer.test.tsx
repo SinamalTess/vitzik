@@ -3,6 +3,7 @@ import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
 import userEvent from '@testing-library/user-event'
 import { Worker, terminate } from '../../tests/mocks/worker'
+import { MidiMode } from '../../types'
 
 const clickPlay = () => {
     const playButton = screen.getByText('Play')
@@ -28,10 +29,12 @@ describe('AudioPlayer', () => {
         midiSpeedFactor: 1,
         isMute: true,
         isPlaying: false,
-        workersChannel: new MessageChannel(),
+        startingTime: 0,
+        midiMode: 'autoplay' as MidiMode,
+        timeToNextNote: 0,
         onToggleSound: () => {},
         onChangeAudioPlayerState: jest.fn(),
-        onChangeWorkersChannel: () => {},
+        onChangeMidiStartingTime: () => {},
         onChangeMidiSpeedFactor: () => {},
         onPlay: () => {},
     }

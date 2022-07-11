@@ -1,0 +1,7 @@
+@use 'sass:map';
+@import './src/style/vars';
+
+.bpm {
+    font-weight: map-get($theme-font-weights, 'bold');
+    margin: map-get($theme-spacing-sizes, 'md');
+}

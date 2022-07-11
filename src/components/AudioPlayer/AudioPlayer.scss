@@ -15,13 +15,8 @@ $input-width: 500px;
         padding: map-get($theme-spacing-sizes, 'md');
     }
 
-    .bpm,
     .title {
         font-weight: map-get($theme-font-weights, 'bold');
-    }
-
-    .bpm {
-        margin: map-get($theme-spacing-sizes, 'md');
     }
 
     .current-time,

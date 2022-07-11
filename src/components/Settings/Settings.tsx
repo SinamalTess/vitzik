@@ -40,7 +40,7 @@ interface SettingsProps {
     React.memo was used to avoid unnecessary re-renders
 */
 
-export const Settings = React.memo(function Settings({
+export function Settings({
     appMode,
     midiMode,
     midiMetas,
@@ -108,4 +108,4 @@ export const Settings = React.memo(function Settings({
             />
         </div>
     )
-})
+}
