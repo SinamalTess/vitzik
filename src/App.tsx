@@ -42,11 +42,11 @@ function App() {
     const [activeTracks, setActiveTracks] = useState<number[]>([])
     const [midiMetas, setMidiMetas] = useState<MidiMetas | null>(null)
     const [midiSpeedFactor, setMidiSpeedFactor] = useState<number>(1)
-    const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiInput, setMidiInput] = useState<MIDIInput | null>(null)
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
+    const [workersChannel, setWorkersChannel] = useState<MessageChannel>(new MessageChannel())
 
     const isMidiImported = midiFile !== null
 
@@ -60,7 +60,6 @@ function App() {
         setMidiTitle(title)
         setMidiFile(midiJSON)
         setMidiMetas(metas)
-        setMidiCurrentTime(0)
         setInstruments([userInstrument, ...metas.initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
 
@@ -78,15 +77,10 @@ function App() {
     )
 
     useEffect(() => {
-        if (
-            timeToNextNote &&
-            isPlaying &&
-            midiCurrentTime >= timeToNextNote &&
-            midiMode === 'wait'
-        ) {
+        if (timeToNextNote && isPlaying && midiMode === 'wait') {
             setIsPlaying(false)
         }
-    }, [midiCurrentTime, isPlaying, midiMode, timeToNextNote])
+    }, [isPlaying, midiMode, timeToNextNote])
 
     return (
         <div className="container">
@@ -95,13 +89,13 @@ function App() {
                     <AudioPlayer
                         isMute={isMute}
                         isPlaying={isPlaying}
-                        midiCurrentTime={midiCurrentTime}
                         midiTitle={midiTitle}
                         midiMetas={midiMetas}
                         midiSpeedFactor={midiSpeedFactor}
                         onChangeAudioPlayerState={setAudioPlayerState}
-                        onChangeMidiCurrentTime={setMidiCurrentTime}
+                        onChangeWorkersChannel={setWorkersChannel}
                         onPlay={setIsPlaying}
+                        workersChannel={workersChannel}
                         onToggleSound={setIsMute}
                         onChangeMidiSpeedFactor={setMidiSpeedFactor}
                     />
@@ -140,9 +134,9 @@ function App() {
                 <Preview
                     appMode={appMode}
                     midiMode={midiMode}
-                    midiCurrentTime={midiCurrentTime}
                     midiFile={midiFile}
                     midiMetas={midiMetas}
+                    workersChannel={workersChannel}
                     activeNotes={activeNotes}
                     audioPlayerState={audioPlayerState}
                     activeTracks={activeTracks}

@@ -300,13 +300,11 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         return notesCoordinates
     }
 
-    getTimeToNextNote(
-        notesCoordinates: SectionNoteCoordinates[],
-        sectionPlaying: number,
-        midiCurrentTime: number
-    ) {
+    getTimeToNextNote(notesCoordinates: SectionNoteCoordinates[], midiCurrentTime: number) {
         if (!notesCoordinates.length) return null
         let nextNote = null
+
+        const sectionPlaying = this.getIndexSectionPlaying(midiCurrentTime)
 
         const checkNextNotes = (section: MidiVisualizerNoteCoordinates[]) => {
             const nextNotes = section.filter(({ startingTime }) => startingTime > midiCurrentTime)
@@ -334,11 +332,10 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
 
     getActiveNotes(
         notesCoordinates: SectionNoteCoordinates[],
-        sectionPlaying: number,
         midiCurrentTime: number
     ): MidiVisualizerActiveNote[] {
+        const sectionPlaying = this.getIndexSectionPlaying(midiCurrentTime)
         const section = notesCoordinates.find((section) => sectionPlaying.toString() in section)
-
         if (section) {
             const sectionNotes = Object.values(section)[0]
             const activeNotesCoordinates = sectionNotes.filter(

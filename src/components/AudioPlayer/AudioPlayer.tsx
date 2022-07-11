@@ -4,7 +4,8 @@ import { PlayButton } from '../PlayButton'
 import React, { useEffect, useState } from 'react'
 import { msPerBeatToBeatPerMin, msToMinAndSec, normalizeTitle } from '../../utils'
 import { usePrevious } from '../../hooks'
-import workerInterval from '../../workers/interval'
+// @ts-ignore
+import workerInterval from '../../workers/interval.js'
 import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
@@ -15,21 +16,20 @@ import { ButtonGroup } from '../generics/ButtonGroup'
 import { WebWorker } from '../../workers/WebWorker'
 
 interface AudioPlayerProps {
-    midiCurrentTime: number
     midiTitle?: string
     midiMetas: MidiMetas
     midiSpeedFactor: number
     isMute: boolean
+    workersChannel: MessageChannel
     isPlaying: boolean
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
-    onChangeMidiCurrentTime: React.Dispatch<React.SetStateAction<number>>
+    onChangeWorkersChannel: React.Dispatch<React.SetStateAction<MessageChannel>>
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onPlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export function AudioPlayer({
-    midiCurrentTime,
     isMute,
     isPlaying,
     midiTitle,
@@ -37,10 +37,14 @@ export function AudioPlayer({
     midiSpeedFactor,
     onToggleSound,
     onChangeAudioPlayerState,
-    onChangeMidiCurrentTime,
+    onChangeWorkersChannel,
     onChangeMidiSpeedFactor,
     onPlay,
 }: AudioPlayerProps) {
+    const [midiCurrentTime, setMidiCurrentTime] = useState(0)
+    const [isSearching, setIsSearching] = useState(false)
+    const [isBPMTooltipOpen, setIsBPMTooltipOpen] = useState<boolean>(false)
+
     const { midiDuration, allMsPerBeat } = midiMetas
     const currentTime = msToMinAndSec(midiCurrentTime)
     const totalTime = msToMinAndSec(midiDuration)
@@ -51,37 +55,61 @@ export function AudioPlayer({
         midiCurrentTime
     ).value
 
-    const [isSearching, setIsSearching] = useState<boolean>(false)
-    const [isBPMTooltipOpen, setIsBPMTooltipOpen] = useState<boolean>(false)
-
     useEffect(() => {
         let worker: Worker = WebWorker(workerInterval)
+        const messageChannel = new MessageChannel()
+        const sendingPort = messageChannel.port2
+        const receivingPort = messageChannel.port1
 
-        function startWorker() {
-            worker.postMessage('start')
-            worker.onmessage = (message) => {
-                if (message.data.hasOwnProperty('interval')) {
-                    const interval = message.data.interval
-                    onChangeMidiCurrentTime((midiCurrentTime: number) => {
-                        if (midiCurrentTime > midiDuration) {
-                            worker.terminate()
-                            onPlay(false)
-                            return 0
-                        }
-                        return midiCurrentTime + interval / midiSpeedFactor
-                    })
-                }
+        function stopWorker() {
+            sendStopMessage()
+            worker.terminate()
+        }
+
+        function sendStopMessage() {
+            worker.postMessage({ code: 'stop' })
+        }
+
+        function portListener(message: MessageEvent) {
+            const { code } = message.data
+            if (code === 'interval') {
+                const { midiCurrentTime: newMidiCurrentTime } = message.data
+                setMidiCurrentTime((midiCurrentTime: number) => {
+                    if (midiCurrentTime > midiDuration) {
+                        worker.terminate()
+                        onPlay(false)
+                        return 0
+                    }
+                    return newMidiCurrentTime
+                })
             }
         }
 
+        function startWorker() {
+            worker.postMessage(
+                {
+                    code: 'start',
+                    port: sendingPort,
+                    midiCurrentTime,
+                    midiSpeedFactor,
+                },
+                [sendingPort]
+            )
+            onChangeWorkersChannel(messageChannel)
+        }
+
         if (isPlaying && !isSearching) {
+            receivingPort.start()
+            receivingPort.addEventListener('message', portListener)
             startWorker()
         } else {
-            worker.terminate()
+            stopWorker()
+            receivingPort.removeEventListener('message', portListener)
         }
 
         return function cleanup() {
-            worker.terminate()
+            stopWorker()
+            receivingPort.removeEventListener('message', portListener)
         }
     }, [isPlaying, isSearching, midiDuration, midiSpeedFactor])
 
@@ -103,7 +131,7 @@ export function AudioPlayer({
 
     function handleChangeAudioPlayer(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
-        onChangeMidiCurrentTime(parseInt(value))
+        setMidiCurrentTime(parseInt(value))
     }
 
     function handleClickOnPlay() {
@@ -112,7 +140,7 @@ export function AudioPlayer({
 
     function handleClickOnStop() {
         onPlay(false)
-        onChangeMidiCurrentTime(0)
+        setMidiCurrentTime(0)
     }
 
     function handleMouseDown() {

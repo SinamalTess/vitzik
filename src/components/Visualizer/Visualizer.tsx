@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import './Visualizer.scss'
 import { AudioPlayerState, MidiMetas, ActiveNote, MidiMode } from '../../types'
 import isEqual from 'lodash.isequal'
@@ -9,11 +9,11 @@ import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 
 interface VisualizerProps {
-    midiCurrentTime: number
     midiFile: IMidiFile
     midiMode: MidiMode
     midiMetas: MidiMetas
     audioPlayerState: AudioPlayerState
+    workersChannel: MessageChannel
     activeTracks: number[]
     height?: number
     width?: number
@@ -23,11 +23,11 @@ interface VisualizerProps {
 
 export const Visualizer = WithContainerDimensions(
     ({
-        midiCurrentTime,
         midiMode,
         midiFile,
         midiMetas,
         audioPlayerState,
+        workersChannel,
         activeTracks,
         height = 0,
         width = 0,
@@ -37,6 +37,7 @@ export const Visualizer = WithContainerDimensions(
         if (!height || !width) return null
         const ref = useRef<HTMLDivElement>(null)
         let animation = useRef<number>(0)
+        const [midiCurrentTime, setMidiCurrentTime] = useState<number>(0)
 
         const midiVisualizerCoordinates = useMemo(
             () =>
@@ -58,9 +59,6 @@ export const Visualizer = WithContainerDimensions(
             [allNotesCoordinates, activeTracks]
         )
 
-        const indexSectionPlaying =
-            midiVisualizerCoordinates.getIndexSectionPlaying(midiCurrentTime)
-
         const indexToDraw: { [key: number]: number } = midiVisualizerCoordinates.getIndexToDraw(
             midiCurrentTime,
             audioPlayerState
@@ -72,28 +70,7 @@ export const Visualizer = WithContainerDimensions(
         ]
 
         useEffect(() => {
-            const newActiveNotes = midiVisualizerCoordinates.getActiveNotes(
-                notesCoordinates,
-                indexSectionPlaying,
-                midiCurrentTime
-            )
-
-            if (midiMode === 'wait') {
-                const timeToNextNote = midiVisualizerCoordinates.getTimeToNextNote(
-                    notesCoordinates,
-                    indexSectionPlaying,
-                    midiCurrentTime
-                )
-                onChangeTimeToNextNote(timeToNextNote)
-            }
-
-            onChangeActiveNotes((activeNotes: ActiveNote[]) => {
-                return isEqual(newActiveNotes, activeNotes) ? activeNotes : newActiveNotes
-            })
-        }, [midiCurrentTime, notesCoordinates, midiMode])
-
-        useEffect(() => {
-            function animationStep(midiCurrentTime: number) {
+            function animationStep() {
                 const top = midiVisualizerCoordinates.getPercentageTopSection(midiCurrentTime)
                 const svgs = ref.current?.getElementsByTagName('svg')
 
@@ -101,22 +78,61 @@ export const Visualizer = WithContainerDimensions(
                     svgs[0].style.transform = `scaleY(-1) translateY(${top[0]})`
                     svgs[1].style.transform = `scaleY(-1) translateY(${top[1]})`
                 }
+            }
 
-                animation.current = window.requestAnimationFrame(() =>
-                    animationStep(midiCurrentTime)
+            function updateActiveNotes() {
+                const newActiveNotes = midiVisualizerCoordinates.getActiveNotes(
+                    notesCoordinates,
+                    midiCurrentTime
                 )
+
+                onChangeActiveNotes((activeNotes: ActiveNote[]) => {
+                    return isEqual(newActiveNotes, activeNotes) ? activeNotes : newActiveNotes
+                })
             }
 
-            animation.current = window.requestAnimationFrame(() => animationStep(midiCurrentTime))
-
-            if (audioPlayerState === 'stopped' || audioPlayerState === 'paused') {
-                cancelAnimationFrame(animation.current)
+            function updateTimeToNextNote() {
+                if (midiMode === 'wait') {
+                    const timeToNextNote = midiVisualizerCoordinates.getTimeToNextNote(
+                        notesCoordinates,
+                        midiCurrentTime
+                    )
+                    onChangeTimeToNextNote(timeToNextNote)
+                }
             }
+
+            function listenToWorker(message: MessageEvent) {
+                if (message.data.code === 'interval') {
+                    const { midiCurrentTime } = message.data
+                    animation.current = window.requestAnimationFrame(animationStep)
+                    updateActiveNotes()
+                    updateTimeToNextNote()
+                    setMidiCurrentTime(midiCurrentTime)
+                }
+            }
+
+            if (audioPlayerState === 'stopped') {
+                animation.current = window.requestAnimationFrame(animationStep)
+                setMidiCurrentTime(0)
+                updateActiveNotes()
+                updateTimeToNextNote()
+            }
+
+            workersChannel.port1.addEventListener('message', listenToWorker)
 
             return function cleanup() {
-                cancelAnimationFrame(animation.current)
+                workersChannel.port1.removeEventListener('message', listenToWorker)
             }
-        }, [midiCurrentTime, audioPlayerState, midiVisualizerCoordinates])
+        }, [
+            midiCurrentTime,
+            midiMode,
+            midiVisualizerCoordinates,
+            notesCoordinates,
+            onChangeActiveNotes,
+            onChangeTimeToNextNote,
+            workersChannel.port1,
+            audioPlayerState,
+        ])
 
         return (
             <div className="visualizer" ref={ref}>

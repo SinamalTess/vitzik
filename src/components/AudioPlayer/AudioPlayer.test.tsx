@@ -24,15 +24,15 @@ describe('AudioPlayer', () => {
         allMsPerBeat: [],
     }
     const props = {
-        midiCurrentTime: 0,
         midiMetas,
         midiSpeedFactor: 1,
         isMute: true,
         isPlaying: false,
+        workersChannel: new MessageChannel(),
         onToggleSound: () => {},
         onChangeAudioPlayerState: jest.fn(),
+        onChangeWorkersChannel: () => {},
         onChangeMidiSpeedFactor: () => {},
-        onChangeMidiCurrentTime: () => {},
         onPlay: () => {},
     }
 
@@ -46,14 +46,14 @@ describe('AudioPlayer', () => {
 
         it('should set the state to "seeking" when the user is moving the cursor forward', () => {
             const { rerender } = render(<AudioPlayer {...props}></AudioPlayer>)
-            rerender(<AudioPlayer {...props} midiCurrentTime={20}></AudioPlayer>)
+            rerender(<AudioPlayer {...props}></AudioPlayer>)
 
             expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('seeking')
         })
 
         it('should set the state to "rewinding" when the user is moving the cursor backward', () => {
-            const { rerender } = render(<AudioPlayer {...props} midiCurrentTime={25}></AudioPlayer>)
-            rerender(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
+            const { rerender } = render(<AudioPlayer {...props}></AudioPlayer>)
+            rerender(<AudioPlayer {...props}></AudioPlayer>)
 
             expect(onChangeAudioPlayerState).toHaveBeenLastCalledWith('rewinding')
         })
@@ -66,7 +66,7 @@ describe('AudioPlayer', () => {
         })
 
         it('should set the state to "paused" when the Paused button is clicked', () => {
-            render(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
+            render(<AudioPlayer {...props}></AudioPlayer>)
             clickPlay()
             clickPause()
 
@@ -76,7 +76,7 @@ describe('AudioPlayer', () => {
 
     describe('Worker', () => {
         it('should stop the worker when the user is moving the player cursor', () => {
-            render(<AudioPlayer {...props} midiCurrentTime={5}></AudioPlayer>)
+            render(<AudioPlayer {...props}></AudioPlayer>)
             const audioPlayer = screen.getByRole('slider')
             clickPlay()
             fireEvent.change(audioPlayer, { target: { value: 50 } })

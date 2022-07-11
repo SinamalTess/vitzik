@@ -18,7 +18,7 @@ interface PreviewProps {
     midiMode: MidiMode
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
-    midiCurrentTime: number
+    workersChannel: MessageChannel
     activeNotes: ActiveNote[]
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
@@ -32,9 +32,9 @@ export function Preview({
     midiMode,
     midiFile,
     midiMetas,
-    midiCurrentTime,
     activeNotes,
     activeTracks,
+    workersChannel,
     audioPlayerState,
     onMidiImport,
     onChangeActiveNotes,
@@ -52,8 +52,8 @@ export function Preview({
                 <Visualizer
                     midiFile={midiFile}
                     midiMode={midiMode}
-                    midiCurrentTime={midiCurrentTime}
                     midiMetas={midiMetas}
+                    workersChannel={workersChannel}
                     audioPlayerState={audioPlayerState}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
