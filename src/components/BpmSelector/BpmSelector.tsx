@@ -39,12 +39,22 @@ export function BpmSelector({
         setIsBPMTooltipOpen((isBPMTooltipOpen) => !isBPMTooltipOpen)
     }
 
+    function onShowTooltip() {
+        console.log('show')
+        setIsBPMTooltipOpen(true)
+    }
+
+    function onHideTooltip() {
+        console.log('hide')
+        setIsBPMTooltipOpen(false)
+    }
+
     const speedFactors = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
     const actualBpm = Math.round(msPerBeatToBeatPerMin(msPerBeat) / midiSpeedFactor)
     return (
         <>
             <Divider orientation="vertical" />
-            <Tooltip show={isBPMTooltipOpen}>
+            <Tooltip show={isBPMTooltipOpen} onHide={onHideTooltip} onShow={onShowTooltip}>
                 <Button onClick={handleClickBPM}> {actualBpm} </Button>
                 <span className="bpm">
                     BPM :

@@ -3,6 +3,7 @@ import './SideBar.scss'
 import clsx from 'clsx'
 import { CSSTransition } from 'react-transition-group'
 import ReactDOM from 'react-dom'
+import { useClickOutside } from '../../../_hooks/useClickOutside'
 
 interface SideBarProps {
     open: boolean
@@ -12,7 +13,6 @@ interface SideBarProps {
 
 export function SideBar({ children, open, onClose }: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
-    const [listening, setListening] = useState(false)
     const sidebarRef = useRef<HTMLDivElement>(null)
 
     const animationDuration = 300
@@ -21,40 +21,12 @@ export function SideBar({ children, open, onClose }: SideBarProps) {
 
     useEffect(() => setIsOpen(open), [open])
 
-    useEffect(() => {
-        const events = ['click', 'touchstart']
+    function closeSideBar() {
+        setIsOpen(false)
+        onClose()
+    }
 
-        function closeSideBar(event: Event) {
-            // @ts-ignore
-            if (sidebarRef.current?.contains(event.target)) return
-            setIsOpen(false)
-            onClose()
-        }
-
-        function listenForOutsideClicks(
-            listening: boolean,
-            setListening: React.Dispatch<React.SetStateAction<boolean>>,
-            sidebarRef: React.RefObject<HTMLDivElement>
-        ) {
-            events.forEach((type) => {
-                if (listening) return
-                if (!sidebarRef) return
-                setListening(true)
-                document.addEventListener(type, closeSideBar)
-            })
-        }
-
-        if (isOpen) {
-            listenForOutsideClicks(listening, setListening, sidebarRef)
-        }
-
-        return function cleanup() {
-            events.forEach((type) => {
-                document.removeEventListener(type, closeSideBar)
-            })
-            setListening(false)
-        }
-    }, [isOpen])
+    useClickOutside([sidebarRef], closeSideBar, isOpen)
 
     return ReactDOM.createPortal(
         <CSSTransition

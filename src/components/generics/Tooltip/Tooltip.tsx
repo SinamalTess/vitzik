@@ -3,6 +3,7 @@ import { usePopper } from 'react-popper'
 import './Tooltip.scss'
 import { beforeWrite } from '@popperjs/core'
 import clsx from 'clsx'
+import { useClickOutside } from '../../../_hooks/useClickOutside'
 
 interface TooltipProps {
     children: ReactNode
@@ -10,6 +11,8 @@ interface TooltipProps {
     referenceWidth?: boolean
     show?: boolean
     showOnHover?: boolean
+    onShow?: () => void
+    onHide?: () => void
 }
 
 export function Tooltip({
@@ -18,6 +21,8 @@ export function Tooltip({
     referenceWidth = false,
     show = false,
     showOnHover = false,
+    onShow = () => {},
+    onHide = () => {},
 }: TooltipProps) {
     /*
         We have to use useMemo to define a custom modifier 
@@ -40,6 +45,7 @@ export function Tooltip({
     const [popperElement, setPopperElement] = useState<HTMLSpanElement | null>(null)
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
     const [isOpen, setOpen] = useState(false)
+    const isVisible = isOpen || show
 
     let modifiers = [
         { name: 'offset', options: { offset: [0, 8] } },
@@ -56,6 +62,12 @@ export function Tooltip({
         placement: 'bottom',
     })
 
+    function onClickOutside() {
+        onHide()
+    }
+
+    useClickOutside([referenceElement], onClickOutside, show)
+
     if (!children || !Array.isArray(children)) return null
 
     const referenceChild = children[0]
@@ -65,14 +77,16 @@ export function Tooltip({
         ? {
               onMouseEnter: () => {
                   setOpen(true)
+                  onShow()
               },
               onMouseLeave: () => {
                   setOpen(false)
+                  onHide()
               },
           }
         : {}
 
-    const className = clsx('tooltip', { 'tooltip--active': show || isOpen })
+    const className = clsx('tooltip', { 'tooltip--active': isVisible })
 
     return (
         <>
