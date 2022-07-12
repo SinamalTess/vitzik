@@ -66,6 +66,17 @@ export function Keyboard({
     function handleMouseDown(note: MidiInputActiveNote) {
         const activeKeysCopy = addNoteToActiveKeys(note)
         onKeyPressed(activeKeysCopy)
+        /*
+           When using onMouseDown prop, handleMouseUp() would not fire when the click was released
+           outside the element, leaving the key active after it was clicked.
+       */
+        document.addEventListener(
+            'mouseup',
+            () => {
+                handleMouseUp(note)
+            },
+            { once: true } // fires only once and then removes automatically the listener.
+        )
     }
 
     function handleMouseUp(note: MidiInputActiveNote) {
@@ -97,6 +108,11 @@ export function Keyboard({
             }
             onKeyPressed(activeKeysCopy)
         }
+    }
+
+    // Prevent
+    function handleDragStart(e: React.DragEvent<HTMLLIElement>) {
+        e.preventDefault()
     }
 
     return (
@@ -139,7 +155,7 @@ export function Keyboard({
                         data-testid={name}
                         className={classNames}
                         onMouseDown={() => handleMouseDown(note)}
-                        onMouseUp={() => handleMouseUp(note)}
+                        onDragStart={handleDragStart}
                     >
                         <span style={styleKeyName}>{keyTranslated}</span>
                     </li>
