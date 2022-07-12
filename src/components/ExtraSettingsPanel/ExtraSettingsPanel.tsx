@@ -38,34 +38,30 @@ export function ExtraSettingsPanel({
     return (
         <SideBar open={isOpen} onClose={onClose}>
             <div className="extra-settings">
+                <h4>User Instrument</h4>
+                <div className="user-instrument">
+                    <Icon size={50} name={userInstrumentIcon} />
+                    <InstrumentSelector onChange={onChangeInstrument} value={userInstrument} />
+                </div>
                 {midiMetas ? (
                     <>
                         <h4>File infos</h4>
                         <div>Ticks per beat : {midiMetas.ticksPerBeat}</div>
                         <div>Format : {midiMetas.format}</div>
-                        <h4>User Instrument</h4>
-                        <div className="user-instrument">
-                            <Icon size={50} name={userInstrumentIcon} />
-                            <InstrumentSelector
-                                onChange={onChangeInstrument}
-                                value={userInstrument}
-                            />
-                        </div>
                         <h4>Music System</h4>
                         <MusicSystemSelector
                             onChange={onChangeMusicSystem}
                             musicSystem={musicSystem}
                         />
+                        <h4>Tracks</h4>
+                        <MidiTrackList
+                            playableTracks={playableTracks}
+                            activeTracks={activeTracks}
+                            initialInstruments={initialInstruments}
+                            onChangeActiveTracks={onChangeActiveTracks}
+                        />
                     </>
                 ) : null}
-
-                <h4>Tracks</h4>
-                <MidiTrackList
-                    playableTracks={playableTracks}
-                    activeTracks={activeTracks}
-                    initialInstruments={initialInstruments}
-                    onChangeActiveTracks={onChangeActiveTracks}
-                />
             </div>
         </SideBar>
     )
