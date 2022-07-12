@@ -3,12 +3,11 @@ import { ListItem } from '../generics/ListItem'
 import { ListItemSecondaryAction } from '../generics/ListItemSecondaryAction'
 import { Button } from '../generics/Button'
 import { List } from '../generics/List'
-import { MIDI_INSTRUMENTS, MIDI_INSTRUMENTS_FLUIDR3_GM } from '../../utils/const'
 import { Icon } from '../generics/Icon'
 import { Instrument, TrackMetas } from '../../types'
-import { IconName } from '../generics/types'
 import { Divider } from '../generics/Divider'
 import './MidiTrackList.scss'
+import { instrumentToIcon } from '../../utils/instruments'
 
 interface MidiTrackListProps {
     playableTracks: TrackMetas[]
@@ -19,14 +18,6 @@ interface MidiTrackListProps {
 
 function getInstrument(channel: number, initialInstruments: Instrument[]) {
     return initialInstruments.find((instrument) => instrument.channel === channel)
-}
-
-function getInstrumentIcon(instrument: Instrument): IconName {
-    const InstrumentIndex = MIDI_INSTRUMENTS.findIndex(
-        (midiInstrument) => midiInstrument === instrument.name
-    )
-    return ('instrument-' +
-        MIDI_INSTRUMENTS_FLUIDR3_GM[InstrumentIndex].toLowerCase().replace(/_/g, '-')) as IconName
 }
 
 export function MidiTrackList({
@@ -99,8 +90,8 @@ export function MidiTrackList({
                               <Divider orientation="vertical" />
                               <List type="transparent">
                                   {channels.map((channel) => {
-                                      const intrument = getInstrument(channel, initialInstruments)
-                                      if (intrument) {
+                                      const instrument = getInstrument(channel, initialInstruments)
+                                      if (instrument) {
                                           return (
                                               <ListItem key={index + channel}>
                                                   <ListItemSecondaryAction>
@@ -112,9 +103,9 @@ export function MidiTrackList({
                                                   </ListItemSecondaryAction>
                                                   <Icon
                                                       size={18}
-                                                      name={getInstrumentIcon(intrument)}
+                                                      name={instrumentToIcon(instrument.name)}
                                                   />
-                                                  {intrument.name}
+                                                  {instrument.name}
                                               </ListItem>
                                           )
                                       } else {

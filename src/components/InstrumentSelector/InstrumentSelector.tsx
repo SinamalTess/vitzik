@@ -4,10 +4,11 @@ import { MIDI_INSTRUMENTS, NOTE_NAMES } from '../../utils/const'
 import { Instrument, InstrumentUserFriendlyName } from '../../types'
 
 interface InstrumentSelectorProps {
+    value: string
     onChange: React.Dispatch<React.SetStateAction<Instrument[]>>
 }
 
-export function InstrumentSelector({ onChange }: InstrumentSelectorProps) {
+export function InstrumentSelector({ value, onChange }: InstrumentSelectorProps) {
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const name = event.target.value as InstrumentUserFriendlyName
         const instrument = {
@@ -29,12 +30,14 @@ export function InstrumentSelector({ onChange }: InstrumentSelectorProps) {
     }
 
     return (
-        <Select onChange={handleChange}>
-            {MIDI_INSTRUMENTS.map((instrument) => (
-                <option value={instrument} key={instrument}>
-                    {instrument}
-                </option>
-            ))}
-        </Select>
+        <>
+            <Select onChange={handleChange} value={value}>
+                {MIDI_INSTRUMENTS.map((instrument) => (
+                    <option value={instrument} key={instrument}>
+                        {instrument}
+                    </option>
+                ))}
+            </Select>
+        </>
     )
 }

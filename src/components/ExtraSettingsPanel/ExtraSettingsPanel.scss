@@ -1,6 +1,13 @@
 @use 'sass:map';
 @import 'src/style/vars';
+@import 'src/style/glitch';
 
 .extra-settings {
     padding: map-get($theme-spacing-sizes, 'lg');
+    .user-instrument {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        @include addGlitchEffect();
+    }
 }

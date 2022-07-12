@@ -41,3 +41,31 @@
         }
     }
 }
+
+@mixin addGlitchEffect() {
+    position: relative;
+    // Creates a copy before our text.
+    &::before {
+        // Duplicates our text with the mixin.
+        @include glitchCopy;
+        // Scoots text slightly to the left for the color offset.
+        left: 2px;
+        // Creates the color 'shadow' that happens on the glitch.
+        text-shadow: -2px 0 #ff00c1;
+        /* Creates an initial clip for our glitch. This works in
+        a typical top,right,bottom,left fashion and creates a mask
+        to only show a certain part of the glitch at a time. */
+        clip: rect(44px, 450px, 56px, 0);
+        /* Runs our glitch-anim defined below to run in a 5s loop, infinitely,
+        with an alternating animation to keep things fresh. */
+        animation: glitch-anim 5s infinite linear alternate-reverse;
+    }
+
+    // Creates a copy after our text. Note comments from ::before.
+    &::after {
+        @include glitchCopy;
+        left: -2px;
+        text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+        animation: glitch-anim2 1s infinite linear alternate-reverse;
+    }
+}

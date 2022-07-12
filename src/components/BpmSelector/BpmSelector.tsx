@@ -55,9 +55,11 @@ export function BpmSelector({
         <>
             <Divider orientation="vertical" />
             <Tooltip show={isBPMTooltipOpen} onHide={onHideTooltip} onShow={onShowTooltip}>
-                <Button onClick={handleClickBPM}> {actualBpm} </Button>
+                <span>
+                    <span> BPM {midiSpeedFactor !== 1 ? `(x${midiSpeedFactor})` : null} : </span>
+                    <Button onClick={handleClickBPM}> {actualBpm}</Button>
+                </span>
                 <span className="bpm">
-                    BPM :
                     <ButtonGroup size={'sm'}>
                         {speedFactors.map((factor, index) => (
                             <Button

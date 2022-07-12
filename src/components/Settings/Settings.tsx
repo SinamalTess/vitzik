@@ -8,6 +8,7 @@ import {
     AppMode,
     ActiveNote,
     MidiMetas,
+    InstrumentUserFriendlyName,
 } from '../../types'
 import { ModeSelector } from '../ModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
@@ -15,6 +16,7 @@ import { Switch } from '../generics/Switch'
 import { Button } from '../generics/Button'
 import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
 import { Tooltip } from '../generics/Tooltip'
+import { MIDI_USER_CHANNEL } from '../../utils/const'
 
 interface SettingsProps {
     appMode: AppMode
@@ -56,6 +58,13 @@ export function Settings({
     onMidiModeChange,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const userInstrument = initialInstruments.find(
+        (instrument) => instrument.channel === MIDI_USER_CHANNEL
+    )
+
+    const userInstrumentName: InstrumentUserFriendlyName = userInstrument
+        ? userInstrument.name
+        : 'Acoustic Grand Keyboard'
 
     function handleChange() {
         onMidiModeChange((midiMode) => {
@@ -101,6 +110,7 @@ export function Settings({
                 activeTracks={activeTracks}
                 isOpen={isOpen}
                 initialInstruments={initialInstruments}
+                userInstrument={userInstrumentName}
                 onClose={handleClose}
                 onChangeMusicSystem={onChangeMusicSystem}
                 onChangeActiveTracks={onChangeActiveTracks}

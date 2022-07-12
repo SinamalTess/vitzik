@@ -32,7 +32,7 @@ export function Button({
     const classNames = clsx(
         className,
         'btn',
-        { [`btn--${size}`]: size },
+        { [`btn-${size}`]: size },
         { [`pd-${size}`]: size },
         { 'btn--active': active },
         { 'btn--outline': variant === 'outlined' },

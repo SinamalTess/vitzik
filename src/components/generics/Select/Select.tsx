@@ -2,13 +2,14 @@ import React, { ReactNode } from 'react'
 import './Select.scss'
 
 interface SelectProps {
-    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    value?: any
     children: ReactNode
+    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-export function Select({ onChange, children }: SelectProps) {
+export function Select({ children, value, onChange }: SelectProps) {
     return (
-        <select onChange={onChange} className="mg-sm">
+        <select onChange={onChange} className="mg-sm" value={value}>
             {children}
         </select>
     )

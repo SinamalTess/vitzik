@@ -1,9 +1,13 @@
 @use 'sass:map';
 @import '/src/style/vars';
 
+$width: 33%;
+
 .sidebar {
     height: 100%;
-    width: 50%;
+    width: $width;
+    right: $width;
+    overflow-y: auto;
     top: 0;
     transform: translateX(100%);
     position: fixed;
