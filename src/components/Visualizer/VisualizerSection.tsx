@@ -9,7 +9,6 @@ interface VisualizerSectionProps {
     height: number
     width: number
     notesCoordinates: MidiVisualizerNoteCoordinates[] | null | undefined
-    showCanvasNumbers?: boolean
 }
 
 interface RectanglesProps {
@@ -18,7 +17,7 @@ interface RectanglesProps {
     indexToDraw: number
 }
 
-const Rectangles = React.memo(function Rectangles({
+const Notes = React.memo(function Notes({
     notesCoordinates,
     height,
     indexToDraw,
@@ -58,7 +57,7 @@ export function VisualizerSection({
             className={classNames}
         >
             {notesCoordinates ? (
-                <Rectangles
+                <Notes
                     notesCoordinates={notesCoordinates}
                     height={height}
                     indexToDraw={indexToDraw}

@@ -20,6 +20,7 @@ export function TimeContextProvider({
     children,
 }: TimeContextProviderProps) {
     const [time, setTime] = useState<number>(0)
+
     useEffect(() => {
         let worker: Worker = WebWorker(workerInterval)
 

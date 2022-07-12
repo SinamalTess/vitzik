@@ -32,11 +32,6 @@ interface SettingsProps {
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
 }
 
-/*
-    This component takes a while to paint.
-    React.memo was used to avoid unnecessary re-renders
-*/
-
 export function Settings({
     appMode,
     midiMode,
@@ -61,7 +56,7 @@ export function Settings({
         ? userInstrument.name
         : 'Acoustic Grand Keyboard'
 
-    function handleChange() {
+    function handleMidiModeChange() {
         onMidiModeChange((midiMode) => {
             switch (midiMode) {
                 case 'autoplay':
@@ -72,11 +67,11 @@ export function Settings({
         })
     }
 
-    function handleClick() {
+    function handleClickOnExtraSettings() {
         setIsOpen((isOpen) => !isOpen)
     }
 
-    function handleClose() {
+    function handleCloseExtraSettings() {
         setIsOpen(false)
     }
 
@@ -84,7 +79,7 @@ export function Settings({
         <div className="settings">
             {isMidiImported ? (
                 <Tooltip showOnHover>
-                    <Switch isOn={midiMode === 'autoplay'} onChange={handleChange}>
+                    <Switch isOn={midiMode === 'autoplay'} onChange={handleMidiModeChange}>
                         Autoplay
                     </Switch>
                     <span>
@@ -96,7 +91,7 @@ export function Settings({
                     </span>
                 </Tooltip>
             ) : null}
-            <Button icon={'settings'} onClick={handleClick} />
+            <Button icon={'settings'} onClick={handleClickOnExtraSettings} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector onMidiInputChange={onMidiInputChange} />
             <ExtraSettingsPanel
@@ -106,7 +101,7 @@ export function Settings({
                 isOpen={isOpen}
                 initialInstruments={initialInstruments}
                 userInstrument={userInstrumentName}
-                onClose={handleClose}
+                onClose={handleCloseExtraSettings}
                 onChangeMusicSystem={onChangeMusicSystem}
                 onChangeActiveTracks={onChangeActiveTracks}
                 onChangeInstrument={onChangeInstrument}

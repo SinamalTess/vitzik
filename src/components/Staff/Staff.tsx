@@ -7,6 +7,10 @@ import { NOTE_NAMES } from '../../utils/const'
 import SVGContext = Vex.Flow.SVGContext
 import { AlphabeticalNote } from '../../types'
 
+/*
+    This component is a WIP
+*/
+
 interface StaffProps {
     notes: AlphabeticalNote[]
 }

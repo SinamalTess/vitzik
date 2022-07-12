@@ -26,7 +26,7 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
     }, [onMidiInputChange])
 
-    function handleChangeMidiInput(event: React.ChangeEvent<HTMLSelectElement>) {
+    function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedInput = event.target.value
         const input = midiInputs.find((e) => e.id === selectedInput)
         if (input) {
@@ -35,7 +35,7 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
     }
 
     return midiInputs.length ? (
-        <Select onChange={handleChangeMidiInput}>
+        <Select onChange={handleChange}>
             {midiInputs.map((midiInput) => (
                 <option
                     value={midiInput.id}

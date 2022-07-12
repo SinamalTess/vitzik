@@ -10,14 +10,7 @@ interface VisualizerTracksProps {
     width: number
 }
 
-function drawLines(
-    ctx: CanvasRenderingContext2D,
-    containerDimensions: {
-        h: number
-        w: number
-    }
-) {
-    const { h, w } = containerDimensions
+function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     ctx.canvas.height = h
     ctx.canvas.width = w
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)'
@@ -40,7 +33,7 @@ export function VisualizerNotesTracks({ height, width }: VisualizerTracksProps) 
     const ctx = canvasRef?.getContext('2d')
 
     if (ctx) {
-        drawLines(ctx, { h: height, w: width })
+        drawTrackLines(ctx, height, width)
     }
 
     const classNames = clsx('visualizer__notes-tracks')

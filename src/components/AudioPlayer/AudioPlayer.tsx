@@ -72,13 +72,7 @@ export function AudioPlayer({
         pause()
     }
 
-    // if (!isPlaying) {
-    //     onChangeAudioPlayerState('paused')
-    // } else {
-    //     onChangeAudioPlayerState('playing')
-    // }
-
-    function handleChangeAudioPlayer(event: React.ChangeEvent<HTMLInputElement>) {
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
         onChangeMidiStartingTime(parseFloat(value))
     }
@@ -118,7 +112,7 @@ export function AudioPlayer({
                 className="audio-player__progress-bar"
                 value={midiCurrentTime}
                 max={midiDuration}
-                onChange={handleChangeAudioPlayer}
+                onChange={handleChange}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
             />

@@ -58,7 +58,7 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         }
     }
 
-    function handleDragLeave(event: DragEvent) {
+    function handleDragLeave() {
         setState('pending')
     }
 
