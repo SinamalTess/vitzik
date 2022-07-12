@@ -2,11 +2,14 @@ import React, { ReactNode, useState } from 'react'
 import './Dropdown.scss'
 import { Button } from '../Button'
 import { Tooltip } from '../Tooltip'
+import clsx from 'clsx'
 
 interface DropdownProps {
     children: ReactNode
     open: boolean
 }
+
+const classNames = clsx('dropdown')
 
 export function Dropdown({ children, open = false }: DropdownProps) {
     const [isOpen, setIsOpen] = useState<boolean>(open)
@@ -33,9 +36,11 @@ export function Dropdown({ children, open = false }: DropdownProps) {
     }
 
     return (
-        <Tooltip arrow={false} referenceWidth show={isOpen}>
-            <Button onClick={handleClick}>{dropdownToggle}</Button>
-            {dropdownItems.map((dropdownItem: ReactNode) => dropdownItem)}
-        </Tooltip>
+        <div className={classNames}>
+            <Tooltip arrow={false} referenceWidth show={isOpen}>
+                <Button onClick={handleClick}>{dropdownToggle}</Button>
+                {dropdownItems.map((dropdownItem: ReactNode) => dropdownItem)}
+            </Tooltip>
+        </div>
     )
 }

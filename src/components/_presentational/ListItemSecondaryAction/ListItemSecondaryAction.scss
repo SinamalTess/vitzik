@@ -1,7 +1,7 @@
 @use 'sass:map';
 @import '../../../style/vars';
 
-.list-item-secondary-action {
+.list__item-secondary-action {
     order: 0;
     padding: map-get($theme-spacing-sizes, 'sm');
 }

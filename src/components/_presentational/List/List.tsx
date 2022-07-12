@@ -11,5 +11,6 @@ interface ListProps {
 
 export function List({ children, className, type = 'background' }: ListProps) {
     const classNames = clsx('list', { 'list--background': type === 'background' }, className)
+
     return <ul className={classNames}>{children}</ul>
 }

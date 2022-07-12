@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react'
 import './TextField.scss'
 import { IconName } from '../types'
 import { Icon } from '../Icon'
+import clsx from 'clsx'
 
 interface TextFieldProps {
     value: string | number
@@ -11,6 +12,8 @@ interface TextFieldProps {
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
+const classNames = clsx('text-field')
+
 export function TextField({
     value,
     fitSize = false,
@@ -19,7 +22,7 @@ export function TextField({
     onChange,
 }: TextFieldProps) {
     return (
-        <span className="text-field">
+        <span className={classNames}>
             {icon ? <Icon name={icon} /> : null}
             <input
                 min={1}

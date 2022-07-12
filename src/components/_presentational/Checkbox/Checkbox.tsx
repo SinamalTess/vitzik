@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import React from 'react'
 import './Checkbox.scss'
+import clsx from 'clsx'
 
 interface CheckboxProps {
     children?: ReactNode
@@ -9,6 +10,8 @@ interface CheckboxProps {
     onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
     disabled?: boolean
 }
+
+const classNames = clsx('checkbox')
 
 export function Checkbox({
     children,
@@ -22,7 +25,7 @@ export function Checkbox({
     }
 
     return (
-        <span className={'checkbox'}>
+        <span className={classNames}>
             <input
                 type="checkbox"
                 value={value}

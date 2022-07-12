@@ -11,13 +11,14 @@ interface SideBarProps {
     onClose: () => void
 }
 
+const classNames = clsx('sidebar')
+
 export function SideBar({ children, open, onClose }: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
     const sidebarRef = useRef<HTMLDivElement>(null)
 
     const animationDuration = 300
     const rootNode = document.getElementById('root') ?? document.body
-    const classNames = clsx('sidebar')
 
     useEffect(() => setIsOpen(open), [open])
 
@@ -34,7 +35,7 @@ export function SideBar({ children, open, onClose }: SideBarProps) {
             appear={isOpen}
             in={isOpen}
             timeout={animationDuration}
-            classNames="sidebar"
+            classNames={classNames}
         >
             <div className={classNames} ref={sidebarRef}>
                 {children}

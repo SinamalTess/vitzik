@@ -8,10 +8,10 @@ interface ButtonGroupProps {
     size?: CSSSpacingSize
 }
 
+const classNames = clsx('btn-group', 'mg-sm')
+
 export function ButtonGroup({ children, size = 'md' }: ButtonGroupProps) {
     if (!children || !Array.isArray(children)) return null
-
-    const classNames = clsx('btn-group', 'mg-sm')
 
     return (
         <div className={classNames} role="group">
