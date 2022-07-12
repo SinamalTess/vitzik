@@ -1,5 +1,4 @@
 import { Staff } from '../Staff'
-import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
@@ -23,7 +22,6 @@ interface PreviewProps {
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
-    onMidiImport: (title: string, midiJSON: IMidiFile) => void
 }
 
 export function Preview({
@@ -34,7 +32,6 @@ export function Preview({
     activeNotes,
     activeTracks,
     audioPlayerState,
-    onMidiImport,
     onChangeActiveNotes,
     onChangeTimeToNextNote,
 }: PreviewProps) {
@@ -45,7 +42,6 @@ export function Preview({
         <Staff notes={staffNotes} />
     ) : (
         <ErrorBoundary>
-            <MidiImporter onMidiImport={onMidiImport} />
             {midiMetas && midiFile ? (
                 <Visualizer
                     midiFile={midiFile}

@@ -17,7 +17,6 @@ interface AudioPlayerProps {
     midiMode: MidiMode
     isMute: boolean
     isPlaying: boolean
-    startingTime: number
     timeToNextNote: number | null
     onToggleSound: (isSoundOn: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void

@@ -64,6 +64,7 @@ export function MidiTrackList({
             <ListItem>
                 <ListItemSecondaryAction>
                     <Button
+                        size={'sm'}
                         icon={allChecked ? 'eye-closed' : 'eye-open'}
                         onClick={() => handleChange('all')}
                     >

@@ -20,6 +20,7 @@ import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
 import { NOTE_NAMES } from './utils/const'
 import { TimeContextProvider } from './components/TimeContextProvider/TimeContextProvider'
+import { MidiImporter } from './components/MidiImporter'
 
 //TODO: check accessibility
 
@@ -92,7 +93,6 @@ function App() {
                             timeToNextNote={timeToNextNote}
                             midiTitle={midiTitle}
                             midiMetas={midiMetas}
-                            startingTime={midiStartingTime}
                             midiSpeedFactor={midiSpeedFactor}
                             onChangeAudioPlayerState={setAudioPlayerState}
                             onChangeMidiStartingTime={setMidiStartingTime}
@@ -113,7 +113,6 @@ function App() {
                         onChangeAppMode={setAppMode}
                         onChangeMusicSystem={setMusicSystem}
                         onChangeInstrument={setInstruments}
-                        onChangeActiveNotes={setActiveNotes}
                         onChangeActiveTracks={setActiveTracks}
                         onMidiModeChange={setMidiMode}
                     />
@@ -127,11 +126,8 @@ function App() {
                     />
                 </div>
                 <div className="item preview">
-                    {midiMetas ? (
-                        <>
-                            <MidiTitle midiTitle={midiTitle} />
-                        </>
-                    ) : null}
+                    {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
+                    <MidiImporter onMidiImport={handleMidiImport} />
                     <Preview
                         appMode={appMode}
                         midiMode={midiMode}
@@ -140,7 +136,6 @@ function App() {
                         activeNotes={activeNotes}
                         audioPlayerState={audioPlayerState}
                         activeTracks={activeTracks}
-                        onMidiImport={handleMidiImport}
                         onChangeActiveNotes={setActiveNotes}
                         onChangeTimeToNextNote={setTimeToNextNote}
                     />
@@ -149,9 +144,9 @@ function App() {
                     <Keyboard
                         activeKeys={activeNotes}
                         musicSystem={musicSystem}
+                        midiMode={midiMode}
                         onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                         onKeyPressed={setActiveNotes}
-                        midiMode={midiMode}
                     />
                     <>
                         {instruments.map(({ channel, name, notes }) => {
