@@ -1,11 +1,9 @@
 import React from 'react'
 import './Icon.scss'
 import clsx from 'clsx'
-import { IconName, CSSSpacingSize } from '../types'
+import { IconName, CSSSpacingSize, PresentationalComponentBasicProps } from '../types'
 
-interface IconProps {
-    style?: React.CSSProperties
-    className?: string[] | string
+interface IconProps extends PresentationalComponentBasicProps {
     name: IconName
     color?: string
     children?: string

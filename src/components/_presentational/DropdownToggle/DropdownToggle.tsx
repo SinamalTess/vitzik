@@ -1,12 +1,16 @@
 import React from 'react'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface DropdownToggleProps {
-    className?: string[] | string
+interface DropdownToggleProps extends PresentationalComponentBasicProps {
     children: string
 }
 
-export function DropdownToggle({ className, children }: DropdownToggleProps) {
+export function DropdownToggle({ style, className, children }: DropdownToggleProps) {
     const classNames = clsx('dropdown__toggle', className)
-    return <span className={classNames}>{children}</span>
+    return (
+        <span className={classNames} style={style}>
+            {children}
+        </span>
+    )
 }

@@ -1,10 +1,9 @@
 import React, { ErrorInfo, ReactNode } from 'react'
 import './ErrorBoundary.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface ErrorBoundaryProps {
-    style?: React.CSSProperties
-    className?: string[] | string
+interface ErrorBoundaryProps extends PresentationalComponentBasicProps {
     children?: ReactNode
 }
 

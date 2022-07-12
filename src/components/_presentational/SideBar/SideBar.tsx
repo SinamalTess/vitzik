@@ -4,10 +4,9 @@ import clsx from 'clsx'
 import { CSSTransition } from 'react-transition-group'
 import ReactDOM from 'react-dom'
 import { useClickOutside } from '../../../_hooks/useClickOutside'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface SideBarProps {
-    style?: React.CSSProperties
-    className?: string | string[]
+interface SideBarProps extends PresentationalComponentBasicProps {
     open: boolean
     children: ReactNode
     onClose: () => void

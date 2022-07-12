@@ -1,12 +1,10 @@
 import React, { ChangeEvent } from 'react'
 import './TextField.scss'
-import { IconName } from '../types'
+import { IconName, PresentationalComponentBasicProps } from '../types'
 import { Icon } from '../Icon'
 import clsx from 'clsx'
 
-interface TextFieldProps {
-    style?: React.CSSProperties
-    className?: string | string[]
+interface TextFieldProps extends PresentationalComponentBasicProps {
     value: string | number
     fitSize?: boolean
     icon?: IconName

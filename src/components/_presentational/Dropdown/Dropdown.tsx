@@ -3,10 +3,9 @@ import './Dropdown.scss'
 import { Button } from '../Button'
 import { Tooltip } from '../Tooltip'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface DropdownProps {
-    className?: string[] | string
-    style?: React.CSSProperties
+interface DropdownProps extends PresentationalComponentBasicProps {
     children: ReactNode
     open: boolean
 }

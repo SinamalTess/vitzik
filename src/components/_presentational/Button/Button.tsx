@@ -1,13 +1,12 @@
 import React, { ReactNode } from 'react'
 import './Button.scss'
 import { Icon } from '../Icon'
-import { CSSSpacingSize, CSSColor, IconName } from '../types'
+import { CSSSpacingSize, CSSColor, IconName, PresentationalComponentBasicProps } from '../types'
 import clsx from 'clsx'
 
 type ButtonVariant = 'outlined' | 'filled' | 'link'
 
-interface ButtonProps {
-    style?: React.CSSProperties
+interface ButtonProps extends PresentationalComponentBasicProps {
     disabled?: boolean
     active?: boolean
     icon?: IconName
@@ -15,7 +14,6 @@ interface ButtonProps {
     size?: CSSSpacingSize
     color?: CSSColor
     variant?: ButtonVariant
-    className?: string[] | string
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 

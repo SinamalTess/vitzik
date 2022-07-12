@@ -1,9 +1,8 @@
 import React, { ReactNode } from 'react'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface DropdownItemProps {
-    style?: React.CSSProperties
-    className?: string[] | string
+interface DropdownItemProps extends PresentationalComponentBasicProps {
     children: ReactNode
 }
 

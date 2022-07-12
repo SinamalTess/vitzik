@@ -4,10 +4,9 @@ import './Tooltip.scss'
 import { beforeWrite } from '@popperjs/core'
 import clsx from 'clsx'
 import { useClickOutside } from '../../../_hooks/useClickOutside'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface TooltipProps {
-    style?: React.CSSProperties
-    className?: string | string[]
+interface TooltipProps extends PresentationalComponentBasicProps {
     children: ReactNode
     arrow?: boolean
     referenceWidth?: boolean

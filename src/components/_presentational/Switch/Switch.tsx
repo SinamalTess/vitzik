@@ -1,10 +1,9 @@
 import React from 'react'
 import './Switch.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface SwitchProps {
-    style?: React.CSSProperties
-    className?: string | string[]
+interface SwitchProps extends PresentationalComponentBasicProps {
     isOn: boolean
     onChange: () => void
     children: string | string[]

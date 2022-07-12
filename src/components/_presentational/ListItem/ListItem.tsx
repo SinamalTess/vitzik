@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react'
 import './ListItem.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface ListItemProps {
-    className?: string | string[]
+interface ListItemProps extends PresentationalComponentBasicProps {
     children: ReactNode
-    style?: React.CSSProperties
 }
 
 export function ListItem({ className, children, style }: ListItemProps) {

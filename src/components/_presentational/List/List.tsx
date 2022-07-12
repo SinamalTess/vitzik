@@ -2,11 +2,10 @@ import { ReactNode } from 'react'
 import React from 'react'
 import './List.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface ListProps {
-    style?: React.CSSProperties
+interface ListProps extends PresentationalComponentBasicProps {
     children: ReactNode
-    className?: string | string[]
     type?: 'background' | 'transparent'
 }
 

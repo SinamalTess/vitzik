@@ -1,10 +1,9 @@
 import React, { ReactNode } from 'react'
 import './ListItemSecondaryAction.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface ListItemSecondaryActionProps {
-    style?: React.CSSProperties
-    className?: string | string[]
+interface ListItemSecondaryActionProps extends PresentationalComponentBasicProps {
     children: ReactNode
 }
 

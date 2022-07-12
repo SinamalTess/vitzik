@@ -1,14 +1,13 @@
 import React from 'react'
 import './RangeSlider.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface RangeSliderPros {
-    style?: React.CSSProperties
+interface RangeSliderPros extends PresentationalComponentBasicProps {
     value: string | number
     min?: number
     max?: number
     step?: number
-    className?: string | string[]
     onMouseUp?: (event: React.MouseEvent<HTMLInputElement>) => void
     onMouseDown?: (event: React.MouseEvent<HTMLInputElement>) => void
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void

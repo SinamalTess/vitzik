@@ -2,14 +2,13 @@ import { ReactNode } from 'react'
 import React from 'react'
 import './Checkbox.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface CheckboxProps {
-    style?: React.CSSProperties
+interface CheckboxProps extends PresentationalComponentBasicProps {
     children?: ReactNode
     value: string
     checked?: boolean
     disabled?: boolean
-    className?: string[] | string
     onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
 }
 

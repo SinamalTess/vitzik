@@ -1,12 +1,10 @@
 import React, { ReactNode } from 'react'
 import './ButtonGroup.scss'
-import { CSSSpacingSize } from '../types'
+import { CSSSpacingSize, PresentationalComponentBasicProps } from '../types'
 import clsx from 'clsx'
 
-interface ButtonGroupProps {
-    style?: React.CSSProperties
+interface ButtonGroupProps extends PresentationalComponentBasicProps {
     children: ReactNode
-    className?: string[] | string
     size?: CSSSpacingSize
 }
 

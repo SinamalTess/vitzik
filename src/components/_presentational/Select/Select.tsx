@@ -1,10 +1,9 @@
 import React, { ReactNode } from 'react'
 import './Select.scss'
 import clsx from 'clsx'
+import { PresentationalComponentBasicProps } from '../types'
 
-interface SelectProps {
-    style?: React.CSSProperties
-    className?: string | string[]
+interface SelectProps extends PresentationalComponentBasicProps {
     value?: any
     children: ReactNode
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
