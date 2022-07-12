@@ -28,6 +28,7 @@ describe('InstrumentPlayer', () => {
 
         render(
             <InstrumentPlayer
+                audioContext={new AudioContext()}
                 activeNotes={[activeNote]}
                 isMute={false}
                 notesToLoad={[]}
@@ -50,6 +51,7 @@ describe('InstrumentPlayer', () => {
 
         render(
             <InstrumentPlayer
+                audioContext={new AudioContext()}
                 activeNotes={[activeNote]}
                 isMute={false}
                 notesToLoad={[]}

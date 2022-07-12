@@ -50,6 +50,10 @@ export function TimeContextProvider({
                 setTime(0)
                 worker.removeEventListener('message', workerListener)
                 break
+            case 'paused':
+                worker.terminate()
+                worker.removeEventListener('message', workerListener)
+                break
             case 'seeking':
                 worker.addEventListener('message', workerListener)
                 worker.postMessage({

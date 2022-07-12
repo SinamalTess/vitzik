@@ -16,6 +16,7 @@ import {
 import { usePrevious } from '../../_hooks'
 
 interface InstrumentPlayerProps {
+    audioContext: AudioContext
     isMute: boolean
     instrumentName: InstrumentUserFriendlyName
     activeNotes: ActiveNote[]
@@ -59,6 +60,7 @@ function playNote(note: ActiveNote, instrumentPlayer: Player) {
 
 export function InstrumentPlayer({
     isMute,
+    audioContext,
     instrumentName,
     notesToLoad,
     activeNotes,
@@ -70,25 +72,21 @@ export function InstrumentPlayer({
 
     useEffect(() => {
         if (isMute) return
-
         function startInstrument() {
-            const ac = new AudioContext()
             const soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
-            Soundfont.instrument(ac, soundfontInstrument, { soundfont, notes: notesToLoad })
+            Soundfont.instrument(audioContext, soundfontInstrument, {
+                soundfont,
+                notes: notesToLoad,
+            })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
                 })
                 .catch(() => {
                     console.error(`Failed to start the instrument ${instrumentName} audio`)
                 })
-            return ac
         }
 
-        const ac = startInstrument()
-
-        return function cleanup() {
-            ac.close()
-        }
+        startInstrument()
     }, [instrumentName, isMute, soundfont])
 
     useEffect(() => {

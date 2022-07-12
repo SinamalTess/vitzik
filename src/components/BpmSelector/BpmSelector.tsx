@@ -23,8 +23,8 @@ export function BpmSelector({
     onChangeMidiStartingTime,
 }: BpmSelectorProps) {
     const midiCurrentTime = useContext(MidiCurrentTime)
-    const { allMsPerBeat } = midiMetas
     const [isBPMTooltipOpen, setIsBPMTooltipOpen] = useState<boolean>(false)
+    const { allMsPerBeat } = midiMetas
     const msPerBeat = MidiVisualizerCoordinates.getMsPerBeatFromTime(
         allMsPerBeat,
         midiCurrentTime
