@@ -8,9 +8,14 @@ interface IconProps extends PresentationalComponentBasicProps {
     color?: string
     children?: string
     size?: CSSSpacingSize | number
+    onMouseEnter?: (event: React.MouseEvent<HTMLSpanElement>) => void
+    onMouseLeave?: (event: React.MouseEvent<HTMLSpanElement>) => void
 }
 
-export function Icon({ style, className, name, children, color, size = 'md' }: IconProps) {
+export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
+    { style, className, name, children, color, size = 'md', onMouseLeave, onMouseEnter },
+    ref
+) {
     const classNames = clsx(
         'icon',
         { [`icon-${name}`]: name },
@@ -26,8 +31,15 @@ export function Icon({ style, className, name, children, color, size = 'md' }: I
 
     return (
         // TODO: check if this is the proper usage of aria-label
-        <span className={classNames} style={styles} aria-label={`icon-${name}`}>
+        <span
+            className={classNames}
+            style={styles}
+            aria-label={`icon-${name}`}
+            ref={ref}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+        >
             {children}
         </span>
     )
-}
+})

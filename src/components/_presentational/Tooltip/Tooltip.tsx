@@ -98,14 +98,7 @@ export function Tooltip({
 
     return (
         <>
-            {typeof referenceChild.type === 'function' ? ( // Function components can't have a ref
-                <span ref={setReferenceElement} {...hoverProps}>
-                    {referenceChild}
-                </span>
-            ) : (
-                // If possible we avoid wrapping the component to save some additional DOM elements
-                React.cloneElement(referenceChild, { ref: setReferenceElement, ...hoverProps })
-            )}
+            {React.cloneElement(referenceChild, { ref: setReferenceElement, ...hoverProps })}
 
             <span
                 className={classNames}

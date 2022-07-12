@@ -5,14 +5,25 @@ import { PresentationalComponentBasicProps } from '../types'
 
 interface SwitchProps extends PresentationalComponentBasicProps {
     isOn: boolean
-    onChange: () => void
     children: string | string[]
+    onChange: () => void
+    onMouseEnter?: (event: React.MouseEvent<HTMLLabelElement>) => void
+    onMouseLeave?: (event: React.MouseEvent<HTMLLabelElement>) => void
 }
 
-export function Switch({ style, className, children, isOn, onChange }: SwitchProps) {
+export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(function Switch(
+    { style, className, children, isOn, onChange, onMouseEnter, onMouseLeave }: SwitchProps,
+    ref
+) {
     const classNames = clsx('switch', className)
     return (
-        <label className={classNames} style={style}>
+        <label
+            className={classNames}
+            style={style}
+            ref={ref}
+            onMouseLeave={onMouseLeave}
+            onMouseEnter={onMouseEnter}
+        >
             {children}
             <input type="checkbox" checked={isOn} onChange={onChange} />
             <span className={'switch--icon'}>
@@ -20,4 +31,4 @@ export function Switch({ style, className, children, isOn, onChange }: SwitchPro
             </span>
         </label>
     )
-}
+})

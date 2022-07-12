@@ -15,20 +15,27 @@ interface ButtonProps extends PresentationalComponentBasicProps {
     color?: CSSColor
     variant?: ButtonVariant
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
+    onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void
+    onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-export function Button({
-    style,
-    disabled = false,
-    active = false,
-    icon,
-    children,
-    size = 'md',
-    color = 'primary',
-    variant,
-    className,
-    onClick = () => {},
-}: ButtonProps) {
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+    {
+        style,
+        disabled = false,
+        active = false,
+        icon,
+        children,
+        size = 'md',
+        color = 'primary',
+        variant,
+        className,
+        onClick = () => {},
+        onMouseEnter = () => {},
+        onMouseLeave = () => {},
+    },
+    ref
+) {
     const classNames = clsx(
         'btn',
         { [`btn-${size}`]: size },
@@ -42,9 +49,17 @@ export function Button({
     )
 
     return (
-        <button disabled={disabled} className={classNames} onClick={onClick} style={style}>
+        <button
+            ref={ref}
+            disabled={disabled}
+            className={classNames}
+            style={style}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+        >
             {icon ? <Icon name={icon} size={size} /> : null}
             {children}
         </button>
     )
-}
+})

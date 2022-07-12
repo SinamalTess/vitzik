@@ -40,12 +40,10 @@ export function BpmSelector({
     }
 
     function onShowTooltip() {
-        console.log('show')
         setIsBPMTooltipOpen(true)
     }
 
     function onHideTooltip() {
-        console.log('hide')
         setIsBPMTooltipOpen(false)
     }
 
