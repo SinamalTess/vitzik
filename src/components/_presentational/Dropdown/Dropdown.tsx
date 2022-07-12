@@ -6,11 +6,12 @@ import clsx from 'clsx'
 
 interface DropdownProps {
     className?: string[] | string
+    style?: React.CSSProperties
     children: ReactNode
     open: boolean
 }
 
-export function Dropdown({ className, children, open = false }: DropdownProps) {
+export function Dropdown({ style, className, children, open = false }: DropdownProps) {
     const [isOpen, setIsOpen] = useState<boolean>(open)
 
     if (!children || !Array.isArray(children)) return null
@@ -37,7 +38,7 @@ export function Dropdown({ className, children, open = false }: DropdownProps) {
     const classNames = clsx('dropdown', className)
 
     return (
-        <div className={classNames}>
+        <div className={classNames} style={style}>
             <Tooltip arrow={false} referenceWidth show={isOpen}>
                 <Button onClick={handleClick}>{dropdownToggle}</Button>
                 {dropdownItems.map((dropdownItem: ReactNode) => dropdownItem)}

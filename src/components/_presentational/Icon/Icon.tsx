@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { IconName, CSSSpacingSize } from '../types'
 
 interface IconProps {
+    style?: React.CSSProperties
     className?: string[] | string
     name: IconName
     color?: string
@@ -11,7 +12,7 @@ interface IconProps {
     size?: CSSSpacingSize | number
 }
 
-export function Icon({ className, name, children, color, size = 'md' }: IconProps) {
+export function Icon({ style, className, name, children, color, size = 'md' }: IconProps) {
     const classNames = clsx(
         'icon',
         { [`icon-${name}`]: name },
@@ -20,11 +21,14 @@ export function Icon({ className, name, children, color, size = 'md' }: IconProp
         className
     )
 
-    const style = typeof size === 'number' ? { fontSize: size + 'px', color } : { color }
+    const styles = {
+        ...(typeof size === 'number' ? { fontSize: size + 'px', color } : { color }),
+        ...{ style },
+    }
 
     return (
         // TODO: check if this is the proper usage of aria-label
-        <span className={classNames} style={style} aria-label={`icon-${name}`}>
+        <span className={classNames} style={styles} aria-label={`icon-${name}`}>
             {children}
         </span>
     )

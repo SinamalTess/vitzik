@@ -7,6 +7,7 @@ import clsx from 'clsx'
 type ButtonVariant = 'outlined' | 'filled' | 'link'
 
 interface ButtonProps {
+    style?: React.CSSProperties
     disabled?: boolean
     active?: boolean
     icon?: IconName
@@ -19,6 +20,7 @@ interface ButtonProps {
 }
 
 export function Button({
+    style,
     disabled = false,
     active = false,
     icon,
@@ -42,7 +44,7 @@ export function Button({
     )
 
     return (
-        <button disabled={disabled} className={classNames} onClick={onClick}>
+        <button disabled={disabled} className={classNames} onClick={onClick} style={style}>
             {icon ? <Icon name={icon} size={size} /> : null}
             {children}
         </button>

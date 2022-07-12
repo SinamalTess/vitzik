@@ -4,6 +4,7 @@ import './Checkbox.scss'
 import clsx from 'clsx'
 
 interface CheckboxProps {
+    style?: React.CSSProperties
     children?: ReactNode
     value: string
     checked?: boolean
@@ -13,6 +14,7 @@ interface CheckboxProps {
 }
 
 export function Checkbox({
+    style,
     children,
     value,
     checked = false,
@@ -33,6 +35,7 @@ export function Checkbox({
                 value={value}
                 checked={checked}
                 disabled={disabled}
+                style={style}
                 onChange={handleChange}
             />
             {children ? <label>{children}</label> : null}

@@ -5,6 +5,7 @@ import { Icon } from '../Icon'
 import clsx from 'clsx'
 
 interface TextFieldProps {
+    style?: React.CSSProperties
     className?: string | string[]
     value: string | number
     fitSize?: boolean
@@ -14,6 +15,7 @@ interface TextFieldProps {
 }
 
 export function TextField({
+    style,
     className,
     value,
     fitSize = false,
@@ -23,7 +25,7 @@ export function TextField({
 }: TextFieldProps) {
     const classNames = clsx('text-field', className)
     return (
-        <span className={classNames}>
+        <span className={classNames} style={style}>
             {icon ? <Icon name={icon} /> : null}
             <input
                 min={1}

@@ -3,6 +3,7 @@ import './ErrorBoundary.scss'
 import clsx from 'clsx'
 
 interface ErrorBoundaryProps {
+    style?: React.CSSProperties
     className?: string[] | string
     children?: ReactNode
 }
@@ -39,7 +40,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         if (this.state.hasError) {
             // You can render any custom fallback UI
             return (
-                <div className={this.classNames}>
+                <div className={this.classNames} style={this.props.style}>
                     <h1>Something went wrong.</h1>
                     {this.state.error?.message}
                     <br />

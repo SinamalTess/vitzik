@@ -3,16 +3,17 @@ import './Select.scss'
 import clsx from 'clsx'
 
 interface SelectProps {
+    style?: React.CSSProperties
     className?: string | string[]
     value?: any
     children: ReactNode
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-export function Select({ className, children, value, onChange }: SelectProps) {
+export function Select({ style, className, children, value, onChange }: SelectProps) {
     const classNames = clsx('select', 'mg-sm', className)
     return (
-        <select onChange={onChange} className={classNames} value={value}>
+        <select className={classNames} value={value} style={style} onChange={onChange}>
             {children}
         </select>
     )

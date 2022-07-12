@@ -3,6 +3,7 @@ import './RangeSlider.scss'
 import clsx from 'clsx'
 
 interface RangeSliderPros {
+    style?: React.CSSProperties
     value: string | number
     min?: number
     max?: number
@@ -14,6 +15,7 @@ interface RangeSliderPros {
 }
 
 export function RangeSlider({
+    style,
     value,
     className,
     min = 0,
@@ -48,6 +50,7 @@ export function RangeSlider({
             min={min}
             step={step}
             max={max}
+            style={style}
             value={value}
             onChange={handleChange}
             onMouseUp={handleMouseUp}
