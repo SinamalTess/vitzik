@@ -2,20 +2,33 @@
 export default () => {
     const fps = 30
     const interval = 1000 / fps
-    let count = 0
+    let timeElapsed = 0
+    let timer = null
+    let currentTime = null
     // eslint-disable-next-line no-restricted-globals
     self.onmessage = (message) => {
-        if (message.data.code === 'start') {
+        const { code } = message.data
+        if (code === 'start') {
             const { midiSpeedFactor, startingTime } = message.data
+            currentTime = startingTime + timeElapsed
 
-            setInterval(() => {
+            timer = setInterval(() => {
                 postMessage({
                     code: 'interval',
                     interval,
-                    currentTime: startingTime + count,
+                    currentTime: startingTime + timeElapsed,
                 })
-                count = count + interval / midiSpeedFactor
+                timeElapsed = timeElapsed + interval / midiSpeedFactor
             }, interval)
+        } else if (code === 'pause') {
+            clearInterval(timer)
+        } else if (code === 'seeking') {
+            const { startingTime } = message.data
+            postMessage({
+                code: 'interval',
+                interval,
+                currentTime: startingTime,
+            })
         }
     }
 }

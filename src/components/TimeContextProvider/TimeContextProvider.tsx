@@ -23,7 +23,7 @@ export function TimeContextProvider({
     useEffect(() => {
         let worker: Worker = WebWorker(workerInterval)
 
-        function startWorker() {
+        function startInterval() {
             worker.postMessage({
                 code: 'start',
                 startingTime,
@@ -34,6 +34,7 @@ export function TimeContextProvider({
         function workerListener(message: MessageEvent) {
             const { code } = message.data
             if (code === 'interval') {
+                console.log(code)
                 const { currentTime } = message.data
                 setTime(currentTime)
             }
@@ -41,17 +42,20 @@ export function TimeContextProvider({
 
         switch (audioPlayerState) {
             case 'playing':
+                startInterval()
                 worker.addEventListener('message', workerListener)
-                startWorker()
                 break
             case 'stopped':
                 worker.terminate()
                 setTime(0)
                 worker.removeEventListener('message', workerListener)
                 break
-            case 'paused':
-                worker.terminate()
-                worker.removeEventListener('message', workerListener)
+            case 'seeking':
+                worker.addEventListener('message', workerListener)
+                worker.postMessage({
+                    code: 'seeking',
+                    startingTime,
+                })
                 break
         }
 

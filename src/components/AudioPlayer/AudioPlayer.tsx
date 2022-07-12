@@ -46,27 +46,38 @@ export function AudioPlayer({
     const totalTime = msToMinAndSec(midiDuration)
     const title = normalizeTitle(midiTitle ?? '')
 
-    if (midiCurrentTime > midiDuration) {
-        stopPlayer()
-    }
-
-    if (timeToNextNote && midiCurrentTime >= timeToNextNote && midiMode === 'wait') {
-        onPlay(false)
-        onChangeMidiStartingTime(midiCurrentTime)
-        onChangeAudioPlayerState('paused')
-    }
-
-    if (!isPlaying) {
-        onChangeAudioPlayerState('paused')
-    } else {
-        onChangeAudioPlayerState('playing')
-    }
-
-    function stopPlayer() {
+    function stop() {
         onPlay(false)
         onChangeAudioPlayerState('stopped')
         onChangeMidiStartingTime(0)
     }
+
+    function pause() {
+        onPlay(false)
+        onChangeAudioPlayerState('paused')
+        onChangeMidiStartingTime(midiCurrentTime)
+    }
+
+    function play() {
+        onPlay(true)
+        onChangeAudioPlayerState('playing')
+    }
+
+    // the end of the song
+    if (midiCurrentTime > midiDuration) {
+        stop()
+    }
+
+    // in `wait` mode we pause until the user hits the right keys
+    if (timeToNextNote && midiCurrentTime >= timeToNextNote && midiMode === 'wait') {
+        pause()
+    }
+
+    // if (!isPlaying) {
+    //     onChangeAudioPlayerState('paused')
+    // } else {
+    //     onChangeAudioPlayerState('playing')
+    // }
 
     function handleChangeAudioPlayer(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
@@ -75,18 +86,14 @@ export function AudioPlayer({
 
     function handleClickOnPlay() {
         if (!isPlaying) {
-            onChangeAudioPlayerState('playing')
+            play()
         } else {
-            onChangeAudioPlayerState('paused')
-            onChangeMidiStartingTime(midiCurrentTime)
+            pause()
         }
-        onPlay((isPlaying) => {
-            return !isPlaying
-        })
     }
 
     function handleClickOnStop() {
-        stopPlayer()
+        stop()
     }
 
     function handleMouseDown() {
