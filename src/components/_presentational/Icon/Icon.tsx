@@ -11,7 +11,7 @@ interface IconProps {
 }
 
 export function Icon({ name, children, color, size = 'md' }: IconProps) {
-    const className = clsx(
+    const classNames = clsx(
         'icon',
         { [`icon-${name}`]: name },
         { [`icon-instrument`]: name.startsWith('instrument') },
@@ -22,7 +22,7 @@ export function Icon({ name, children, color, size = 'md' }: IconProps) {
 
     return (
         // TODO: check if this is the proper usage of aria-label
-        <span className={className} style={style} aria-label={`icon-${name}`}>
+        <span className={classNames} style={style} aria-label={`icon-${name}`}>
             {children}
         </span>
     )

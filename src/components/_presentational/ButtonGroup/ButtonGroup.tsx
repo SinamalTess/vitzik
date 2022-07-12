@@ -11,10 +11,10 @@ interface ButtonGroupProps {
 export function ButtonGroup({ children, size = 'md' }: ButtonGroupProps) {
     if (!children || !Array.isArray(children)) return null
 
-    const className = clsx('btn-group', 'mg-sm')
+    const classNames = clsx('btn-group', 'mg-sm')
 
     return (
-        <div className={className} role="group">
+        <div className={classNames} role="group">
             {children.map((child, index) =>
                 React.cloneElement(child, { size, key: 'btn' + index })
             )}

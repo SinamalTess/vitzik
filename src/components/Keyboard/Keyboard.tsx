@@ -119,7 +119,7 @@ export function Keyboard({
                         ? translateNoteToMusicSystem(name, musicSystem)
                         : name
                 const { width, margin } = getStyles(name)
-                const className = clsx(
+                const classNames = clsx(
                     { ['keyboard__blackkey']: isBlackKey },
                     { ['keyboard__whitekey']: !isBlackKey },
                     { [`keyboard__blackkey--active`]: isActive && isBlackKey },
@@ -137,7 +137,7 @@ export function Keyboard({
                             background: isActive ? MIDI_CHANNEL_COLORS[lastActiveKey.channel] : '',
                         }}
                         data-testid={name}
-                        className={className}
+                        className={classNames}
                         onMouseDown={() => handleMouseDown(note)}
                         onMouseUp={() => handleMouseUp(note)}
                     >

@@ -86,7 +86,7 @@ export function Tooltip({
           }
         : {}
 
-    const className = clsx('tooltip', { 'tooltip--active': isVisible })
+    const classNames = clsx('tooltip', { 'tooltip--active': isVisible })
 
     return (
         <>
@@ -100,7 +100,7 @@ export function Tooltip({
             )}
 
             <span
-                className={className}
+                className={classNames}
                 role="tooltip"
                 ref={setPopperElement}
                 style={styles.popper}

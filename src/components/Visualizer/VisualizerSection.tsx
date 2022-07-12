@@ -48,14 +48,14 @@ export function VisualizerSection({
     width,
     notesCoordinates,
 }: VisualizerSectionProps) {
-    const className = clsx('visualizer__section', [`visualizer__section--${index}`])
+    const classNames = clsx('visualizer__section', [`visualizer__section--${index}`])
 
     return (
         <svg
             width={width}
             height={height}
             data-testid={`visualizer__section--${index}`}
-            className={className}
+            className={classNames}
         >
             {notesCoordinates ? (
                 <Rectangles
