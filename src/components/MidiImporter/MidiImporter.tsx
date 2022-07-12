@@ -2,7 +2,7 @@ import { parseArrayBuffer } from 'midi-json-parser'
 import React, { useEffect, useState } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
-import { Icon } from '../generics/Icon'
+import { Icon } from '../_presentational/Icon'
 
 interface MidiImporterProps {
     onMidiImport: (title: string, midiJSON: IMidiFile) => void

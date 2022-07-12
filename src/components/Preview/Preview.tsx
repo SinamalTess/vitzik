@@ -11,7 +11,7 @@ import {
     ActiveNote,
     MidiMode,
 } from '../../types'
-import { ErrorBoundary } from '../generics/ErrorBoundary'
+import { ErrorBoundary } from '../_presentational/ErrorBoundary'
 
 interface PreviewProps {
     appMode: AppMode

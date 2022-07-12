@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
-import { Button } from '../components/generics/Button/Button'
+import { Button } from '../components/_presentational/Button/Button'
 
 export default {
     title: 'Example/Button',

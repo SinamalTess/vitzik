@@ -1,7 +1,7 @@
 import React from 'react'
 import { MusicSystem } from '../../types'
-import { ButtonGroup } from '../generics/ButtonGroup'
-import { Button } from '../generics/Button'
+import { ButtonGroup } from '../_presentational/ButtonGroup'
+import { Button } from '../_presentational/Button'
 
 interface MusicSystemSelectorProps {
     musicSystem: MusicSystem

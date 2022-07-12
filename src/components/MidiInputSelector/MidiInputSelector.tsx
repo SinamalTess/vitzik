@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Icon } from '../generics/Icon'
-import { Select } from '../generics/Select'
-import { Tooltip } from '../generics/Tooltip'
+import { Icon } from '../_presentational/Icon'
+import { Select } from '../_presentational/Select'
+import { Tooltip } from '../_presentational/Tooltip'
 import './MidiInputSelector.scss'
 
 //TODO: align the icon and animation + color

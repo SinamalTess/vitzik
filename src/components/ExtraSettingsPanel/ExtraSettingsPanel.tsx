@@ -1,11 +1,11 @@
-import { SideBar } from '../generics/SideBar'
+import { SideBar } from '../_presentational/SideBar'
 import { MusicSystemSelector } from '../MusicSystemSelector'
 import { InstrumentSelector } from '../InstrumentSelector'
 import React from 'react'
 import { Instrument, InstrumentUserFriendlyName, MidiMetas, MusicSystem } from '../../types'
 import './ExtraSettingsPanel.scss'
 import { MidiTrackList } from '../MidiTrackList'
-import { Icon } from '../generics/Icon'
+import { Icon } from '../_presentational/Icon'
 import { instrumentToIcon } from '../../utils/instruments'
 
 interface ExtraSettingsPanelProps {

@@ -1,5 +1,5 @@
 import { InstrumentUserFriendlyName } from '../types'
-import { IconName } from '../components/generics/types'
+import { IconName } from '../components/_presentational/types'
 import { MIDI_INSTRUMENTS, MIDI_INSTRUMENTS_FLUIDR3_GM } from './const'
 
 export const instrumentToIcon = (instrumentName: InstrumentUserFriendlyName): IconName => {

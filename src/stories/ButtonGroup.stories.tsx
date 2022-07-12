@@ -1,8 +1,8 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
-import { ButtonGroup } from '../components/generics/ButtonGroup/ButtonGroup'
-import { Button } from '../components/generics/Button/Button'
+import { ButtonGroup } from '../components/_presentational/ButtonGroup/ButtonGroup'
+import { Button } from '../components/_presentational/Button/Button'
 
 export default {
     title: 'Example/ButtonGroup',

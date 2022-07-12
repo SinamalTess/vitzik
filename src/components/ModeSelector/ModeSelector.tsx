@@ -1,5 +1,5 @@
-import { ButtonGroup } from '../generics/ButtonGroup'
-import { Button } from '../generics/Button'
+import { ButtonGroup } from '../_presentational/ButtonGroup'
+import { Button } from '../_presentational/Button'
 import React from 'react'
 import { AppMode } from '../../types'
 

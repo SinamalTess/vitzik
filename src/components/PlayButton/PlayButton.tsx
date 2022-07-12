@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '../generics/Button'
+import { Button } from '../_presentational/Button'
 import './PlayButton.scss'
 import clsx from 'clsx'
 
@@ -9,13 +9,13 @@ interface PlayerControllerProps {
 }
 
 export function PlayButton({ onClick, isPlaying }: PlayerControllerProps) {
-    const className = clsx('play-button-container', {
+    const classNames = clsx('play-button-container', {
         [`play-button-container--playing`]: isPlaying,
     })
 
     return (
         <Button onClick={onClick} variant={'link'}>
-            <span className={className}>
+            <span className={classNames}>
                 <span className="play-button play-button--before"></span>
                 <span className="play-button play-button--after"></span>
             </span>

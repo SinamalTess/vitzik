@@ -12,10 +12,10 @@ import {
 } from '../../types'
 import { ModeSelector } from '../ModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
-import { Switch } from '../generics/Switch'
-import { Button } from '../generics/Button'
+import { Switch } from '../_presentational/Switch'
+import { Button } from '../_presentational/Button'
 import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
-import { Tooltip } from '../generics/Tooltip'
+import { Tooltip } from '../_presentational/Tooltip'
 import { MIDI_USER_CHANNEL } from '../../utils/const'
 
 interface SettingsProps {

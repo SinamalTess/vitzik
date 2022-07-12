@@ -1,4 +1,4 @@
-import { Select } from '../generics/Select'
+import { Select } from '../_presentational/Select'
 import React from 'react'
 import { MIDI_INSTRUMENTS, NOTE_NAMES } from '../../utils/const'
 import { Instrument, InstrumentUserFriendlyName } from '../../types'
