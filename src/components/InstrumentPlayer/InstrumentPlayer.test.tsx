@@ -28,10 +28,10 @@ describe('InstrumentPlayer', () => {
 
         render(
             <InstrumentPlayer
-                activeKeys={[activeNote]}
+                activeNotes={[activeNote]}
                 isMute={false}
-                notes={[]}
-                instrument={'Acoustic Grand Keyboard'}
+                notesToLoad={[]}
+                instrumentName={'Acoustic Grand Keyboard'}
                 channel={0}
             ></InstrumentPlayer>
         )
@@ -50,10 +50,10 @@ describe('InstrumentPlayer', () => {
 
         render(
             <InstrumentPlayer
-                activeKeys={[activeNote]}
+                activeNotes={[activeNote]}
                 isMute={false}
-                notes={[]}
-                instrument={'Acoustic Grand Keyboard'}
+                notesToLoad={[]}
+                instrumentName={'Acoustic Grand Keyboard'}
                 soundfont={'FatBoy'}
                 channel={0}
             ></InstrumentPlayer>

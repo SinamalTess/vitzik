@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import Soundfont, { Player, InstrumentName } from 'soundfont-player'
 import { msToSec } from '../../utils'
-import { InstrumentUserFriendlyName, ActiveNote, isMidiVisualizerActiveNote } from '../../types'
+import {
+    InstrumentUserFriendlyName,
+    ActiveNote,
+    isMidiVisualizerActiveNote,
+    AlphabeticalNote,
+} from '../../types'
 import {
     MIDI_INSTRUMENTS,
     MIDI_INSTRUMENTS_FATBOY,
@@ -12,9 +17,9 @@ import { usePrevious } from '../../_hooks'
 
 interface InstrumentPlayerProps {
     isMute: boolean
-    instrument: InstrumentUserFriendlyName
-    activeKeys: ActiveNote[]
-    notes: string[]
+    instrumentName: InstrumentUserFriendlyName
+    activeNotes: ActiveNote[]
+    notesToLoad: AlphabeticalNote[]
     soundfont?: SoundFont
     channel: number
 }
@@ -54,27 +59,27 @@ function playNote(note: ActiveNote, instrumentPlayer: Player) {
 
 export function InstrumentPlayer({
     isMute,
-    instrument,
-    notes,
-    activeKeys,
+    instrumentName,
+    notesToLoad,
+    activeNotes,
     channel,
     soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
-    const prevActiveKeys = usePrevious(activeKeys)
+    const prevActiveKeys = usePrevious(activeNotes)
 
     useEffect(() => {
         if (isMute) return
 
         function startInstrument() {
             const ac = new AudioContext()
-            const soundfontInstrument = normalizeInstrumentName(instrument, soundfont)
-            Soundfont.instrument(ac, soundfontInstrument, { soundfont, notes })
+            const soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
+            Soundfont.instrument(ac, soundfontInstrument, { soundfont, notes: notesToLoad })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
                 })
                 .catch(() => {
-                    console.error(`Failed to start the instrument ${instrument} audio`)
+                    console.error(`Failed to start the instrument ${instrumentName} audio`)
                 })
             return ac
         }
@@ -84,10 +89,10 @@ export function InstrumentPlayer({
         return function cleanup() {
             ac.close()
         }
-    }, [instrument, isMute, soundfont])
+    }, [instrumentName, isMute, soundfont])
 
     useEffect(() => {
-        const notes = activeKeys.filter((note) => note.channel === channel)
+        const notes = activeNotes.filter((note) => note.channel === channel)
         if (isMute || !notes.length || !instrumentPlayer) return
 
         let newNotes = notes
@@ -105,7 +110,7 @@ export function InstrumentPlayer({
         newNotes.forEach((note) => {
             playNote(note, instrumentPlayer)
         })
-    }, [activeKeys, instrumentPlayer, isMute])
+    }, [activeNotes, instrumentPlayer, isMute])
 
     return null
 }

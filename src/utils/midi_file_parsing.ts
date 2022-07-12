@@ -7,6 +7,7 @@ import {
     MidiJsonNote,
     MidiInputActiveNote,
     MsPerBeat,
+    AlphabeticalNote,
 } from '../types'
 import { MIDI_INSTRUMENTS } from './const'
 import { largestNum } from './maths'
@@ -151,7 +152,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
                     })
                 }
                 if (instrument) {
-                    instrument.notes.push(keyToNote(event.noteOn.noteNumber) as string)
+                    instrument.notes.push(keyToNote(event.noteOn.noteNumber) as AlphabeticalNote)
                 }
             }
 

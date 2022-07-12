@@ -6,7 +6,7 @@ import { MidiInputActiveNote } from '../../types'
 
 describe('Keyboard', () => {
     it('should render the proper number of keys', () => {
-        render(<Keyboard midiMode={'autoplay'} activeKeys={[]} onKeyPressed={() => {}}></Keyboard>)
+        render(<Keyboard midiMode={'autoplay'} activeNotes={[]} onKeyPressed={() => {}}></Keyboard>)
         const blackKeys = screen.getAllByText(/#/)
         const whiteKeys = screen.getAllByText(/[A-G]\d/)
 
@@ -32,7 +32,7 @@ describe('Keyboard', () => {
         render(
             <Keyboard
                 midiMode={'autoplay'}
-                activeKeys={[whiteKey, blackKey]}
+                activeNotes={[whiteKey, blackKey]}
                 onKeyPressed={() => {}}
             ></Keyboard>
         )

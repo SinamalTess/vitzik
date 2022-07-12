@@ -1,6 +1,6 @@
 import React from 'react'
 import './Keyboard.scss'
-import { NOTE_NAMES } from '../../utils/const'
+import { MIDI_USER_CHANNEL, NOTE_NAMES } from '../../utils/const'
 import {
     AlphabeticalNote,
     MusicSystem,
@@ -21,11 +21,61 @@ import clsx from 'clsx'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 
 interface KeyboardProps {
-    activeKeys: ActiveNote[]
+    activeNotes: ActiveNote[]
     musicSystem?: MusicSystem
     midiMode: MidiMode
     onKeyPressed: (note: MidiInputActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
+}
+
+const KEYBOARD_CHANNEL = MIDI_USER_CHANNEL
+const KEYBOARD_VELOCITY = 100
+
+const NOTES = NOTE_NAMES.alphabetical.map((noteName) => ({
+    name: noteName,
+    velocity: KEYBOARD_VELOCITY,
+    key: noteToKey(noteName),
+    channel: KEYBOARD_CHANNEL,
+}))
+
+function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
+    return NOTES.map((note) => {
+        const { name } = note
+        const isBlackKey = checkIsBlackKey(name)
+        const activeKeysReversed = [...activeNotes].reverse()
+        /*
+            Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
+            So we pick the last active key because this is the one on top in the Visualizer.
+        */
+        const lastActiveKey = activeKeysReversed.find(
+            (activeKey) => activeKey.name === name
+        ) as MidiVisualizerActiveNote
+
+        const isActive = Boolean(lastActiveKey)
+        const styleKeyName = isActive ? { display: 'block' } : {}
+        const keyTranslated =
+            musicSystem !== 'alphabetical' ? translateNoteToMusicSystem(name, musicSystem) : name
+        const { width, margin } = getStyles(name)
+        const background = isActive ? MIDI_CHANNEL_COLORS[lastActiveKey.channel] : ''
+        const classNames = clsx(
+            { ['keyboard__blackkey']: isBlackKey },
+            { ['keyboard__whitekey']: !isBlackKey },
+            { [`keyboard__blackkey--active`]: isActive && isBlackKey },
+            { [`keyboard__whitekey--active`]: isActive && !isBlackKey },
+            [`${name}`]
+        )
+
+        return {
+            note,
+            styleKeyName,
+            keyTranslated,
+            classNames,
+            name,
+            width,
+            margin,
+            background,
+        }
+    })
 }
 
 function getStyles(note: AlphabeticalNote) {
@@ -42,25 +92,16 @@ function getStyles(note: AlphabeticalNote) {
 }
 
 export function Keyboard({
-    activeKeys,
+    activeNotes,
     musicSystem = 'alphabetical',
     midiMode,
     onKeyPressed,
     onAllMidiKeysPlayed,
 }: KeyboardProps) {
-    const activeKeysReversed = [...activeKeys].reverse()
-    const keyboardChannel = 16
-    const keyboardVelocity = 100
-
-    const notes = NOTE_NAMES.alphabetical.map((noteName) => ({
-        name: noteName,
-        velocity: keyboardVelocity,
-        key: noteToKey(noteName),
-        channel: keyboardChannel,
-    }))
+    const keys = getKeys(activeNotes, musicSystem)
 
     function addNoteToActiveKeys(note: MidiInputActiveNote) {
-        return [...activeKeys, note]
+        return [...activeNotes, note]
     }
 
     function handleMouseDown(note: MidiInputActiveNote) {
@@ -81,7 +122,7 @@ export function Keyboard({
 
     function handleMouseUp(note: MidiInputActiveNote) {
         const { name, channel } = note
-        const midiActiveNotes = activeKeys.filter(
+        const midiActiveNotes = activeNotes.filter(
             (activeKey) => activeKey.name === name && activeKey.channel !== channel
         )
         /*
@@ -92,16 +133,16 @@ export function Keyboard({
         const lastMidiNote = midiActiveNotes.at(-1)
 
         if (lastMidiNote) {
-            const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [note, lastMidiNote])
+            const activeKeysCopy = removeNotesFromActiveKeys(activeNotes, [note, lastMidiNote])
             const isAllNotesPlayed = activeKeysCopy.length === 0
             if (isAllNotesPlayed && onAllMidiKeysPlayed && midiMode === 'wait') {
                 onKeyPressed(activeKeysCopy)
                 onAllMidiKeysPlayed()
             } else {
-                onKeyPressed(removeNotesFromActiveKeys(activeKeys, [note]))
+                onKeyPressed(removeNotesFromActiveKeys(activeNotes, [note]))
             }
         } else {
-            const activeKeysCopy = removeNotesFromActiveKeys(activeKeys, [note])
+            const activeKeysCopy = removeNotesFromActiveKeys(activeNotes, [note])
             const isAllNotesPlayed = activeKeysCopy.length === 0
             if (isAllNotesPlayed && onAllMidiKeysPlayed) {
                 onAllMidiKeysPlayed()
@@ -117,40 +158,24 @@ export function Keyboard({
 
     return (
         <ul className="keyboard">
-            {notes.map((note) => {
-                const { name } = note
-                const isBlackKey = checkIsBlackKey(name)
-                /*
-                    Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
-                    So we pick the last active key because this is the one on top in the Visualizer.
-                */
-                const lastActiveKey = activeKeysReversed.find(
-                    (activeKey) => activeKey.name === name
-                ) as MidiVisualizerActiveNote
-
-                const isActive = Boolean(lastActiveKey)
-                const styleKeyName = isActive ? { display: 'block' } : {}
-                const keyTranslated =
-                    musicSystem !== 'alphabetical'
-                        ? translateNoteToMusicSystem(name, musicSystem)
-                        : name
-                const { width, margin } = getStyles(name)
-                const classNames = clsx(
-                    { ['keyboard__blackkey']: isBlackKey },
-                    { ['keyboard__whitekey']: !isBlackKey },
-                    { [`keyboard__blackkey--active`]: isActive && isBlackKey },
-                    { [`keyboard__whitekey--active`]: isActive && !isBlackKey },
-                    [`${noteToKey(name)}`],
-                    [`${name}`]
-                )
-
+            {keys.map((key) => {
+                const {
+                    name,
+                    width,
+                    margin,
+                    background,
+                    classNames,
+                    styleKeyName,
+                    keyTranslated,
+                    note,
+                } = key
                 return (
                     <li
                         key={name}
                         style={{
                             width,
                             margin,
-                            background: isActive ? MIDI_CHANNEL_COLORS[lastActiveKey.channel] : '',
+                            background,
                         }}
                         data-testid={name}
                         className={classNames}

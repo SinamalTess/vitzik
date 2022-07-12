@@ -11,6 +11,7 @@ import {
     AppMode,
     ActiveNote,
     MidiMetas,
+    AlphabeticalNote,
 } from './types'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
@@ -28,7 +29,7 @@ const userInstrument: Instrument = {
     name: 'Acoustic Grand Keyboard',
     channel: 16,
     index: 1,
-    notes: NOTE_NAMES.alphabetical as unknown as string[],
+    notes: NOTE_NAMES.alphabetical as unknown as AlphabeticalNote[],
 }
 
 function App() {
@@ -142,7 +143,7 @@ function App() {
                 </div>
                 <div className="item">
                     <Keyboard
-                        activeKeys={activeNotes}
+                        activeNotes={activeNotes}
                         musicSystem={musicSystem}
                         midiMode={midiMode}
                         onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
@@ -154,9 +155,9 @@ function App() {
                                 <InstrumentPlayer
                                     key={`${name}-${channel}`}
                                     isMute={isMute}
-                                    activeKeys={activeNotes}
-                                    instrument={name}
-                                    notes={notes}
+                                    activeNotes={activeNotes}
+                                    instrumentName={name}
+                                    notesToLoad={notes}
                                     channel={channel}
                                 />
                             )
