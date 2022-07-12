@@ -39,7 +39,7 @@ export function ExtraSettingsPanel({
         <SideBar open={isOpen} onClose={onClose}>
             <div className="extra-settings">
                 <h4>User Instrument</h4>
-                <div className="user-instrument">
+                <div className="extra-settings__user-instrument">
                     <Icon size={50} name={userInstrumentIcon} />
                     <InstrumentSelector onChange={onChangeInstrument} value={userInstrument} />
                 </div>

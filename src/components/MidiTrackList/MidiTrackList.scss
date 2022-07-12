@@ -1,8 +1,8 @@
 @import 'src/style/mixins';
 @import 'src/style/vars';
 
-.track-list {
-    .track-index {
+.midi-track-list {
+    &__track-index {
         font-weight: map-get($theme-font-weights, 'bold');
     }
     .channel {

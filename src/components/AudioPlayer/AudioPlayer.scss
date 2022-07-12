@@ -7,24 +7,21 @@ $input-width: 500px;
     display: flex;
     align-items: center;
 
-    .title {
+    &__track-title {
         max-width: 150px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         padding: map-get($theme-spacing-sizes, 'md');
-    }
-
-    .title {
         font-weight: map-get($theme-font-weights, 'bold');
     }
 
-    .current-time,
-    .total-time {
+    &__current-time,
+    &__total-time {
         margin: map-get($theme-spacing-sizes, 'md');
     }
 
-    .progress-bar {
+    &__progress-bar {
         cursor: pointer;
         overflow: hidden;
         width: $input-width;
@@ -53,6 +50,7 @@ $input-width: 500px;
         &::-moz-range-track {
             background-color: map-get($theme-colors-variants, 'dark-secondary');
         }
+
         /* IE*/
         &::-ms-fill-lower {
             background-color: map-get($theme-colors, 'primary');

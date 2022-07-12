@@ -11,6 +11,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
     &-enter,
     &-appear {
         opacity: 0;
@@ -27,19 +28,15 @@
         opacity: 0;
         transition: opacity 500ms;
     }
-    &--active {
-        .midi-title__text {
-            position: relative;
-            color: white;
-            letter-spacing: 0.15em;
-            @include addGlitchEffect();
-        }
-    }
 
     &__text {
+        position: relative;
+        color: white;
+        letter-spacing: 0.15em;
         text-align: center;
         font-size: 3em;
         text-transform: uppercase;
         max-width: 80%;
+        @include addGlitchEffect();
     }
 }

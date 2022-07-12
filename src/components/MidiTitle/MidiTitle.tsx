@@ -28,7 +28,7 @@ export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
             timeout={animationDuration}
             classNames="midi-title"
         >
-            <div className="midi-title midi-title--active">
+            <div className="midi-title">
                 <p className="midi-title__text" data-text={title}>
                     {title}
                 </p>

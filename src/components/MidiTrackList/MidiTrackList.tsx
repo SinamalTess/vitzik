@@ -60,7 +60,7 @@ export function MidiTrackList({
     }
 
     return (
-        <List className="track-list">
+        <List className="midi-track-list">
             <ListItem>
                 <ListItemSecondaryAction>
                     <Button
@@ -80,14 +80,14 @@ export function MidiTrackList({
                       return (
                           <ListItem key={index}>
                               <ListItemSecondaryAction>
-                                  <span className="track-index">{index}</span>
+                                  <span className="midi-track-list__track-index">{index}</span>
                                   <Button
                                       icon={isActiveTrack ? 'eye-open' : 'eye-closed'}
                                       onClick={() => handleChange(index)}
                                   />
                               </ListItemSecondaryAction>
                               <Divider orientation="vertical" />
-                              <span className="track-names">{names?.join('')}</span>
+                              <span>{names?.join('')}</span>
                               <Divider orientation="vertical" />
                               <List type="transparent">
                                   {channels.map((channel) => {

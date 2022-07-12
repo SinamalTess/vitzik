@@ -1,6 +1,8 @@
 @use 'sass:map';
 @import './src/style/vars';
 
-.bpm {
-    font-weight: map-get($theme-font-weights, 'bold');
+.bpm-selector {
+    &__value {
+        font-weight: map-get($theme-font-weights, 'bold');
+    }
 }

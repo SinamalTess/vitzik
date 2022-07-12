@@ -110,19 +110,19 @@ export function AudioPlayer({
     return (
         <div className="audio-player">
             <Tooltip showOnHover>
-                <span className="title">{title}</span>
+                <span className="audio-player__track-title">{title}</span>
                 {title}
             </Tooltip>
-            <span className="current-time">{currentTime}</span>
+            <span className="audio-player__current-time">{currentTime}</span>
             <RangeSlider
-                className="progress-bar"
+                className="audio-player__progress-bar"
                 value={midiCurrentTime}
                 max={midiDuration}
                 onChange={handleChangeAudioPlayer}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
             />
-            <span className="total-time">{totalTime}</span>
+            <span className="audio-player__total-time">{totalTime}</span>
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
             <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />

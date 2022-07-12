@@ -1,12 +1,12 @@
 @use 'sass:map';
 @import 'src/style/vars';
 
-.play-button-container {
+.play-button {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: map-get($theme-spacing-sizes, 'md');
-    .play-button {
+    &__half {
         position: absolute;
         width: map-get($theme-font-sizes, 'md');
         height: map-get($theme-font-sizes, 'md');
@@ -20,10 +20,10 @@
         }
     }
     &--playing {
-        .play-button--after {
+        .play-button__half--after {
             clip-path: polygon(70% 0, 100% 0, 100% 100%, 70% 100%);
         }
-        .play-button--before {
+        .play-button__half--before {
             clip-path: polygon(0 0, 30% 0, 30% 100%, 0% 100%);
         }
     }

@@ -32,7 +32,7 @@
         }
     }
 
-    .keyboard__whitekey {
+    &__whitekey {
         height: 100%;
         z-index: 2;
         border-left: 1px solid #bbb;
@@ -46,7 +46,7 @@
         }
     }
 
-    .keyboard__blackkey {
+    &__blackkey {
         height: 50%;
         z-index: 3;
         border-radius: 0 0 3px 3px;

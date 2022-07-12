@@ -4,8 +4,6 @@ import { Select } from '../_presentational/Select'
 import { Tooltip } from '../_presentational/Tooltip'
 import './MidiInputSelector.scss'
 
-//TODO: align the icon and animation + color
-
 interface MidiInputSelectorProps {
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
 }
