@@ -6,11 +6,13 @@ interface DropdownItemProps extends PresentationalComponentBasicProps {
     children: ReactNode
 }
 
-export function DropdownItem({ style, className, children }: DropdownItemProps) {
-    const classNames = clsx('dropdown__item', className)
-    return (
-        <div className={classNames} style={style}>
-            {children}
-        </div>
-    )
-}
+export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
+    function DropdownItem({ style, className, children }: DropdownItemProps, ref) {
+        const classNames = clsx('dropdown__item', className)
+        return (
+            <div className={classNames} style={style} ref={ref}>
+                {children}
+            </div>
+        )
+    }
+)

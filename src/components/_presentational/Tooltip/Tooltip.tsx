@@ -5,6 +5,7 @@ import { beforeWrite } from '@popperjs/core'
 import clsx from 'clsx'
 import { useClickOutside } from '../../../_hooks/useClickOutside'
 import { PresentationalComponentBasicProps } from '../types'
+import { isArrayOfChildren } from '../utils/isArrayOfChildren'
 
 interface TooltipProps extends PresentationalComponentBasicProps {
     children: ReactNode
@@ -51,7 +52,7 @@ export function Tooltip({
     const isVisible = isOpen || show
 
     let modifiers = [
-        { name: 'offset', options: { offset: [0, 8] } },
+        { name: 'offset', options: { offset: referenceWidth ? [0, 0] : [0, 8] } },
         { name: 'arrow', options: { element: arrowElement } },
     ]
 
@@ -71,12 +72,12 @@ export function Tooltip({
 
     useClickOutside([referenceElement], onClickOutside, show)
 
-    if (!children || !Array.isArray(children)) return null
+    if (!isArrayOfChildren(children, Tooltip.name)) return null
 
     const referenceChild = children[0]
     const tooltipChild = children[1]
 
-    const hoverProps = showOnHover
+    const props = showOnHover
         ? {
               onMouseEnter: () => {
                   setOpen(true)
@@ -98,7 +99,7 @@ export function Tooltip({
 
     return (
         <>
-            {React.cloneElement(referenceChild, { ref: setReferenceElement, ...hoverProps })}
+            {React.cloneElement(referenceChild, { ref: setReferenceElement, ...props })}
 
             <span
                 className={classNames}
