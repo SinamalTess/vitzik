@@ -1,28 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Soundfont, { Player, InstrumentName } from 'soundfont-player'
 import { msToSec } from '../../utils'
-import {
-    AudioPlayerState,
-    MidiVisualizerActiveNote,
-    InstrumentUserFriendlyName,
-    ActiveNote,
-    isMidiVisualizerActiveNote,
-} from '../../types'
-import { IMidiFile } from 'midi-json-parser-worker'
+import { InstrumentUserFriendlyName, ActiveNote, isMidiVisualizerActiveNote } from '../../types'
 import {
     MIDI_INSTRUMENTS,
     MIDI_INSTRUMENTS_FATBOY,
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
 } from '../../utils/const'
+import { usePrevious } from '../../_hooks'
 
 interface InstrumentPlayerProps {
     isMute: boolean
     instrument: InstrumentUserFriendlyName
-    audioPlayerState: AudioPlayerState
     activeKeys: ActiveNote[]
     notes: string[]
-    midiFile: IMidiFile | null
     soundfont?: SoundFont
     channel: number
 }
@@ -50,44 +42,26 @@ const normalizeInstrumentName = (
 const normalizeVelocity = (val: number, max: number, min: number): number =>
     (val - min) / (max - min)
 
-function playNote(
-    note: ActiveNote,
-    notesAlreadyPlayed: MidiVisualizerActiveNote[],
-    instrumentPlayer: Player
-) {
+function playNote(note: ActiveNote, instrumentPlayer: Player) {
     const { velocity, key } = note
     const gain = normalizeVelocity(velocity, 127, 0)
-    if (isMidiVisualizerActiveNote(note)) {
-        const { id, duration } = note
-        const gain = normalizeVelocity(velocity, 127, 0)
-        const isNoteAlreadyPlayed = notesAlreadyPlayed.find((note) => note.id === id)
-        if (!isNoteAlreadyPlayed) {
-            instrumentPlayer.play(key.toString(), 0, {
-                gain,
-                duration: msToSec(duration),
-            })
-            notesAlreadyPlayed.push(note)
-        }
-    } else {
-        instrumentPlayer.play(key.toString(), 0, {
-            gain,
-            duration: msToSec(0),
-        })
-    }
+    const duration = isMidiVisualizerActiveNote(note) ? note.duration : 0
+    instrumentPlayer.play(key.toString(), 0, {
+        gain,
+        duration: msToSec(duration),
+    })
 }
 
 export function InstrumentPlayer({
     isMute,
     instrument,
     notes,
-    audioPlayerState,
     activeKeys,
-    midiFile,
     channel,
     soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
-    const notesAlreadyPlayed: React.MutableRefObject<MidiVisualizerActiveNote[]> = useRef([])
+    const prevActiveKeys = usePrevious(activeKeys)
 
     useEffect(() => {
         if (isMute) return
@@ -115,24 +89,23 @@ export function InstrumentPlayer({
     useEffect(() => {
         const notes = activeKeys.filter((note) => note.channel === channel)
         if (isMute || !notes.length || !instrumentPlayer) return
-        notes.forEach((note) => {
-            playNote(note, notesAlreadyPlayed.current, instrumentPlayer)
+
+        let newNotes = notes
+
+        if (prevActiveKeys) {
+            newNotes = notes.filter(
+                (note) =>
+                    !(prevActiveKeys as ActiveNote[]).find(
+                        (prevActiveKey) =>
+                            'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
+                    )
+            )
+        }
+
+        newNotes.forEach((note) => {
+            playNote(note, instrumentPlayer)
         })
     }, [activeKeys, instrumentPlayer, isMute])
-
-    useEffect(() => {
-        if (audioPlayerState === 'rewinding') {
-            notesAlreadyPlayed.current = []
-        } else if (audioPlayerState === 'stopped') {
-            notesAlreadyPlayed.current = []
-        } else if (audioPlayerState === 'paused') {
-            instrumentPlayer?.stop(0)
-        }
-    }, [audioPlayerState, instrumentPlayer])
-
-    useEffect(() => {
-        notesAlreadyPlayed.current = []
-    }, [midiFile])
 
     return null
 }

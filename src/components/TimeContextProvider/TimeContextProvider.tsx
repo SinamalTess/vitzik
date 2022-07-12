@@ -34,7 +34,6 @@ export function TimeContextProvider({
         function workerListener(message: MessageEvent) {
             const { code } = message.data
             if (code === 'interval') {
-                console.log(code)
                 const { currentTime } = message.data
                 setTime(currentTime)
             }

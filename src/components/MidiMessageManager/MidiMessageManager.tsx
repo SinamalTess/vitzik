@@ -81,8 +81,6 @@ export function MidiMessageManager({
         function handleMIDIMessage(message: MIDIMessageEvent) {
             const { command, note } = getMessage(message)
 
-            console.log(command)
-
             switch (command) {
                 case 144: // noteOn
                     note.velocity > 0 ? addNote(note) : removeNote(note)

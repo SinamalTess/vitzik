@@ -159,12 +159,10 @@ function App() {
                                 <InstrumentPlayer
                                     key={`${name}-${channel}`}
                                     isMute={isMute}
-                                    audioPlayerState={audioPlayerState}
                                     activeKeys={activeNotes}
                                     instrument={name}
                                     notes={notes}
                                     channel={channel}
-                                    midiFile={midiFile}
                                 />
                             )
                         })}
