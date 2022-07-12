@@ -6,14 +6,13 @@ import ReactDOM from 'react-dom'
 import { useClickOutside } from '../../../_hooks/useClickOutside'
 
 interface SideBarProps {
+    className?: string | string[]
     open: boolean
     children: ReactNode
     onClose: () => void
 }
 
-const classNames = clsx('sidebar')
-
-export function SideBar({ children, open, onClose }: SideBarProps) {
+export function SideBar({ className, children, open, onClose }: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
     const sidebarRef = useRef<HTMLDivElement>(null)
 
@@ -28,6 +27,8 @@ export function SideBar({ children, open, onClose }: SideBarProps) {
     }
 
     useClickOutside([sidebarRef], closeSideBar, isOpen)
+
+    const classNames = clsx('sidebar', className)
 
     return ReactDOM.createPortal(
         <CSSTransition

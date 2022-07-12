@@ -5,6 +5,7 @@ import { Icon } from '../Icon'
 import clsx from 'clsx'
 
 interface TextFieldProps {
+    className?: string | string[]
     value: string | number
     fitSize?: boolean
     icon?: IconName
@@ -12,15 +13,15 @@ interface TextFieldProps {
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-const classNames = clsx('text-field')
-
 export function TextField({
+    className,
     value,
     fitSize = false,
     icon,
     type = 'text',
     onChange,
 }: TextFieldProps) {
+    const classNames = clsx('text-field', className)
     return (
         <span className={classNames}>
             {icon ? <Icon name={icon} /> : null}

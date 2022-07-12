@@ -5,7 +5,7 @@ import clsx from 'clsx'
 
 interface ListProps {
     children: ReactNode
-    className?: string
+    className?: string | string[]
     type?: 'background' | 'transparent'
 }
 

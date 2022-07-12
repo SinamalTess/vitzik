@@ -7,7 +7,7 @@ interface RangeSliderPros {
     min?: number
     max?: number
     step?: number
-    className?: string
+    className?: string | string[]
     onMouseUp?: (event: React.MouseEvent<HTMLInputElement>) => void
     onMouseDown?: (event: React.MouseEvent<HTMLInputElement>) => void
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void

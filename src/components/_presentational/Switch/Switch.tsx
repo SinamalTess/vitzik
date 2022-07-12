@@ -3,14 +3,14 @@ import './Switch.scss'
 import clsx from 'clsx'
 
 interface SwitchProps {
+    className?: string | string[]
     isOn: boolean
     onChange: () => void
     children: string | string[]
 }
 
-const classNames = clsx('switch')
-
-export function Switch({ isOn, onChange, children }: SwitchProps) {
+export function Switch({ className, children, isOn, onChange }: SwitchProps) {
+    const classNames = clsx('switch', className)
     return (
         <label className={classNames}>
             {children}

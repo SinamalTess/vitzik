@@ -5,13 +5,14 @@ import clsx from 'clsx'
 
 interface ButtonGroupProps {
     children: ReactNode
+    className?: string[] | string
     size?: CSSSpacingSize
 }
 
-const classNames = clsx('btn-group', 'mg-sm')
-
-export function ButtonGroup({ children, size = 'md' }: ButtonGroupProps) {
+export function ButtonGroup({ className, children, size = 'md' }: ButtonGroupProps) {
     if (!children || !Array.isArray(children)) return null
+
+    const classNames = clsx('btn-group', 'mg-sm', className)
 
     return (
         <div className={classNames} role="group">

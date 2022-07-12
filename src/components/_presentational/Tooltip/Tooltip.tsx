@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import { useClickOutside } from '../../../_hooks/useClickOutside'
 
 interface TooltipProps {
+    className?: string | string[]
     children: ReactNode
     arrow?: boolean
     referenceWidth?: boolean
@@ -16,6 +17,7 @@ interface TooltipProps {
 }
 
 export function Tooltip({
+    className,
     children,
     arrow = true,
     referenceWidth = false,
@@ -86,7 +88,7 @@ export function Tooltip({
           }
         : {}
 
-    const classNames = clsx('tooltip', { 'tooltip--active': isVisible })
+    const classNames = clsx('tooltip', { 'tooltip--active': isVisible }, className)
 
     return (
         <>

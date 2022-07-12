@@ -5,13 +5,12 @@ import { Tooltip } from '../Tooltip'
 import clsx from 'clsx'
 
 interface DropdownProps {
+    className?: string[] | string
     children: ReactNode
     open: boolean
 }
 
-const classNames = clsx('dropdown')
-
-export function Dropdown({ children, open = false }: DropdownProps) {
+export function Dropdown({ className, children, open = false }: DropdownProps) {
     const [isOpen, setIsOpen] = useState<boolean>(open)
 
     if (!children || !Array.isArray(children)) return null
@@ -34,6 +33,8 @@ export function Dropdown({ children, open = false }: DropdownProps) {
     function handleClick() {
         setIsOpen((open) => !open)
     }
+
+    const classNames = clsx('dropdown', className)
 
     return (
         <div className={classNames}>

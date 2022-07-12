@@ -30,7 +30,6 @@ export function Button({
     onClick = () => {},
 }: ButtonProps) {
     const classNames = clsx(
-        className,
         'btn',
         { [`btn-${size}`]: size },
         { [`pd-${size}`]: size },
@@ -38,7 +37,8 @@ export function Button({
         { 'btn--outline': variant === 'outlined' },
         { 'btn--link': variant === 'link' },
         { 'btn--disabled': disabled },
-        { [`btn--${color}`]: color }
+        { [`btn--${color}`]: color },
+        className
     )
 
     return (

@@ -7,22 +7,24 @@ interface CheckboxProps {
     children?: ReactNode
     value: string
     checked?: boolean
-    onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
     disabled?: boolean
+    className?: string[] | string
+    onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
 }
-
-const classNames = clsx('checkbox')
 
 export function Checkbox({
     children,
     value,
     checked = false,
     disabled = false,
+    className,
     onChange,
 }: CheckboxProps) {
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         onChange(event)
     }
+
+    const classNames = clsx('checkbox', className)
 
     return (
         <span className={classNames}>

@@ -3,11 +3,12 @@ import './ListItemSecondaryAction.scss'
 import clsx from 'clsx'
 
 interface ListItemSecondaryActionProps {
+    className?: string | string[]
     children: ReactNode
 }
 
-const classNames = clsx('list__item-secondary-action')
+export function ListItemSecondaryAction({ className, children }: ListItemSecondaryActionProps) {
+    const classNames = clsx('list__item-secondary-action', className)
 
-export function ListItemSecondaryAction({ children }: ListItemSecondaryActionProps) {
     return <span className={classNames}>{children}</span>
 }
