@@ -18,21 +18,6 @@ export function WithContainerDimensions<P>(
 
         const { width, height } = dimensions
 
-        React.useEffect(() => {
-            function handleResize() {
-                setDimensions({
-                    height: ref?.current?.clientHeight ?? 0,
-                    width: ref?.current?.clientWidth ?? 0,
-                })
-            }
-
-            window.addEventListener('resize', handleResize)
-
-            return function cleanup() {
-                window.removeEventListener('resize', handleResize)
-            }
-        }, [])
-
         useEffect(() => {
             if (ref.current) {
                 setDimensions({
@@ -41,6 +26,23 @@ export function WithContainerDimensions<P>(
                 })
             }
         }, [ref])
+
+        useEffect(() => {
+            function handleResize() {
+                if (ref.current) {
+                    setDimensions({
+                        height: ref.current.clientHeight,
+                        width: ref.current.clientWidth,
+                    })
+                }
+            }
+
+            window.addEventListener('resize', handleResize)
+
+            return function cleanup() {
+                window.removeEventListener('resize', handleResize)
+            }
+        }, [])
 
         return (
             <div ref={ref} style={{ height: '100%', width: '100%' }}>

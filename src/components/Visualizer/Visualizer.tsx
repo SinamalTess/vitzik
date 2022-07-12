@@ -33,7 +33,6 @@ export const Visualizer = WithContainerDimensions(
         onChangeActiveNotes,
         onChangeTimeToNextNote,
     }: VisualizerProps) => {
-        if (!height || !width) return null
         const ref = useRef<HTMLDivElement>(null)
         let animation = useRef<number>(0)
         const midiCurrentTime = useContext(MidiCurrentTime)
@@ -112,6 +111,8 @@ export const Visualizer = WithContainerDimensions(
             onChangeTimeToNextNote,
             audioPlayerState,
         ])
+
+        if (!height || !width) return null
 
         return (
             <div className="visualizer" ref={ref}>
