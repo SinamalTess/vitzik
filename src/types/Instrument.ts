@@ -7,5 +7,7 @@ export interface Instrument {
     name: InstrumentUserFriendlyName
     index: number
     channel: number
-    notes: AlphabeticalNote[]
+    notes: Set<AlphabeticalNote>
+    timestamp: number
+    delta: number
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import './Visualizer.scss'
-import { AudioPlayerState, MidiMetas, ActiveNote, MidiMode } from '../../types'
+import { ActiveNote, AudioPlayerState, Instrument, MidiMetas, MidiMode } from '../../types'
 import isEqual from 'lodash.isequal'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
@@ -10,6 +10,7 @@ import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 
 interface VisualizerProps {
+    instruments: Instrument[]
     midiFile: IMidiFile
     midiMode: MidiMode
     midiMetas: MidiMetas
@@ -18,11 +19,13 @@ interface VisualizerProps {
     height?: number
     width?: number
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
+    onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
 }
 
 export const Visualizer = WithContainerDimensions(
     ({
+        instruments,
         midiMode,
         midiFile,
         midiMetas,
@@ -31,6 +34,7 @@ export const Visualizer = WithContainerDimensions(
         height = 0,
         width = 0,
         onChangeActiveNotes,
+        onChangeInstruments,
         onChangeTimeToNextNote,
     }: VisualizerProps) => {
         const ref = useRef<HTMLDivElement>(null)
@@ -109,8 +113,35 @@ export const Visualizer = WithContainerDimensions(
             notesCoordinates,
             onChangeActiveNotes,
             onChangeTimeToNextNote,
-            audioPlayerState,
         ])
+
+        useEffect(() => {
+            function updateInstruments() {
+                const newInstruments = instruments.map((activeInstrument) => {
+                    const sameChannelInstruments = midiMetas.instruments.filter(
+                        (instrument) => instrument.channel === activeInstrument.channel
+                    )
+                    if (sameChannelInstruments.length) {
+                        return (
+                            sameChannelInstruments
+                                .sort((a, b) => b.delta - a.delta) // sort by largest delta first
+                                .find(
+                                    (sameChannelInstrument) =>
+                                        sameChannelInstrument.timestamp <= midiCurrentTime
+                                ) ?? activeInstrument
+                        )
+                    }
+                    return activeInstrument
+                })
+
+                if (!isEqual(newInstruments, instruments)) {
+                    onChangeInstruments(newInstruments)
+                    console.log('Updated instruments')
+                }
+            }
+
+            updateInstruments()
+        }, [instruments, midiCurrentTime, midiMetas.instruments, onChangeInstruments])
 
         if (!height || !width) return null
 

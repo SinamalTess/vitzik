@@ -19,7 +19,7 @@ describe('AudioPlayer', () => {
     const midiMetas = {
         ticksPerBeat: 0,
         midiDuration: 100,
-        initialInstruments: [],
+        instruments: [],
         format: 1,
         tracksMetas: [],
         allMsPerBeat: [],

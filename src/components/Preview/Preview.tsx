@@ -9,11 +9,13 @@ import {
     AppMode,
     ActiveNote,
     MidiMode,
+    Instrument,
 } from '../../types'
 import { ErrorBoundary } from '../_presentational/ErrorBoundary'
 
 interface PreviewProps {
     appMode: AppMode
+    instruments: Instrument[]
     midiMode: MidiMode
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
@@ -21,11 +23,13 @@ interface PreviewProps {
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
+    onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
 }
 
 export function Preview({
     appMode,
+    instruments,
     midiMode,
     midiFile,
     midiMetas,
@@ -34,6 +38,7 @@ export function Preview({
     audioPlayerState,
     onChangeActiveNotes,
     onChangeTimeToNextNote,
+    onChangeInstruments,
 }: PreviewProps) {
     const staffNotes = activeNotes
         .filter((note) => !note.name)
@@ -44,6 +49,7 @@ export function Preview({
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <Visualizer
+                    instruments={instruments}
                     midiFile={midiFile}
                     midiMode={midiMode}
                     midiMetas={midiMetas}
@@ -51,6 +57,7 @@ export function Preview({
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}
+                    onChangeInstruments={onChangeInstruments}
                 />
             ) : null}
         </ErrorBoundary>

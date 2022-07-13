@@ -1,6 +1,6 @@
 import { Instrument } from './Instrument'
 
-export type MsPerBeat = {
+export interface MsPerBeat {
     timestamp: number
     value: number
     delta: number
@@ -35,12 +35,8 @@ export interface TrackMetas {
 export interface MidiMetas {
     ticksPerBeat: number
     midiDuration: number
-    initialInstruments: Instrument[]
+    instruments: Instrument[]
     format: number
     tracksMetas: TrackMetas[]
     allMsPerBeat: MsPerBeat[]
-}
-
-export interface MidiUserMetas {
-    msPerBeat: MsPerBeat
 }

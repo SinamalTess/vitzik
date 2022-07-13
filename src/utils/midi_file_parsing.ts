@@ -1,6 +1,5 @@
 import { IMidiFile, TMidiEvent } from 'midi-json-parser-worker'
 import {
-    Instrument,
     InstrumentUserFriendlyName,
     MidiMetas,
     TrackMetas,
@@ -8,6 +7,7 @@ import {
     MidiInputActiveNote,
     MsPerBeat,
     AlphabeticalNote,
+    Instrument,
 } from '../types'
 import { MIDI_INSTRUMENTS } from './const'
 import { largestNum } from './maths'
@@ -105,6 +105,31 @@ function getAllMsPerBeat(trackMetas: TrackMetas[]) {
     return allMsPerBeat.sort((a, b) => a.delta - b.delta).flat(1) // smallest delta values first
 }
 
+export function getMsPerBeatFromDelta(delta: number, allMsPerBeat: MsPerBeat[]) {
+    const passedMsPerBeat = allMsPerBeat.filter((msPerBeat) => msPerBeat.delta <= delta)
+
+    return passedMsPerBeat[passedMsPerBeat.length - 1]
+}
+
+export function deltaToTime(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBeat: number) {
+    const lastMsPerBeat = getMsPerBeatFromDelta(delta, allMsPerBeat)
+    return (
+        lastMsPerBeat.timestamp +
+        ((delta - lastMsPerBeat.delta) / ticksPerBeat) * lastMsPerBeat.value
+    )
+}
+
+export function getInitialInstruments(instruments: Instrument[]) {
+    return instruments.reduce((acc, val) => {
+        if (!acc.length) {
+            return [{ ...val }]
+        } else {
+            const isChannelExisting = acc.find(({ channel }) => channel === val.channel)
+            return isChannelExisting ? [...acc] : [...acc, { ...val }]
+        }
+    }, [] as Instrument[])
+}
+
 export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
     const { value, timestamp, delta } = allMsPerBeat[allMsPerBeat.length - 1] // last value
     const timeLeft = ((nbTicks - delta) / ticksPerBeat) * value
@@ -112,7 +137,7 @@ export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, tick
 }
 
 export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
-    let initialInstruments: Instrument[] = []
+    let instruments: Instrument[] = []
     let tracksMetas: TrackMetas[] = []
     const ticksPerBeat = getTicksPerBeat(midiJson)
 
@@ -140,19 +165,33 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
         track.forEach((event) => {
             deltaAcc = deltaAcc + event.delta
 
+            if (isProgramChangeEvent(event)) {
+                const { channel } = event
+                const { programNumber } = event.programChange
+                instruments.push({
+                    channel,
+                    delta: deltaAcc,
+                    timestamp: 0,
+                    name: programNumberToInstrument(programNumber),
+                    index: programNumber,
+                    notes: new Set(),
+                })
+            }
+
             if (isNoteOnEvent(event)) {
                 const previousChannels = trackMetas.channels ? trackMetas.channels : []
                 const hasChannel = previousChannels.some((channel) => channel === event.channel)
-                const instrument = initialInstruments.find(
-                    ({ channel }) => channel === event.channel
-                )
+                const instrument = instruments
+                    .filter(({ channel }) => channel === event.channel)
+                    .sort((a, b) => b.delta - a.delta) // sort by largest delta first
+                    .find(({ delta }) => delta <= deltaAcc)
                 if (!hasChannel) {
                     addToTrackMetas({
                         channels: [...previousChannels, event.channel],
                     })
                 }
                 if (instrument) {
-                    instrument.notes.push(keyToNote(event.noteOn.noteNumber) as AlphabeticalNote)
+                    instrument.notes.add(keyToNote(event.noteOn.noteNumber) as AlphabeticalNote)
                 }
             }
 
@@ -200,21 +239,6 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
                     keySignature: event.keySignature,
                 })
             }
-            if (isProgramChangeEvent(event)) {
-                const { channel } = event
-                const { programNumber } = event.programChange
-                const isChannelFound = initialInstruments.find(
-                    (instrument) => instrument.channel === channel
-                )
-                if (!isChannelFound) {
-                    initialInstruments.push({
-                        channel,
-                        name: programNumberToInstrument(programNumber),
-                        index: programNumber,
-                        notes: [],
-                    })
-                }
-            }
         })
 
         tracksMetas.push(trackMetas)
@@ -223,11 +247,20 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
     const allMsPerBeat = getAllMsPerBeat(tracksMetas)
     const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicksInTrack(track))) //TODO: this would only work for format 0 and 1
 
+    const finalInstruments = instruments
+        .map((instrument) => {
+            return {
+                ...instrument,
+                timestamp: deltaToTime(allMsPerBeat, instrument.delta, ticksPerBeat),
+            }
+        })
+        .sort((a, b) => a.delta - b.delta) // smallest delta values first
+
     return {
         ticksPerBeat,
         midiDuration: getMidiDuration(allMsPerBeat, nbTicks, ticksPerBeat),
         format: getFormat(midiJson),
-        initialInstruments,
+        instruments: finalInstruments,
         tracksMetas,
         allMsPerBeat,
     }

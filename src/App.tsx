@@ -1,6 +1,6 @@
 import './App.scss'
 import React, { useCallback, useEffect, useState } from 'react'
-import { getMidiMetas } from './utils'
+import { getInitialInstruments, getMidiMetas } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
 import {
@@ -11,7 +11,6 @@ import {
     AppMode,
     ActiveNote,
     MidiMetas,
-    AlphabeticalNote,
 } from './types'
 import { Preview } from './components/Preview'
 import { IMidiFile } from 'midi-json-parser-worker'
@@ -19,18 +18,11 @@ import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
-import { NOTE_NAMES } from './utils/const'
 import { TimeContextProvider } from './components/TimeContextProvider/TimeContextProvider'
 import { MidiImporter } from './components/MidiImporter'
+import { DEFAULT_USER_INSTRUMENT } from './utils/const'
 
 //TODO: check accessibility
-
-const userInstrument: Instrument = {
-    name: 'Acoustic Grand Keyboard',
-    channel: 16,
-    index: 1,
-    notes: NOTE_NAMES.alphabetical as unknown as AlphabeticalNote[],
-}
 
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
@@ -38,7 +30,7 @@ function App() {
     const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [instruments, setInstruments] = useState<Instrument[]>([userInstrument])
+    const [instruments, setInstruments] = useState<Instrument[]>([DEFAULT_USER_INSTRUMENT])
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [isMute, setIsMute] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -69,11 +61,15 @@ function App() {
             ? metas.tracksMetas.filter((track) => track.isPlayable)
             : []
 
+        const { instruments } = metas
+        const initialInstruments = getInitialInstruments(instruments)
+
         setMidiTitle(title)
         setMidiFile(midiJSON)
         setMidiMetas(metas)
-        setInstruments([userInstrument, ...metas.initialInstruments])
+        setInstruments([DEFAULT_USER_INSTRUMENT, ...initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
+        setMidiStartingTime(0)
 
         console.log(midiJSON)
         console.log(metas)
@@ -141,6 +137,7 @@ function App() {
                     <MidiImporter onMidiImport={handleMidiImport} />
                     <Preview
                         appMode={appMode}
+                        instruments={instruments}
                         midiMode={midiMode}
                         midiFile={midiFile}
                         midiMetas={midiMetas}
@@ -149,6 +146,7 @@ function App() {
                         activeTracks={activeTracks}
                         onChangeActiveNotes={setActiveNotes}
                         onChangeTimeToNextNote={setTimeToNextNote}
+                        onChangeInstruments={setInstruments}
                     />
                 </div>
                 <div className="item">
@@ -169,7 +167,7 @@ function App() {
                                         isMute={isMute}
                                         activeNotes={activeNotes}
                                         instrumentName={name}
-                                        notesToLoad={notes}
+                                        notesToLoad={Array.from(notes)}
                                         channel={channel}
                                     />
                                 )
