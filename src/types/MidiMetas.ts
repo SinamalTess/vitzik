@@ -8,7 +8,7 @@ export interface MsPerBeat {
 
 export interface TrackMetas {
     index: number
-    names?: string[]
+    names: string[]
     nbTicks: number // ticks = delta
     /*
         Time signature is defined as follows:
@@ -28,7 +28,7 @@ export interface TrackMetas {
         scale: number
     }
     msPerBeat?: MsPerBeat[]
-    channels: number[]
+    channels: Set<number>
     isPlayable: boolean
 }
 

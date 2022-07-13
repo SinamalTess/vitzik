@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import './Visualizer.scss'
 import { ActiveNote, AudioPlayerState, Instrument, MidiMetas, MidiMode } from '../../types'
-import isEqual from 'lodash.isequal'
+import { isEqual } from 'lodash'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerNotesTracks } from './VisualizerNotesTracks'

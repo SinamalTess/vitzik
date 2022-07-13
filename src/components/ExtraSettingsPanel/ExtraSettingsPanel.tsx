@@ -14,7 +14,7 @@ interface ExtraSettingsPanelProps {
     musicSystem: MusicSystem
     midiMetas: MidiMetas | null
     activeTracks: number[]
-    initialInstruments: Instrument[]
+    activeInstruments: Instrument[]
     onClose: () => void
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
@@ -27,14 +27,14 @@ export function ExtraSettingsPanel({
     musicSystem,
     midiMetas,
     activeTracks,
-    initialInstruments,
+    activeInstruments,
     onClose,
     onChangeMusicSystem,
     onChangeActiveTracks,
     onChangeInstrument,
 }: ExtraSettingsPanelProps) {
-    const playableTracks = midiMetas?.tracksMetas.filter((track) => track.isPlayable) ?? []
     const userInstrumentIcon = instrumentToIcon(userInstrument)
+    const instruments = midiMetas?.instruments ?? []
     return (
         <SideBar open={isOpen} onClose={onClose}>
             <div className="extra-settings">
@@ -55,9 +55,10 @@ export function ExtraSettingsPanel({
                         />
                         <h4>Tracks</h4>
                         <MidiTrackList
-                            playableTracks={playableTracks}
+                            activeInstruments={activeInstruments}
+                            tracks={midiMetas.tracksMetas}
                             activeTracks={activeTracks}
-                            initialInstruments={initialInstruments}
+                            instruments={instruments}
                             onChangeActiveTracks={onChangeActiveTracks}
                         />
                     </>

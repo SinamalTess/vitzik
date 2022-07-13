@@ -32,7 +32,9 @@ function App() {
     const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [instruments, setInstruments] = useState<Instrument[]>([DEFAULT_USER_INSTRUMENT])
+    const [activeInstruments, setActiveInstruments] = useState<Instrument[]>([
+        DEFAULT_USER_INSTRUMENT,
+    ])
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [isMute, setIsMute] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -59,9 +61,8 @@ function App() {
         setMidiTitle(title)
         setMidiFile(midiJSON)
         setMidiMetas(metas)
-        setInstruments([DEFAULT_USER_INSTRUMENT, ...initialInstruments])
+        setActiveInstruments([DEFAULT_USER_INSTRUMENT, ...initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
-        setMidiStartingTime(0)
 
         console.log(midiJSON)
         console.log(metas)
@@ -101,7 +102,7 @@ function App() {
                         />
                     ) : null}
                     <Settings
-                        initialInstruments={instruments}
+                        activeInstruments={activeInstruments}
                         appMode={appMode}
                         midiMetas={midiMetas}
                         midiMode={midiMode}
@@ -111,7 +112,7 @@ function App() {
                         onMidiInputChange={setMidiInput}
                         onChangeAppMode={setAppMode}
                         onChangeMusicSystem={setMusicSystem}
-                        onChangeInstrument={setInstruments}
+                        onChangeInstrument={setActiveInstruments}
                         onChangeActiveTracks={setActiveTracks}
                         onMidiModeChange={setMidiMode}
                     />
@@ -129,7 +130,7 @@ function App() {
                     <MidiImporter onMidiImport={handleMidiImport} />
                     <Preview
                         appMode={appMode}
-                        instruments={instruments}
+                        instruments={activeInstruments}
                         midiMode={midiMode}
                         midiFile={midiFile}
                         midiMetas={midiMetas}
@@ -138,7 +139,7 @@ function App() {
                         activeTracks={activeTracks}
                         onChangeActiveNotes={setActiveNotes}
                         onChangeTimeToNextNote={setTimeToNextNote}
-                        onChangeInstruments={setInstruments}
+                        onChangeActiveInstruments={setActiveInstruments}
                     />
                 </div>
                 <div className="item">
@@ -150,7 +151,7 @@ function App() {
                         onKeyPressed={setActiveNotes}
                     />
                     <>
-                        {instruments.map(({ channel, name, notes }) => {
+                        {activeInstruments.map(({ channel, name, notes }) => {
                             return (
                                 <InstrumentPlayer
                                     audioContext={AUDIO_CONTEXT}

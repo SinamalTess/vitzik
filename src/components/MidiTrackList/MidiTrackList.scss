@@ -7,6 +7,7 @@
     }
     .channel {
         border-radius: 3px;
+        background-color: map-get($theme-colors-variants, 'light-secondary');
         color: map-get($theme-colors-variants, 'dark-secondary');
         padding: map-get($theme-spacing-sizes, 'sm');
         font-weight: map-get($theme-font-weights, 'bold');

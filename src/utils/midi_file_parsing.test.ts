@@ -41,6 +41,7 @@ describe('getMidiMetas()', () => {
             tracksMetas: [
                 {
                     index: 0,
+                    names: [],
                     keySignature: {
                         key: 1,
                         scale: 0,
@@ -65,14 +66,14 @@ describe('getMidiMetas()', () => {
                         thirtyseconds: 8,
                     },
                     isPlayable: false,
-                    channels: [],
+                    channels: new Set(),
                 },
                 {
                     index: 1,
                     names: ['Piano'],
                     nbTicks: 208895,
                     isPlayable: false,
-                    channels: [],
+                    channels: new Set(),
                 },
             ],
         }

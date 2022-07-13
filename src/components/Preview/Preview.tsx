@@ -23,7 +23,7 @@ interface PreviewProps {
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
-    onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
 }
 
@@ -38,7 +38,7 @@ export function Preview({
     audioPlayerState,
     onChangeActiveNotes,
     onChangeTimeToNextNote,
-    onChangeInstruments,
+    onChangeActiveInstruments,
 }: PreviewProps) {
     const staffNotes = activeNotes
         .filter((note) => !note.name)
@@ -57,7 +57,7 @@ export function Preview({
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}
-                    onChangeInstruments={onChangeInstruments}
+                    onChangeInstruments={onChangeActiveInstruments}
                 />
             ) : null}
         </ErrorBoundary>

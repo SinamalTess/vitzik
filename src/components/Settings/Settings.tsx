@@ -23,7 +23,7 @@ interface SettingsProps {
     musicSystem: MusicSystem
     activeTracks: number[]
     isMidiImported: boolean
-    initialInstruments: Instrument[]
+    activeInstruments: Instrument[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -32,14 +32,14 @@ interface SettingsProps {
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
 }
 
-export function Settings({
+export const Settings = React.memo(function Settings({
     appMode,
     midiMode,
     midiMetas,
     musicSystem,
     activeTracks,
     isMidiImported,
-    initialInstruments,
+    activeInstruments,
     onChangeMusicSystem,
     onChangeAppMode,
     onChangeInstrument,
@@ -48,7 +48,7 @@ export function Settings({
     onMidiModeChange,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const userInstrument = initialInstruments.find(
+    const userInstrument = activeInstruments.find(
         (instrument) => instrument.channel === MIDI_USER_CHANNEL
     )
 
@@ -99,7 +99,7 @@ export function Settings({
                 musicSystem={musicSystem}
                 activeTracks={activeTracks}
                 isOpen={isOpen}
-                initialInstruments={initialInstruments}
+                activeInstruments={activeInstruments}
                 userInstrument={userInstrumentName}
                 onClose={handleCloseExtraSettings}
                 onChangeMusicSystem={onChangeMusicSystem}
@@ -108,4 +108,4 @@ export function Settings({
             />
         </div>
     )
-}
+})

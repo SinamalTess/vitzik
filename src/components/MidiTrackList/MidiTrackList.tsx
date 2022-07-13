@@ -8,26 +8,74 @@ import { Instrument, TrackMetas } from '../../types'
 import { Divider } from '../_presentational/Divider'
 import './MidiTrackList.scss'
 import { instrumentToIcon } from '../../utils/instruments'
+import { msToMinAndSec } from '../../utils'
+import { Tooltip } from '../_presentational/Tooltip'
 
 interface MidiTrackListProps {
-    playableTracks: TrackMetas[]
+    tracks: TrackMetas[]
     activeTracks: number[]
-    initialInstruments: Instrument[]
+    instruments: Instrument[]
+    activeInstruments: Instrument[]
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
 }
 
-function getInstrument(channel: number, initialInstruments: Instrument[]) {
-    return initialInstruments.find((instrument) => instrument.channel === channel)
+function getChannelInstruments(
+    channel: number,
+    instruments: Instrument[],
+    activeInstruments: Instrument[]
+) {
+    const isInstrumentActive = (instrument: Instrument) =>
+        activeInstruments.some(
+            ({ timestamp, name, channel }) =>
+                timestamp === instrument.timestamp &&
+                name === instrument.name &&
+                channel === instrument.channel
+        )
+
+    return instruments
+        .filter((instrument) => instrument.channel === channel)
+        .map((instrument) => ({
+            ...instrument,
+            isActive: isInstrumentActive(instrument),
+        }))
+}
+
+function getListItem(
+    playableTracks: TrackMetas[],
+    instruments: Instrument[],
+    activeTracks: number[],
+    activeInstruments: Instrument[]
+) {
+    return playableTracks.map(({ channels, index, names }) => {
+        // turns Set into Array
+        const channelsInstruments = [...channels].reduce(
+            (acc, val) => acc.concat(getChannelInstruments(val, instruments, activeInstruments)),
+            [] as any[]
+        )
+
+        const isActiveTrack = activeTracks.some((activeTrack) => activeTrack === index)
+
+        return {
+            index,
+            names,
+            channelsInstruments,
+            isActiveTrack,
+        }
+    })
 }
 
 export function MidiTrackList({
-    playableTracks,
+    tracks,
     activeTracks,
-    initialInstruments,
+    instruments,
+    activeInstruments,
     onChangeActiveTracks,
 }: MidiTrackListProps) {
+    const playableTracks = tracks.filter((track) => track.isPlayable)
     const allChecked = activeTracks.length === playableTracks.length
     const playableTracksIndexes = playableTracks.map(({ index }) => index)
+
+    const listItem = getListItem(playableTracks, instruments, activeTracks, activeInstruments)
 
     function selectAllPlayableTracks() {
         onChangeActiveTracks([...playableTracksIndexes])
@@ -73,10 +121,7 @@ export function MidiTrackList({
                 </ListItemSecondaryAction>
             </ListItem>
             {playableTracks
-                ? playableTracks.map(({ index, channels, names }) => {
-                      const isActiveTrack = activeTracks.some(
-                          (activeTrack) => activeTrack === index
-                      )
+                ? listItem.map(({ index, names, channelsInstruments, isActiveTrack }) => {
                       return (
                           <ListItem key={index}>
                               <ListItemSecondaryAction>
@@ -90,29 +135,30 @@ export function MidiTrackList({
                               <span>{names?.join('')}</span>
                               <Divider orientation="vertical" />
                               <List type="transparent">
-                                  {channels.map((channel) => {
-                                      const instrument = getInstrument(channel, initialInstruments)
-                                      if (instrument) {
-                                          return (
-                                              <ListItem key={index + channel}>
-                                                  <ListItemSecondaryAction>
+                                  {channelsInstruments.map(
+                                      ({ channel, isActive, timestamp, name }) => (
+                                          <ListItem key={index + channel + timestamp}>
+                                              <ListItemSecondaryAction>
+                                                  <Tooltip showOnHover>
                                                       <span
-                                                          className={`channel channel-${channel}`}
+                                                          className={
+                                                              isActive
+                                                                  ? `channel channel-${channel}`
+                                                                  : 'channel'
+                                                          }
                                                       >
                                                           CH : {channel}
                                                       </span>
-                                                  </ListItemSecondaryAction>
-                                                  <Icon
-                                                      size={18}
-                                                      name={instrumentToIcon(instrument.name)}
-                                                  />
-                                                  {instrument.name}
-                                              </ListItem>
-                                          )
-                                      } else {
-                                          return null
-                                      }
-                                  })}
+                                                      <span>
+                                                          starting time : {msToMinAndSec(timestamp)}
+                                                      </span>
+                                                  </Tooltip>
+                                              </ListItemSecondaryAction>
+                                              <Icon size={18} name={instrumentToIcon(name)} />
+                                              {name}
+                                          </ListItem>
+                                      )
+                                  )}
                               </List>
                           </ListItem>
                       )
