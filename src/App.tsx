@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { getInitialInstruments, getMidiMetas } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
@@ -24,6 +24,8 @@ import { DEFAULT_USER_INSTRUMENT } from './utils/const'
 
 //TODO: check accessibility
 
+const AUDIO_CONTEXT = new AudioContext()
+
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [notesPlayed, setNotesPlayed] = useState<string[]>([])
@@ -42,17 +44,7 @@ function App() {
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [midiStartingTime, setMidiStartingTime] = useState<number>(0)
-    const [audioContext, setAudioContext] = useState<AudioContext | null>(null)
     const isMidiImported = midiFile !== null
-
-    useEffect(() => {
-        const ac = new AudioContext()
-        setAudioContext(ac)
-
-        return function cleanup() {
-            ac.close()
-        }
-    }, [])
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         const metas = getMidiMetas(midiJSON)
@@ -158,20 +150,19 @@ function App() {
                         onKeyPressed={setActiveNotes}
                     />
                     <>
-                        {audioContext &&
-                            instruments.map(({ channel, name, notes }) => {
-                                return (
-                                    <InstrumentPlayer
-                                        audioContext={audioContext}
-                                        key={`${name}-${channel}`}
-                                        isMute={isMute}
-                                        activeNotes={activeNotes}
-                                        instrumentName={name}
-                                        notesToLoad={Array.from(notes)}
-                                        channel={channel}
-                                    />
-                                )
-                            })}
+                        {instruments.map(({ channel, name, notes }) => {
+                            return (
+                                <InstrumentPlayer
+                                    audioContext={AUDIO_CONTEXT}
+                                    key={`${name}-${channel}`}
+                                    isMute={isMute}
+                                    activeNotes={activeNotes}
+                                    instrumentName={name}
+                                    notesToLoad={Array.from(notes)}
+                                    channel={channel}
+                                />
+                            )
+                        })}
                     </>
                 </div>
             </div>
