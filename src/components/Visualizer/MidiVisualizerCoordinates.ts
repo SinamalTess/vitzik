@@ -18,6 +18,7 @@ import {
     isNoteOffEvent,
     isNoteOnEvent,
 } from '../../utils'
+import { findLast, minBy } from 'lodash'
 
 interface PartialNote extends MidiVisualizerNoteCoordinates {
     deltaAcc: number
@@ -37,28 +38,22 @@ export class MidiTimeInfos {
     }
 
     static getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], midiCurrentTime: number) {
-        const passedMsPerBeat = allMsPerBeat.filter(
-            (msPerBeat) => msPerBeat.timestamp <= midiCurrentTime
-        )
-
-        return passedMsPerBeat[passedMsPerBeat.length - 1]
+        return findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= midiCurrentTime)
     }
 
     getMsPerBeatFromDelta(delta: number) {
-        const passedMsPerBeat = this.midiMetas.allMsPerBeat.filter(
-            (msPerBeat) => msPerBeat.delta <= delta
-        )
-
-        return passedMsPerBeat[passedMsPerBeat.length - 1]
+        return findLast(this.midiMetas.allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
     }
 
     deltaToTime(delta: number) {
         const lastMsPerBeat = this.getMsPerBeatFromDelta(delta)
 
-        return (
-            lastMsPerBeat.timestamp +
-            ((delta - lastMsPerBeat.delta) / this.ticksPerBeat) * lastMsPerBeat.value
-        )
+        if (lastMsPerBeat) {
+            const { timestamp, delta: lastDelta, value } = lastMsPerBeat
+            return timestamp + ((delta - lastDelta) / this.ticksPerBeat) * value
+        }
+
+        return 0
     }
 }
 
@@ -87,14 +82,14 @@ class MidiVisualizerPositions extends MidiTimeInfos {
     getPercentageTopSection(midiCurrentTime: number) {
         const exactNbSectionPassed = midiCurrentTime / this.msPerSection
         const percentageTop = +((exactNbSectionPassed % 1) * 100).toFixed(2)
-        const percentageFirstSection = `${100 - percentageTop}%`
-        const percentageSecondSection = `-${percentageTop}%`
+        const percentage1 = `${100 - percentageTop}%`
+        const percentage2 = `-${percentageTop}%`
         const sectionPlaying = this.getIndexSectionPlaying(midiCurrentTime)
         const isIndexEven = isEven(sectionPlaying)
 
         return {
-            0: isIndexEven ? percentageSecondSection : percentageFirstSection,
-            1: isIndexEven ? percentageFirstSection : percentageSecondSection,
+            0: isIndexEven ? percentage2 : percentage1,
+            1: isIndexEven ? percentage1 : percentage2,
         }
     }
 
@@ -259,7 +254,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
 
                 const lastMsPerBeat = this.getMsPerBeatFromDelta(deltaAcc)
 
-                if (lastMsPerBeat.value !== this.msPerBeat) {
+                if (lastMsPerBeat && lastMsPerBeat.value !== this.msPerBeat) {
                     this.msPerBeat = lastMsPerBeat.value
                 }
 
@@ -302,32 +297,27 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
 
     getTimeToNextNote(notesCoordinates: SectionNoteCoordinates[], midiCurrentTime: number) {
         if (!notesCoordinates.length) return null
-        let nextNote = null
 
-        const sectionPlaying = this.getIndexSectionPlaying(midiCurrentTime)
+        const indexSectionPlaying = this.getIndexSectionPlaying(midiCurrentTime)
+        const nbSectionsLeft = notesCoordinates.length - indexSectionPlaying
+        const maxNbSectionsToCheck = Math.max(nbSectionsLeft, 5) // to have better performance we limit the search to only a few sections ahead
 
-        const checkNextNotes = (section: MidiVisualizerNoteCoordinates[]) => {
-            const nextNotes = section.filter(({ startingTime }) => startingTime > midiCurrentTime)
-            if (nextNotes.length) {
-                return nextNotes.reduce((prev, current) => (prev.y < current.y ? prev : current))
+        for (let i = indexSectionPlaying; i < maxNbSectionsToCheck; i++) {
+            const key = i.toString()
+            const section = notesCoordinates.find((section) => key in section)
+            if (section) {
+                const sectionNotes: MidiVisualizerNoteCoordinates[] = Object.values(section)[0]
+                const nextNotes = sectionNotes.filter(
+                    ({ startingTime }) => startingTime > midiCurrentTime
+                )
+                const firstNextNote = minBy(nextNotes, 'startingTime')
+                if (firstNextNote) {
+                    return firstNextNote.startingTime
+                }
             }
         }
 
-        const section = notesCoordinates.find((section) => sectionPlaying.toString() in section)
-
-        if (section) {
-            nextNote = checkNextNotes(Object.values(section)[0])
-        }
-
-        const nextSection = notesCoordinates.find(
-            (section) => (sectionPlaying + 1).toString() in section
-        )
-
-        if (!nextNote && nextSection) {
-            nextNote = checkNextNotes(Object.values(nextSection)[0])
-        }
-
-        return nextNote ? nextNote.startingTime : null // if there is no nextNote we might have reached the end of the song
+        return null
     }
 
     getActiveNotes(
