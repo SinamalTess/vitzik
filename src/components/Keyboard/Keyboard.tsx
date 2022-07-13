@@ -19,6 +19,7 @@ import {
 } from '../../utils'
 import clsx from 'clsx'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
+import { findLast } from 'lodash'
 
 interface KeyboardProps {
     activeNotes: ActiveNote[]
@@ -42,12 +43,12 @@ function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
     return NOTES.map((note) => {
         const { name } = note
         const isBlackKey = checkIsBlackKey(name)
-        const activeKeysReversed = [...activeNotes].reverse()
         /*
             Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
             So we pick the last active key because this is the one on top in the Visualizer.
         */
-        const lastActiveKey = activeKeysReversed.find(
+        const lastActiveKey = findLast(
+            activeNotes,
             (activeKey) => activeKey.name === name
         ) as MidiVisualizerActiveNote
 

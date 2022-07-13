@@ -145,8 +145,8 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
 
         coordinatesActiveTracks.forEach((section) => {
             const sectionKey = Object.keys(section)[0]
-            const existingSectionIndex = mergedCoordinates.findIndex((el) =>
-                el.hasOwnProperty(sectionKey)
+            const existingSectionIndex = mergedCoordinates.findIndex(
+                (section) => sectionKey.toString() in section
             )
             if (existingSectionIndex >= 0) {
                 const previousValues = Object.values(mergedCoordinates[existingSectionIndex])[0]
@@ -218,9 +218,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
 
     addNoteToSection(
         note: MidiVisualizerNoteCoordinates,
-        notesCoordinatesInTrack: {
-            [sectionIndex: number]: MidiVisualizerNoteCoordinates[]
-        }[]
+        notesCoordinatesInTrack: SectionNoteCoordinates[]
     ) {
         const startingSection = Math.floor(note.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
         const endingSection = Math.floor((note.startingTime + note.duration) / this.msPerSection)
@@ -329,9 +327,8 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         if (section) {
             const sectionNotes = Object.values(section)[0]
             const activeNotesCoordinates = sectionNotes.filter(
-                (note: MidiVisualizerNoteCoordinates) =>
-                    note.startingTime <= midiCurrentTime &&
-                    note.startingTime + note.duration > midiCurrentTime
+                ({ startingTime, duration }: MidiVisualizerNoteCoordinates) =>
+                    startingTime <= midiCurrentTime && startingTime + duration > midiCurrentTime
             )
 
             return MidiVisualizerCoordinates.noteCoordinatesToActiveNotes(activeNotesCoordinates)
@@ -345,10 +342,7 @@ export class MidiVisualizerCoordinates extends MidiVisualizerPositions {
         indexToDraw: number
     ) => {
         if (!notesCoordinates) return []
-        const section = notesCoordinates.find((section) => section.hasOwnProperty(indexToDraw))
-        if (section) {
-            return Object.values(section)[0]
-        }
-        return []
+        const section = notesCoordinates.find((section) => indexToDraw.toString() in section)
+        return section ? Object.values(section)[0] : []
     }
 }
