@@ -20,7 +20,7 @@ import {
     isTimeSignatureEvent,
     isTrackNameEvent,
 } from './midi_events'
-import { assign } from 'lodash'
+import { assign, uniqBy } from 'lodash'
 
 export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
 
@@ -121,14 +121,7 @@ export function deltaToTime(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBe
 }
 
 export function getInitialInstruments(instruments: Instrument[]) {
-    return instruments.reduce((acc, val) => {
-        if (!acc.length) {
-            return [{ ...val }]
-        } else {
-            const isChannelExisting = acc.find(({ channel }) => channel === val.channel)
-            return isChannelExisting ? [...acc] : [...acc, { ...val }]
-        }
-    }, [] as Instrument[])
+    return uniqBy(instruments, 'channel')
 }
 
 export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
