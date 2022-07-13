@@ -10,7 +10,7 @@ import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 
 interface VisualizerProps {
-    instruments: Instrument[]
+    activeInstruments: Instrument[]
     midiFile: IMidiFile
     midiMode: MidiMode
     midiMetas: MidiMetas
@@ -25,7 +25,7 @@ interface VisualizerProps {
 
 export const Visualizer = WithContainerDimensions(
     ({
-        instruments,
+        activeInstruments,
         midiMode,
         midiFile,
         midiMetas,
@@ -117,7 +117,7 @@ export const Visualizer = WithContainerDimensions(
 
         useEffect(() => {
             function updateInstruments() {
-                const newInstruments = instruments.map((activeInstrument) => {
+                const newInstruments = activeInstruments.map((activeInstrument) => {
                     const sameChannelInstruments = midiMetas.instruments.filter(
                         (instrument) => instrument.channel === activeInstrument.channel
                     )
@@ -134,14 +134,14 @@ export const Visualizer = WithContainerDimensions(
                     return activeInstrument
                 })
 
-                if (!isEqual(newInstruments, instruments)) {
+                if (!isEqual(newInstruments, activeInstruments)) {
                     onChangeInstruments(newInstruments)
                     console.log('Updated instruments')
                 }
             }
 
             updateInstruments()
-        }, [instruments, midiCurrentTime, midiMetas.instruments, onChangeInstruments])
+        }, [activeInstruments, midiCurrentTime, midiMetas.instruments, onChangeInstruments])
 
         if (!height || !width) return null
 

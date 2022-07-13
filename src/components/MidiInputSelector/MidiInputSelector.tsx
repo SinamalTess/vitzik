@@ -17,7 +17,7 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
         }
 
         function onMIDISuccess(midiAccess: MIDIAccess) {
-            const inputs: MIDIInput[] = Array.from(midiAccess.inputs.values())
+            const inputs: MIDIInput[] = [...midiAccess.inputs.values()] // turn into array
 
             setMidiInputs(inputs)
             onMidiInputChange(inputs[0])

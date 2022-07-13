@@ -125,12 +125,10 @@ function App() {
                     {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                     <MidiImporter onMidiImport={handleMidiImport} />
                     <Preview
-                        appMode={appMode}
-                        instruments={activeInstruments}
+                        activeInstruments={activeInstruments}
                         midiMode={midiMode}
                         midiFile={midiFile}
                         midiMetas={midiMetas}
-                        activeNotes={activeNotes}
                         audioPlayerState={audioPlayerState}
                         activeTracks={activeTracks}
                         onChangeActiveNotes={setActiveNotes}
