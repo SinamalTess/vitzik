@@ -71,6 +71,7 @@ describe('getMidiMetas()', () => {
                 {
                     index: 1,
                     names: ['Piano'],
+                    msPerBeat: [],
                     nbTicks: 208895,
                     isPlayable: false,
                     channels: new Set(),

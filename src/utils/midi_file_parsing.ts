@@ -10,7 +10,6 @@ import {
     Instrument,
 } from '../types'
 import { MIDI_INSTRUMENTS } from './const'
-import { largestNum } from './maths'
 import { keyToNote } from './notes'
 import {
     isKeySignatureEvent,
@@ -20,7 +19,7 @@ import {
     isTimeSignatureEvent,
     isTrackNameEvent,
 } from './midi_events'
-import { assign, uniqBy } from 'lodash'
+import { assign, findLast, last, max, sortBy, uniqBy } from 'lodash'
 
 export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
 
@@ -96,28 +95,26 @@ export function getInitialMsPerBeat(allMsPerBeats: MsPerBeat[]) {
 }
 
 function getAllMsPerBeat(trackMetas: TrackMetas[]) {
-    let allMsPerBeat: MsPerBeat[] = []
-    trackMetas.forEach((track) => {
-        if (Array.isArray(track.msPerBeat)) {
-            allMsPerBeat = [...allMsPerBeat, ...(track.msPerBeat as MsPerBeat[])]
-        }
-    })
+    const allMsPerBeat = trackMetas.reduce((acc, val) => {
+        return [...acc, ...val.msPerBeat]
+    }, [] as MsPerBeat[])
 
-    return allMsPerBeat.sort((a, b) => a.delta - b.delta).flat(1) // smallest delta values first
+    return sortBy(allMsPerBeat, 'delta').flat(1)
 }
 
 export function getMsPerBeatFromDelta(delta: number, allMsPerBeat: MsPerBeat[]) {
-    const passedMsPerBeat = allMsPerBeat.filter((msPerBeat) => msPerBeat.delta <= delta)
-
-    return passedMsPerBeat[passedMsPerBeat.length - 1]
+    return findLast(allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
 }
 
 export function deltaToTime(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBeat: number) {
     const lastMsPerBeat = getMsPerBeatFromDelta(delta, allMsPerBeat)
-    return (
-        lastMsPerBeat.timestamp +
-        ((delta - lastMsPerBeat.delta) / ticksPerBeat) * lastMsPerBeat.value
-    )
+
+    if (lastMsPerBeat) {
+        const { timestamp, delta: lastDelta, value } = lastMsPerBeat
+        return timestamp + ((delta - lastDelta) / ticksPerBeat) * value
+    }
+
+    return 0
 }
 
 export function getInitialInstruments(instruments: Instrument[]) {
@@ -125,9 +122,15 @@ export function getInitialInstruments(instruments: Instrument[]) {
 }
 
 export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
-    const { value, timestamp, delta } = allMsPerBeat[allMsPerBeat.length - 1] // last value
-    const timeLeft = ((nbTicks - delta) / ticksPerBeat) * value
-    return timestamp + timeLeft
+    const lastMsPerBeat = last(allMsPerBeat)
+
+    if (lastMsPerBeat) {
+        const { value, timestamp, delta } = lastMsPerBeat
+        const timeLeft = ((nbTicks - delta) / ticksPerBeat) * value
+        return timestamp + timeLeft
+    }
+
+    return 0
 }
 
 export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
@@ -143,6 +146,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             channels: new Set<number>(),
             isPlayable: false,
             names: [],
+            msPerBeat: [],
         }
 
         if (isTrackPlayable(track)) {
@@ -164,7 +168,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
                 const instrument = {
                     channel,
                     delta: deltaAcc,
-                    timestamp: 0,
+                    timestamp: 0, // to be replaced once we know allMsPerBeat values
                     name: programNumberToInstrument(programNumber),
                     index: programNumber,
                     notes: new Set(),
@@ -196,19 +200,18 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             if (isSetTempoEvent(event)) {
                 const { microsecondsPerQuarter } = event.setTempo
 
-                const previousMsPerBeat = trackMetas.msPerBeat ?? []
+                const previousMsPerBeat = last(trackMetas.msPerBeat)
                 const currentMsPerBeatValue = microSPerBeatToMsPerBeat(microsecondsPerQuarter)
                 let newTimestamp = (deltaAcc / ticksPerBeat) * currentMsPerBeatValue
 
-                if (previousMsPerBeat.length) {
-                    const { value, delta, timestamp } =
-                        previousMsPerBeat[previousMsPerBeat.length - 1]
+                if (previousMsPerBeat) {
+                    const { value, delta, timestamp } = previousMsPerBeat
                     newTimestamp = ((deltaAcc - delta) / ticksPerBeat) * value + timestamp
                 }
 
                 assign(trackMetas, {
                     msPerBeat: [
-                        ...previousMsPerBeat,
+                        ...trackMetas.msPerBeat,
                         {
                             value: currentMsPerBeatValue,
                             timestamp: newTimestamp,
@@ -237,24 +240,24 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
     })
 
     const allMsPerBeat = getAllMsPerBeat(tracksMetas)
-    const nbTicks = largestNum(midiJson.tracks.map((track) => getNbTicksInTrack(track))) //TODO: this would only work for format 0 and 1
+    const nbTicks = max(midiJson.tracks.map((track) => getNbTicksInTrack(track))) ?? 0 // TODO: this would only work for format 0 and 1
 
     const finalInstruments = instruments
         .filter((instrument) => instrument.notes.size) // remove instruments without notes
         .map((instrument) => {
+            const { delta } = instrument
             // calculates final timestamp of instruments
             return {
                 ...instrument,
-                timestamp: deltaToTime(allMsPerBeat, instrument.delta, ticksPerBeat),
+                timestamp: deltaToTime(allMsPerBeat, delta, ticksPerBeat),
             }
         })
-        .sort((a, b) => a.delta - b.delta) // smallest delta values first
 
     return {
         ticksPerBeat,
         midiDuration: getMidiDuration(allMsPerBeat, nbTicks, ticksPerBeat),
         format: getFormat(midiJson),
-        instruments: finalInstruments,
+        instruments: sortBy(finalInstruments, 'delta'),
         tracksMetas,
         allMsPerBeat,
     }

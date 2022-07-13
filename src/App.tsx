@@ -50,11 +50,7 @@ function App() {
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         const metas = getMidiMetas(midiJSON)
-
-        const playableTracks = Array.isArray(metas.tracksMetas)
-            ? metas.tracksMetas.filter((track) => track.isPlayable)
-            : []
-
+        const playableTracks = metas.tracksMetas.filter((track) => track.isPlayable)
         const { instruments } = metas
         const initialInstruments = getInitialInstruments(instruments)
 

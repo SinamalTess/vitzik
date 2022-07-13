@@ -27,7 +27,7 @@ export interface TrackMetas {
         key: number
         scale: number
     }
-    msPerBeat?: MsPerBeat[]
+    msPerBeat: MsPerBeat[]
     channels: Set<number>
     isPlayable: boolean
 }
