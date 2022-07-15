@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
 import { Icon } from '../_presentational/Icon'
+import clsx from 'clsx'
 
 interface MidiImporterProps {
+    isMidiImported: boolean
     onMidiImport: (title: string, midiJSON: IMidiFile) => void
 }
 
-type midiImporterState = 'pending' | 'error' | 'dragging'
+type midiImporterState = 'pristine' | 'pending' | 'error' | 'valid'
 
 function getFiles(event: DragEvent) {
     let files: File[] = []
@@ -35,8 +37,8 @@ function parseMidiFile(files: File[], callback: (fileName: string, midiJson: IMi
     reader.readAsArrayBuffer(files[0])
 }
 
-export function MidiImporter({ onMidiImport }: MidiImporterProps) {
-    const [state, setState] = useState<midiImporterState>('pending')
+export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps) {
+    const [state, setState] = useState<midiImporterState>('pristine')
 
     useEffect(() => {
         window.addEventListener('dragover', handleDragOver)
@@ -52,14 +54,14 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
 
     function handleDragOver(event: DragEvent) {
         event.preventDefault()
-        setState('dragging')
+        setState('valid')
         if (event.dataTransfer?.items[0].type !== 'audio/mid') {
             setState('error')
         }
     }
 
     function handleDragLeave() {
-        setState('pending')
+        isMidiImported ? setState('pending') : setState('pristine')
     }
 
     function handleDrop(event: DragEvent) {
@@ -76,15 +78,26 @@ export function MidiImporter({ onMidiImport }: MidiImporterProps) {
         setState('pending')
     }
 
+    const classNamesMessage = clsx('dropzone__message', {
+        'dropzone__message--error': state === 'error',
+    })
+
+    const message = () => {
+        switch (state) {
+            case 'error':
+                return 'We only support MIDI files :('
+            case 'valid':
+                return 'Oh that looks like a valid file! :)'
+            default:
+                return 'Drag a MIDI file to this dropzone to start'
+        }
+    }
+
     return (
         <div className={`dropzone dropzone--${state}`}>
-            <div className="dropzone__message">
-                <Icon name="midi" size={75} />
-                {state === 'error' ? (
-                    <p>We only support MIDI files</p>
-                ) : (
-                    <p>Drag a MIDI file to this Drop Zone</p>
-                )}
+            <div className={classNamesMessage}>
+                <Icon name="midi" size={36} />
+                <span>{message()}</span>
             </div>
         </div>
     )

@@ -42,7 +42,8 @@
       "/src/types",
       "/src/reportWebVitals.js",
       "/src/utils/const",
-      "/index.js"
+      "/index.js",
+      "/index.ts"
     ]
   },
   "eslintConfig": {

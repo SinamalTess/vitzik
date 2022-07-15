@@ -25,7 +25,7 @@ interface InstrumentPlayerProps {
     channel: number
 }
 
-type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
+export type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
 
 const normalizeInstrumentName = (
     instrument: InstrumentUserFriendlyName,

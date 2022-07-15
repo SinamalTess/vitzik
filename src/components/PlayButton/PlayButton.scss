@@ -19,7 +19,7 @@
             clip-path: polygon(0 0, 50% 25%, 50% 75%, 0% 100%);
         }
     }
-    &--playing {
+    &--pause {
         .play-button__half--after {
             clip-path: polygon(70% 0, 100% 0, 100% 100%, 70% 100%);
         }

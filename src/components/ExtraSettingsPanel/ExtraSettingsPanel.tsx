@@ -37,7 +37,7 @@ export function ExtraSettingsPanel({
     const instruments = midiMetas?.instruments ?? []
     return (
         <SideBar open={isOpen} onClose={onClose}>
-            <div className="extra-settings">
+            <div className="extra-settings" role="toolbar" aria-orientation="vertical">
                 <h4>User Instrument</h4>
                 <div className="extra-settings__user-instrument">
                     <Icon size={50} name={userInstrumentIcon} />

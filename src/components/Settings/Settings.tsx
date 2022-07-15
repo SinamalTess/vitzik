@@ -56,7 +56,7 @@ export const Settings = React.memo(function Settings({
         ? userInstrument.name
         : 'Acoustic Grand Keyboard'
 
-    function handleMidiModeChange() {
+    function handleMidiModeClick() {
         onMidiModeChange((midiMode) => {
             switch (midiMode) {
                 case 'autoplay':
@@ -76,10 +76,10 @@ export const Settings = React.memo(function Settings({
     }
 
     return (
-        <div className="settings">
+        <div className="settings" role="toolbar">
             {isMidiImported ? (
                 <Tooltip showOnHover>
-                    <Switch isOn={midiMode === 'autoplay'} onChange={handleMidiModeChange}>
+                    <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
                         Autoplay
                     </Switch>
                     <span>

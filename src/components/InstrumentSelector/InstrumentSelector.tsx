@@ -28,14 +28,12 @@ export function InstrumentSelector({ value, onChange }: InstrumentSelectorProps)
     }
 
     return (
-        <>
-            <Select onChange={handleChange} value={value}>
-                {MIDI_INSTRUMENTS.map((instrument) => (
-                    <option value={instrument} key={instrument}>
-                        {instrument}
-                    </option>
-                ))}
-            </Select>
-        </>
+        <Select onChange={handleChange} value={value}>
+            {MIDI_INSTRUMENTS.map((instrument) => (
+                <option value={instrument} key={instrument}>
+                    {instrument}
+                </option>
+            ))}
+        </Select>
     )
 }

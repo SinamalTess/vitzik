@@ -123,7 +123,7 @@ function App() {
                 </div>
                 <div className="item preview">
                     {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
-                    <MidiImporter onMidiImport={handleMidiImport} />
+                    <MidiImporter isMidiImported={isMidiImported} onMidiImport={handleMidiImport} />
                     <Preview
                         activeInstruments={activeInstruments}
                         midiMode={midiMode}

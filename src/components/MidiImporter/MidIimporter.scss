@@ -1,16 +1,24 @@
 @import '../../style/vars';
 
 .dropzone {
-    height: 100%;
     pointer-events: none;
+    height: 100%;
     width: 100%;
-    text-align: center;
-    position: fixed;
-    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    z-index: 1;
+    background-color: map-get($theme-colors-variants, 'dark-secondary');
     &--pending {
         display: none;
     }
-    &--dragging {
-        display: block;
+    &__message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+    &__message {
+        &--error {
+            color: red;
+        }
     }
 }

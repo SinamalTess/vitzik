@@ -30,6 +30,7 @@ export function Checkbox({
     return (
         <span className={classNames}>
             <input
+                aria-checked={checked}
                 type="checkbox"
                 value={value}
                 checked={checked}

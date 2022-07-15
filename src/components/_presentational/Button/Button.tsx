@@ -22,6 +22,7 @@ interface ButtonProps extends PresentationalComponentBasicProps {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     {
         style,
+        'aria-label': ariaLabel,
         disabled = false,
         active = false,
         icon,
@@ -54,6 +55,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
             disabled={disabled}
             className={classNames}
             style={style}
+            aria-label={ariaLabel}
             onClick={onClick}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}

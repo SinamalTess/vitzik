@@ -14,4 +14,6 @@ export class Worker {
     postMessage() {
         this.onmessage()
     }
+
+    removeEventListener() {}
 }

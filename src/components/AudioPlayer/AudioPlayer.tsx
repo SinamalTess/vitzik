@@ -107,7 +107,9 @@ export function AudioPlayer({
                 <span className="audio-player__track-title">{title}</span>
                 {title}
             </Tooltip>
-            <span className="audio-player__current-time">{currentTime}</span>
+            <span className="audio-player__current-time" role="timer">
+                {currentTime}
+            </span>
             <RangeSlider
                 className="audio-player__progress-bar"
                 value={midiCurrentTime}
@@ -116,7 +118,9 @@ export function AudioPlayer({
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
             />
-            <span className="audio-player__total-time">{totalTime}</span>
+            <span className="audio-player__total-time" role="timer">
+                {totalTime}
+            </span>
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
             <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />

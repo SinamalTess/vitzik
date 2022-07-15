@@ -2,17 +2,18 @@ import React from 'react'
 import './Switch.scss'
 import clsx from 'clsx'
 import { PresentationalComponentBasicProps } from '../types'
+import { Button } from '../Button'
 
 interface SwitchProps extends PresentationalComponentBasicProps {
     isOn: boolean
     children: string | string[]
-    onChange: () => void
+    onClick: () => void
     onMouseEnter?: (event: React.MouseEvent<HTMLLabelElement>) => void
     onMouseLeave?: (event: React.MouseEvent<HTMLLabelElement>) => void
 }
 
 export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(function Switch(
-    { style, className, children, isOn, onChange, onMouseEnter, onMouseLeave }: SwitchProps,
+    { style, className, children, isOn, onClick, onMouseEnter, onMouseLeave }: SwitchProps,
     ref
 ) {
     const classNames = clsx('switch', className)
@@ -25,8 +26,12 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(function S
             onMouseEnter={onMouseEnter}
         >
             {children}
-            <input type="checkbox" checked={isOn} onChange={onChange} />
-            <span className={'switch--icon'}>
+            <Button
+                onClick={onClick}
+                className={clsx({ 'switch--active': isOn })}
+                aria-checked={isOn}
+            />
+            <span className={'switch__icon'}>
                 <span></span>
             </span>
         </label>

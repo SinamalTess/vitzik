@@ -24,8 +24,9 @@ const Notes = React.memo(function Notes({
 }: RectanglesProps) {
     return (
         <>
-            {notesCoordinates.map(({ channel, y, x, w, h, id }) => (
+            {notesCoordinates.map(({ channel, y, x, w, h, id, name }) => (
                 <rect
+                    aria-label={`${name} note`}
                     key={id}
                     className={`channel-${channel}`}
                     x={x}
