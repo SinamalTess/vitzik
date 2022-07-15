@@ -8,6 +8,7 @@ import { Worker } from './tests/mocks/worker'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import { AudioContext } from './tests/mocks/AudioContext'
 
+// Mocks
 global.URL.createObjectURL = () => {}
 global.Worker = Worker
 global.navigator.requestMIDIAccess = requestMIDIAccess

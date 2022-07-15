@@ -1,9 +1,7 @@
 import { render, waitFor } from '@testing-library/react'
 import React from 'react'
-import { InstrumentPlayer } from './InstrumentPlayer'
-import * as midiFile from '../../tests/midi1.json'
-import { IMidiFile } from 'midi-json-parser-worker'
-import { MidiVisualizerActiveNote } from '../../types'
+import { InstrumentPlayer, SoundFont } from './InstrumentPlayer'
+import { AlphabeticalNote, InstrumentUserFriendlyName, MidiVisualizerActiveNote } from '../../types'
 import Soundfont from 'soundfont-player'
 import Mock = jest.Mock
 
@@ -12,7 +10,6 @@ jest.mock('soundfont-player', () => ({
 }))
 
 describe('InstrumentPlayer', () => {
-    const midiJson = midiFile as IMidiFile
     const activeNote: MidiVisualizerActiveNote = {
         name: 'A0',
         velocity: 100,
@@ -23,19 +20,20 @@ describe('InstrumentPlayer', () => {
         startingTime: 0,
     }
 
+    const props = {
+        audioContext: new AudioContext(),
+        activeNotes: [activeNote],
+        isMute: false,
+        notesToLoad: [],
+        instrumentName: 'Acoustic Grand Keyboard' as InstrumentUserFriendlyName,
+        soundfont: 'FatBoy' as SoundFont,
+        channel: 0,
+    }
+
     it('should load the passed instrument', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
 
-        render(
-            <InstrumentPlayer
-                audioContext={new AudioContext()}
-                activeNotes={[activeNote]}
-                isMute={false}
-                notesToLoad={[]}
-                instrumentName={'Acoustic Grand Keyboard'}
-                channel={0}
-            ></InstrumentPlayer>
-        )
+        render(<InstrumentPlayer {...props}></InstrumentPlayer>)
 
         await waitFor(() => {
             expect(Soundfont.instrument).toHaveBeenCalledWith(
@@ -49,23 +47,31 @@ describe('InstrumentPlayer', () => {
     it('should load the passed soundfont', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
 
-        render(
-            <InstrumentPlayer
-                audioContext={new AudioContext()}
-                activeNotes={[activeNote]}
-                isMute={false}
-                notesToLoad={[]}
-                instrumentName={'Acoustic Grand Keyboard'}
-                soundfont={'FatBoy'}
-                channel={0}
-            ></InstrumentPlayer>
-        )
+        render(<InstrumentPlayer {...props} soundfont={'FatBoy'}></InstrumentPlayer>)
 
         await waitFor(() => {
             expect(Soundfont.instrument).toHaveBeenCalledWith(
                 expect.anything(),
                 expect.anything(),
                 {
+                    notes: [],
+                    soundfont: 'FatBoy',
+                }
+            )
+        })
+    })
+
+    it('should load the requested notes', async () => {
+        ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
+
+        render(<InstrumentPlayer {...props} notesToLoad={['A0']}></InstrumentPlayer>)
+
+        await waitFor(() => {
+            expect(Soundfont.instrument).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.anything(),
+                {
+                    notes: ['A0'],
                     soundfont: 'FatBoy',
                 }
             )

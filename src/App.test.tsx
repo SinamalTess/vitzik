@@ -1,33 +1,69 @@
-import { screen, render, waitFor } from '@testing-library/react'
-import React from 'react'
+import { screen, render, fireEvent } from '@testing-library/react'
+import React, { ReactNode } from 'react'
 import App from './App'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'
-import Mock = jest.Mock
+import userEvent from '@testing-library/user-event'
 
-jest.mock('./components/Staff', () => () => {
-    return <div />
-})
-
-jest.mock('midi-json-parser', () => () => {
-    return () => {}
-})
+interface TooltipProps {
+    children: ReactNode
+}
 
 jest.mock('soundfont-player', () => ({
     instrument: jest.fn(),
 }))
 
+jest.mock('./components/_presentational/Tooltip', () => ({
+    Tooltip: ({ children }: TooltipProps) => {
+        return children
+    },
+}))
+
+jest.mock('midi-json-parser', () => () => {})
+
+const clickExtraSettings = () => {
+    const button = screen.getByLabelText(/settings/)
+    userEvent.click(button)
+}
+
+const dropFile = () => {
+    const dropzone = screen.getByLabelText(/drop files here/i)
+    fireEvent.drop(dropzone, {
+        dataTransfer: {
+            files: [new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' })],
+        },
+    })
+}
+
 describe('App', () => {
-    it('should render', async () => {
+    beforeEach(() => {
         requestMIDIAccess.mockResolvedValue({
             inputs: {
                 values: () => [],
             },
         })
-        ;(Soundfont.instrument as Mock).mockResolvedValue('fakeInstrumentPlayer')
+
+        // @ts-ignore
+        Soundfont.instrument.mockResolvedValue('fakeInstrumentPlayer')
+    })
+
+    afterEach(() => jest.clearAllMocks())
+
+    it('should render', async () => {
         render(<App />)
-        await waitFor(() => {
-            expect(screen.getByText('Import Midi')).toBeInTheDocument()
-        })
+        expect(screen.getByText('Import Midi')).toBeInTheDocument()
+        expect(screen.getByText(/Music theory/i)).toBeInTheDocument()
+    })
+
+    it('should let extra settings be opened', async () => {
+        render(<App />)
+        clickExtraSettings()
+        expect(screen.getByText(/User Instrument/i)).toBeVisible()
+    })
+
+    it('should let a midi file be dropped', async () => {
+        render(<App />)
+        clickExtraSettings()
+        expect(screen.getByText(/User Instrument/i)).toBeVisible()
     })
 })

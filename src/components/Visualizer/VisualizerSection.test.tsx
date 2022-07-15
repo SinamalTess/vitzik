@@ -37,7 +37,7 @@ describe('VisualizerSection', () => {
         })
     })
 
-    it('should render a canvas properly', () => {
+    it('should render a section properly', () => {
         render(
             <VisualizerSection
                 notesCoordinates={notesCoordinates}
@@ -47,8 +47,8 @@ describe('VisualizerSection', () => {
                 index={0}
             ></VisualizerSection>
         )
-        const canvas = screen.getByTestId('visualizer__section--0')
+        const section = screen.getByTestId('visualizer__section--0')
 
-        expect(canvas).toBeVisible()
+        expect(section).toBeVisible()
     })
 })

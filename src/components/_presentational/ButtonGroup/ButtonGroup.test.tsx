@@ -15,7 +15,7 @@ describe('ButtonGroup', () => {
         const buttons = screen.getAllByRole('button')
 
         buttons.forEach((button) => {
-            expect(button).toHaveClass('btn--sm')
+            expect(button).toHaveClass('btn-sm')
         })
     })
 })
