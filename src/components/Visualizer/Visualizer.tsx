@@ -8,6 +8,7 @@ import { VisualizerNotesTracks } from './VisualizerNotesTracks'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
+import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 
 interface VisualizerProps {
     activeInstruments: Instrument[]
@@ -89,7 +90,12 @@ export const Visualizer = WithContainerDimensions(
                 )
 
                 onChangeActiveNotes((activeNotes: ActiveNote[]) => {
-                    return isEqual(newActiveNotes, activeNotes) ? activeNotes : newActiveNotes
+                    const midiInputNotes = activeNotes.filter(({ channel }) =>
+                        [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
+                    )
+                    return isEqual(newActiveNotes, activeNotes)
+                        ? activeNotes
+                        : [...newActiveNotes, ...midiInputNotes]
                 })
             }
 

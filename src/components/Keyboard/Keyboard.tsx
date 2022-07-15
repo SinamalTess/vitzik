@@ -14,7 +14,7 @@ import {
     isSpecialNote as checkIsSpecialNote,
     isBlackKey as checkIsBlackKey,
     noteToKey,
-    removeNotesFromActiveKeys,
+    removeNotesFromActiveNotes,
     translateNoteToMusicSystem,
 } from '../../utils'
 import clsx from 'clsx'
@@ -133,16 +133,16 @@ export function Keyboard({
         const lastMidiNote = midiActiveNotes.at(-1)
 
         if (lastMidiNote) {
-            const activeKeysCopy = removeNotesFromActiveKeys(activeNotes, [note, lastMidiNote])
+            const activeKeysCopy = removeNotesFromActiveNotes(activeNotes, [note, lastMidiNote])
             const isAllNotesPlayed = activeKeysCopy.length === 0
             if (isAllNotesPlayed && onAllMidiKeysPlayed && midiMode === 'wait') {
                 onKeyPressed(activeKeysCopy)
                 onAllMidiKeysPlayed()
             } else {
-                onKeyPressed(removeNotesFromActiveKeys(activeNotes, [note]))
+                onKeyPressed(removeNotesFromActiveNotes(activeNotes, [note]))
             }
         } else {
-            const activeKeysCopy = removeNotesFromActiveKeys(activeNotes, [note])
+            const activeKeysCopy = removeNotesFromActiveNotes(activeNotes, [note])
             const isAllNotesPlayed = activeKeysCopy.length === 0
             if (isAllNotesPlayed && onAllMidiKeysPlayed) {
                 onAllMidiKeysPlayed()

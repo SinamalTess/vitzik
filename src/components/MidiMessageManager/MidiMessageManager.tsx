@@ -6,17 +6,16 @@ import {
     AlphabeticalNote,
     isMidiVisualizerActiveNote,
 } from '../../types'
-import { keyToNote, removeNotesFromActiveKeys } from '../../utils'
-import React, { useEffect, useRef } from 'react'
+import { keyToNote, removeNotesFromActiveNotes } from '../../utils'
+import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 
 interface MidiMessageManagerProps {
-    midiInput: MIDIInput | null
+    midiInput: MIDIInput
     audioPlayerState: AudioPlayerState
     activeNotes: ActiveNote[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onAllMidiKeysPlayed: () => void
-    onNotePlayed: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 function getMessage(message: MIDIMessageEvent) {
@@ -42,13 +41,56 @@ export function MidiMessageManager({
     onChangeActiveNotes,
     onAllMidiKeysPlayed,
     audioPlayerState,
-    onNotePlayed,
 }: MidiMessageManagerProps) {
-    const notesAlreadyPlayedRef: React.MutableRefObject<MidiVisualizerActiveNote[]> = useRef([])
-    const notesBeingHeldRef: React.MutableRefObject<MidiInputActiveNote[]> = useRef([])
+    const [notesBeingHeld, setNotesBeingHeld] = useState<MidiInputActiveNote[]>([])
+    const [midiNotesAlreadyPlayed, setMidiNotesAlreadyPlayed] = useState<Set<string>>(new Set())
 
     useEffect(() => {
-        if (!midiInput) return
+        function removeNote(note: MidiInputActiveNote) {
+            setNotesBeingHeld((notesBeingHeld) =>
+                removeNotesFromActiveNotes(notesBeingHeld, [note])
+            )
+            onChangeActiveNotes((prevActiveNotes) =>
+                removeNotesFromActiveNotes(prevActiveNotes, [note])
+            )
+        }
+
+        function checkAllMidiNotesPlayed(
+            midiActiveNotes: MidiVisualizerActiveNote[],
+            note: MidiInputActiveNote
+        ) {
+            return midiActiveNotes.every((midiActiveNote) => {
+                const isCurrentNote = note.name && note.name === midiActiveNote.name
+                const isNoteBeingHeld = notesBeingHeld.find(
+                    (noteBeingHeld) => noteBeingHeld.name === midiActiveNote.name
+                )
+                const isNoteAlreadyPlayed = midiNotesAlreadyPlayed.has(midiActiveNote.id)
+
+                return isCurrentNote || isNoteBeingHeld || isNoteAlreadyPlayed
+            })
+        }
+
+        function addNote(note: MidiInputActiveNote) {
+            setNotesBeingHeld((notesBeingHeld) => [...notesBeingHeld, note])
+
+            const midiActiveNotes = activeNotes.filter((activeNote) =>
+                isMidiVisualizerActiveNote(activeNote)
+            ) as MidiVisualizerActiveNote[]
+
+            const isAllMidiNotesPlayed = checkAllMidiNotesPlayed(midiActiveNotes, note)
+
+            onChangeActiveNotes((prevActiveNotes) => [...prevActiveNotes, note])
+
+            if (isAllMidiNotesPlayed) {
+                const midiActiveNotesIds = midiActiveNotes.map(({ id }) => id)
+                setMidiNotesAlreadyPlayed(
+                    (midiNotesAlreadyPlayed) =>
+                        new Set([...midiNotesAlreadyPlayed, ...midiActiveNotesIds])
+                )
+                onAllMidiKeysPlayed()
+            }
+        }
+
         function handleMIDIMessage(message: MIDIMessageEvent) {
             const { command, note } = getMessage(message)
 
@@ -67,43 +109,24 @@ export function MidiMessageManager({
 
         return function cleanup() {
             // @ts-ignore
-            midiInput?.removeEventListener('midimessage', handleMIDIMessage)
+            midiInput.removeEventListener('midimessage', handleMIDIMessage)
         }
-    }, [midiInput])
-
-    function removeNote(note: MidiInputActiveNote) {
-        notesBeingHeldRef.current = removeNotesFromActiveKeys(notesBeingHeldRef.current, [note])
-        const activeNotesCopy = removeNotesFromActiveKeys(activeNotes, [note])
-        onChangeActiveNotes(activeNotesCopy)
-    }
-
-    function addNote(note: MidiInputActiveNote) {
-        notesBeingHeldRef.current.push(note)
-        const midiActiveNotes = activeNotes.filter((activeNote) =>
-            isMidiVisualizerActiveNote(activeNote)
-        ) as MidiVisualizerActiveNote[]
-
-        const areAllMidiNotesPlayed = midiActiveNotes.every(
-            (note) =>
-                notesBeingHeldRef.current.find((activeNote) => activeNote.name === note.name) ||
-                notesAlreadyPlayedRef.current.find((activeNote) => activeNote.id === note.id)
-        )
-        onChangeActiveNotes([...activeNotes, note])
-        if (areAllMidiNotesPlayed) {
-            notesAlreadyPlayedRef.current = notesAlreadyPlayedRef.current.concat(midiActiveNotes)
-            const ids = midiActiveNotes.filter((id) => Boolean(id)).map(({ id }) => id) as string[]
-            onAllMidiKeysPlayed()
-            onNotePlayed((notes) => [...notes, ...ids])
-        }
-    }
+    }, [
+        activeNotes,
+        midiInput,
+        midiNotesAlreadyPlayed,
+        notesBeingHeld,
+        onAllMidiKeysPlayed,
+        onChangeActiveNotes,
+    ])
 
     useEffect(() => {
         if (audioPlayerState === 'rewinding') {
-            notesBeingHeldRef.current = []
-            notesAlreadyPlayedRef.current = []
+            setNotesBeingHeld([])
+            setMidiNotesAlreadyPlayed(new Set())
         } else if (audioPlayerState === 'stopped') {
-            notesAlreadyPlayedRef.current = []
-            notesBeingHeldRef.current = []
+            setMidiNotesAlreadyPlayed(new Set())
+            setNotesBeingHeld([])
         }
     }, [audioPlayerState])
 

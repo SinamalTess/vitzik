@@ -30,6 +30,7 @@ interface SettingsProps {
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
+    onMute: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const Settings = React.memo(function Settings({
@@ -46,6 +47,7 @@ export const Settings = React.memo(function Settings({
     onChangeActiveTracks,
     onMidiInputChange,
     onMidiModeChange,
+    onMute,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const userInstrument = activeInstruments.find(
@@ -60,8 +62,10 @@ export const Settings = React.memo(function Settings({
         onMidiModeChange((midiMode) => {
             switch (midiMode) {
                 case 'autoplay':
+                    onMute(true)
                     return 'wait'
                 case 'wait':
+                    onMute(false)
                     return 'autoplay'
             }
         })

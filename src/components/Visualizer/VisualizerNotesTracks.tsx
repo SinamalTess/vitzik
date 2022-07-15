@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRef } from 'react'
 import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import './VisualizerNotesTracks.scss'
@@ -29,12 +29,15 @@ function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
 
 export function VisualizerNotesTracks({ height, width }: VisualizerTracksProps) {
     const refCanvas = useRef<HTMLCanvasElement>(null)
-    const canvasRef: HTMLCanvasElement | undefined | null = refCanvas.current
-    const ctx = canvasRef?.getContext('2d')
 
-    if (ctx) {
-        drawTrackLines(ctx, height, width)
-    }
+    useEffect(() => {
+        if (refCanvas.current && height && width) {
+            const ctx = refCanvas.current.getContext('2d')
+            if (ctx) {
+                drawTrackLines(ctx, height, width)
+            }
+        }
+    }, [height, width])
 
     const classNames = clsx('visualizer__notes-tracks')
 

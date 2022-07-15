@@ -28,7 +28,6 @@ const AUDIO_CONTEXT = new AudioContext()
 
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
-    const [notesPlayed, setNotesPlayed] = useState<string[]>([])
     const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
@@ -91,7 +90,7 @@ function App() {
                             onChangeAudioPlayerState={setAudioPlayerState}
                             onChangeMidiStartingTime={setMidiStartingTime}
                             onPlay={setIsPlaying}
-                            onToggleSound={setIsMute}
+                            onMute={setIsMute}
                             onChangeMidiSpeedFactor={setMidiSpeedFactor}
                         />
                     ) : null}
@@ -109,15 +108,17 @@ function App() {
                         onChangeInstrument={setActiveInstruments}
                         onChangeActiveTracks={setActiveTracks}
                         onMidiModeChange={setMidiMode}
+                        onMute={setIsMute}
                     />
-                    <MidiMessageManager
-                        audioPlayerState={audioPlayerState}
-                        midiInput={midiInput}
-                        activeNotes={activeNotes}
-                        onChangeActiveNotes={setActiveNotes}
-                        onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
-                        onNotePlayed={setNotesPlayed}
-                    />
+                    {midiInput ? (
+                        <MidiMessageManager
+                            audioPlayerState={audioPlayerState}
+                            midiInput={midiInput}
+                            activeNotes={activeNotes}
+                            onChangeActiveNotes={setActiveNotes}
+                            onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
+                        />
+                    ) : null}
                 </div>
                 <div className="item preview">
                     {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}

@@ -18,7 +18,7 @@ interface AudioPlayerProps {
     isMute: boolean
     isPlaying: boolean
     timeToNextNote: number | null
-    onToggleSound: (isSoundOn: boolean) => void
+    onMute: (isMute: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
@@ -33,7 +33,7 @@ export function AudioPlayer({
     midiMetas,
     timeToNextNote,
     midiSpeedFactor,
-    onToggleSound,
+    onMute,
     onChangeAudioPlayerState,
     onChangeMidiSpeedFactor,
     onChangeMidiStartingTime,
@@ -60,6 +60,14 @@ export function AudioPlayer({
     function play() {
         onPlay(true)
         onChangeAudioPlayerState('playing')
+    }
+
+    if (midiMode === 'wait') {
+        if (!isPlaying) {
+            onChangeAudioPlayerState('paused')
+        } else {
+            onChangeAudioPlayerState('playing')
+        }
     }
 
     // the end of the song
@@ -123,7 +131,7 @@ export function AudioPlayer({
             </span>
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
             <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
-            <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
+            <SoundButton isMute={isMute} onMute={onMute} />
             <BpmSelector
                 midiSpeedFactor={midiSpeedFactor}
                 onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}

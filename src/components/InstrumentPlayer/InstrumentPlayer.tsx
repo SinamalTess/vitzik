@@ -13,7 +13,6 @@ import {
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
     MIDI_INPUT_CHANNEL,
-    KEYBOARD_CHANNEL,
 } from '../../utils/const'
 import { usePrevious } from '../../_hooks'
 
@@ -75,7 +74,7 @@ export function InstrumentPlayer({
     const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
 
     useEffect(() => {
-        if (instrumentPlayer && channel === MIDI_INPUT_CHANNEL) {
+        if (midiInput && instrumentPlayer && channel === MIDI_INPUT_CHANNEL) {
             /*
                 This throws a warning in the console.
                 There is not much we can do since this comes from the library.
@@ -92,7 +91,7 @@ export function InstrumentPlayer({
             const soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
             Soundfont.instrument(audioContext, soundfontInstrument, {
                 soundfont,
-                notes: notesToLoad,
+                notes: notesToLoad, // We pass only the notes required to play the midi song for better performances.
             })
                 .then((instrumentPlayer) => {
                     setInstrumentPlayer(instrumentPlayer)
@@ -112,27 +111,13 @@ export function InstrumentPlayer({
         let newNotes = notes
 
         if (prevActiveKeys) {
-            if (channel === KEYBOARD_CHANNEL) {
-                newNotes = notes.filter(
-                    (note) =>
-                        !prevActiveKeys.find(
-                            (prevActiveKey) =>
-                                'id' in prevActiveKey &&
-                                'id' in note &&
-                                prevActiveKey.id === note.id
-                        )
+            const isNewNote = (note: ActiveNote) =>
+                !prevActiveKeys.find(
+                    (prevActiveKey) =>
+                        'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
                 )
-            } else {
-                newNotes = notes.filter(
-                    (note) =>
-                        !prevActiveKeys.find(
-                            (prevActiveKey) =>
-                                'id' in prevActiveKey &&
-                                'id' in note &&
-                                prevActiveKey.id === note.id
-                        )
-                )
-            }
+
+            newNotes = notes.filter((note) => isNewNote(note))
         }
 
         newNotes.forEach((note) => {

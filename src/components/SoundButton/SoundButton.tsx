@@ -5,12 +5,12 @@ import clsx from 'clsx'
 
 interface SoundButtonProps {
     isMute: boolean
-    onToggleSound: (isSoundOn: boolean) => void
+    onMute: (isMute: boolean) => void
 }
 
-export function SoundButton({ isMute, onToggleSound }: SoundButtonProps) {
+export function SoundButton({ isMute, onMute }: SoundButtonProps) {
     function handleClick() {
-        onToggleSound(!isMute)
+        onMute(!isMute)
     }
 
     const classNames = clsx('volume-icon', { 'volume-icon--active': isMute })
