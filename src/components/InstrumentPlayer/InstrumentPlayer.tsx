@@ -12,11 +12,14 @@ import {
     MIDI_INSTRUMENTS_FATBOY,
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
+    MIDI_INPUT_CHANNEL,
+    KEYBOARD_CHANNEL,
 } from '../../utils/const'
 import { usePrevious } from '../../_hooks'
 
 interface InstrumentPlayerProps {
     audioContext: AudioContext
+    midiInput?: MIDIInput | null
     isMute: boolean
     instrumentName: InstrumentUserFriendlyName
     activeNotes: ActiveNote[]
@@ -60,6 +63,7 @@ function playNote(note: ActiveNote, instrumentPlayer: Player) {
 
 export function InstrumentPlayer({
     isMute,
+    midiInput,
     audioContext,
     instrumentName,
     notesToLoad,
@@ -68,7 +72,19 @@ export function InstrumentPlayer({
     soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
-    const prevActiveKeys = usePrevious(activeNotes)
+    const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
+
+    useEffect(() => {
+        if (instrumentPlayer && channel === MIDI_INPUT_CHANNEL) {
+            /*
+                This throws a warning in the console.
+                There is not much we can do since this comes from the library.
+                The warning is harmless though...
+                See this : https://github.com/danigb/soundfont-player/issues/61
+            */
+            instrumentPlayer.listenToMidi(midiInput)
+        }
+    }, [instrumentPlayer, midiInput, channel])
 
     useEffect(() => {
         if (isMute) return
@@ -91,18 +107,32 @@ export function InstrumentPlayer({
 
     useEffect(() => {
         const notes = activeNotes.filter((note) => note.channel === channel)
-        if (isMute || !notes.length || !instrumentPlayer) return
+        if (isMute || !notes.length || !instrumentPlayer || channel === MIDI_INPUT_CHANNEL) return
 
         let newNotes = notes
 
         if (prevActiveKeys) {
-            newNotes = notes.filter(
-                (note) =>
-                    !(prevActiveKeys as ActiveNote[]).find(
-                        (prevActiveKey) =>
-                            'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
-                    )
-            )
+            if (channel === KEYBOARD_CHANNEL) {
+                newNotes = notes.filter(
+                    (note) =>
+                        !prevActiveKeys.find(
+                            (prevActiveKey) =>
+                                'id' in prevActiveKey &&
+                                'id' in note &&
+                                prevActiveKey.id === note.id
+                        )
+                )
+            } else {
+                newNotes = notes.filter(
+                    (note) =>
+                        !prevActiveKeys.find(
+                            (prevActiveKey) =>
+                                'id' in prevActiveKey &&
+                                'id' in note &&
+                                prevActiveKey.id === note.id
+                        )
+                )
+            }
         }
 
         newNotes.forEach((note) => {

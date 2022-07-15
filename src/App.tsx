@@ -20,7 +20,7 @@ import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
 import { TimeContextProvider } from './components/TimeContextProvider/TimeContextProvider'
 import { MidiImporter } from './components/MidiImporter'
-import { DEFAULT_USER_INSTRUMENT } from './utils/const'
+import { DEFAULT_INSTRUMENTS } from './utils/const'
 
 //TODO: check accessibility
 
@@ -32,9 +32,7 @@ function App() {
     const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [activeInstruments, setActiveInstruments] = useState<Instrument[]>([
-        DEFAULT_USER_INSTRUMENT,
-    ])
+    const [activeInstruments, setActiveInstruments] = useState<Instrument[]>(DEFAULT_INSTRUMENTS)
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [isMute, setIsMute] = useState<boolean>(false)
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
@@ -57,7 +55,7 @@ function App() {
         setMidiTitle(title)
         setMidiFile(midiJSON)
         setMidiMetas(metas)
-        setActiveInstruments([DEFAULT_USER_INSTRUMENT, ...initialInstruments])
+        setActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
 
         console.log(midiJSON)
@@ -148,6 +146,7 @@ function App() {
                         {activeInstruments.map(({ channel, name, notes }) => {
                             return (
                                 <InstrumentPlayer
+                                    midiInput={midiInput}
                                     audioContext={AUDIO_CONTEXT}
                                     key={`${name}-${channel}`}
                                     isMute={isMute}

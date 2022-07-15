@@ -14,7 +14,7 @@ import { Switch } from '../_presentational/Switch'
 import { Button } from '../_presentational/Button'
 import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
 import { Tooltip } from '../_presentational/Tooltip'
-import { MIDI_USER_CHANNEL } from '../../utils/const'
+import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 
 interface SettingsProps {
     appMode: AppMode
@@ -49,7 +49,7 @@ export const Settings = React.memo(function Settings({
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const userInstrument = activeInstruments.find(
-        (instrument) => instrument.channel === MIDI_USER_CHANNEL
+        (instrument) => instrument.channel === MIDI_INPUT_CHANNEL
     )
 
     const userInstrumentName: InstrumentUserFriendlyName = userInstrument

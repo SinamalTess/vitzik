@@ -1,6 +1,6 @@
 import React from 'react'
 import './Keyboard.scss'
-import { MIDI_USER_CHANNEL, NOTE_NAMES } from '../../utils/const'
+import { KEYBOARD_CHANNEL, NOTE_NAMES } from '../../utils/const'
 import {
     AlphabeticalNote,
     MusicSystem,
@@ -29,7 +29,6 @@ interface KeyboardProps {
     onAllMidiKeysPlayed?: () => void
 }
 
-const KEYBOARD_CHANNEL = MIDI_USER_CHANNEL
 const KEYBOARD_VELOCITY = 100
 
 const NOTES = NOTE_NAMES.alphabetical.map((noteName) => ({

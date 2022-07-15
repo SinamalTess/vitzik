@@ -1,6 +1,10 @@
 import { Select } from '../_presentational/Select'
 import React from 'react'
-import { MIDI_INSTRUMENTS, DEFAULT_USER_INSTRUMENT } from '../../utils/const'
+import {
+    MIDI_INSTRUMENTS,
+    DEFAULT_MIDI_INSTRUMENT,
+    DEFAULT_KEYBOARD_INSTRUMENT,
+} from '../../utils/const'
 import { Instrument, InstrumentUserFriendlyName } from '../../types'
 
 interface InstrumentSelectorProps {
@@ -11,18 +15,27 @@ interface InstrumentSelectorProps {
 export function InstrumentSelector({ value, onChange }: InstrumentSelectorProps) {
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const name = event.target.value as InstrumentUserFriendlyName
-        const instrument = {
-            ...DEFAULT_USER_INSTRUMENT,
-            name,
-        }
+        const newUserInstruments = [
+            {
+                ...DEFAULT_MIDI_INSTRUMENT,
+                name,
+            },
+            {
+                ...DEFAULT_KEYBOARD_INSTRUMENT,
+                name,
+            },
+        ]
 
         onChange((instruments) => {
-            const indexInstrument = instruments.findIndex(
-                ({ channel }) => channel === instrument.channel
-            )
-            if (indexInstrument < 0) return instruments
             const copyInstruments = [...instruments]
-            copyInstruments[indexInstrument] = instrument
+            newUserInstruments.forEach((instrument) => {
+                const indexInstrument = instruments.findIndex(
+                    ({ channel }) => channel === instrument.channel
+                )
+                if (indexInstrument >= 0) {
+                    copyInstruments[indexInstrument] = instrument
+                }
+            })
             return copyInstruments
         })
     }
