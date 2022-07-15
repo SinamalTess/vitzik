@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { getInitialInstruments, getMidiMetas } from './utils'
 import { Keyboard } from './components/Keyboard'
 import { Settings } from './components/Settings'
@@ -44,6 +44,24 @@ function App() {
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [midiStartingTime, setMidiStartingTime] = useState<number>(0)
     const isMidiImported = midiFile !== null
+
+    useEffect(() => {
+        if (isMute) {
+            /*
+                Suspends the progression of time in the audio context,
+                temporarily halting audio hardware access and reducing CPU/battery usage in the process.
+            */
+            const suspend = async () => {
+                await AUDIO_CONTEXT.suspend()
+            }
+            suspend().catch((e) => console.error(e))
+        } else {
+            const resume = async () => {
+                await AUDIO_CONTEXT.resume()
+            }
+            resume().catch((e) => console.error(e))
+        }
+    }, [isMute])
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         const metas = getMidiMetas(midiJSON)
