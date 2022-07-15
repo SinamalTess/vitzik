@@ -23,6 +23,7 @@ export function MidiInputSelector({ onMidiInputChange }: MidiInputSelectorProps)
             onMidiInputChange(inputs[0])
         }
 
+        // @ts-ignore
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
     }, [onMidiInputChange])
 

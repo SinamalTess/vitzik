@@ -4,6 +4,7 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
 import { Icon } from '../_presentational/Icon'
 import clsx from 'clsx'
+import { isDesktop } from 'react-device-detect'
 
 interface MidiImporterProps {
     isMidiImported: boolean
@@ -41,14 +42,18 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
     const [state, setState] = useState<midiImporterState>('pristine')
 
     useEffect(() => {
-        window.addEventListener('dragover', handleDragOver)
-        window.addEventListener('drop', handleDrop)
-        window.addEventListener('dragleave', handleDragLeave)
+        if (isDesktop) {
+            window.addEventListener('dragover', handleDragOver)
+            window.addEventListener('drop', handleDrop)
+            window.addEventListener('dragleave', handleDragLeave)
+        }
 
         return function cleanup() {
-            window.removeEventListener('dragover', handleDragOver)
-            window.removeEventListener('drop', handleDrop)
-            window.removeEventListener('dragleave', handleDragLeave)
+            if (isDesktop) {
+                window.removeEventListener('dragover', handleDragOver)
+                window.removeEventListener('drop', handleDrop)
+                window.removeEventListener('dragleave', handleDragLeave)
+            }
         }
     }, [])
 
@@ -78,6 +83,16 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
         setState('pending')
     }
 
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const { files } = event.target
+
+        if (files && files.length) {
+            parseMidiFile(Array.from(files), onMidiImport)
+        }
+
+        setState('pending')
+    }
+
     const classNamesMessage = clsx('dropzone__message', {
         'dropzone__message--error': state === 'error',
     })
@@ -89,7 +104,9 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
             case 'valid':
                 return 'Oh that looks like a valid file! :)'
             default:
-                return 'Drag a MIDI file to this dropzone to start'
+                return isDesktop
+                    ? 'Drag a MIDI file to this dropzone to start'
+                    : 'Select a MIDI file to import'
         }
     }
 
@@ -98,6 +115,9 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
             <div className={classNamesMessage}>
                 <Icon name="midi" size={36} />
                 <span>{message()}</span>
+                {!isDesktop ? (
+                    <input type="file" name="avatar" accept=".midi, .mid" onChange={handleChange} />
+                ) : null}
             </div>
         </div>
     )
