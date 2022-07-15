@@ -2,7 +2,7 @@
   "name": "musicsheet_maker",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://sinamaltess.github.io",
+  "homepage": "./",
   "dependencies": {
     "@popperjs/core": "^2.11.5",
     "@types/react-transition-group": "^4.4.5",
