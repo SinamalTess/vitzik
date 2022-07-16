@@ -4,10 +4,10 @@ import { Button } from '../_presentational/Button'
 import { ButtonGroup } from '../_presentational/ButtonGroup'
 import React, { useContext, useState } from 'react'
 import { msPerBeatToBeatPerMin } from '../../utils'
-import { MidiVisualizerCoordinates } from '../Visualizer/MidiVisualizerCoordinates'
 import { MidiMetas } from '../../types'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 import './BpmSelectors.scss'
+import { getMsPerBeatFromTime } from '../Visualizer/MidiVisualizerCoordinates'
 
 interface BpmSelectorProps {
     midiSpeedFactor: number
@@ -25,8 +25,7 @@ export function BpmSelector({
     const midiCurrentTime = useContext(MidiCurrentTime)
     const [isBPMTooltipOpen, setIsBPMTooltipOpen] = useState<boolean>(false)
     const { allMsPerBeat } = midiMetas
-    const msPerBeat =
-        MidiVisualizerCoordinates.getMsPerBeatFromTime(allMsPerBeat, midiCurrentTime)?.value ?? 0
+    const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, midiCurrentTime)?.value ?? 0
 
     function handleChangeMidiSpeedFactor(value: number) {
         onChangeMidiSpeedFactor(value)

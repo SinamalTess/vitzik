@@ -6,7 +6,7 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerNotesTracks } from './VisualizerNotesTracks'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
-import { MidiVisualizerCoordinates } from './MidiVisualizerCoordinates'
+import { getSectionCoordinates, init, mergeNotesCoordinates } from './MidiVisualizerCoordinates'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 
@@ -43,11 +43,7 @@ export const Visualizer = WithContainerDimensions(
         const midiCurrentTime = useContext(MidiCurrentTime)
 
         const midiVisualizerCoordinates = useMemo(
-            () =>
-                new MidiVisualizerCoordinates(midiMetas, {
-                    w: width,
-                    h: height,
-                }),
+            () => init(midiMetas, height, width),
             [height, midiMetas, width]
         )
 
@@ -57,8 +53,7 @@ export const Visualizer = WithContainerDimensions(
         )
 
         const notesCoordinates = useMemo(
-            () =>
-                MidiVisualizerCoordinates.mergeNotesCoordinates(activeTracks, allNotesCoordinates),
+            () => mergeNotesCoordinates(activeTracks, allNotesCoordinates),
             [allNotesCoordinates, activeTracks]
         )
 
@@ -68,8 +63,8 @@ export const Visualizer = WithContainerDimensions(
         )
 
         const coordinates = [
-            midiVisualizerCoordinates.getSectionCoordinates(notesCoordinates, indexToDraw[0]),
-            midiVisualizerCoordinates.getSectionCoordinates(notesCoordinates, indexToDraw[1]),
+            getSectionCoordinates(notesCoordinates, indexToDraw[0]),
+            getSectionCoordinates(notesCoordinates, indexToDraw[1]),
         ]
 
         useEffect(() => {

@@ -17,9 +17,11 @@ function getFiles(event: DragEvent) {
     let files: File[] = []
 
     if (event.dataTransfer?.items) {
+        // @ts-ignore
         const filesArr = [...event.dataTransfer.items].filter((item) => item.kind === 'file')
         files = filesArr.map((file) => file.getAsFile()) as File[]
     } else if (event.dataTransfer?.files) {
+        // @ts-ignore
         files = [...event.dataTransfer.files] // turn into an array
     }
 
