@@ -101,18 +101,24 @@ export function Tooltip({
         <>
             {React.cloneElement(referenceChild, { ref: setReferenceElement, ...props })}
 
-            <span
-                className={classNames}
-                role="tooltip"
-                ref={setPopperElement}
-                style={styleTooltip}
-                {...attributes.popper}
-            >
-                {tooltipChild}
-                {arrow ? (
-                    <div ref={setArrowElement} style={styles.arrow} className={'tooltip__arrow'} />
-                ) : null}
-            </span>
+            {isVisible ? (
+                <span
+                    className={classNames}
+                    role="tooltip"
+                    ref={setPopperElement}
+                    style={styleTooltip}
+                    {...attributes.popper}
+                >
+                    {arrow ? (
+                        <div
+                            ref={setArrowElement}
+                            style={styles.arrow}
+                            className={'tooltip__arrow'}
+                        />
+                    ) : null}
+                    {tooltipChild}
+                </span>
+            ) : null}
         </>
     )
 }
