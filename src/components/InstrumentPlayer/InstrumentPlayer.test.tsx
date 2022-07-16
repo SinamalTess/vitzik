@@ -1,7 +1,12 @@
 import { render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { InstrumentPlayer, SoundFont } from './InstrumentPlayer'
-import { AlphabeticalNote, InstrumentUserFriendlyName, MidiVisualizerActiveNote } from '../../types'
+import {
+    AlphabeticalNote,
+    AudioPlayerState,
+    InstrumentUserFriendlyName,
+    MidiVisualizerActiveNote,
+} from '../../types'
 import Soundfont from 'soundfont-player'
 import Mock = jest.Mock
 
@@ -25,6 +30,7 @@ describe('InstrumentPlayer', () => {
         activeNotes: [activeNote],
         isMute: false,
         notesToLoad: [],
+        audioPlayerState: 'stopped' as AudioPlayerState,
         instrumentName: 'Acoustic Grand Keyboard' as InstrumentUserFriendlyName,
         soundfont: 'FatBoy' as SoundFont,
         channel: 0,

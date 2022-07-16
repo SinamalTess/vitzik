@@ -6,6 +6,7 @@ import {
     ActiveNote,
     isMidiVisualizerActiveNote,
     AlphabeticalNote,
+    AudioPlayerState,
 } from '../../types'
 import {
     MIDI_INSTRUMENTS,
@@ -20,6 +21,7 @@ interface InstrumentPlayerProps {
     audioContext: AudioContext
     midiInput?: MIDIInput | null
     isMute: boolean
+    audioPlayerState: AudioPlayerState
     instrumentName: InstrumentUserFriendlyName
     activeNotes: ActiveNote[]
     notesToLoad: AlphabeticalNote[]
@@ -68,10 +70,28 @@ export function InstrumentPlayer({
     notesToLoad,
     activeNotes,
     channel,
+    audioPlayerState,
     soundfont = 'MusyngKite',
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
+
+    useEffect(() => {
+        switch (audioPlayerState) {
+            case 'paused':
+                instrumentPlayer?.stop()
+                break
+            case 'stopped':
+                instrumentPlayer?.stop()
+                break
+        }
+    }, [audioPlayerState])
+
+    useEffect(() => {
+        return function cleanup() {
+            instrumentPlayer?.stop()
+        }
+    }, [])
 
     useEffect(() => {
         if (midiInput && instrumentPlayer && channel === MIDI_INPUT_CHANNEL) {
@@ -86,7 +106,10 @@ export function InstrumentPlayer({
     }, [instrumentPlayer, midiInput, channel])
 
     useEffect(() => {
-        if (isMute) return
+        if (isMute) {
+            instrumentPlayer?.stop()
+            return
+        }
         function startInstrument() {
             const soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
             Soundfont.instrument(audioContext, soundfontInstrument, {

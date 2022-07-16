@@ -165,6 +165,7 @@ function App() {
                         {activeInstruments.map(({ channel, name, notes }) => {
                             return (
                                 <InstrumentPlayer
+                                    audioPlayerState={audioPlayerState}
                                     midiInput={midiInput}
                                     audioContext={AUDIO_CONTEXT}
                                     key={`${name}-${channel}`}
