@@ -22,6 +22,7 @@ import { TimeContextProvider } from './components/TimeContextProvider/TimeContex
 import { MidiImporter } from './components/MidiImporter'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
 import { MidiAccessMode } from './types/MidiAccessMode'
+import { registerShortcut } from './utils/keyboard_shortcuts'
 
 //TODO: check accessibility
 
@@ -35,7 +36,6 @@ function App() {
     const [activeInstruments, setActiveInstruments] = useState<Instrument[]>(DEFAULT_INSTRUMENTS)
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [isMute, setIsMute] = useState<boolean>(false)
-    const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const [activeTracks, setActiveTracks] = useState<number[]>([])
     const [midiMetas, setMidiMetas] = useState<MidiMetas | null>(null)
     const [midiSpeedFactor, setMidiSpeedFactor] = useState<number>(1)
@@ -85,11 +85,32 @@ function App() {
     const handleAllMidiKeysPlayed = useCallback(
         function handleAllMidiKeysPlayed() {
             if (timeToNextNote && midiMode === 'wait') {
-                setIsPlaying(true)
+                setAudioPlayerState('playing')
             }
         },
         [midiMode, timeToNextNote]
     )
+
+    useEffect(() => {
+        const unsubscribe = registerShortcut('Space', () => {
+            setAudioPlayerState((audioPlayerState) => {
+                switch (audioPlayerState) {
+                    case 'stopped':
+                        return 'playing'
+                    case 'paused':
+                        return 'playing'
+                    case 'playing':
+                        return 'paused'
+                    default:
+                        return audioPlayerState
+                }
+            })
+        })
+
+        return function cleanup() {
+            unsubscribe()
+        }
+    }, [])
 
     return (
         <TimeContextProvider
@@ -101,8 +122,8 @@ function App() {
                 <div className="item topbar">
                     {midiMetas ? (
                         <AudioPlayer
+                            audioPlayerState={audioPlayerState}
                             isMute={isMute}
-                            isPlaying={isPlaying}
                             midiMode={midiMode}
                             timeToNextNote={timeToNextNote}
                             midiTitle={midiTitle}
@@ -110,7 +131,6 @@ function App() {
                             midiSpeedFactor={midiSpeedFactor}
                             onChangeAudioPlayerState={setAudioPlayerState}
                             onChangeMidiStartingTime={setMidiStartingTime}
-                            onPlay={setIsPlaying}
                             onMute={setIsMute}
                             onChangeMidiSpeedFactor={setMidiSpeedFactor}
                         />

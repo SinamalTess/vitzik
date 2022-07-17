@@ -11,23 +11,22 @@ import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 import { BpmSelector } from '../BpmSelector'
 
 interface AudioPlayerProps {
+    audioPlayerState: AudioPlayerState
     midiTitle?: string
     midiMetas: MidiMetas
     midiSpeedFactor: number
     midiMode: MidiMode
     isMute: boolean
-    isPlaying: boolean
     timeToNextNote: number | null
     onMute: (isMute: boolean) => void
     onChangeAudioPlayerState: (audioPlayerState: AudioPlayerState) => void
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
-    onPlay: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export function AudioPlayer({
+    audioPlayerState,
     isMute,
-    isPlaying,
     midiTitle,
     midiMode,
     midiMetas,
@@ -37,47 +36,34 @@ export function AudioPlayer({
     onChangeAudioPlayerState,
     onChangeMidiSpeedFactor,
     onChangeMidiStartingTime,
-    onPlay,
 }: AudioPlayerProps) {
     const midiCurrentTime = useContext(MidiCurrentTime)
     const { midiDuration } = midiMetas
     const currentTime = msToMinAndSec(midiCurrentTime)
     const totalTime = msToMinAndSec(midiDuration)
     const title = normalizeTitle(midiTitle ?? '')
+    const isPlaying = audioPlayerState === 'playing'
 
-    function stop() {
-        onPlay(false)
-        onChangeAudioPlayerState('stopped')
-        onChangeMidiStartingTime(0)
-    }
-
-    function pause() {
-        onPlay(false)
-        onChangeAudioPlayerState('paused')
-        onChangeMidiStartingTime(midiCurrentTime)
-    }
-
-    function play() {
-        onPlay(true)
-        onChangeAudioPlayerState('playing')
-    }
-
-    if (midiMode === 'wait') {
-        if (!isPlaying) {
-            onChangeAudioPlayerState('paused')
-        } else {
-            onChangeAudioPlayerState('playing')
-        }
+    switch (audioPlayerState) {
+        case 'paused':
+            onChangeMidiStartingTime(midiCurrentTime)
+            break
+        case 'stopped':
+            onChangeMidiStartingTime(0)
+            break
+        default:
     }
 
     // the end of the song
     if (midiCurrentTime > midiDuration) {
-        stop()
+        onChangeMidiStartingTime(0)
+        onChangeAudioPlayerState('stopped')
     }
 
     // in `wait` mode we pause until the user hits the right keys
     if (timeToNextNote && midiCurrentTime >= timeToNextNote && midiMode === 'wait') {
-        pause()
+        onChangeMidiStartingTime(midiCurrentTime)
+        onChangeAudioPlayerState('paused')
     }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -86,15 +72,11 @@ export function AudioPlayer({
     }
 
     function handleClickOnPlay() {
-        if (!isPlaying) {
-            play()
-        } else {
-            pause()
-        }
+        onChangeAudioPlayerState(isPlaying ? 'paused' : 'playing')
     }
 
     function handleClickOnStop() {
-        stop()
+        onChangeAudioPlayerState('stopped')
     }
 
     function handleMouseDown() {
@@ -102,11 +84,7 @@ export function AudioPlayer({
     }
 
     function handleMouseUp() {
-        if (!isPlaying) {
-            onChangeAudioPlayerState('paused')
-        } else {
-            onChangeAudioPlayerState('playing')
-        }
+        onChangeAudioPlayerState(isPlaying ? 'paused' : 'playing')
     }
 
     return (
@@ -130,7 +108,7 @@ export function AudioPlayer({
                 {totalTime}
             </span>
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
-            <PlayButton onClick={handleClickOnPlay} isPlaying={isPlaying} />
+            <PlayButton onClick={handleClickOnPlay} isPlaying={audioPlayerState === 'playing'} />
             <SoundButton isMute={isMute} onMute={onMute} />
             <BpmSelector
                 midiSpeedFactor={midiSpeedFactor}

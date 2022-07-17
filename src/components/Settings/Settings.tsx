@@ -60,6 +60,7 @@ export const Settings = React.memo(function Settings({
     const userInstrument = activeInstruments.find(
         (instrument) => instrument.channel === MIDI_INPUT_CHANNEL
     )
+    const nbTracks = activeTracks.length
 
     const userInstrumentName: InstrumentUserFriendlyName = userInstrument
         ? userInstrument.name
@@ -94,18 +95,24 @@ export const Settings = React.memo(function Settings({
 
     return (
         <div className="settings" role="toolbar">
-            <Tooltip showOnHover>
-                <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
-                    Autoplay
-                </Switch>
-                <span>
-                    <div>Autoplay ON : Play the song without stopping</div>
-                    <div>
-                        Autoplay OFF : Wait for you to play the right notes before moving forward
-                    </div>
-                </span>
-            </Tooltip>
-            <Button icon={'settings'} onClick={handleClickOnExtraSettings} />
+            {isMidiImported ? (
+                <Tooltip showOnHover>
+                    <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
+                        Autoplay
+                    </Switch>
+                    <span>
+                        <p>
+                            Autoplay ON : Play the song without stopping
+                            <br />
+                            Autoplay OFF : Wait for you to play the right notes before moving
+                            forward
+                        </p>
+                    </span>
+                </Tooltip>
+            ) : null}
+            <Button icon={'settings'} onClick={handleClickOnExtraSettings}>
+                {nbTracks ? ` ${nbTracks} track${nbTracks > 1 ? 's' : ''}` : null}
+            </Button>
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector
                 onMidiInputChange={onMidiInputChange}
