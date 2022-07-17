@@ -6,6 +6,7 @@
         font-weight: map-get($theme-font-weights, 'bold');
     }
     .channel {
+        cursor: pointer;
         border-radius: 3px;
         background-color: map-get($theme-colors-variants, 'light-secondary');
         color: map-get($theme-colors-variants, 'dark-secondary');

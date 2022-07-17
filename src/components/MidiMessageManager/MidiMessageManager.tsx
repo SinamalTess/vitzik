@@ -9,9 +9,13 @@ import {
 import { keyToNote, removeNotesFromActiveNotes } from '../../utils'
 import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
+import { MidiAccessMode } from '../../types/MidiAccessMode'
+import { usePrevious } from '../../_hooks'
 
 interface MidiMessageManagerProps {
     midiInput: MIDIInput
+    midiOutput: MIDIOutput | null
+    midiAccessMode: MidiAccessMode
     audioPlayerState: AudioPlayerState
     activeNotes: ActiveNote[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
@@ -35,8 +39,12 @@ function getMessage(message: MIDIMessageEvent) {
     }
 }
 
+const LIMIT = 2
+
 export function MidiMessageManager({
     midiInput,
+    midiOutput,
+    midiAccessMode,
     activeNotes,
     onChangeActiveNotes,
     onAllMidiKeysPlayed,
@@ -44,6 +52,31 @@ export function MidiMessageManager({
 }: MidiMessageManagerProps) {
     const [notesBeingHeld, setNotesBeingHeld] = useState<MidiInputActiveNote[]>([])
     const [midiNotesAlreadyPlayed, setMidiNotesAlreadyPlayed] = useState<Set<string>>(new Set())
+    const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
+
+    useEffect(() => {
+        // /!\ EXPERIMENTAL /!\
+        if (midiAccessMode === 'output' && midiOutput && activeNotes.length) {
+            let newNotes = activeNotes
+
+            if (prevActiveKeys) {
+                const isNewNote = (note: ActiveNote) =>
+                    !prevActiveKeys.find(
+                        (prevActiveKey) =>
+                            'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
+                    )
+
+                newNotes = activeNotes.filter((note) => isNewNote(note))
+            }
+
+            if (newNotes.length) {
+                for (let i = 0; i < Math.min(LIMIT, newNotes.length); i++) {
+                    const noteOnMessage = [0x90, newNotes[i].key, 0x7f] // note on, key, full velocity
+                    midiOutput.send(noteOnMessage)
+                }
+            }
+        }
+    }, [midiAccessMode, activeNotes])
 
     useEffect(() => {
         function removeNote(note: MidiInputActiveNote) {

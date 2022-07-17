@@ -5,8 +5,6 @@ import React from 'react'
 import { Instrument, InstrumentUserFriendlyName, MidiMetas, MusicSystem } from '../../types'
 import './ExtraSettingsPanel.scss'
 import { MidiTrackList } from '../MidiTrackList'
-import { Icon } from '../_presentational/Icon'
-import { instrumentToIcon } from '../../utils/instruments'
 
 interface ExtraSettingsPanelProps {
     isOpen: boolean
@@ -33,14 +31,17 @@ export function ExtraSettingsPanel({
     onChangeActiveTracks,
     onChangeInstrument,
 }: ExtraSettingsPanelProps) {
-    const userInstrumentIcon = instrumentToIcon(userInstrument)
     const instruments = midiMetas?.instruments ?? []
     return (
         <SideBar open={isOpen} onClose={onClose}>
             <div className="extra-settings" role="toolbar" aria-orientation="vertical">
                 <h4>User Instrument</h4>
                 <div className="extra-settings__user-instrument">
-                    <Icon size={50} name={userInstrumentIcon} />
+                    <img
+                        src={`img/svg/instruments/instrument_${userInstrument}.svg`}
+                        alt={`instrument ${userInstrument}`}
+                        style={{ width: 48 }}
+                    />
                     <InstrumentSelector onChange={onChangeInstrument} value={userInstrument} />
                 </div>
                 {midiMetas ? (

@@ -15,10 +15,12 @@ import { Button } from '../_presentational/Button'
 import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
 import { Tooltip } from '../_presentational/Tooltip'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
+import { MidiAccessMode } from '../../types/MidiAccessMode'
 
 interface SettingsProps {
     appMode: AppMode
     midiMode: MidiMode
+    midiAccessMode: MidiAccessMode
     midiMetas: MidiMetas | null
     musicSystem: MusicSystem
     activeTracks: number[]
@@ -29,13 +31,16 @@ interface SettingsProps {
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
+    onMidiOutputChange: React.Dispatch<React.SetStateAction<MIDIOutput | null>>
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
+    onMidiAccessModeChange: React.Dispatch<React.SetStateAction<MidiAccessMode>>
     onMute: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const Settings = React.memo(function Settings({
     appMode,
     midiMode,
+    midiAccessMode,
     midiMetas,
     musicSystem,
     activeTracks,
@@ -46,6 +51,8 @@ export const Settings = React.memo(function Settings({
     onChangeInstrument,
     onChangeActiveTracks,
     onMidiInputChange,
+    onMidiOutputChange,
+    onMidiAccessModeChange,
     onMidiModeChange,
     onMute,
 }: SettingsProps) {
@@ -79,25 +86,31 @@ export const Settings = React.memo(function Settings({
         setIsOpen(false)
     }
 
+    function handleMidiAccessModeClick() {
+        onMidiAccessModeChange((midiAccessMode) =>
+            midiAccessMode === 'input' ? 'output' : 'input'
+        )
+    }
+
     return (
         <div className="settings" role="toolbar">
-            {isMidiImported ? (
-                <Tooltip showOnHover>
-                    <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
-                        Autoplay
-                    </Switch>
-                    <span>
-                        <div>Autoplay ON : Play the song without stopping</div>
-                        <div>
-                            Autoplay OFF : Wait for you to play the right notes before moving
-                            forward
-                        </div>
-                    </span>
-                </Tooltip>
-            ) : null}
+            <Tooltip showOnHover>
+                <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
+                    Autoplay
+                </Switch>
+                <span>
+                    <div>Autoplay ON : Play the song without stopping</div>
+                    <div>
+                        Autoplay OFF : Wait for you to play the right notes before moving forward
+                    </div>
+                </span>
+            </Tooltip>
             <Button icon={'settings'} onClick={handleClickOnExtraSettings} />
             <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
-            <MidiInputSelector onMidiInputChange={onMidiInputChange} />
+            <MidiInputSelector
+                onMidiInputChange={onMidiInputChange}
+                onMidiOutputChange={onMidiOutputChange}
+            />
             <ExtraSettingsPanel
                 midiMetas={midiMetas}
                 musicSystem={musicSystem}

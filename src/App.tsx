@@ -21,6 +21,7 @@ import { MidiTitle } from './components/MidiTitle'
 import { TimeContextProvider } from './components/TimeContextProvider/TimeContextProvider'
 import { MidiImporter } from './components/MidiImporter'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
+import { MidiAccessMode } from './types/MidiAccessMode'
 
 //TODO: check accessibility
 
@@ -38,8 +39,10 @@ function App() {
     const [activeTracks, setActiveTracks] = useState<number[]>([])
     const [midiMetas, setMidiMetas] = useState<MidiMetas | null>(null)
     const [midiSpeedFactor, setMidiSpeedFactor] = useState<number>(1)
+    const [midiAccessMode, setMidiAccessMode] = useState<MidiAccessMode>('input')
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiInput, setMidiInput] = useState<MIDIInput | null>(null)
+    const [midiOutput, setMidiOutput] = useState<MIDIOutput | null>(null)
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [midiStartingTime, setMidiStartingTime] = useState<number>(0)
@@ -117,21 +120,26 @@ function App() {
                         appMode={appMode}
                         midiMetas={midiMetas}
                         midiMode={midiMode}
+                        midiAccessMode={midiAccessMode}
                         isMidiImported={isMidiImported}
                         musicSystem={musicSystem}
                         activeTracks={activeTracks}
                         onMidiInputChange={setMidiInput}
+                        onMidiOutputChange={setMidiOutput}
                         onChangeAppMode={setAppMode}
                         onChangeMusicSystem={setMusicSystem}
                         onChangeInstrument={setActiveInstruments}
                         onChangeActiveTracks={setActiveTracks}
                         onMidiModeChange={setMidiMode}
+                        onMidiAccessModeChange={setMidiAccessMode}
                         onMute={setIsMute}
                     />
                     {midiInput ? (
                         <MidiMessageManager
+                            midiAccessMode={midiAccessMode}
                             audioPlayerState={audioPlayerState}
                             midiInput={midiInput}
+                            midiOutput={midiOutput}
                             activeNotes={activeNotes}
                             onChangeActiveNotes={setActiveNotes}
                             onAllMidiKeysPlayed={handleAllMidiKeysPlayed}

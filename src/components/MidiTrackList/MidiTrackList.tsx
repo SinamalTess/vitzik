@@ -3,11 +3,9 @@ import { ListItem } from '../_presentational/ListItem'
 import { ListItemSecondaryAction } from '../_presentational/ListItemSecondaryAction'
 import { Button } from '../_presentational/Button'
 import { List } from '../_presentational/List'
-import { Icon } from '../_presentational/Icon'
 import { Instrument, TrackMetas } from '../../types'
 import { Divider } from '../_presentational/Divider'
 import './MidiTrackList.scss'
-import { instrumentToIcon } from '../../utils/instruments'
 import { msToMinAndSec } from '../../utils'
 import { Tooltip } from '../_presentational/Tooltip'
 
@@ -154,7 +152,11 @@ export function MidiTrackList({
                                                       </span>
                                                   </Tooltip>
                                               </ListItemSecondaryAction>
-                                              <Icon size={18} name={instrumentToIcon(name)} />
+                                              <img
+                                                  src={`img/svg/instruments/instrument_${name}.svg`}
+                                                  alt={`instrument ${name}`}
+                                                  style={{ width: 24 }}
+                                              />
                                               {name}
                                           </ListItem>
                                       )
