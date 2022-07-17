@@ -28,7 +28,7 @@ const Notes = React.memo(function Notes({
                 <rect
                     aria-label={`${name} note`}
                     key={id}
-                    className={`channel-${channel}`}
+                    className={`channel--${channel}`}
                     x={x}
                     y={y - indexToDraw * height}
                     rx="5"

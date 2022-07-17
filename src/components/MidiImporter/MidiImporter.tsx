@@ -2,9 +2,10 @@ import { parseArrayBuffer } from 'midi-json-parser'
 import React, { useEffect, useState } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
-import { Icon } from '../_presentational/Icon'
 import clsx from 'clsx'
 import { isDesktop } from 'react-device-detect'
+import { Button } from '../_presentational/Button'
+import { TURKISH_MARCH } from '../../utils/const'
 
 interface MidiImporterProps {
     isMidiImported: boolean
@@ -95,6 +96,11 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
         setState('pending')
     }
 
+    function handleClick() {
+        onMidiImport('Turkish March', TURKISH_MARCH as IMidiFile)
+        setState('pending')
+    }
+
     const classNamesMessage = clsx('dropzone__message', {
         'dropzone__message--error': state === 'error',
     })
@@ -106,16 +112,20 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
             case 'valid':
                 return 'Oh that looks like a valid file! :)'
             default:
-                return isDesktop
-                    ? 'Drag a MIDI file to this dropzone to start'
-                    : 'Select a MIDI file to import'
+                return isDesktop ? (
+                    <>
+                        Drag and drop a MIDI file to this dropzone, or try with an
+                        <Button onClick={handleClick}> example </Button>
+                    </>
+                ) : (
+                    'Select a MIDI file to import'
+                )
         }
     }
 
     return (
         <div className={`dropzone dropzone--${state}`}>
             <div className={classNamesMessage}>
-                <Icon name="midi" size={36} />
                 <span>{message()}</span>
                 {!isDesktop ? (
                     <input type="file" name="avatar" accept=".midi, .mid" onChange={handleChange} />

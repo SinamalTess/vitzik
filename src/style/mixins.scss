@@ -35,53 +35,10 @@
 
 @mixin addChannelColors($property) {
     .channel {
-        &-0 {
-            #{$property}: map-get($channel-colors, '0');
-        }
-        &-1 {
-            #{$property}: map-get($channel-colors, '1');
-        }
-        &-2 {
-            #{$property}: map-get($channel-colors, '2');
-        }
-        &-3 {
-            #{$property}: map-get($channel-colors, '3');
-        }
-        &-4 {
-            #{$property}: map-get($channel-colors, '4');
-        }
-        &-5 {
-            #{$property}: map-get($channel-colors, '5');
-        }
-        &-6 {
-            #{$property}: map-get($channel-colors, '6');
-        }
-        &-7 {
-            #{$property}: map-get($channel-colors, '7');
-        }
-        &-8 {
-            #{$property}: map-get($channel-colors, '8');
-        }
-        &-9 {
-            #{$property}: map-get($channel-colors, '9');
-        }
-        &-10 {
-            #{$property}: map-get($channel-colors, '10');
-        }
-        &-11 {
-            #{$property}: map-get($channel-colors, '11');
-        }
-        &-12 {
-            #{$property}: map-get($channel-colors, '12');
-        }
-        &-13 {
-            #{$property}: map-get($channel-colors, '13');
-        }
-        &-14 {
-            #{$property}: map-get($channel-colors, '14');
-        }
-        &-15 {
-            #{$property}: map-get($channel-colors, '15');
+        @for $i from 0 through 15 {
+            &--#{$i} {
+                #{$property}: map-get($channel-colors, #{$i});
+            }
         }
     }
 }

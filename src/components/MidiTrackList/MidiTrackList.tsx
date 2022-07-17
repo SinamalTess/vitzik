@@ -136,22 +136,20 @@ export function MidiTrackList({
                                   {channelsInstruments.map(
                                       ({ channel, isActive, timestamp, name }) => (
                                           <ListItem key={index + channel + timestamp}>
-                                              <ListItemSecondaryAction>
-                                                  <Tooltip showOnHover>
-                                                      <span
-                                                          className={
-                                                              isActive
-                                                                  ? `channel channel-${channel}`
-                                                                  : 'channel'
-                                                          }
-                                                      >
-                                                          CH : {channel}
-                                                      </span>
-                                                      <span>
-                                                          starting time : {msToMinAndSec(timestamp)}
-                                                      </span>
-                                                  </Tooltip>
-                                              </ListItemSecondaryAction>
+                                              <Tooltip showOnHover>
+                                                  <span
+                                                      className={
+                                                          isActive
+                                                              ? `channel channel--${channel}`
+                                                              : 'channel'
+                                                      }
+                                                  >
+                                                      CH : {channel}
+                                                  </span>
+                                                  <span>
+                                                      starting time : {msToMinAndSec(timestamp)}
+                                                  </span>
+                                              </Tooltip>
                                               <img
                                                   src={`img/svg/instruments/instrument_${name}.svg`}
                                                   alt={`instrument ${name}`}
