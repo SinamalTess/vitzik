@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from 'react'
 
-const isRefObject = (
-    element: React.RefObject<HTMLElement> | HTMLElement | null
-): element is React.RefObject<HTMLElement> => element !== null && 'current' in element
+type Element = HTMLElement | React.RefObject<HTMLElement> | null
+
+const isRefObject = (element: Element): element is React.RefObject<HTMLElement> =>
+    element !== null && 'current' in element
+
+const isClickInside = (elements: Element[], target: Node) =>
+    elements.some((element) => {
+        const isRef = isRefObject(element)
+        if (isRef) {
+            return element.current?.contains(target)
+        } else {
+            return element?.contains?.(target)
+        }
+    })
+
+/*
+    Custom hook to check if a click is made outside a provided array of elements.
+    The listener is only set if the passed condition is true.
+*/
 
 export const useClickOutside = (
-    elements: (React.RefObject<HTMLElement> | HTMLElement | null)[],
+    elements: Element[],
     callback: Function,
     condition: boolean = true
 ) => {
@@ -15,24 +31,16 @@ export const useClickOutside = (
     useEffect(() => {
         function onClick(event: Event) {
             const { target } = event
-            const isInsideClick = elements.some((element) => {
-                const isRef = isRefObject(element)
-                if (isRef) {
-                    return element.current?.contains(target as Node)
-                } else {
-                    return element?.contains?.(target as Node)
-                }
-            })
-            if (isInsideClick) return
+            if (isClickInside(elements, target as Node)) return
             callback()
         }
 
         function listenForOutsideClicks() {
-            events.forEach((type) => {
+            events.forEach((eventType) => {
                 if (listening) return
-                if (elements.every((element) => !element)) return
+                if (elements.every((element) => !element)) return // if all elements are null/undefined we stop here
                 setListening(true)
-                document.addEventListener(type, onClick)
+                document.addEventListener(eventType, onClick)
             })
         }
 
