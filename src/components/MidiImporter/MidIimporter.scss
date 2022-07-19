@@ -3,7 +3,6 @@
 .dropzone {
     height: 100%;
     width: 100%;
-    position: absolute;
     z-index: 1;
     background-color: map-get($theme-colors-variants, 'dark-secondary');
     &--pending {

@@ -62,7 +62,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
-            {icon ? <Icon name={icon} size={size} /> : null}
+            {icon ? (
+                <Icon
+                    name={icon}
+                    size={size}
+                    className={clsx({ [`pd-r-${size}`]: size && children })}
+                />
+            ) : null}
             {children}
         </button>
     )

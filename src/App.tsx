@@ -117,7 +117,9 @@ function App() {
                             onChangeIsEditingLoop={setIsEditingLoop}
                             onChangeLoopTimes={setLoopTimes}
                         />
-                    ) : null}
+                    ) : (
+                        <div />
+                    )}
                     <Settings
                         activeInstruments={activeInstruments}
                         appMode={appMode}

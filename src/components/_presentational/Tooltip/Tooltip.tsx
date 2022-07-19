@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { useClickOutside } from '../../../_hooks'
 import { PresentationalComponentBasicProps } from '../types'
 import { isArrayOfChildren } from '../utils/isArrayOfChildren'
+import { Placement } from '@popperjs/core'
 
 interface TooltipProps extends PresentationalComponentBasicProps {
     children: ReactNode
@@ -14,6 +15,8 @@ interface TooltipProps extends PresentationalComponentBasicProps {
     showOnHover?: boolean
     onShow?: () => void
     onHide?: () => void
+    placement?: Placement
+    offset?: [number, number]
 }
 
 const BASE_CLASS = 'tooltip'
@@ -28,6 +31,8 @@ export function Tooltip({
     showOnHover = false,
     onShow = () => {},
     onHide = () => {},
+    placement = 'bottom',
+    offset = [0, 8],
 }: TooltipProps) {
     /*
         We have to use useMemo to define a custom modifier 
@@ -55,7 +60,7 @@ export function Tooltip({
     const isVisible = isOpen || show
 
     let modifiers = [
-        { name: 'offset', options: { offset: referenceWidth ? [0, 0] : [0, 8] } },
+        { name: 'offset', options: { offset: referenceWidth ? [0, 0] : offset } },
         { name: 'arrow', options: { element: arrowElement } },
     ]
 
@@ -66,7 +71,7 @@ export function Tooltip({
 
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
         modifiers,
-        placement: 'bottom',
+        placement,
     })
 
     function onClickOutside() {

@@ -103,12 +103,9 @@ export const Settings = React.memo(function Settings({
                         Autoplay
                     </Switch>
                     <span>
-                        <p>
-                            Autoplay ON : Play the song without stopping
-                            <br />
-                            Autoplay OFF : Wait for you to play the right notes before moving
-                            forward
-                        </p>
+                        Autoplay ON : Play the song without stopping
+                        <br />
+                        Autoplay OFF : Wait for you to play the right notes before moving forward
                     </span>
                 </Tooltip>
             ) : null}

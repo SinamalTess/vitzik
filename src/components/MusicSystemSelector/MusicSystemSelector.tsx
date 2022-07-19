@@ -10,7 +10,7 @@ interface MusicSystemSelectorProps {
 
 export function MusicSystemSelector({ musicSystem, onChange }: MusicSystemSelectorProps) {
     return (
-        <ButtonGroup>
+        <ButtonGroup size={'sm'}>
             <Button onClick={() => onChange('syllabic')} active={musicSystem === 'syllabic'}>
                 Syllabic
             </Button>

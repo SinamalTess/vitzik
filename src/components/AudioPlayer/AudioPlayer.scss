@@ -19,6 +19,7 @@ $input-width: 500px;
     &__current-time,
     &__total-time {
         margin: map-get($theme-spacing-sizes, 'md');
+        width: 4ch; // avoids jitter when numbers are changing, for example 1 is thinner than a 5
     }
 
     &__progress-bar {

@@ -5,6 +5,12 @@
     &__track-index {
         font-weight: map-get($theme-font-weights, 'bold');
     }
+    &__track-name {
+        font-weight: map-get($theme-font-weights, 'bold');
+        padding: map-get($theme-spacing-sizes, 'md') map-get($theme-spacing-sizes, 'md')
+            map-get($theme-spacing-sizes, 'md') map-get($theme-spacing-sizes, 'sm');
+        display: inline-block;
+    }
     .channel {
         cursor: pointer;
         border-radius: 3px;

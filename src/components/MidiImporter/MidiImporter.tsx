@@ -99,7 +99,7 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
     }
 
     function handleClick() {
-        onMidiImport('Turkish March', TURKISH_MARCH as IMidiFile)
+        onMidiImport('Turkish March - Mozart', TURKISH_MARCH as IMidiFile)
         setState('pending')
     }
 

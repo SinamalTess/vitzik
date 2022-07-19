@@ -4,10 +4,10 @@ import { ListItemSecondaryAction } from '../_presentational/ListItemSecondaryAct
 import { Button } from '../_presentational/Button'
 import { List } from '../_presentational/List'
 import { Instrument, TrackMetas } from '../../types'
-import { Divider } from '../_presentational/Divider'
 import './MidiTrackList.scss'
 import { msToTime } from '../../utils'
 import { Tooltip } from '../_presentational/Tooltip'
+import { Divider } from '../_presentational/Divider'
 
 interface MidiTrackListProps {
     tracks: TrackMetas[]
@@ -131,35 +131,46 @@ export function MidiTrackList({
                                       onClick={() => handleClick(index)}
                                   />
                               </ListItemSecondaryAction>
-                              <Divider orientation="vertical" />
-                              <span>{names?.join('')}</span>
-                              <Divider orientation="vertical" />
-                              <List variant="transparent">
-                                  {channelsInstruments.map(
-                                      ({ channel, isActive, timestamp, name }) => (
-                                          <ListItem key={index + channel + timestamp}>
-                                              <Tooltip showOnHover>
-                                                  <span
-                                                      className={
-                                                          isActive
-                                                              ? `channel channel--${channel}`
-                                                              : 'channel'
-                                                      }
-                                                  >
-                                                      CH : {channel}
-                                                  </span>
-                                                  <span>starting time : {msToTime(timestamp)}</span>
-                                              </Tooltip>
-                                              <img
-                                                  src={`img/svg/instruments/instrument_${name}.svg`}
-                                                  alt={`instrument ${name}`}
-                                                  style={{ width: 24 }}
-                                              />
-                                              {name}
-                                          </ListItem>
-                                      )
-                                  )}
-                              </List>
+                              <Divider orientation={'vertical'} />
+                              <div>
+                                  {names.length ? (
+                                      <Tooltip showOnHover placement={'right'}>
+                                          <span className={`${BASE_CLASS}__track-name`}>
+                                              {names?.join('')}
+                                          </span>
+                                          Track Name
+                                      </Tooltip>
+                                  ) : null}
+                                  <List variant="transparent">
+                                      {channelsInstruments.map(
+                                          ({ channel, isActive, timestamp, name }) => (
+                                              <ListItem key={index + channel + timestamp}>
+                                                  <Tooltip showOnHover>
+                                                      <span
+                                                          className={
+                                                              isActive
+                                                                  ? `channel channel--${channel}`
+                                                                  : 'channel'
+                                                          }
+                                                      >
+                                                          CH : {channel}
+                                                      </span>
+                                                      <span>
+                                                          starting time : {msToTime(timestamp)}
+                                                      </span>
+                                                  </Tooltip>
+                                                  <img
+                                                      className={'pd-r-md pd-l-md'}
+                                                      src={`img/svg/instruments/instrument_${name}.svg`}
+                                                      alt={`instrument ${name}`}
+                                                      style={{ width: 24 }}
+                                                  />
+                                                  {name}
+                                              </ListItem>
+                                          )
+                                      )}
+                                  </List>
+                              </div>
                           </ListItem>
                       )
                   })

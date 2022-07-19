@@ -1,4 +1,7 @@
+@import '../../style/vars';
+
 .midi-input--not-found {
+    padding-right: map-get($theme-spacing-sizes, 'md');
     .tooltip--active {
         max-width: 100px;
     }

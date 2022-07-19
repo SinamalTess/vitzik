@@ -5,6 +5,7 @@ import { Tooltip } from '../_presentational/Tooltip'
 import { BpmSelector } from '../BpmSelector'
 import React from 'react'
 import { AudioPlayerState, MsPerBeat } from '../../types'
+import { Divider } from '../_presentational/Divider'
 
 interface ControlsProps {
     isEditingLoop: boolean
@@ -39,17 +40,24 @@ export function Controls({
             <PlayButton onClick={onClickOnPlay} isPlaying={audioPlayerState === 'playing'} />
             <SoundButton isMute={isMute} onMute={onMute} />
             <Tooltip showOnHover>
-                <Button icon={'loop'} onClick={onClickOnLoop}>
+                <Button
+                    icon={'loop'}
+                    onClick={onClickOnLoop}
+                    variant="link"
+                    color={isEditingLoop ? 'primary' : 'secondary'}
+                >
                     {isEditingLoop ? 'clear' : ''}
                 </Button>
                 Loop over a range of time
             </Tooltip>
+            <Divider orientation="vertical" />
             <BpmSelector
                 midiSpeedFactor={midiSpeedFactor}
                 onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
                 onChangeMidiStartingTime={onChangeMidiStartingTime}
                 allMsPerBeat={allMsPerBeat}
             />
+            <Divider orientation="vertical" />
         </>
     )
 }
