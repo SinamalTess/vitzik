@@ -1,7 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 import { usePopper } from 'react-popper'
 import './Tooltip.scss'
-import { beforeWrite } from '@popperjs/core'
 import clsx from 'clsx'
 import { useClickOutside } from '../../../_hooks'
 import { PresentationalComponentBasicProps } from '../types'
@@ -41,7 +40,7 @@ export function Tooltip({
             fn: ({ state }: any) => {
                 state.styles.popper.width = `${state.rects.reference.width}px`
             },
-            phase: beforeWrite,
+            phase: 'beforeWrite',
             requires: ['computeStyles'],
         }),
         []

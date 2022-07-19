@@ -6,8 +6,9 @@ describe('Button', () => {
     describe('When a text is passed for child', () => {
         it('should display the text', () => {
             render(<Button>Click me</Button>)
+            const button = screen.getByRole('button')
 
-            expect(screen.getByRole('button')).toHaveTextContent('Click me')
+            expect(button).toHaveTextContent('Click me')
         })
     })
     describe('When the "icon" prop is passed', () => {
