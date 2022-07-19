@@ -17,12 +17,24 @@ export function AudioPlayerKeyboardShortcuts({
 }: AudioPlayerKeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(audioPlayerState)
 
-    function onArrowUp() {
+    function seekFor(value: number) {
         onChangeMidiStartingTime(midiCurrentTime)
         onChangeAudioPlayerState('seeking')
         onChangeMidiStartingTime((midiStartingTime) => {
-            return midiStartingTime + 100
+            return Math.max(0, midiStartingTime + value) // can't seek below 0
         })
+    }
+
+    function onArrowUp() {
+        seekFor(100)
+    }
+
+    function onArrowDown() {
+        seekFor(-100)
+    }
+
+    function restoreAudioPlayerPreviousState() {
+        onChangeAudioPlayerState(prevState === 'stopped' ? 'paused' : prevState)
     }
 
     const onSpace = useCallback(() => {
@@ -54,6 +66,21 @@ export function AudioPlayerKeyboardShortcuts({
             unsubscribe()
         }
     }, [onArrowUp])
+
+    useEffect(() => {
+        if (audioPlayerState !== 'seeking') {
+            setPrevState(audioPlayerState)
+        }
+        const unsubscribe = registerShortcut(
+            'ArrowDown',
+            onArrowDown,
+            restoreAudioPlayerPreviousState
+        )
+
+        return function cleanup() {
+            unsubscribe()
+        }
+    }, [onArrowDown])
 
     useEffect(() => {
         const unsubscribe = registerShortcut('Space', onSpace)
