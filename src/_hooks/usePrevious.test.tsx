@@ -18,11 +18,20 @@ describe('usePrevious', () => {
         expect(screen.getByText('hello')).toBeInTheDocument()
     })
 
-    it('on second render should return the previous value', () => {
+    it('on next render should return the previous value', () => {
         const { rerender } = render(<MyComponent myProp={'hello'} />)
 
         rerender(<MyComponent myProp={'very nice to meet you'} />)
 
         expect(screen.getByText('hello')).toBeInTheDocument()
+    })
+
+    it('on X render should return the previous value', () => {
+        const { rerender } = render(<MyComponent myProp={'hello'} />)
+
+        rerender(<MyComponent myProp={'very nice to meet you'} />)
+        rerender(<MyComponent myProp={'my name is'} />)
+
+        expect(screen.getByText('very nice to meet you')).toBeInTheDocument()
     })
 })

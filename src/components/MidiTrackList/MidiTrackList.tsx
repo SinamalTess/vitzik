@@ -132,7 +132,7 @@ export function MidiTrackList({
                               <Divider orientation="vertical" />
                               <span>{names?.join('')}</span>
                               <Divider orientation="vertical" />
-                              <List type="transparent">
+                              <List variant="transparent">
                                   {channelsInstruments.map(
                                       ({ channel, isActive, timestamp, name }) => (
                                           <ListItem key={index + channel + timestamp}>

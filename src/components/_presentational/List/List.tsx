@@ -6,11 +6,11 @@ import { PresentationalComponentBasicProps } from '../types'
 
 interface ListProps extends PresentationalComponentBasicProps {
     children: ReactNode
-    type?: 'background' | 'transparent'
+    variant?: 'background' | 'transparent'
 }
 
-export function List({ style, children, className, type = 'background' }: ListProps) {
-    const classNames = clsx('list', { 'list--background': type === 'background' }, className)
+export function List({ style, children, className, variant = 'background' }: ListProps) {
+    const classNames = clsx('list', { 'list--background': variant === 'background' }, className)
 
     return (
         <ul className={classNames} style={style}>

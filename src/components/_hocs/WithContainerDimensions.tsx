@@ -5,6 +5,9 @@ interface WithParentDimensionsProps {
     width: number
 }
 
+/*
+    HOC component that passes the width and height of the parent container to its children
+*/
 export function WithContainerDimensions<P>(
     WrappedComponent: React.ComponentType<P & WithParentDimensionsProps>
 ) {
@@ -45,9 +48,9 @@ export function WithContainerDimensions<P>(
         }, [])
 
         return (
-            <div ref={ref} style={{ height: '100%', width: '100%' }}>
+            <span ref={ref} style={{ height: '100%', width: '100%' }}>
                 <WrappedComponent {...props} height={height} width={width} />
-            </div>
+            </span>
         )
     }
 
