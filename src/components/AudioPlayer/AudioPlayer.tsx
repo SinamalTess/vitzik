@@ -1,16 +1,11 @@
-import { RangeSlider } from '../_presentational/RangeSlider'
-import { SoundButton } from '../SoundButton'
-import { PlayButton } from '../PlayButton'
 import React, { useContext, useState } from 'react'
-import { msToTime, normalizeTitle } from '../../utils'
 import { AudioPlayerState, MidiMetas, MidiMode } from '../../types'
 import './AudioPlayer.scss'
-import { Button } from '../_presentational/Button'
-import { Tooltip } from '../_presentational/Tooltip'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
-import { BpmSelector } from '../BpmSelector'
 import { LoopTimes } from '../../types/LoopTimes'
 import { AudioPlayerKeyboardShortcuts } from './AudioPlayerKeyboardShortcuts'
+import { ProgressBar } from './ProgressBar'
+import { Controls } from './Controls'
 
 interface AudioPlayerProps {
     audioPlayerState: AudioPlayerState
@@ -51,9 +46,6 @@ export function AudioPlayer({
 }: AudioPlayerProps) {
     const midiCurrentTime = useContext(MidiCurrentTime)
     const { midiDuration } = midiMetas
-    const currentTime = msToTime(midiCurrentTime)
-    const totalTime = msToTime(midiDuration)
-    const title = normalizeTitle(midiTitle ?? '')
     const isPlaying = audioPlayerState === 'playing'
     const [prevState, setPrevState] = useState<AudioPlayerState>(audioPlayerState)
     const [startLoop, endLoop] = loopTimes
@@ -118,39 +110,25 @@ export function AudioPlayer({
 
     return (
         <div className={BASE_CLASS}>
-            <Tooltip showOnHover>
-                <span className={`${BASE_CLASS}__track-title`}>{title}</span>
-                {title}
-            </Tooltip>
-            <span className={`${BASE_CLASS}__current-time`} role="timer">
-                {currentTime}
-            </span>
-            <RangeSlider
-                className={`${BASE_CLASS}__progress-bar`}
-                value={midiCurrentTime}
-                max={midiDuration}
+            <ProgressBar
+                midiDuration={midiDuration}
+                midiTitle={midiTitle}
                 onChange={handleChange}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
+                onMouseUp={handleMouseDown}
+                onMouseDown={handleMouseUp}
             />
-            <span className={`${BASE_CLASS}__total-time`} role="timer">
-                {totalTime}
-            </span>
-            <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />
-            <PlayButton onClick={handleClickOnPlay} isPlaying={audioPlayerState === 'playing'} />
-            <SoundButton isMute={isMute} onMute={onMute} />
-            <Tooltip showOnHover>
-                <Button icon={'loop'} onClick={handleClickOnLoop}>
-                    {isEditingLoop ? 'clear' : ''}
-                </Button>
-                Loop over a range of time
-            </Tooltip>
-
-            <BpmSelector
+            <Controls
+                isEditingLoop={isEditingLoop}
+                isMute={isMute}
                 midiSpeedFactor={midiSpeedFactor}
-                onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
-                onChangeMidiStartingTime={onChangeMidiStartingTime}
+                audioPlayerState={audioPlayerState}
                 midiMetas={midiMetas}
+                onMute={onMute}
+                onChangeMidiStartingTime={onChangeMidiStartingTime}
+                onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
+                onClickOnPlay={handleClickOnPlay}
+                onClickOnLoop={handleClickOnLoop}
+                onStop={handleClickOnStop}
             />
             <AudioPlayerKeyboardShortcuts
                 audioPlayerState={audioPlayerState}

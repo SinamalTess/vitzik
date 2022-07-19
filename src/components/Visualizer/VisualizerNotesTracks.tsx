@@ -4,14 +4,13 @@ import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import './VisualizerNotesTracks.scss'
 import { getWidthWhiteKey } from '../../utils'
 import clsx from 'clsx'
-import { BASE_CLASS as VISUALIZER_BASE_CLASS } from './Visualizer'
 
 interface VisualizerTracksProps {
     height: number
     width: number
 }
 
-const BASECLASS = `${VISUALIZER_BASE_CLASS}__notes-tracks`
+const BASECLASS = `visualizer__notes-tracks`
 
 function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     ctx.canvas.height = h

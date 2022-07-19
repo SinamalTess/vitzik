@@ -2,7 +2,6 @@ import React from 'react'
 import './VisualizerSection.scss'
 import clsx from 'clsx'
 import { MidiVisualizerNoteCoordinates } from '../../types'
-import { BASE_CLASS as VISUALIZER_BASE_CLASS } from './Visualizer'
 
 interface VisualizerSectionProps {
     index: number
@@ -18,7 +17,7 @@ interface RectanglesProps {
     indexToDraw: number
 }
 
-const BASECLASS = `${VISUALIZER_BASE_CLASS}__section`
+const BASECLASS = `visualizer__section`
 
 const Notes = React.memo(function Notes({
     notesCoordinates,
