@@ -1,12 +1,7 @@
 import { render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { InstrumentPlayer, SoundFont } from './InstrumentPlayer'
-import {
-    AlphabeticalNote,
-    AudioPlayerState,
-    InstrumentUserFriendlyName,
-    MidiVisualizerActiveNote,
-} from '../../types'
+import { AudioPlayerState, InstrumentUserFriendlyName, MidiVisualizerActiveNote } from '../../types'
 import Soundfont from 'soundfont-player'
 import Mock = jest.Mock
 

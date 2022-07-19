@@ -33,12 +33,11 @@ export function ExtraSettingsPanel({
     onChangeActiveTracks,
     onChangeInstrument,
 }: ExtraSettingsPanelProps) {
-    const instruments = midiMetas?.instruments ?? []
     return (
         <SideBar open={isOpen} onClose={onClose}>
             <div className={BASE_CLASS} role="toolbar" aria-orientation="vertical">
                 <h4>User Instrument</h4>
-                <div className="extra-settings__user-instrument">
+                <div className={`${BASE_CLASS}__user-instrument`}>
                     <img
                         src={`img/svg/instruments/instrument_${userInstrument}.svg`}
                         alt={`instrument ${userInstrument}`}
@@ -61,7 +60,7 @@ export function ExtraSettingsPanel({
                             activeInstruments={activeInstruments}
                             tracks={midiMetas.tracksMetas}
                             activeTracks={activeTracks}
-                            instruments={instruments}
+                            instruments={midiMetas.instruments}
                             onChangeActiveTracks={onChangeActiveTracks}
                         />
                     </>
