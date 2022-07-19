@@ -26,15 +26,6 @@ const clickExtraSettings = () => {
     userEvent.click(button)
 }
 
-const dropFile = () => {
-    const dropzone = screen.getByLabelText(/drop files here/i)
-    fireEvent.drop(dropzone, {
-        dataTransfer: {
-            files: [new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' })],
-        },
-    })
-}
-
 describe('App', () => {
     beforeEach(() => {
         requestMIDIAccess.mockResolvedValue({
