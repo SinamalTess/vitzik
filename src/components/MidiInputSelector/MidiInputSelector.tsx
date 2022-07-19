@@ -11,6 +11,10 @@ interface MidiInputSelectorProps {
 
 const BASE_CLASS = 'midi-input'
 
+function onMIDIFailure(msg: string) {
+    console.error('Failed to get MIDI access - ' + msg)
+}
+
 export function MidiInputSelector({
     onMidiInputChange,
     onMidiOutputChange,
@@ -19,26 +23,9 @@ export function MidiInputSelector({
     const [midiOutputs, setMidiOutputs] = useState<MIDIOutput[]>([])
 
     useEffect(() => {
-        function onMIDIFailure(msg: string) {
-            console.error('Failed to get MIDI access - ' + msg)
-        }
-
         function onMIDISuccess(midiAccess: MIDIAccess) {
-            // @ts-ignore
             const inputs: MIDIInput[] = [...midiAccess.inputs.values()] // turn into array
             const outputs: MIDIOutput[] = [...midiAccess.outputs.values()] // turn into array
-
-            outputs[0].onstatechange = (event) => {
-                console.log('output')
-                // Print information about the (dis)connected MIDI controller
-                console.log(event)
-            }
-
-            inputs[0].onstatechange = (event) => {
-                console.log('input')
-                // Print information about the (dis)connected MIDI controller
-                console.log(event)
-            }
 
             setMidiInputs(inputs)
             setMidiOutputs(outputs)
@@ -46,7 +33,6 @@ export function MidiInputSelector({
             onMidiOutputChange(outputs[0])
         }
 
-        // @ts-ignore
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
     }, [onMidiInputChange])
 

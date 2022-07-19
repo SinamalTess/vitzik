@@ -4,18 +4,21 @@ import { AudioPlayerState } from '../../types'
 
 interface AudioPlayerKeyboardShortcutsProps {
     audioPlayerState: AudioPlayerState
+    midiCurrentTime: number
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 export function AudioPlayerKeyboardShortcuts({
+    audioPlayerState,
+    midiCurrentTime,
     onChangeMidiStartingTime,
     onChangeAudioPlayerState,
-    audioPlayerState,
 }: AudioPlayerKeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(audioPlayerState)
 
-    function onArrowRight() {
+    function onArrowUp() {
+        onChangeMidiStartingTime(midiCurrentTime)
         onChangeAudioPlayerState('seeking')
         onChangeMidiStartingTime((midiStartingTime) => {
             return midiStartingTime + 100
@@ -38,19 +41,19 @@ export function AudioPlayerKeyboardShortcuts({
     }, [onChangeAudioPlayerState])
 
     useEffect(() => {
-        setPrevState(audioPlayerState)
-        const unsubscribe = registerShortcut(
-            'ArrowRight',
-            () => {
-                onArrowRight()
-            },
-            () => onChangeAudioPlayerState(prevState)
-        )
+        if (audioPlayerState !== 'seeking') {
+            setPrevState(audioPlayerState)
+        }
+
+        const restoreAudioPlayerPreviousState = () =>
+            onChangeAudioPlayerState(prevState === 'stopped' ? 'paused' : prevState)
+
+        const unsubscribe = registerShortcut('ArrowUp', onArrowUp, restoreAudioPlayerPreviousState)
 
         return function cleanup() {
             unsubscribe()
         }
-    }, [onArrowRight, audioPlayerState])
+    }, [onArrowUp])
 
     useEffect(() => {
         const unsubscribe = registerShortcut('Space', onSpace)

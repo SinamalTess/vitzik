@@ -96,7 +96,7 @@ export function MidiTrackList({
         }
     }
 
-    function handleChange(value: number | string) {
+    function handleClick(value: number | string) {
         if (value === 'all' && !allChecked) {
             selectAllPlayableTracks()
         } else if (value === 'all') {
@@ -114,7 +114,7 @@ export function MidiTrackList({
                     <Button
                         size={'sm'}
                         icon={allChecked ? 'eye-closed' : 'eye-open'}
-                        onClick={() => handleChange('all')}
+                        onClick={() => handleClick('all')}
                     >
                         {allChecked ? 'Hide All' : 'Show all'}
                     </Button>
@@ -128,7 +128,7 @@ export function MidiTrackList({
                                   <span className={`${BASE_CLASS}__track-index`}>{index}</span>
                                   <Button
                                       icon={isActiveTrack ? 'eye-open' : 'eye-closed'}
-                                      onClick={() => handleChange(index)}
+                                      onClick={() => handleClick(index)}
                                   />
                               </ListItemSecondaryAction>
                               <Divider orientation="vertical" />

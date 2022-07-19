@@ -10,7 +10,7 @@ interface LineProps {
     timestamp: number
 }
 
-function Line({ y, width, timestamp }: LineProps) {
+function LoopLine({ y, width, timestamp }: LineProps) {
     const yText = y + 20
     return (
         <>
@@ -96,11 +96,11 @@ export function LoopEditor({
             {lines.length
                 ? lines.map((line) => {
                       const y = height - (line - midiCurrentTime) * ratio
-                      return <Line y={y} timestamp={line} width={width} />
+                      return <LoopLine y={y} timestamp={line} width={width} />
                   })
                 : null}
             {previewLine ? (
-                <Line
+                <LoopLine
                     y={height - (previewLine - midiCurrentTime) * ratio}
                     timestamp={previewLine}
                     width={width}

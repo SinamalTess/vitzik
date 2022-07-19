@@ -65,10 +65,14 @@ export function AudioPlayer({
         onChangeAudioPlayerState('stopped')
     }
 
+    // if loops are defined we restart at the beginning of the loop if the end is reached
     if (startLoop && endLoop && midiCurrentTime > endLoop) {
         const previousState = audioPlayerState
         onChangeAudioPlayerState('seeking')
-        onChangeMidiStartingTime(startLoop - 100 ?? 0)
+        onChangeMidiStartingTime(startLoop - 100 ?? 0) // starts a bit before the loop start
+        /*
+            Yeah, this setTimeout() is ugly...but otherwise the state is not restored, and we can't use flushSync here
+        */
         setTimeout(() => {
             onChangeAudioPlayerState(previousState)
         }, 100)
@@ -104,7 +108,7 @@ export function AudioPlayer({
     function handleClickOnLoop() {
         onChangeIsEditingLoop((isEditingLoop) => !isEditingLoop)
         if (isEditingLoop) {
-            onChangeLoopTimes([null, null])
+            onChangeLoopTimes([null, null]) // clears the loop times
         }
     }
 
@@ -114,8 +118,8 @@ export function AudioPlayer({
                 midiDuration={midiDuration}
                 midiTitle={midiTitle}
                 onChange={handleChange}
-                onMouseUp={handleMouseDown}
-                onMouseDown={handleMouseUp}
+                onMouseUp={handleMouseUp}
+                onMouseDown={handleMouseDown}
             />
             <Controls
                 isEditingLoop={isEditingLoop}
@@ -134,6 +138,7 @@ export function AudioPlayer({
                 audioPlayerState={audioPlayerState}
                 onChangeAudioPlayerState={onChangeAudioPlayerState}
                 onChangeMidiStartingTime={onChangeMidiStartingTime}
+                midiCurrentTime={midiCurrentTime}
             />
         </div>
     )

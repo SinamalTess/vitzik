@@ -16,10 +16,10 @@ export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
 
     useEffect(() => {
         setIsVisible(true)
-        const stopAnimation = setTimeout(() => setIsVisible(false), 1000)
+        const animation = setTimeout(() => setIsVisible(false), ANIMATION_DURATION * 2)
 
         return function cleanup() {
-            clearTimeout(stopAnimation)
+            clearTimeout(animation)
         }
     }, [midiTitle])
 
