@@ -34,7 +34,7 @@ function getMessage(message: MIDIMessageEvent) {
             name,
             velocity,
             key,
-            channel: MIDI_INPUT_CHANNEL, // TODO: check if not provided
+            channel: MIDI_INPUT_CHANNEL,
         },
     }
 }

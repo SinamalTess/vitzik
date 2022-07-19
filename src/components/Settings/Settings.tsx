@@ -37,6 +37,8 @@ interface SettingsProps {
     onMute: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+const BASE_CLASS = 'settings'
+
 export const Settings = React.memo(function Settings({
     appMode,
     midiMode,
@@ -94,7 +96,7 @@ export const Settings = React.memo(function Settings({
     }
 
     return (
-        <div className="settings" role="toolbar">
+        <div className={BASE_CLASS} role="toolbar">
             {isMidiImported ? (
                 <Tooltip showOnHover>
                     <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>

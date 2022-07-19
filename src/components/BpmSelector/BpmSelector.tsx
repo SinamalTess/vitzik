@@ -16,6 +16,8 @@ interface BpmSelectorProps {
     onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
 }
 
+const BASE_CLASS = 'bpm-selector'
+
 export function BpmSelector({
     midiSpeedFactor,
     midiMetas,
@@ -47,14 +49,14 @@ export function BpmSelector({
     const speedFactors = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
     const actualBpm = Math.round(msPerBeatToBeatPerMin(msPerBeat) / midiSpeedFactor)
     return (
-        <span className="bpm-selector">
+        <span className={BASE_CLASS}>
             <Divider orientation="vertical" />
             <Tooltip show={isBPMTooltipOpen} onHide={onHideTooltip} onShow={onShowTooltip}>
                 <span>
                     <span> BPM {midiSpeedFactor !== 1 ? `(x${midiSpeedFactor})` : null} : </span>
                     <Button onClick={handleClickBPM}> {actualBpm}</Button>
                 </span>
-                <span className="bpm-selector__value">
+                <span className={`${BASE_CLASS}__value`}>
                     <ButtonGroup size={'sm'}>
                         {speedFactors.map((factor, index) => (
                             <Button

@@ -13,22 +13,20 @@ interface SideBarProps extends PresentationalComponentBasicProps {
 }
 
 const BASE_CLASS = 'sidebar'
+const ANIMATION_DURATION = 300
 
 export function SideBar({ style, className, children, open, onClose }: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
-    const sidebarRef = useRef<HTMLDivElement>(null)
-
-    const animationDuration = 300
+    const ref = useRef<HTMLDivElement>(null)
     const rootNode = document.getElementById('root') ?? document.body
 
     useEffect(() => setIsOpen(open), [open])
+    useClickOutside([ref], closeSideBar, isOpen)
 
     function closeSideBar() {
         setIsOpen(false)
         onClose()
     }
-
-    useClickOutside([sidebarRef], closeSideBar, isOpen)
 
     const classNames = clsx(BASE_CLASS, className)
 
@@ -37,10 +35,10 @@ export function SideBar({ style, className, children, open, onClose }: SideBarPr
             unmountOnExit
             appear={isOpen}
             in={isOpen}
-            timeout={animationDuration}
+            timeout={ANIMATION_DURATION}
             classNames={classNames}
         >
-            <div className={classNames} ref={sidebarRef} style={style}>
+            <div className={classNames} ref={ref} style={style}>
                 {children}
             </div>
         </CSSTransition>,

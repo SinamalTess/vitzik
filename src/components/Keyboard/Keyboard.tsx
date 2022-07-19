@@ -38,6 +38,8 @@ const NOTES = NOTE_NAMES.alphabetical.map((noteName) => ({
     channel: KEYBOARD_CHANNEL,
 }))
 
+const BASE_CLASS = 'keyboard'
+
 function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
     return NOTES.map((note) => {
         const { name } = note
@@ -58,10 +60,10 @@ function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
         const { width, margin } = getStyles(name)
         const background = isActive ? MIDI_CHANNEL_COLORS[lastActiveKey.channel] : ''
         const classNames = clsx(
-            { ['keyboard__blackkey']: isBlackKey },
-            { ['keyboard__whitekey']: !isBlackKey },
-            { [`keyboard__blackkey--active`]: isActive && isBlackKey },
-            { [`keyboard__whitekey--active`]: isActive && !isBlackKey },
+            { [`${BASE_CLASS}__blackkey`]: isBlackKey },
+            { [`${BASE_CLASS}__whitekey`]: !isBlackKey },
+            { [`${BASE_CLASS}__blackkey--active`]: isActive && isBlackKey },
+            { [`${BASE_CLASS}__whitekey--active`]: isActive && !isBlackKey },
             [`${name}`]
         )
 
@@ -157,7 +159,7 @@ export function Keyboard({
     }
 
     return (
-        <ul className="keyboard">
+        <ul className={BASE_CLASS}>
             {keys.map((key) => {
                 const {
                     name,

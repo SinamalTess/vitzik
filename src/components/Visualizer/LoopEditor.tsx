@@ -22,6 +22,8 @@ function Line({ y, width, timestamp }: LineProps) {
     )
 }
 
+export const BASE_CLASS = 'loop-editor'
+
 interface LoopEditorProps {
     loopTimes: LoopTimes
     height: number
@@ -88,7 +90,7 @@ export function LoopEditor({
         <svg
             height={height}
             width="100%"
-            className={'loop-editor'}
+            className={BASE_CLASS}
             {...(allLinesDrawn ? null : props)}
         >
             {lines.length

@@ -2,6 +2,7 @@ import React from 'react'
 import './VisualizerSection.scss'
 import clsx from 'clsx'
 import { MidiVisualizerNoteCoordinates } from '../../types'
+import { BASE_CLASS as VISUALIZER_BASE_CLASS } from './Visualizer'
 
 interface VisualizerSectionProps {
     index: number
@@ -16,6 +17,8 @@ interface RectanglesProps {
     height: number
     indexToDraw: number
 }
+
+const BASECLASS = `${VISUALIZER_BASE_CLASS}__section`
 
 const Notes = React.memo(function Notes({
     notesCoordinates,
@@ -48,13 +51,13 @@ export function VisualizerSection({
     width,
     notesCoordinates,
 }: VisualizerSectionProps) {
-    const classNames = clsx('visualizer__section', [`visualizer__section--${index}`])
+    const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
 
     return (
         <svg
             width={width}
             height={height}
-            data-testid={`visualizer__section--${index}`}
+            data-testid={`${BASECLASS}--${index}`}
             className={classNames}
         >
             {notesCoordinates ? (

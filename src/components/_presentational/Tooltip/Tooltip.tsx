@@ -32,6 +32,8 @@ export function Tooltip({
     /*
         We have to use useMemo to define a custom modifier 
         See this : https://popper.js.org/react-popper/v2/faq/
+
+        This custom modifier makes sure that the Tooltip gets the same width as its container (the reference)
     */
     const referenceWidthModifier = React.useMemo(
         () => ({

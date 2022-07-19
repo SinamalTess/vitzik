@@ -9,6 +9,8 @@ interface MidiInputSelectorProps {
     onMidiOutputChange: React.Dispatch<React.SetStateAction<MIDIOutput | null>>
 }
 
+const BASE_CLASS = 'midi-input'
+
 export function MidiInputSelector({
     onMidiInputChange,
     onMidiOutputChange,
@@ -66,7 +68,7 @@ export function MidiInputSelector({
             ))}
         </Select>
     ) : (
-        <span className="midi-input--not-found">
+        <span className={`${BASE_CLASS}--not-found`}>
             <Tooltip showOnHover>
                 <Icon name="usb">No input found</Icon>
                 Try connecting an instrument to your computer via USB

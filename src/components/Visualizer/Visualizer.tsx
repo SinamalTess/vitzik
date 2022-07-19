@@ -30,6 +30,7 @@ interface VisualizerProps {
 }
 
 const MS_PER_SECTION = 2000
+export const BASE_CLASS = 'visualizer'
 
 export const Visualizer = WithContainerDimensions(
     ({
@@ -156,7 +157,7 @@ export const Visualizer = WithContainerDimensions(
         if (!height || !width) return null
 
         return (
-            <div className="visualizer" ref={ref}>
+            <div className={BASE_CLASS} ref={ref}>
                 {[0, 1].map((index) => {
                     return (
                         <VisualizerSection

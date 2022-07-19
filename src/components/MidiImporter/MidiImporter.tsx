@@ -14,6 +14,8 @@ interface MidiImporterProps {
 
 type midiImporterState = 'pristine' | 'pending' | 'error' | 'valid'
 
+const BASE_CLASS = 'dropzone'
+
 function getFiles(event: DragEvent) {
     let files: File[] = []
 
@@ -101,10 +103,6 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
         setState('pending')
     }
 
-    const classNamesMessage = clsx('dropzone__message', {
-        'dropzone__message--error': state === 'error',
-    })
-
     const message = () => {
         switch (state) {
             case 'error':
@@ -123,8 +121,16 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
         }
     }
 
+    const classNamesMessage = clsx(`${BASE_CLASS}__message`, {
+        [`${BASE_CLASS}__message--error`]: state === 'error',
+    })
+
+    const className = clsx(BASE_CLASS, {
+        [`${BASE_CLASS}--${state}`]: state,
+    })
+
     return (
-        <div className={`dropzone dropzone--${state}`}>
+        <div className={className}>
             <div className={classNamesMessage}>
                 <span>{message()}</span>
                 {!isDesktop ? (

@@ -7,7 +7,7 @@ interface IconProps extends PresentationalComponentBasicProps {
     name: IconName
     color?: string
     children?: string
-    size?: CSSSpacingSize | number
+    size?: CSSSpacingSize
     onMouseEnter?: (event: React.MouseEvent<HTMLSpanElement>) => void
     onMouseLeave?: (event: React.MouseEvent<HTMLSpanElement>) => void
 }
@@ -22,17 +22,16 @@ export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
         BASE_CLASS,
         { [`${BASE_CLASS}-${name}`]: name },
         { [`${BASE_CLASS}-instrument`]: name.startsWith('instrument') },
-        { [`${BASE_CLASS}-${size}`]: typeof size === 'string' },
+        { [`${BASE_CLASS}-${size}`]: size },
         className
     )
 
     const styles = {
-        ...(typeof size === 'number' ? { fontSize: size + 'px', color } : { color }),
+        ...{ color },
         ...{ style },
     }
 
     return (
-        // TODO: check if this is the proper usage of aria-label
         <span
             className={classNames}
             style={styles}

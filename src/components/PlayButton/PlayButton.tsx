@@ -8,9 +8,11 @@ interface PlayerControllerProps {
     onClick: () => void
 }
 
+const BASE_CLASS = 'play-button'
+
 export function PlayButton({ onClick, isPlaying }: PlayerControllerProps) {
-    const classNames = clsx('play-button', {
-        [`play-button--pause`]: isPlaying,
+    const classNames = clsx(BASE_CLASS, {
+        [`${BASE_CLASS}--pause`]: isPlaying,
     })
 
     return (
@@ -20,8 +22,8 @@ export function PlayButton({ onClick, isPlaying }: PlayerControllerProps) {
             aria-label={isPlaying ? 'play button' : 'paused button'}
         >
             <span className={classNames} aria-hidden="true">
-                <span className="play-button__half play-button__half--before"></span>
-                <span className="play-button__half play-button__half--after"></span>
+                <span className={`${BASE_CLASS}__half ${BASE_CLASS}__half--before`}></span>
+                <span className={`${BASE_CLASS}__half ${BASE_CLASS}__half--after`}></span>
             </span>
         </Button>
     )

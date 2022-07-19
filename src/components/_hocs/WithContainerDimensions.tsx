@@ -48,9 +48,9 @@ export function WithContainerDimensions<P>(
         }, [])
 
         return (
-            <span ref={ref} style={{ height: '100%', width: '100%' }}>
+            <div ref={ref} style={{ height: '100%', width: '100%' }}>
                 <WrappedComponent {...props} height={height} width={width} />
-            </span>
+            </div>
         )
     }
 

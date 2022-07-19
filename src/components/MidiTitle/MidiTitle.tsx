@@ -8,6 +8,7 @@ interface MidiTrackInfosPros {
 }
 
 const ANIMATION_DURATION = 500
+const BASE_CLASS = 'midi-title'
 
 export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
     const [isVisible, setIsVisible] = useState<boolean>(false)
@@ -28,10 +29,10 @@ export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
             appear={isVisible}
             in={isVisible}
             timeout={ANIMATION_DURATION}
-            classNames="midi-title"
+            classNames={BASE_CLASS}
         >
-            <div className="midi-title">
-                <p className="midi-title__text" data-text={title}>
+            <div className={BASE_CLASS}>
+                <p className={`${BASE_CLASS}__text`} data-text={title}>
                     {title}
                 </p>
             </div>

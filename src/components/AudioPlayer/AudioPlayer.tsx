@@ -30,6 +30,8 @@ interface AudioPlayerProps {
     onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
 }
 
+const BASE_CLASS = 'audio-player'
+
 export function AudioPlayer({
     audioPlayerState,
     isEditingLoop,
@@ -115,23 +117,23 @@ export function AudioPlayer({
     }
 
     return (
-        <div className="audio-player">
+        <div className={BASE_CLASS}>
             <Tooltip showOnHover>
-                <span className="audio-player__track-title">{title}</span>
+                <span className={`${BASE_CLASS}__track-title`}>{title}</span>
                 {title}
             </Tooltip>
-            <span className="audio-player__current-time" role="timer">
+            <span className={`${BASE_CLASS}__current-time`} role="timer">
                 {currentTime}
             </span>
             <RangeSlider
-                className="audio-player__progress-bar"
+                className={`${BASE_CLASS}__progress-bar`}
                 value={midiCurrentTime}
                 max={midiDuration}
                 onChange={handleChange}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
             />
-            <span className="audio-player__total-time" role="timer">
+            <span className={`${BASE_CLASS}__total-time`} role="timer">
                 {totalTime}
             </span>
             <Button onClick={handleClickOnStop} icon="stop" variant="link" color="secondary" />

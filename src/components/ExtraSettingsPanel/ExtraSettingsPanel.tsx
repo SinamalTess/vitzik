@@ -19,6 +19,8 @@ interface ExtraSettingsPanelProps {
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
 }
 
+const BASE_CLASS = 'extra-settings'
+
 export function ExtraSettingsPanel({
     isOpen,
     userInstrument,
@@ -34,7 +36,7 @@ export function ExtraSettingsPanel({
     const instruments = midiMetas?.instruments ?? []
     return (
         <SideBar open={isOpen} onClose={onClose}>
-            <div className="extra-settings" role="toolbar" aria-orientation="vertical">
+            <div className={BASE_CLASS} role="toolbar" aria-orientation="vertical">
                 <h4>User Instrument</h4>
                 <div className="extra-settings__user-instrument">
                     <img

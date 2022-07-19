@@ -17,6 +17,8 @@ interface MidiTrackListProps {
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
 }
 
+const BASE_CLASS = 'midi-track-list'
+
 function getChannelInstruments(
     channel: number,
     instruments: Instrument[],
@@ -106,7 +108,7 @@ export function MidiTrackList({
     }
 
     return (
-        <List className="midi-track-list">
+        <List className={BASE_CLASS}>
             <ListItem>
                 <ListItemSecondaryAction>
                     <Button
@@ -123,7 +125,7 @@ export function MidiTrackList({
                       return (
                           <ListItem key={index}>
                               <ListItemSecondaryAction>
-                                  <span className="midi-track-list__track-index">{index}</span>
+                                  <span className={`${BASE_CLASS}__track-index`}>{index}</span>
                                   <Button
                                       icon={isActiveTrack ? 'eye-open' : 'eye-closed'}
                                       onClick={() => handleChange(index)}

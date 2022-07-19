@@ -8,12 +8,14 @@ interface SoundButtonProps {
     onMute: (isMute: boolean) => void
 }
 
+const BASE_CLASS = 'volume-icon'
+
 export function SoundButton({ isMute, onMute }: SoundButtonProps) {
     function handleClick() {
         onMute(!isMute)
     }
 
-    const classNames = clsx('volume-icon', { 'volume-icon--active': isMute })
+    const classNames = clsx(BASE_CLASS, { [`${BASE_CLASS}--active`]: isMute })
 
     return (
         <Button
