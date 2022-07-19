@@ -4,69 +4,88 @@ import { Button } from '../_presentational/Button'
 import { ButtonGroup } from '../_presentational/ButtonGroup'
 import React, { useContext, useState } from 'react'
 import { msPerBeatToBeatPerMin } from '../../utils'
-import { MidiMetas } from '../../types'
+import { MsPerBeat } from '../../types'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
-import './BpmSelectors.scss'
+import './BpmSelector.scss'
 import { getMsPerBeatFromTime } from '../Visualizer/MidiVisualizerCoordinates'
 
 interface BpmSelectorProps {
     midiSpeedFactor: number
-    midiMetas: MidiMetas
+    allMsPerBeat: MsPerBeat[]
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 const BASE_CLASS = 'bpm-selector'
+const SPEED_FACTORS = [
+    {
+        factor: 0.5, // The factor used to divide the BPM
+        speed: 2, // The resulting speed. (Fewer beats per minute = higher speed)
+    },
+    {
+        factor: 0.75,
+        speed: 1.5,
+    },
+    {
+        factor: 1,
+        speed: 1,
+    },
+    {
+        factor: 1.25,
+        speed: 0.75,
+    },
+    {
+        factor: 2,
+        speed: 0.5,
+    },
+]
 
 export function BpmSelector({
     midiSpeedFactor,
-    midiMetas,
+    allMsPerBeat,
     onChangeMidiSpeedFactor,
     onChangeMidiStartingTime,
 }: BpmSelectorProps) {
     const midiCurrentTime = useContext(MidiCurrentTime)
-    const [isBPMTooltipOpen, setIsBPMTooltipOpen] = useState<boolean>(false)
-    const { allMsPerBeat } = midiMetas
+    const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false)
     const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, midiCurrentTime)?.value ?? 0
+    const bpm = Math.round(msPerBeatToBeatPerMin(msPerBeat) / midiSpeedFactor)
+    const speed = SPEED_FACTORS.find(({ factor }) => factor === midiSpeedFactor)?.speed
 
-    function handleChangeMidiSpeedFactor(value: number) {
+    function handleChange(value: number) {
         onChangeMidiSpeedFactor(value)
         onChangeMidiStartingTime(midiCurrentTime)
     }
 
-    function handleClickBPM() {
-        setIsBPMTooltipOpen((isBPMTooltipOpen) => !isBPMTooltipOpen)
+    function handleClick() {
+        setIsTooltipOpen((isOpen) => !isOpen)
     }
 
     function onShowTooltip() {
-        setIsBPMTooltipOpen(true)
+        setIsTooltipOpen(true)
     }
 
     function onHideTooltip() {
-        setIsBPMTooltipOpen(false)
+        setIsTooltipOpen(false)
     }
 
-    const speedFactors = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
-    const actualBpm = Math.round(msPerBeatToBeatPerMin(msPerBeat) / midiSpeedFactor)
     return (
         <span className={BASE_CLASS}>
             <Divider orientation="vertical" />
-            <Tooltip show={isBPMTooltipOpen} onHide={onHideTooltip} onShow={onShowTooltip}>
+            <Tooltip show={isTooltipOpen} onHide={onHideTooltip} onShow={onShowTooltip}>
                 <span>
-                    <span> BPM {midiSpeedFactor !== 1 ? `(x${midiSpeedFactor})` : null} : </span>
-                    <Button onClick={handleClickBPM}> {actualBpm}</Button>
+                    <span> BPM {midiSpeedFactor !== 1 ? `(x${speed})` : null} : </span>
+                    <Button onClick={handleClick}> {bpm}</Button>
                 </span>
                 <span className={`${BASE_CLASS}__value`}>
                     <ButtonGroup size={'sm'}>
-                        {speedFactors.map((factor, index) => (
+                        {SPEED_FACTORS.map(({ factor, speed }) => (
                             <Button
                                 key={factor}
                                 active={factor === midiSpeedFactor}
-                                onClick={() => {
-                                    handleChangeMidiSpeedFactor(factor)
-                                }}
+                                onClick={() => handleChange(factor)}
                             >
-                                x{speedFactors[index]}
+                                x{speed}
                             </Button>
                         ))}
                     </ButtonGroup>

@@ -4,14 +4,14 @@ import { SoundButton } from '../SoundButton'
 import { Tooltip } from '../_presentational/Tooltip'
 import { BpmSelector } from '../BpmSelector'
 import React from 'react'
-import { AudioPlayerState, MidiMetas } from '../../types'
+import { AudioPlayerState, MsPerBeat } from '../../types'
 
 interface ControlsProps {
     isEditingLoop: boolean
     isMute: boolean
     audioPlayerState: AudioPlayerState
     midiSpeedFactor: number
-    midiMetas: MidiMetas
+    allMsPerBeat: MsPerBeat[]
     onClickOnPlay: () => void
     onStop: () => void
     onClickOnLoop: () => void
@@ -25,7 +25,7 @@ export function Controls({
     isMute,
     midiSpeedFactor,
     audioPlayerState,
-    midiMetas,
+    allMsPerBeat,
     onClickOnPlay,
     onStop,
     onMute,
@@ -48,7 +48,7 @@ export function Controls({
                 midiSpeedFactor={midiSpeedFactor}
                 onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
                 onChangeMidiStartingTime={onChangeMidiStartingTime}
-                midiMetas={midiMetas}
+                allMsPerBeat={allMsPerBeat}
             />
         </>
     )

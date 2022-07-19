@@ -45,7 +45,7 @@ export function AudioPlayer({
     onChangeLoopTimes,
 }: AudioPlayerProps) {
     const midiCurrentTime = useContext(MidiCurrentTime)
-    const { midiDuration } = midiMetas
+    const { midiDuration, allMsPerBeat } = midiMetas
     const isPlaying = audioPlayerState === 'playing'
     const [prevState, setPrevState] = useState<AudioPlayerState>(audioPlayerState)
     const [startLoop, endLoop] = loopTimes
@@ -122,7 +122,7 @@ export function AudioPlayer({
                 isMute={isMute}
                 midiSpeedFactor={midiSpeedFactor}
                 audioPlayerState={audioPlayerState}
-                midiMetas={midiMetas}
+                allMsPerBeat={allMsPerBeat}
                 onMute={onMute}
                 onChangeMidiStartingTime={onChangeMidiStartingTime}
                 onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}

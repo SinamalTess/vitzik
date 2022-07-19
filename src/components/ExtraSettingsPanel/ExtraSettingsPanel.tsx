@@ -49,8 +49,8 @@ export function ExtraSettingsPanel({
                 {midiMetas ? (
                     <>
                         <h4>File infos</h4>
-                        <div>Ticks per beat : {midiMetas.ticksPerBeat}</div>
-                        <div>Format : {midiMetas.format}</div>
+                        <p>Ticks per beat : {midiMetas.ticksPerBeat}</p>
+                        <p>Format : {midiMetas.format}</p>
                         <h4>Music System</h4>
                         <MusicSystemSelector
                             onChange={onChangeMusicSystem}
