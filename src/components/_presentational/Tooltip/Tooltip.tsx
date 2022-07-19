@@ -3,7 +3,7 @@ import { usePopper } from 'react-popper'
 import './Tooltip.scss'
 import { beforeWrite } from '@popperjs/core'
 import clsx from 'clsx'
-import { useClickOutside } from '../../../_hooks/useClickOutside'
+import { useClickOutside } from '../../../_hooks'
 import { PresentationalComponentBasicProps } from '../types'
 import { isArrayOfChildren } from '../utils/isArrayOfChildren'
 

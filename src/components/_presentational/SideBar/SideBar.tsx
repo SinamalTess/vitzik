@@ -3,7 +3,7 @@ import './SideBar.scss'
 import clsx from 'clsx'
 import { CSSTransition } from 'react-transition-group'
 import ReactDOM from 'react-dom'
-import { useClickOutside } from '../../../_hooks/useClickOutside'
+import { useClickOutside } from '../../../_hooks'
 import { PresentationalComponentBasicProps } from '../types'
 
 interface SideBarProps extends PresentationalComponentBasicProps {
