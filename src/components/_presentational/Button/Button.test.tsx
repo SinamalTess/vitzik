@@ -12,10 +12,10 @@ describe('Button', () => {
     })
     describe('When the "icon" prop is passed', () => {
         it('should display the icon', () => {
-            render(<Button icon={'volume'}></Button>)
+            render(<Button icon={'loop'}></Button>)
             const icon = screen.getByLabelText(/icon/)
 
-            expect(icon).toHaveClass('icon-volume')
+            expect(icon).toHaveClass('icon-loop')
         })
     })
 })

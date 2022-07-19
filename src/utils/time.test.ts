@@ -1,9 +1,9 @@
-import { msToMinAndSec, msToSec } from './time'
+import { msToTime, msToSec } from './time'
 
 describe('msToMinAndSec()', () => {
     it('should convert milliseconds to minutes and seconds', () => {
-        expect(msToMinAndSec(2100)).toBe('00:02')
-        expect(msToMinAndSec(240000)).toBe('04:00')
+        expect(msToTime(2100)).toBe('00:02')
+        expect(msToTime(240000)).toBe('04:00')
     })
 })
 

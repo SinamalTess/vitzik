@@ -28,9 +28,8 @@ export interface SectionNoteCoordinates {
     [sectionIndex: number]: MidiVisualizerNoteCoordinates[]
 }
 
-export function init(midiMetas: MidiMetas, height: number, width: number) {
+export function init(midiMetas: MidiMetas, height: number, width: number, msPerSection: number) {
     const { ticksPerBeat } = midiMetas
-    const msPerSection = 500 * 4
     let msPerBeat = getInitialMsPerBeat(midiMetas.allMsPerBeat)
     const ratioSection = height / msPerSection
 

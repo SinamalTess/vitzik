@@ -9,11 +9,15 @@ import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { getSectionCoordinates, init, mergeNotesCoordinates } from './MidiVisualizerCoordinates'
 import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
+import { LoopEditor } from './LoopEditor'
+import { LoopTimes } from '../../types/LoopTimes'
 
 interface VisualizerProps {
     activeInstruments: Instrument[]
     midiFile: IMidiFile
     midiMode: MidiMode
+    loopTimes: LoopTimes
+    isEditingLoop: boolean
     midiMetas: MidiMetas
     audioPlayerState: AudioPlayerState
     activeTracks: number[]
@@ -22,13 +26,18 @@ interface VisualizerProps {
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
+    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
 }
+
+const MS_PER_SECTION = 2000
 
 export const Visualizer = WithContainerDimensions(
     ({
         activeInstruments,
         midiMode,
         midiFile,
+        loopTimes,
+        isEditingLoop,
         midiMetas,
         audioPlayerState,
         activeTracks,
@@ -37,13 +46,14 @@ export const Visualizer = WithContainerDimensions(
         onChangeActiveNotes,
         onChangeInstruments,
         onChangeTimeToNextNote,
+        onChangeLoopTimes,
     }: VisualizerProps) => {
         const ref = useRef<HTMLDivElement>(null)
         let animation = useRef<number>(0)
         const midiCurrentTime = useContext(MidiCurrentTime)
 
         const midiVisualizerCoordinates = useMemo(
-            () => init(midiMetas, height, width),
+            () => init(midiMetas, height, width, MS_PER_SECTION),
             [height, midiMetas, width]
         )
 
@@ -160,6 +170,15 @@ export const Visualizer = WithContainerDimensions(
                     )
                 })}
                 <VisualizerNotesTracks height={height} width={width} />
+                {isEditingLoop ? (
+                    <LoopEditor
+                        loopTimes={loopTimes}
+                        width={width}
+                        height={height}
+                        msPerSection={MS_PER_SECTION}
+                        onChangeLoopTimes={onChangeLoopTimes}
+                    />
+                ) : null}
             </div>
         )
     }

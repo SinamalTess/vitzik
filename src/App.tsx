@@ -22,9 +22,7 @@ import { TimeContextProvider } from './components/TimeContextProvider/TimeContex
 import { MidiImporter } from './components/MidiImporter'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
 import { MidiAccessMode } from './types/MidiAccessMode'
-import { registerShortcut } from './utils/keyboard_shortcuts'
-
-//TODO: check accessibility
+import { LoopTimes } from './types/LoopTimes'
 
 const AUDIO_CONTEXT = new AudioContext()
 
@@ -46,6 +44,8 @@ function App() {
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [midiStartingTime, setMidiStartingTime] = useState<number>(0)
+    const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
+    const [isEditingLoop, setIsEditingLoop] = useState(false)
     const isMidiImported = midiFile !== null
 
     useEffect(() => {
@@ -91,27 +91,6 @@ function App() {
         [midiMode, timeToNextNote]
     )
 
-    useEffect(() => {
-        const unsubscribe = registerShortcut('Space', () => {
-            setAudioPlayerState((audioPlayerState) => {
-                switch (audioPlayerState) {
-                    case 'stopped':
-                        return 'playing'
-                    case 'paused':
-                        return 'playing'
-                    case 'playing':
-                        return 'paused'
-                    default:
-                        return audioPlayerState
-                }
-            })
-        })
-
-        return function cleanup() {
-            unsubscribe()
-        }
-    }, [])
-
     return (
         <TimeContextProvider
             startingTime={midiStartingTime}
@@ -122,17 +101,21 @@ function App() {
                 <div className="item topbar">
                     {midiMetas ? (
                         <AudioPlayer
+                            isEditingLoop={isEditingLoop}
                             audioPlayerState={audioPlayerState}
                             isMute={isMute}
                             midiMode={midiMode}
                             timeToNextNote={timeToNextNote}
                             midiTitle={midiTitle}
                             midiMetas={midiMetas}
+                            loopTimes={loopTimes}
                             midiSpeedFactor={midiSpeedFactor}
                             onChangeAudioPlayerState={setAudioPlayerState}
                             onChangeMidiStartingTime={setMidiStartingTime}
                             onMute={setIsMute}
                             onChangeMidiSpeedFactor={setMidiSpeedFactor}
+                            onChangeIsEditingLoop={setIsEditingLoop}
+                            onChangeLoopTimes={setLoopTimes}
                         />
                     ) : null}
                     <Settings
@@ -170,8 +153,10 @@ function App() {
                     {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                     <MidiImporter isMidiImported={isMidiImported} onMidiImport={handleMidiImport} />
                     <Preview
+                        loopTimes={loopTimes}
                         activeInstruments={activeInstruments}
                         midiMode={midiMode}
+                        isEditingLoop={isEditingLoop}
                         midiFile={midiFile}
                         midiMetas={midiMetas}
                         audioPlayerState={audioPlayerState}
@@ -179,6 +164,7 @@ function App() {
                         onChangeActiveNotes={setActiveNotes}
                         onChangeTimeToNextNote={setTimeToNextNote}
                         onChangeActiveInstruments={setActiveInstruments}
+                        onChangeLoopTimes={setLoopTimes}
                     />
                 </div>
                 <div className="item">

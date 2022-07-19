@@ -6,7 +6,7 @@ import { List } from '../_presentational/List'
 import { Instrument, TrackMetas } from '../../types'
 import { Divider } from '../_presentational/Divider'
 import './MidiTrackList.scss'
-import { msToMinAndSec } from '../../utils'
+import { msToTime } from '../../utils'
 import { Tooltip } from '../_presentational/Tooltip'
 
 interface MidiTrackListProps {
@@ -146,9 +146,7 @@ export function MidiTrackList({
                                                   >
                                                       CH : {channel}
                                                   </span>
-                                                  <span>
-                                                      starting time : {msToMinAndSec(timestamp)}
-                                                  </span>
+                                                  <span>starting time : {msToTime(timestamp)}</span>
                                               </Tooltip>
                                               <img
                                                   src={`img/svg/instruments/instrument_${name}.svg`}

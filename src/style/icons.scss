@@ -9,7 +9,7 @@
         font-family: 'Custom Icons', serif;
         text-transform: none;
     }
-    &-volume {
+    &-loop {
         &::before {
             content: 'a';
         }
@@ -19,7 +19,7 @@
             content: 'b';
         }
     }
-    &-infos {
+    &-reset {
         &::before {
             content: 'c';
         }
@@ -52,11 +52,6 @@
     &-stop {
         &::before {
             content: 'i';
-        }
-    }
-    &-reset {
-        &::before {
-            content: 'j';
         }
     }
 }

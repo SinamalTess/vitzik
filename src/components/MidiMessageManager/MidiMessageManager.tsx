@@ -154,10 +154,7 @@ export function MidiMessageManager({
     ])
 
     useEffect(() => {
-        if (audioPlayerState === 'rewinding') {
-            setNotesBeingHeld([])
-            setMidiNotesAlreadyPlayed(new Set())
-        } else if (audioPlayerState === 'stopped') {
+        if (audioPlayerState === 'stopped') {
             setMidiNotesAlreadyPlayed(new Set())
             setNotesBeingHeld([])
         }
