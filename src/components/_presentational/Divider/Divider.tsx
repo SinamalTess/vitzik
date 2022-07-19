@@ -7,10 +7,12 @@ interface DividerProps extends PresentationalComponentBasicProps {
     orientation?: 'vertical' | 'horizontal'
 }
 
+const BASE_CLASS = 'divider'
+
 export function Divider({ style, className, orientation = 'horizontal' }: DividerProps) {
     const classNames = clsx(
-        'divider',
-        { 'divider--vertical': orientation === 'vertical' },
+        BASE_CLASS,
+        { [`${BASE_CLASS}--vertical`]: orientation === 'vertical' },
         className
     )
 

@@ -9,8 +9,10 @@ interface SelectProps extends PresentationalComponentBasicProps {
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
+const BASE_CLASS = 'select'
+
 export function Select({ style, className, children, value, onChange }: SelectProps) {
-    const classNames = clsx('select', 'mg-sm', className)
+    const classNames = clsx(BASE_CLASS, 'mg-sm', className)
     return (
         <select className={classNames} value={value} style={style} onChange={onChange}>
             {children}

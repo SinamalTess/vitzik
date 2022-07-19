@@ -9,10 +9,12 @@ interface ButtonGroupProps extends PresentationalComponentBasicProps {
     size?: CSSSpacingSize
 }
 
+const BASE_CLASS = 'btn-group'
+
 export function ButtonGroup({ style, className, children, size = 'md' }: ButtonGroupProps) {
     if (!isArrayOfChildren(children, ButtonGroup.name)) return null
 
-    const classNames = clsx('btn-group', 'mg-sm', className)
+    const classNames = clsx(BASE_CLASS, 'mg-sm', className)
 
     const props = { size }
 

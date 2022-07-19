@@ -10,6 +10,8 @@ interface DropdownProps extends PresentationalComponentBasicProps {
     open: boolean
 }
 
+export const BASE_CLASS = 'dropdown'
+
 export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(function Dropdown(
     { style, className, children, open = false }: DropdownProps,
     ref
@@ -22,7 +24,7 @@ export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(function
         setIsOpen((open) => !open)
     }
 
-    const classNames = clsx('dropdown', className)
+    const classNames = clsx(BASE_CLASS, className)
 
     return (
         <div className={classNames} style={style} onClick={handleClick} ref={ref}>

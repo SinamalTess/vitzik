@@ -19,6 +19,8 @@ interface ButtonProps extends PresentationalComponentBasicProps {
     onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
+const BASE_CLASS = 'btn'
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     {
         style,
@@ -38,14 +40,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     ref
 ) {
     const classNames = clsx(
-        'btn',
-        { [`btn-${size}`]: size },
+        BASE_CLASS,
+        { [`${BASE_CLASS}-${size}`]: size },
         { [`pd-${size}`]: size },
-        { 'btn--active': active },
-        { 'btn--outline': variant === 'outlined' },
-        { 'btn--link': variant === 'link' },
-        { 'btn--disabled': disabled },
-        { [`btn--${color}`]: color },
+        { [`${BASE_CLASS}--active`]: active },
+        { [`${BASE_CLASS}--outline`]: variant === 'outlined' },
+        { [`${BASE_CLASS}--link`]: variant === 'link' },
+        { [`${BASE_CLASS}--disabled`]: disabled },
+        { [`${BASE_CLASS}--${color}`]: color },
         className
     )
 

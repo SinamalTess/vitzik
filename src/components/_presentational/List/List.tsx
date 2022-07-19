@@ -9,8 +9,14 @@ interface ListProps extends PresentationalComponentBasicProps {
     variant?: 'background' | 'transparent'
 }
 
+export const BASE_CLASS = 'list'
+
 export function List({ style, children, className, variant = 'background' }: ListProps) {
-    const classNames = clsx('list', { 'list--background': variant === 'background' }, className)
+    const classNames = clsx(
+        BASE_CLASS,
+        { [`${BASE_CLASS}--background`]: variant === 'background' },
+        className
+    )
 
     return (
         <ul className={classNames} style={style}>

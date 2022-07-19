@@ -12,15 +12,17 @@ interface IconProps extends PresentationalComponentBasicProps {
     onMouseLeave?: (event: React.MouseEvent<HTMLSpanElement>) => void
 }
 
+const BASE_CLASS = 'icon'
+
 export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
     { style, className, name, children, color, size = 'md', onMouseLeave, onMouseEnter },
     ref
 ) {
     const classNames = clsx(
-        'icon',
-        { [`icon-${name}`]: name },
-        { [`icon-instrument`]: name.startsWith('instrument') },
-        { [`icon-${size}`]: typeof size === 'string' },
+        BASE_CLASS,
+        { [`${BASE_CLASS}-${name}`]: name },
+        { [`${BASE_CLASS}-instrument`]: name.startsWith('instrument') },
+        { [`${BASE_CLASS}-${size}`]: typeof size === 'string' },
         className
     )
 

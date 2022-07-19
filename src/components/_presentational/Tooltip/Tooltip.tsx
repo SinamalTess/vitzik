@@ -17,6 +17,8 @@ interface TooltipProps extends PresentationalComponentBasicProps {
     onHide?: () => void
 }
 
+const BASE_CLASS = 'tooltip'
+
 export function Tooltip({
     style,
     className,
@@ -90,7 +92,7 @@ export function Tooltip({
           }
         : {}
 
-    const classNames = clsx('tooltip', { 'tooltip--active': isVisible }, className)
+    const classNames = clsx(BASE_CLASS, { [`${BASE_CLASS}--active`]: isVisible }, className)
 
     const styleTooltip = {
         ...styles.popper,
@@ -113,7 +115,7 @@ export function Tooltip({
                         <div
                             ref={setArrowElement}
                             style={styles.arrow}
-                            className={'tooltip__arrow'}
+                            className={`${BASE_CLASS}__arrow`}
                         />
                     ) : null}
                     {tooltipChild}

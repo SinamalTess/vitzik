@@ -12,6 +12,8 @@ interface TextFieldProps extends PresentationalComponentBasicProps {
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
+const BASE_CLASS = 'text-field'
+
 export function TextField({
     style,
     className,
@@ -21,7 +23,7 @@ export function TextField({
     type = 'text',
     onChange,
 }: TextFieldProps) {
-    const classNames = clsx('text-field', className)
+    const classNames = clsx(BASE_CLASS, className)
     return (
         <span className={classNames} style={style}>
             {icon ? <Icon name={icon} /> : null}

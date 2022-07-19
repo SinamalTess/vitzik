@@ -12,6 +12,8 @@ interface CheckboxProps extends PresentationalComponentBasicProps {
     onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+const BASE_CLASS = 'checkbox'
+
 export function Checkbox({
     style,
     children,
@@ -25,7 +27,7 @@ export function Checkbox({
         onChange(event)
     }
 
-    const classNames = clsx('checkbox', className)
+    const classNames = clsx(BASE_CLASS, className)
 
     return (
         <span className={classNames}>

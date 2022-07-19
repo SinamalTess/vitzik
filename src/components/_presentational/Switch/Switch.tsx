@@ -12,11 +12,13 @@ interface SwitchProps extends PresentationalComponentBasicProps {
     onMouseLeave?: (event: React.MouseEvent<HTMLLabelElement>) => void
 }
 
+const BASE_CLASS = 'switch'
+
 export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(function Switch(
     { style, className, children, isOn, onClick, onMouseEnter, onMouseLeave }: SwitchProps,
     ref
 ) {
-    const classNames = clsx('switch', className)
+    const classNames = clsx(BASE_CLASS, className)
     return (
         <label
             className={classNames}
@@ -28,10 +30,10 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(function S
             {children}
             <Button
                 onClick={onClick}
-                className={clsx({ 'switch--active': isOn })}
+                className={clsx({ [`${BASE_CLASS}--active`]: isOn })}
                 aria-checked={isOn}
             />
-            <span className={'switch__icon'}>
+            <span className={`${BASE_CLASS}__icon`}>
                 <span></span>
             </span>
         </label>

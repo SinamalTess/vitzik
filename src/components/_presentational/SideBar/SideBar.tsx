@@ -12,6 +12,8 @@ interface SideBarProps extends PresentationalComponentBasicProps {
     onClose: () => void
 }
 
+const BASE_CLASS = 'sidebar'
+
 export function SideBar({ style, className, children, open, onClose }: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
     const sidebarRef = useRef<HTMLDivElement>(null)
@@ -28,7 +30,7 @@ export function SideBar({ style, className, children, open, onClose }: SideBarPr
 
     useClickOutside([sidebarRef], closeSideBar, isOpen)
 
-    const classNames = clsx('sidebar', className)
+    const classNames = clsx(BASE_CLASS, className)
 
     return ReactDOM.createPortal(
         <CSSTransition

@@ -13,6 +13,8 @@ interface RangeSliderPros extends PresentationalComponentBasicProps {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+const BASE_CLASS = 'range-slider'
+
 export function RangeSlider({
     style,
     value,
@@ -40,7 +42,7 @@ export function RangeSlider({
         onChange(event)
     }
 
-    const classNames = clsx('range-slider', className)
+    const classNames = clsx(BASE_CLASS, className)
 
     return (
         <input
