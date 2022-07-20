@@ -4,18 +4,18 @@ import { AudioPlayerState } from '../../types'
 
 interface AudioPlayerKeyboardShortcutsProps {
     worker: Worker
-    audioPlayerState: AudioPlayerState
-    onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
-    onChangeAudioPlayerTime: React.Dispatch<React.SetStateAction<number>>
+    state: AudioPlayerState
+    onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
+    onChangeTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 export function AudioPlayerKeyboardShortcuts({
     worker,
-    audioPlayerState,
-    onChangeAudioPlayerTime,
-    onChangeAudioPlayerState,
+    state,
+    onChangeTime,
+    onChangeState,
 }: AudioPlayerKeyboardShortcutsProps) {
-    const [prevState, setPrevState] = useState<AudioPlayerState>(audioPlayerState)
+    const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const midiCurrentTime = useRef<number>(0)
 
     useEffect(() => {
@@ -32,9 +32,9 @@ export function AudioPlayerKeyboardShortcuts({
     }, [worker])
 
     function seekFor(value: number) {
-        onChangeAudioPlayerTime(midiCurrentTime.current)
-        onChangeAudioPlayerState('seeking')
-        onChangeAudioPlayerTime((midiStartingTime) => {
+        onChangeTime(midiCurrentTime.current)
+        onChangeState('seeking')
+        onChangeTime((midiStartingTime) => {
             return Math.max(0, midiStartingTime + value) // can't seek below 0
         })
     }
@@ -48,11 +48,11 @@ export function AudioPlayerKeyboardShortcuts({
     }
 
     function restoreAudioPlayerPreviousState() {
-        onChangeAudioPlayerState(prevState === 'stopped' ? 'paused' : prevState)
+        onChangeState(prevState === 'stopped' ? 'paused' : prevState)
     }
 
     const onSpace = useCallback(() => {
-        onChangeAudioPlayerState((audioPlayerState) => {
+        onChangeState((audioPlayerState) => {
             switch (audioPlayerState) {
                 case 'stopped':
                     return 'playing'
@@ -64,15 +64,15 @@ export function AudioPlayerKeyboardShortcuts({
                     return audioPlayerState
             }
         })
-    }, [onChangeAudioPlayerState])
+    }, [onChangeState])
 
     useEffect(() => {
-        if (audioPlayerState !== 'seeking') {
-            setPrevState(audioPlayerState)
+        if (state !== 'seeking') {
+            setPrevState(state)
         }
 
         const restoreAudioPlayerPreviousState = () =>
-            onChangeAudioPlayerState(prevState === 'stopped' ? 'paused' : prevState)
+            onChangeState(prevState === 'stopped' ? 'paused' : prevState)
 
         const unsubscribe = registerShortcut('ArrowUp', onArrowUp, restoreAudioPlayerPreviousState)
 
@@ -82,8 +82,8 @@ export function AudioPlayerKeyboardShortcuts({
     }, [onArrowUp])
 
     useEffect(() => {
-        if (audioPlayerState !== 'seeking') {
-            setPrevState(audioPlayerState)
+        if (state !== 'seeking') {
+            setPrevState(state)
         }
         const unsubscribe = registerShortcut(
             'ArrowDown',

@@ -16,15 +16,20 @@ import { ExtraSettingsPanel } from '../ExtraSettingsPanel'
 import { Tooltip } from '../_presentational/Tooltip'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { MidiAccessMode } from '../../types/MidiAccessMode'
+import { Divider } from '../_presentational/Divider'
+import { BpmSelector } from '../BpmSelector'
+import { LoopTimes } from '../../types/LoopTimes'
 
 interface SettingsProps {
+    worker: Worker
     appMode: AppMode
     midiMode: MidiMode
     midiAccessMode: MidiAccessMode
     midiMetas: MidiMetas | null
     musicSystem: MusicSystem
     activeTracks: number[]
-    isMidiImported: boolean
+    midiSpeedFactor: number
+    isEditingLoop: boolean
     activeInstruments: Instrument[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
@@ -34,19 +39,24 @@ interface SettingsProps {
     onMidiOutputChange: React.Dispatch<React.SetStateAction<MIDIOutput | null>>
     onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
     onMidiAccessModeChange: React.Dispatch<React.SetStateAction<MidiAccessMode>>
+    onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
+    onChangeIsEditingLoop: React.Dispatch<React.SetStateAction<boolean>>
+    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
     onMute: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BASE_CLASS = 'settings'
 
 export const Settings = React.memo(function Settings({
+    worker,
     appMode,
     midiMode,
     midiAccessMode,
     midiMetas,
     musicSystem,
     activeTracks,
-    isMidiImported,
+    isEditingLoop,
+    midiSpeedFactor,
     activeInstruments,
     onChangeMusicSystem,
     onChangeAppMode,
@@ -55,6 +65,9 @@ export const Settings = React.memo(function Settings({
     onMidiInputChange,
     onMidiOutputChange,
     onMidiAccessModeChange,
+    onChangeMidiSpeedFactor,
+    onChangeIsEditingLoop,
+    onChangeLoopTimes,
     onMidiModeChange,
     onMute,
 }: SettingsProps) {
@@ -95,19 +108,48 @@ export const Settings = React.memo(function Settings({
         )
     }
 
+    function handleClickOnLoop() {
+        onChangeIsEditingLoop((isEditingLoop) => !isEditingLoop)
+        if (isEditingLoop) {
+            onChangeLoopTimes([null, null]) // clears the loop times
+        }
+    }
+
     return (
         <div className={BASE_CLASS} role="toolbar">
-            {isMidiImported ? (
-                <Tooltip showOnHover>
-                    <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
-                        Autoplay
-                    </Switch>
-                    <span>
-                        Autoplay ON : Play the song without stopping
-                        <br />
-                        Autoplay OFF : Wait for you to play the right notes before moving forward
-                    </span>
-                </Tooltip>
+            <Tooltip showOnHover>
+                <Button
+                    icon={'loop'}
+                    onClick={handleClickOnLoop}
+                    variant="link"
+                    color={isEditingLoop ? 'primary' : 'secondary'}
+                >
+                    {isEditingLoop ? 'clear' : ''}
+                </Button>
+                Loop over a range of time
+            </Tooltip>
+            {midiMetas ? (
+                <>
+                    <Divider orientation="vertical" />
+                    <BpmSelector
+                        worker={worker}
+                        midiSpeedFactor={midiSpeedFactor}
+                        onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
+                        allMsPerBeat={midiMetas.allMsPerBeat}
+                    />
+                    <Divider orientation="vertical" />
+                    <Tooltip showOnHover>
+                        <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
+                            Autoplay
+                        </Switch>
+                        <span>
+                            Autoplay ON : Play the song without stopping
+                            <br />
+                            Autoplay OFF : Wait for you to play the right notes before moving
+                            forward
+                        </span>
+                    </Tooltip>
+                </>
             ) : null}
             <Button icon={'settings'} onClick={handleClickOnExtraSettings}>
                 {nbTracks ? ` ${nbTracks} track${nbTracks > 1 ? 's' : ''}` : null}

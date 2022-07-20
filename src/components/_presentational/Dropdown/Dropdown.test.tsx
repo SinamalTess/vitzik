@@ -3,7 +3,6 @@ import React from 'react'
 import { Dropdown } from './Dropdown'
 import { DropdownItem } from '../DropdownItem'
 import { DropdownToggle } from '../DropdownToggle'
-import userEvent from '@testing-library/user-event'
 
 describe('Dropdown', () => {
     it('should be closed when the `open` prop is false', async () => {

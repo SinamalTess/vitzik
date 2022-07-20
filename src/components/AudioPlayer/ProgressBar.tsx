@@ -7,8 +7,8 @@ const BASE_CLASS = 'audio-player'
 
 interface ProgressBarProps {
     worker: Worker
-    midiDuration: number
-    midiTitle?: string
+    duration: number
+    title?: string
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     onMouseDown: (event: React.MouseEvent<HTMLInputElement>) => void
     onMouseUp: (event: React.MouseEvent<HTMLInputElement>) => void
@@ -16,8 +16,8 @@ interface ProgressBarProps {
 
 export function ProgressBar({
     worker,
-    midiDuration,
-    midiTitle,
+    duration,
+    title,
     onChange,
     onMouseDown,
     onMouseUp,
@@ -44,19 +44,21 @@ export function ProgressBar({
         }
     }, [])
 
-    const totalTime = msToTime(midiDuration)
-    const title = normalizeTitle(midiTitle ?? '')
+    const totalTime = msToTime(duration)
+    const titleWithoutExtension = normalizeTitle(title ?? '')
     return (
         <>
-            <Tooltip showOnHover>
-                <span className={`${BASE_CLASS}__track-title`}>{title}</span>
-                {title}
-            </Tooltip>
+            {title ? (
+                <Tooltip showOnHover>
+                    <span className={`${BASE_CLASS}__track-title`}>{titleWithoutExtension}</span>
+                    {titleWithoutExtension}
+                </Tooltip>
+            ) : null}
             <span className={`${BASE_CLASS}__current-time`} role="timer" ref={refTime} />
             <RangeSlider
                 ref={refBar}
                 className={`${BASE_CLASS}__progress-bar`}
-                max={midiDuration}
+                max={duration}
                 onChange={onChange}
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}

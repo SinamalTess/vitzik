@@ -18,7 +18,7 @@ import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
-import { TimeContextProvider } from './components/TimeContextProvider/TimeContextProvider'
+import { TimeContextProvider } from './components/TimeContextProvider'
 import { MidiImporter } from './components/MidiImporter'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
 import { MidiAccessMode } from './types/MidiAccessMode'
@@ -50,7 +50,6 @@ function App() {
     const [audioPlayerTime, setAudioPlayerTime] = useState<number>(0)
     const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
-    const isMidiImported = midiFile !== null
 
     useEffect(() => {
         if (isMute) {
@@ -101,43 +100,42 @@ function App() {
                 {midiMetas ? (
                     <AudioPlayer
                         worker={worker}
-                        isEditingLoop={isEditingLoop}
-                        audioPlayerState={audioPlayerState}
+                        state={audioPlayerState}
                         isMute={isMute}
-                        midiMode={midiMode}
                         timeToNextNote={timeToNextNote}
-                        midiTitle={midiTitle}
-                        midiMetas={midiMetas}
+                        title={midiTitle}
+                        duration={midiMetas.midiDuration}
                         loopTimes={loopTimes}
-                        midiSpeedFactor={midiSpeedFactor}
-                        onChangeAudioPlayerState={setAudioPlayerState}
-                        onChangeAudioPlayerTime={setAudioPlayerTime}
+                        onChangeState={setAudioPlayerState}
+                        onChangeTime={setAudioPlayerTime}
                         onMute={setIsMute}
-                        onChangeMidiSpeedFactor={setMidiSpeedFactor}
-                        onChangeIsEditingLoop={setIsEditingLoop}
-                        onChangeLoopTimes={setLoopTimes}
                     />
                 ) : (
                     <div />
                 )}
                 <Settings
+                    worker={worker}
+                    isEditingLoop={isEditingLoop}
                     activeInstruments={activeInstruments}
                     appMode={appMode}
+                    midiSpeedFactor={midiSpeedFactor}
                     midiMetas={midiMetas}
                     midiMode={midiMode}
                     midiAccessMode={midiAccessMode}
-                    isMidiImported={isMidiImported}
                     musicSystem={musicSystem}
                     activeTracks={activeTracks}
                     onMidiInputChange={setMidiInput}
                     onMidiOutputChange={setMidiOutput}
                     onChangeAppMode={setAppMode}
+                    onChangeMidiSpeedFactor={setMidiSpeedFactor}
                     onChangeMusicSystem={setMusicSystem}
                     onChangeInstrument={setActiveInstruments}
                     onChangeActiveTracks={setActiveTracks}
                     onMidiModeChange={setMidiMode}
                     onMidiAccessModeChange={setMidiAccessMode}
+                    onChangeIsEditingLoop={setIsEditingLoop}
                     onMute={setIsMute}
+                    onChangeLoopTimes={setLoopTimes}
                 />
                 {midiInput ? (
                     <MidiMessageManager
@@ -153,7 +151,7 @@ function App() {
             </div>
             <div className="item preview">
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
-                <MidiImporter isMidiImported={isMidiImported} onMidiImport={handleMidiImport} />
+                <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 <Preview
                     worker={worker}
                     loopTimes={loopTimes}
