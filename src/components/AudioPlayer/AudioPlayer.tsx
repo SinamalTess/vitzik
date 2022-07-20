@@ -5,9 +5,11 @@ import { LoopTimes } from '../../types/LoopTimes'
 import { AudioPlayerKeyboardShortcuts } from './AudioPlayerKeyboardShortcuts'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
+import { IntervalWorkerManager } from './IntervalWorkerManager'
 
 interface AudioPlayerProps {
     worker: Worker
+    midiSpeedFactor?: number
     state: AudioPlayerState
     title?: string
     duration: number
@@ -15,7 +17,6 @@ interface AudioPlayerProps {
     timeToNextNote?: number | null
     onMute: (isMute: boolean) => void
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
-    onChangeTime: React.Dispatch<React.SetStateAction<number>>
     loopTimes?: LoopTimes
 }
 
@@ -23,6 +24,7 @@ const BASE_CLASS = 'audio-player'
 
 export const AudioPlayer = React.memo(function AudioPlayer({
     worker,
+    midiSpeedFactor = 1,
     state = 'stopped',
     isMute = false,
     loopTimes = [null, null],
@@ -31,11 +33,11 @@ export const AudioPlayer = React.memo(function AudioPlayer({
     timeToNextNote = null,
     onMute,
     onChangeState,
-    onChangeTime,
 }: AudioPlayerProps) {
     const isPlaying = state === 'playing'
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const [startLoop, endLoop] = loopTimes
+    const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
 
     const checkIsEnd = useCallback(
         (time: number) => {
@@ -52,7 +54,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
             if (startLoop && endLoop && time > endLoop) {
                 const previousState = state
                 onChangeState('seeking')
-                onChangeTime(startLoop - 100 ?? 0) // starts a bit before the loop start
+                setWorkerInitialTime(startLoop - 100 ?? 0) // starts a bit before the loop start
                 /*
                 Yeah, this setTimeout() is ugly...but otherwise the state is not restored, and we can't use flushSync here
             */
@@ -61,7 +63,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
                 }, 100)
             }
         },
-        [state, endLoop, onChangeState, onChangeTime, startLoop]
+        [state, endLoop, onChangeState, startLoop]
     )
 
     const checkForWaitMode = useCallback(
@@ -93,7 +95,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
-        onChangeTime(parseFloat(value))
+        setWorkerInitialTime(parseFloat(value))
     }
 
     function handleClickOnPlay() {
@@ -120,6 +122,12 @@ export const AudioPlayer = React.memo(function AudioPlayer({
 
     return (
         <div className={BASE_CLASS}>
+            <IntervalWorkerManager
+                worker={worker}
+                startAt={workerInitialTime}
+                state={state}
+                midiSpeedFactor={midiSpeedFactor}
+            />
             <ProgressBar
                 worker={worker}
                 duration={duration}
@@ -139,7 +147,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
                 worker={worker}
                 state={state}
                 onChangeState={onChangeState}
-                onChangeTime={onChangeTime}
+                onChangeTime={setWorkerInitialTime}
             />
         </div>
     )

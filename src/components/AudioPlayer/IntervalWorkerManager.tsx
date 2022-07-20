@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react'
 import { AudioPlayerState } from '../../types'
 import { usePrevious } from '../../_hooks'
 
-interface TimeContextProviderProps {
+interface IntervalWorkerManagerProps {
     worker: Worker
-    audioPlayerState: AudioPlayerState
+    state: AudioPlayerState
     startAt: number
     midiSpeedFactor: number
 }
 
-export function TimeContextProvider({
+export function IntervalWorkerManager({
     worker,
     midiSpeedFactor,
     startAt,
-    audioPlayerState,
-}: TimeContextProviderProps) {
+    state,
+}: IntervalWorkerManagerProps) {
     const [isStarted, setIsStarted] = useState(false)
     const prevMidiSpeedFactor = usePrevious(midiSpeedFactor)
 
@@ -65,7 +65,7 @@ export function TimeContextProvider({
             })
         }
 
-        switch (audioPlayerState) {
+        switch (state) {
             case 'playing':
                 start()
                 break
@@ -79,7 +79,7 @@ export function TimeContextProvider({
                 seekTo()
                 break
         }
-    }, [audioPlayerState, isStarted, midiSpeedFactor, startAt, worker])
+    }, [state, isStarted, midiSpeedFactor, startAt, worker])
 
     return null
 }

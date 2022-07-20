@@ -18,7 +18,6 @@ import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
 import { MidiMessageManager } from './components/MidiMessageManager'
 import { MidiTitle } from './components/MidiTitle'
-import { TimeContextProvider } from './components/TimeContextProvider'
 import { MidiImporter } from './components/MidiImporter'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
 import { MidiAccessMode } from './types/MidiAccessMode'
@@ -47,7 +46,6 @@ function App() {
     const [midiOutput, setMidiOutput] = useState<MIDIOutput | null>(null)
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
-    const [audioPlayerTime, setAudioPlayerTime] = useState<number>(0)
     const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
 
@@ -99,6 +97,7 @@ function App() {
             <div className="item topbar">
                 {midiMetas ? (
                     <AudioPlayer
+                        midiSpeedFactor={midiSpeedFactor}
                         worker={worker}
                         state={audioPlayerState}
                         isMute={isMute}
@@ -107,7 +106,6 @@ function App() {
                         duration={midiMetas.midiDuration}
                         loopTimes={loopTimes}
                         onChangeState={setAudioPlayerState}
-                        onChangeTime={setAudioPlayerTime}
                         onMute={setIsMute}
                     />
                 ) : (
@@ -176,29 +174,21 @@ function App() {
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     onKeyPressed={setActiveNotes}
                 />
-                <>
-                    <TimeContextProvider
-                        worker={worker}
-                        startAt={audioPlayerTime}
-                        audioPlayerState={audioPlayerState}
-                        midiSpeedFactor={midiSpeedFactor}
-                    />
-                    {activeInstruments.map(({ channel, name, notes }) => {
-                        return (
-                            <InstrumentPlayer
-                                audioPlayerState={audioPlayerState}
-                                midiInput={midiInput}
-                                audioContext={AUDIO_CONTEXT}
-                                key={`${name}-${channel}`}
-                                isMute={isMute}
-                                activeNotes={activeNotes}
-                                instrumentName={name}
-                                notesToLoad={Array.from(notes)}
-                                channel={channel}
-                            />
-                        )
-                    })}
-                </>
+                {activeInstruments.map(({ channel, name, notes }) => {
+                    return (
+                        <InstrumentPlayer
+                            audioPlayerState={audioPlayerState}
+                            midiInput={midiInput}
+                            audioContext={AUDIO_CONTEXT}
+                            key={`${name}-${channel}`}
+                            isMute={isMute}
+                            activeNotes={activeNotes}
+                            instrumentName={name}
+                            notesToLoad={[...notes]}
+                            channel={channel}
+                        />
+                    )
+                })}
             </div>
         </div>
     )

@@ -37,7 +37,6 @@ describe('AudioPlayer', () => {
                 duration={1000}
                 onMute={() => {}}
                 onChangeState={() => {}}
-                onChangeTime={() => {}}
             ></AudioPlayer>
         )
 
@@ -58,7 +57,6 @@ describe('AudioPlayer', () => {
                 duration={1000}
                 onMute={() => {}}
                 onChangeState={onChangeState}
-                onChangeTime={() => {}}
             ></AudioPlayer>
         )
         clickPlay()
@@ -75,7 +73,6 @@ describe('AudioPlayer', () => {
                 duration={1000}
                 onMute={() => {}}
                 onChangeState={onChangeState}
-                onChangeTime={() => {}}
             ></AudioPlayer>
         )
         expect(worker.addEventListener).toHaveBeenCalled()
@@ -91,7 +88,6 @@ describe('AudioPlayer', () => {
                 duration={1000}
                 onMute={() => {}}
                 onChangeState={() => {}}
-                onChangeTime={() => {}}
             ></AudioPlayer>
         )
         mockWorkerTimeEvent(1200) // exceeds the duration
