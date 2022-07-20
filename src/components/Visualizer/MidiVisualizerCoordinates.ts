@@ -318,9 +318,16 @@ const noteCoordinatesToActiveNotes = (
 
 export function getSectionCoordinates(
     notesCoordinates: SectionNoteCoordinates[] | undefined,
-    indexToDraw: number
-) {
+    indexToDraw: number,
+    height: number
+): MidiVisualizerNoteCoordinates[] {
     if (!notesCoordinates) return []
     const section = notesCoordinates.find((section) => indexToDraw.toString() in section)
-    return section ? Object.values(section)[0] : []
+    const coordinates: MidiVisualizerNoteCoordinates[] = section ? Object.values(section)[0] : []
+    return coordinates.map((coordinate) => {
+        return {
+            ...coordinate,
+            y: coordinate.y - indexToDraw * height,
+        }
+    })
 }

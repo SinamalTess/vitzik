@@ -1,18 +1,25 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './Visualizer.scss'
-import { ActiveNote, AudioPlayerState, Instrument, MidiMetas, MidiMode } from '../../types'
+import {
+    ActiveNote,
+    AudioPlayerState,
+    Instrument,
+    MidiMetas,
+    MidiMode,
+    MidiVisualizerNoteCoordinates,
+} from '../../types'
 import { findLast, isEqual } from 'lodash'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerSection } from './VisualizerSection'
 import { VisualizerNotesTracks } from './VisualizerNotesTracks'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { getSectionCoordinates, init, mergeNotesCoordinates } from './MidiVisualizerCoordinates'
-import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 import { LoopTimes } from '../../types/LoopTimes'
 
 interface VisualizerProps {
+    worker: Worker
     activeInstruments: Instrument[]
     midiFile: IMidiFile
     midiMode: MidiMode
@@ -34,6 +41,7 @@ export const BASE_CLASS = 'visualizer'
 
 export const Visualizer = WithContainerDimensions(
     ({
+        worker,
         activeInstruments,
         midiMode,
         midiFile,
@@ -49,50 +57,67 @@ export const Visualizer = WithContainerDimensions(
         onChangeTimeToNextNote,
         onChangeLoopTimes,
     }: VisualizerProps) => {
-        const ref = useRef<HTMLDivElement>(null)
+        const svgRef = useRef<HTMLDivElement>(null)
         let animation = useRef<number>(0)
-        const midiCurrentTime = useContext(MidiCurrentTime)
+        const [coordinates, setCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>([])
 
-        const midiVisualizerCoordinates = useMemo(
+        const coordinatesFactory = useMemo(
             () => init(midiMetas, height, width, MS_PER_SECTION),
             [height, midiMetas, width]
         )
 
-        const allNotesCoordinates = useMemo(
-            () => midiVisualizerCoordinates.getNotesCoordinates(midiFile),
-            [midiVisualizerCoordinates, midiFile]
+        const allCoordinates = useMemo(
+            () => coordinatesFactory.getNotesCoordinates(midiFile),
+            [coordinatesFactory, midiFile]
         )
 
-        const notesCoordinates = useMemo(
-            () => mergeNotesCoordinates(activeTracks, allNotesCoordinates),
-            [allNotesCoordinates, activeTracks]
+        const activeTracksCoordinates = useMemo(
+            () => mergeNotesCoordinates(activeTracks, allCoordinates),
+            [allCoordinates, activeTracks]
         )
 
-        const indexToDraw: { [key: number]: number } = midiVisualizerCoordinates.getIndexToDraw(
-            midiCurrentTime,
-            audioPlayerState
-        )
+        const updateInstruments = useCallback(
+            (time: number) => {
+                const newInstruments = activeInstruments.map((activeInstrument) => {
+                    const sameChannelInstruments = midiMetas.instruments.filter(
+                        (instrument) => instrument.channel === activeInstrument.channel
+                    )
+                    if (sameChannelInstruments.length) {
+                        return (
+                            findLast(
+                                sameChannelInstruments,
+                                (sameChannelInstrument) => sameChannelInstrument.timestamp <= time
+                            ) ?? activeInstrument
+                        )
+                    }
+                    return activeInstrument
+                })
 
-        const coordinates = [
-            getSectionCoordinates(notesCoordinates, indexToDraw[0]),
-            getSectionCoordinates(notesCoordinates, indexToDraw[1]),
-        ]
-
-        useEffect(() => {
-            function animationStep() {
-                const top = midiVisualizerCoordinates.getPercentageTopSection(midiCurrentTime)
-                const svgs = ref.current?.getElementsByTagName('svg')
-
-                if (svgs) {
-                    svgs[0].style.transform = `scaleY(-1) translateY(${top[0]})`
-                    svgs[1].style.transform = `scaleY(-1) translateY(${top[1]})`
+                if (!isEqual(newInstruments, activeInstruments)) {
+                    onChangeInstruments(newInstruments)
                 }
-            }
+            },
+            [activeInstruments, midiMetas.instruments, onChangeInstruments]
+        )
 
-            function updateActiveNotes() {
-                const newActiveNotes = midiVisualizerCoordinates.getActiveNotes(
-                    notesCoordinates,
-                    midiCurrentTime
+        const updateTimeToNextNote = useCallback(
+            (time: number) => {
+                if (midiMode === 'wait') {
+                    const timeToNextNote = coordinatesFactory.getTimeToNextNote(
+                        activeTracksCoordinates,
+                        time
+                    )
+                    onChangeTimeToNextNote(timeToNextNote)
+                }
+            },
+            [midiMode, coordinatesFactory, activeTracksCoordinates, onChangeTimeToNextNote]
+        )
+
+        const updateActiveNotes = useCallback(
+            (time: number) => {
+                const newActiveNotes = coordinatesFactory.getActiveNotes(
+                    activeTracksCoordinates,
+                    time
                 )
 
                 onChangeActiveNotes((activeNotes: ActiveNote[]) => {
@@ -103,67 +128,72 @@ export const Visualizer = WithContainerDimensions(
                         ? activeNotes
                         : [...newActiveNotes, ...midiInputNotes]
                 })
-            }
+            },
+            [coordinatesFactory, activeTracksCoordinates, onChangeActiveNotes]
+        )
 
-            function updateTimeToNextNote() {
-                if (midiMode === 'wait') {
-                    const timeToNextNote = midiVisualizerCoordinates.getTimeToNextNote(
-                        notesCoordinates,
-                        midiCurrentTime
-                    )
-                    onChangeTimeToNextNote(timeToNextNote)
+        const calcCoordinates = useCallback(
+            (time: number) => {
+                const indexToDraw = coordinatesFactory.getIndexToDraw(time, audioPlayerState)
+
+                setCoordinates([
+                    getSectionCoordinates(activeTracksCoordinates, indexToDraw[0], height),
+                    getSectionCoordinates(activeTracksCoordinates, indexToDraw[1], height),
+                ])
+            },
+            [activeTracksCoordinates, audioPlayerState, coordinatesFactory, height]
+        )
+
+        const animate = useCallback(
+            (time: number) => {
+                function animationStep() {
+                    const top = coordinatesFactory.getPercentageTopSection(time)
+                    const svgs = svgRef.current?.getElementsByTagName('svg')
+
+                    if (svgs) {
+                        svgs[0].style.transform = `scaleY(-1) translateY(${top[0]})`
+                        svgs[1].style.transform = `scaleY(-1) translateY(${top[1]})`
+                    }
                 }
-            }
 
-            animation.current = window.requestAnimationFrame(animationStep)
-            updateActiveNotes()
-            updateTimeToNextNote()
-        }, [
-            midiCurrentTime,
-            midiMode,
-            midiVisualizerCoordinates,
-            notesCoordinates,
-            onChangeActiveNotes,
-            onChangeTimeToNextNote,
-        ])
+                animation.current = window.requestAnimationFrame(animationStep)
+            },
+            [coordinatesFactory]
+        )
 
         useEffect(() => {
-            function updateInstruments() {
-                const newInstruments = activeInstruments.map((activeInstrument) => {
-                    const sameChannelInstruments = midiMetas.instruments.filter(
-                        (instrument) => instrument.channel === activeInstrument.channel
-                    )
-                    if (sameChannelInstruments.length) {
-                        return (
-                            findLast(
-                                sameChannelInstruments,
-                                (sameChannelInstrument) =>
-                                    sameChannelInstrument.timestamp <= midiCurrentTime
-                            ) ?? activeInstrument
-                        )
-                    }
-                    return activeInstrument
-                })
-
-                if (!isEqual(newInstruments, activeInstruments)) {
-                    onChangeInstruments(newInstruments)
-                    console.log('Updated instruments')
-                }
+            function onTimeChange(message: MessageEvent) {
+                const { time } = message.data
+                animate(time)
+                calcCoordinates(time)
+                updateActiveNotes(time)
+                updateTimeToNextNote(time)
+                updateInstruments(time)
             }
 
-            updateInstruments()
-        }, [activeInstruments, midiCurrentTime, midiMetas.instruments, onChangeInstruments])
+            worker.addEventListener('message', onTimeChange)
+
+            return function cleanup() {
+                worker.removeEventListener('message', onTimeChange)
+            }
+        }, [
+            animate,
+            calcCoordinates,
+            updateActiveNotes,
+            updateInstruments,
+            updateTimeToNextNote,
+            worker,
+        ])
 
         if (!height || !width) return null
 
         return (
-            <div className={BASE_CLASS} ref={ref}>
+            <div className={BASE_CLASS} ref={svgRef}>
                 {[0, 1].map((index) => {
                     return (
                         <VisualizerSection
                             index={index}
                             key={index}
-                            indexToDraw={indexToDraw[index]}
                             notesCoordinates={coordinates[index]}
                             height={height}
                             width={width}
@@ -173,6 +203,7 @@ export const Visualizer = WithContainerDimensions(
                 <VisualizerNotesTracks height={height} width={width} />
                 {isEditingLoop ? (
                     <LoopEditor
+                        worker={worker}
                         loopTimes={loopTimes}
                         width={width}
                         height={height}

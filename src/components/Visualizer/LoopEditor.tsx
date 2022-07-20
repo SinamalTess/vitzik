@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
+import React, { useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimes } from '../../types/LoopTimes'
 import { msToTime } from '../../utils'
@@ -25,6 +24,7 @@ function LoopLine({ y, width, timestamp }: LineProps) {
 export const BASE_CLASS = 'loop-editor'
 
 interface LoopEditorProps {
+    worker: Worker
     loopTimes: LoopTimes
     height: number
     width: number
@@ -33,17 +33,29 @@ interface LoopEditorProps {
 }
 
 export function LoopEditor({
+    worker,
     loopTimes,
     height,
     width,
     msPerSection,
     onChangeLoopTimes,
 }: LoopEditorProps) {
-    const midiCurrentTime = useContext(MidiCurrentTime)
     const ratio = height / msPerSection
     const allLinesDrawn = !loopTimes.includes(null)
     const [previewLine, setPreviewLine] = useState(0)
     const [startLoop, endLoop] = loopTimes
+    const [time, setTime] = useState(0)
+
+    useEffect(() => {
+        function onTimeChange(message: MessageEvent) {
+            const { time } = message.data
+            setTime(time)
+        }
+        worker.addEventListener('message', onTimeChange)
+        return function cleanup() {
+            worker.removeEventListener('message', onTimeChange)
+        }
+    }, [])
 
     useEffect(() => {
         if (allLinesDrawn) {
@@ -52,7 +64,7 @@ export function LoopEditor({
     }, [allLinesDrawn])
 
     function handleMouseMove(event: React.MouseEvent<SVGElement>) {
-        const timestamp = (height - (event.clientY - 40)) / ratio + midiCurrentTime
+        const timestamp = (height - (event.clientY - 40)) / ratio + time
         if (startLoop) {
             if (timestamp > startLoop) {
                 setPreviewLine(timestamp)
@@ -63,7 +75,7 @@ export function LoopEditor({
     }
 
     function handleClick(event: React.MouseEvent<SVGElement>) {
-        const timestamp = (height - (event.clientY - 40)) / ratio + midiCurrentTime
+        const timestamp = (height - (event.clientY - 40)) / ratio + time
         onChangeLoopTimes((loopTimes) => {
             const [startLoop, endLoop] = loopTimes
             if (startLoop === null) {
@@ -77,8 +89,7 @@ export function LoopEditor({
     }
 
     const lines = loopTimes.filter(
-        (loopTime) =>
-            loopTime && loopTime > midiCurrentTime && loopTime < midiCurrentTime + msPerSection
+        (loopTime) => loopTime && loopTime > time && loopTime < time + msPerSection
     ) as number[]
 
     const props = {
@@ -95,13 +106,13 @@ export function LoopEditor({
         >
             {lines.length
                 ? lines.map((line) => {
-                      const y = height - (line - midiCurrentTime) * ratio
+                      const y = height - (line - time) * ratio
                       return <LoopLine y={y} timestamp={line} width={width} />
                   })
                 : null}
             {previewLine ? (
                 <LoopLine
-                    y={height - (previewLine - midiCurrentTime) * ratio}
+                    y={height - (previewLine - time) * ratio}
                     timestamp={previewLine}
                     width={width}
                 />

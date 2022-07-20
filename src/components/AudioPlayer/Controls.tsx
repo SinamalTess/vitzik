@@ -8,6 +8,7 @@ import { AudioPlayerState, MsPerBeat } from '../../types'
 import { Divider } from '../_presentational/Divider'
 
 interface ControlsProps {
+    worker: Worker
     isEditingLoop: boolean
     isMute: boolean
     audioPlayerState: AudioPlayerState
@@ -18,10 +19,10 @@ interface ControlsProps {
     onClickOnLoop: () => void
     onMute: (isMute: boolean) => void
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
-    onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 export function Controls({
+    worker,
     isEditingLoop,
     isMute,
     midiSpeedFactor,
@@ -31,7 +32,6 @@ export function Controls({
     onStop,
     onMute,
     onChangeMidiSpeedFactor,
-    onChangeMidiStartingTime,
     onClickOnLoop,
 }: ControlsProps) {
     return (
@@ -52,9 +52,9 @@ export function Controls({
             </Tooltip>
             <Divider orientation="vertical" />
             <BpmSelector
+                worker={worker}
                 midiSpeedFactor={midiSpeedFactor}
                 onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
-                onChangeMidiStartingTime={onChangeMidiStartingTime}
                 allMsPerBeat={allMsPerBeat}
             />
             <Divider orientation="vertical" />

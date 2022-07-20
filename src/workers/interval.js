@@ -1,28 +1,40 @@
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
-    const fps = 30
+    const fps = 40
     const interval = 1000 / fps
     let timeElapsed = 0
+    let clock = null
+
+    const clearClock = () => {
+        clearInterval(clock)
+        timeElapsed = 0
+    }
     // eslint-disable-next-line no-restricted-globals
     self.onmessage = (message) => {
-        const { code } = message.data
+        const { code, startAt, midiSpeedFactor } = message.data
         if (code === 'start') {
-            const { midiSpeedFactor, startingTime } = message.data
-
-            setInterval(() => {
+            clock = setInterval(() => {
                 postMessage({
-                    code: 'interval',
-                    interval,
-                    currentTime: startingTime + timeElapsed,
+                    time: timeElapsed ?? startAt,
                 })
+
                 timeElapsed = timeElapsed + interval / midiSpeedFactor
             }, interval)
         } else if (code === 'seeking') {
-            const { startingTime } = message.data
+            clearInterval(clock)
             postMessage({
-                code: 'interval',
-                interval,
-                currentTime: startingTime,
+                time: startAt,
+            })
+            timeElapsed = startAt
+        } else if (code === 'stopped') {
+            clearClock()
+            postMessage({
+                time: 0,
+            })
+        } else if (code === 'paused') {
+            clearInterval(clock)
+            postMessage({
+                time: timeElapsed,
             })
         }
     }

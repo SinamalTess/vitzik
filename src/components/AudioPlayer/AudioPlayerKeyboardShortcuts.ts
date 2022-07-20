@@ -1,26 +1,40 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { registerShortcut } from '../../utils/keyboard_shortcuts'
 import { AudioPlayerState } from '../../types'
 
 interface AudioPlayerKeyboardShortcutsProps {
+    worker: Worker
     audioPlayerState: AudioPlayerState
-    midiCurrentTime: number
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
-    onChangeMidiStartingTime: React.Dispatch<React.SetStateAction<number>>
+    onChangeAudioPlayerTime: React.Dispatch<React.SetStateAction<number>>
 }
 
 export function AudioPlayerKeyboardShortcuts({
+    worker,
     audioPlayerState,
-    midiCurrentTime,
-    onChangeMidiStartingTime,
+    onChangeAudioPlayerTime,
     onChangeAudioPlayerState,
 }: AudioPlayerKeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(audioPlayerState)
+    const midiCurrentTime = useRef<number>(0)
+
+    useEffect(() => {
+        function onTimeUpdate(message: MessageEvent) {
+            const { time } = message.data
+            midiCurrentTime.current = time
+        }
+
+        worker.addEventListener('message', onTimeUpdate)
+
+        return function cleanup() {
+            worker.removeEventListener('message', onTimeUpdate)
+        }
+    }, [worker])
 
     function seekFor(value: number) {
-        onChangeMidiStartingTime(midiCurrentTime)
+        onChangeAudioPlayerTime(midiCurrentTime.current)
         onChangeAudioPlayerState('seeking')
-        onChangeMidiStartingTime((midiStartingTime) => {
+        onChangeAudioPlayerTime((midiStartingTime) => {
             return Math.max(0, midiStartingTime + value) // can't seek below 0
         })
     }

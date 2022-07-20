@@ -5,7 +5,6 @@ import { MidiVisualizerNoteCoordinates } from '../../types'
 
 interface VisualizerSectionProps {
     index: number
-    indexToDraw: number
     height: number
     width: number
     notesCoordinates: MidiVisualizerNoteCoordinates[] | null | undefined
@@ -13,17 +12,11 @@ interface VisualizerSectionProps {
 
 interface RectanglesProps {
     notesCoordinates: MidiVisualizerNoteCoordinates[]
-    height: number
-    indexToDraw: number
 }
 
 const BASECLASS = `visualizer__section`
 
-const Notes = React.memo(function Notes({
-    notesCoordinates,
-    height,
-    indexToDraw,
-}: RectanglesProps) {
+const Notes = React.memo(function Notes({ notesCoordinates }: RectanglesProps) {
     return (
         <>
             {notesCoordinates.map(({ channel, y, x, w, h, id, name }) => (
@@ -32,7 +25,7 @@ const Notes = React.memo(function Notes({
                     key={id}
                     className={`channel--${channel}`}
                     x={x}
-                    y={y - indexToDraw * height}
+                    y={y}
                     rx="5"
                     ry="5"
                     width={w}
@@ -45,7 +38,6 @@ const Notes = React.memo(function Notes({
 
 export function VisualizerSection({
     index,
-    indexToDraw,
     height,
     width,
     notesCoordinates,
@@ -59,13 +51,7 @@ export function VisualizerSection({
             data-testid={`${BASECLASS}--${index}`}
             className={classNames}
         >
-            {notesCoordinates ? (
-                <Notes
-                    notesCoordinates={notesCoordinates}
-                    height={height}
-                    indexToDraw={indexToDraw}
-                />
-            ) : null}
+            {notesCoordinates ? <Notes notesCoordinates={notesCoordinates} /> : null}
         </svg>
     )
 }

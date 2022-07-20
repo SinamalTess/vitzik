@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { PresentationalComponentBasicProps } from '../types'
 
 interface RangeSliderPros extends PresentationalComponentBasicProps {
-    value: string | number
+    value?: string | number
     min?: number
     max?: number
     step?: number
@@ -15,17 +15,10 @@ interface RangeSliderPros extends PresentationalComponentBasicProps {
 
 const BASE_CLASS = 'range-slider'
 
-export function RangeSlider({
-    style,
-    value,
-    className,
-    min = 0,
-    max = 100,
-    step,
-    onChange,
-    onMouseUp,
-    onMouseDown,
-}: RangeSliderPros) {
+export const RangeSlider = React.forwardRef<HTMLInputElement, RangeSliderPros>(function RangeSlider(
+    { style, value, className, min = 0, max = 100, step, onChange, onMouseUp, onMouseDown },
+    ref
+) {
     function handleMouseUp(event: React.MouseEvent<HTMLInputElement>) {
         if (onMouseUp) {
             onMouseUp(event)
@@ -46,6 +39,7 @@ export function RangeSlider({
 
     return (
         <input
+            ref={ref}
             type="range"
             className={classNames}
             min={min}
@@ -58,4 +52,4 @@ export function RangeSlider({
             onMouseDown={handleMouseDown}
         />
     )
-}
+})

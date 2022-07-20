@@ -1,28 +1,49 @@
 import { Tooltip } from '../_presentational/Tooltip'
 import { RangeSlider } from '../_presentational/RangeSlider'
-import React, { useContext } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { msToTime, normalizeTitle } from '../../utils'
-import { MidiCurrentTime } from '../TimeContextProvider/TimeContextProvider'
 
 const BASE_CLASS = 'audio-player'
 
 interface ProgressBarProps {
+    worker: Worker
     midiDuration: number
     midiTitle?: string
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-    onMouseDown: () => void
-    onMouseUp: () => void
+    onMouseDown: (event: React.MouseEvent<HTMLInputElement>) => void
+    onMouseUp: (event: React.MouseEvent<HTMLInputElement>) => void
 }
 
 export function ProgressBar({
+    worker,
     midiDuration,
     midiTitle,
     onChange,
     onMouseDown,
     onMouseUp,
 }: ProgressBarProps) {
-    const midiCurrentTime = useContext(MidiCurrentTime)
-    const currentTime = msToTime(midiCurrentTime)
+    const refTime = useRef<HTMLSpanElement>(null)
+    const refBar = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (refTime.current && refBar.current) {
+            refTime.current.innerText = msToTime(0)
+            refBar.current.value = '0'
+        }
+        function onTimeChange(message: MessageEvent) {
+            const { time } = message.data
+            const readableTime = msToTime(time)
+            if (refTime.current && refBar.current) {
+                refTime.current.innerText = readableTime
+                refBar.current.value = time
+            }
+        }
+        worker.addEventListener('message', onTimeChange)
+        return function cleanup() {
+            worker.removeEventListener('message', onTimeChange)
+        }
+    }, [])
+
     const totalTime = msToTime(midiDuration)
     const title = normalizeTitle(midiTitle ?? '')
     return (
@@ -31,12 +52,10 @@ export function ProgressBar({
                 <span className={`${BASE_CLASS}__track-title`}>{title}</span>
                 {title}
             </Tooltip>
-            <span className={`${BASE_CLASS}__current-time`} role="timer">
-                {currentTime}
-            </span>
+            <span className={`${BASE_CLASS}__current-time`} role="timer" ref={refTime} />
             <RangeSlider
+                ref={refBar}
                 className={`${BASE_CLASS}__progress-bar`}
-                value={midiCurrentTime}
                 max={midiDuration}
                 onChange={onChange}
                 onMouseDown={onMouseDown}

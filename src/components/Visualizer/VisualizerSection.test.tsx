@@ -41,7 +41,6 @@ describe('VisualizerSection', () => {
         render(
             <VisualizerSection
                 notesCoordinates={notesCoordinates}
-                indexToDraw={0}
                 width={100}
                 height={50}
                 index={0}

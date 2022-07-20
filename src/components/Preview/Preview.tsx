@@ -6,6 +6,7 @@ import { ErrorBoundary } from '../_presentational/ErrorBoundary'
 import { LoopTimes } from '../../types/LoopTimes'
 
 interface PreviewProps {
+    worker: Worker
     activeInstruments: Instrument[]
     midiMode: MidiMode
     loopTimes: LoopTimes
@@ -20,7 +21,8 @@ interface PreviewProps {
     onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
 }
 
-export function Preview({
+export const Preview = React.memo(function Preview({
+    worker,
     loopTimes,
     activeInstruments,
     midiMode,
@@ -38,6 +40,7 @@ export function Preview({
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <Visualizer
+                    worker={worker}
                     loopTimes={loopTimes}
                     activeInstruments={activeInstruments}
                     midiFile={midiFile}
@@ -54,4 +57,4 @@ export function Preview({
             ) : null}
         </ErrorBoundary>
     )
-}
+})

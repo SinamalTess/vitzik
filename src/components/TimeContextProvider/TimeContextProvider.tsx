@@ -1,73 +1,85 @@
-import { WebWorker } from '../../workers/WebWorker'
-// @ts-ignore
-import workerInterval from '../../workers/interval.js'
-import React, { ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AudioPlayerState } from '../../types'
-
-export const MidiCurrentTime = React.createContext(0)
+import { usePrevious } from '../../_hooks'
 
 interface TimeContextProviderProps {
+    worker: Worker
     audioPlayerState: AudioPlayerState
-    startingTime: number
+    startAt: number
     midiSpeedFactor: number
-    children: ReactNode
 }
 
 export function TimeContextProvider({
+    worker,
     midiSpeedFactor,
-    startingTime,
+    startAt,
     audioPlayerState,
-    children,
 }: TimeContextProviderProps) {
-    const [time, setTime] = useState<number>(0)
+    const [isStarted, setIsStarted] = useState(false)
+    const prevMidiSpeedFactor = usePrevious(midiSpeedFactor)
 
     useEffect(() => {
-        let worker: Worker = WebWorker(workerInterval)
+        const start = () => {
+            setIsStarted(true)
+            if (!isStarted) {
+                worker.postMessage({
+                    code: 'start',
+                    startAt,
+                    midiSpeedFactor,
+                })
+            }
+        }
 
-        function startInterval() {
+        const pause = () => {
+            setIsStarted(false)
+            worker.postMessage({
+                code: 'paused',
+            })
+        }
+
+        const seekTo = () => {
+            setIsStarted(false)
+            worker.postMessage({
+                code: 'seeking',
+                startAt,
+            })
+        }
+
+        const stop = () => {
+            setIsStarted(false)
+            worker.postMessage({
+                code: 'stopped',
+            })
+        }
+
+        if (prevMidiSpeedFactor !== midiSpeedFactor) {
+            setIsStarted(false)
+            worker.postMessage({
+                code: 'paused',
+            })
+            setIsStarted(true)
             worker.postMessage({
                 code: 'start',
-                startingTime,
+                startAt,
                 midiSpeedFactor,
             })
         }
 
-        function workerListener(message: MessageEvent) {
-            const { code } = message.data
-            if (code === 'interval') {
-                const { currentTime } = message.data
-                setTime(currentTime)
-            }
-        }
-
         switch (audioPlayerState) {
             case 'playing':
-                startInterval()
-                worker.addEventListener('message', workerListener)
+                start()
                 break
             case 'stopped':
-                worker.terminate()
-                setTime(0)
-                worker.removeEventListener('message', workerListener)
+                stop()
                 break
             case 'paused':
-                worker.terminate()
-                worker.removeEventListener('message', workerListener)
+                pause()
                 break
             case 'seeking':
-                worker.addEventListener('message', workerListener)
-                worker.postMessage({
-                    code: 'seeking',
-                    startingTime,
-                })
+                seekTo()
                 break
         }
+    }, [audioPlayerState, isStarted, midiSpeedFactor, startAt, worker])
 
-        return function cleanup() {
-            worker.terminate()
-            worker.removeEventListener('message', workerListener)
-        }
-    }, [audioPlayerState, midiSpeedFactor, startingTime])
-
-    return <MidiCurrentTime.Provider value={time}>{children}</MidiCurrentTime.Provider>
+    return null
 }
