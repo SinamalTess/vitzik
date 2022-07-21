@@ -117,19 +117,19 @@ export const Settings = React.memo(function Settings({
 
     return (
         <div className={BASE_CLASS} role="toolbar">
-            <Tooltip showOnHover>
-                <Button
-                    icon={'loop'}
-                    onClick={handleClickOnLoop}
-                    variant="link"
-                    color={isEditingLoop ? 'primary' : 'secondary'}
-                >
-                    {isEditingLoop ? 'clear' : ''}
-                </Button>
-                Loop over a range of time
-            </Tooltip>
             {midiMetas ? (
                 <>
+                    <Tooltip showOnHover>
+                        <Button
+                            icon={'loop'}
+                            onClick={handleClickOnLoop}
+                            variant="link"
+                            color={isEditingLoop ? 'primary' : 'secondary'}
+                        >
+                            {isEditingLoop ? 'clear' : ''}
+                        </Button>
+                        Loop over a range of time
+                    </Tooltip>
                     <Divider orientation="vertical" />
                     <BpmSelector
                         worker={worker}
