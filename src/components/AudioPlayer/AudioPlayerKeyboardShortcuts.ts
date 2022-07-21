@@ -12,8 +12,8 @@ interface AudioPlayerKeyboardShortcutsProps {
 export function AudioPlayerKeyboardShortcuts({
     worker,
     state,
-    onChangeTime,
     onChangeState,
+    onChangeTime,
 }: AudioPlayerKeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const midiCurrentTime = useRef<number>(0)

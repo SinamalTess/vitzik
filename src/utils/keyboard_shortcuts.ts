@@ -16,18 +16,18 @@ export function registerShortcut(
     }
 
     function subscribe() {
-        document.documentElement.addEventListener('keydown', onKeyDownKeyboardShortcut)
+        document.addEventListener('keydown', onKeyDownKeyboardShortcut)
         if (callbackKeyUp) {
-            document.documentElement.addEventListener('keyup', onKeyUpKeyboardShortcut)
+            document.addEventListener('keyup', onKeyUpKeyboardShortcut)
         }
     }
 
     subscribe()
 
     return function unsubscribe() {
-        document.documentElement.removeEventListener('keydown', onKeyDownKeyboardShortcut)
+        document.removeEventListener('keydown', onKeyDownKeyboardShortcut)
         if (callbackKeyUp) {
-            document.documentElement.removeEventListener('keyup', onKeyUpKeyboardShortcut)
+            document.removeEventListener('keyup', onKeyUpKeyboardShortcut)
         }
     }
 }

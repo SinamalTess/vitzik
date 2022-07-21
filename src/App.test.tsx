@@ -1,4 +1,4 @@
-import { screen, render, fireEvent } from '@testing-library/react'
+import { screen, render } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 import App from './App'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
@@ -47,12 +47,6 @@ describe('App', () => {
     })
 
     it('should let extra settings be opened', async () => {
-        render(<App />)
-        clickExtraSettings()
-        expect(screen.getByText(/User Instrument/i)).toBeVisible()
-    })
-
-    it('should let a midi file be dropped', async () => {
         render(<App />)
         clickExtraSettings()
         expect(screen.getByText(/User Instrument/i)).toBeVisible()

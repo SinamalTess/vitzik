@@ -22,9 +22,9 @@ interface VisualizerProps {
     worker: Worker
     activeInstruments: Instrument[]
     midiFile: IMidiFile
-    midiMode: MidiMode
-    loopTimes: LoopTimes
-    isEditingLoop: boolean
+    midiMode?: MidiMode
+    loopTimes?: LoopTimes
+    isEditingLoop?: boolean
     midiMetas: MidiMetas
     audioPlayerState: AudioPlayerState
     activeTracks: number[]
@@ -43,7 +43,7 @@ export const Visualizer = WithContainerDimensions(
     ({
         worker,
         activeInstruments,
-        midiMode,
+        midiMode = 'autoplay',
         midiFile,
         loopTimes,
         isEditingLoop,
@@ -201,7 +201,7 @@ export const Visualizer = WithContainerDimensions(
                     )
                 })}
                 <VisualizerNotesTracks height={height} width={width} />
-                {isEditingLoop ? (
+                {isEditingLoop && loopTimes ? (
                     <LoopEditor
                         worker={worker}
                         loopTimes={loopTimes}

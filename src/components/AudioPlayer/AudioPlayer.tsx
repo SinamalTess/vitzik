@@ -52,6 +52,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
         (time: number) => {
             // if loops are defined we restart at the beginning of the loop if the end is reached
             if (startLoop && endLoop && time > endLoop) {
+                // TODO: fix cause this can be 0
                 const previousState = state
                 onChangeState('seeking')
                 setWorkerInitialTime(startLoop - 100 ?? 0) // starts a bit before the loop start
