@@ -25,6 +25,7 @@ import { LoopTimes } from './types/LoopTimes'
 import { WebWorker } from './workers/WebWorker'
 // @ts-ignore
 import workerInterval from './workers/interval'
+import { useTitle } from './_hooks/useTitle'
 
 const AUDIO_CONTEXT = new AudioContext()
 let worker: Worker = WebWorker(workerInterval)
@@ -48,6 +49,8 @@ function App() {
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
+
+    useTitle('Vitzik')
 
     useEffect(() => {
         if (isMute) {
