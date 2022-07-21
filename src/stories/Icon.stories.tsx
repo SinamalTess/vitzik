@@ -1,6 +1,6 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-import { Icon } from '../components/_presentational/Icon/Icon'
+import { Icon } from '../components/_presentational/Icon'
 
 export default {
     title: 'Example/Icon',
@@ -10,4 +10,6 @@ export default {
 const Template: ComponentStory<typeof Icon> = (args) => <Icon {...args} />
 
 export const Default = Template.bind({})
-Default.args = {}
+Default.args = {
+    name: 'settings',
+}

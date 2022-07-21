@@ -1,8 +1,8 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
-import { ButtonGroup } from '../components/_presentational/ButtonGroup/ButtonGroup'
-import { Button } from '../components/_presentational/Button/Button'
+import { ButtonGroup } from '../components/_presentational/ButtonGroup'
+import { Button } from '../components/_presentational/Button'
 
 export default {
     title: 'Example/ButtonGroup',
@@ -11,8 +11,8 @@ export default {
 
 const Template: ComponentStory<typeof ButtonGroup> = (args) => (
     <ButtonGroup {...args}>
-        <Button>Test</Button>
-        <Button>Test 2</Button>
+        <Button>Button 1</Button>
+        <Button>Button 2</Button>
     </ButtonGroup>
 )
 
