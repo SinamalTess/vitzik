@@ -1,28 +1,12 @@
 import React from 'react'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MidiImporter } from './MidiImporter'
+import * as reactDeviceDetect from 'react-device-detect'
+import { dragInvalidFile, dragValidFile } from '../../tests/utils/midiImporter'
 
 jest.mock('midi-json-parser', () => () => {})
 
 const onMidiImport = jest.fn()
-
-const dragValidFile = () => {
-    const dropzone = screen.getByText(/dropzone/)
-    fireEvent.dragOver(dropzone, {
-        dataTransfer: {
-            items: [new File(['(⌐□_□)'], 'midi-track.midi', { type: 'audio/mid' })],
-        },
-    })
-}
-
-const dragInvalidFile = () => {
-    const dropzone = screen.getByText(/dropzone/)
-    fireEvent.dragOver(dropzone, {
-        dataTransfer: {
-            items: [new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' })],
-        },
-    })
-}
 
 describe('MidiImporter', () => {
     it('should start in pending state', () => {
@@ -43,5 +27,14 @@ describe('MidiImporter', () => {
         dragValidFile()
 
         expect(screen.getByText(/valid/)).toBeInTheDocument()
+    })
+
+    it('should show a input when using a mobile', () => {
+        // @ts-ignore
+        reactDeviceDetect.isDesktop = false
+        render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
+
+        expect(screen.getByText('Select a MIDI file to import')).toBeInTheDocument()
+        expect(screen.getByTestId('midiInput')).toBeInTheDocument()
     })
 })

@@ -262,7 +262,10 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
 }
 
 export function getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], midiCurrentTime: number) {
-    return findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= midiCurrentTime)
+    return (
+        findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= midiCurrentTime) ??
+        allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= midiCurrentTime)
+    )
 }
 
 const getNoteId = (trackIndex: number, note: MidiInputActiveNote) =>

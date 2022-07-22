@@ -90,7 +90,10 @@ export function BpmSelector({
         <span className={BASE_CLASS}>
             <span> BPM {midiSpeedFactor !== 1 ? `(x${speed})` : null}</span>
             <Tooltip show={isTooltipOpen} onHide={onHideTooltip} onShow={onShowTooltip}>
-                <Button onClick={handleClick}> {bpm}</Button>
+                <Button onClick={handleClick} aria-label={'beats per minute'}>
+                    {' '}
+                    {bpm}
+                </Button>
                 <span className={`${BASE_CLASS}__value`}>
                     Speed
                     <ButtonGroup size={'sm'}>

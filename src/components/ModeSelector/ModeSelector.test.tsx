@@ -1,23 +1,13 @@
-import { screen, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import React from 'react'
 import { ModeSelector } from './'
-import userEvent from '@testing-library/user-event'
+import { clickImportMode, clickLearningMode } from '../../tests/mocks/midiMode'
 
 jest.mock('../_presentational/Tooltip', () => ({
     Tooltip: ({ children }: any) => {
         return children
     },
 }))
-
-const clickLearningMode = () => {
-    const button = screen.getByText(/music theory/i)
-    userEvent.click(button)
-}
-
-const clickImportMode = () => {
-    const button = screen.getByText(/import/i)
-    userEvent.click(button)
-}
 
 describe('ModeSelector', () => {
     const onChange = jest.fn()

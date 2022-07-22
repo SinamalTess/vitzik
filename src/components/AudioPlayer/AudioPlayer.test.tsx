@@ -2,26 +2,18 @@ import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
 import { WorkerMock } from '../../tests/mocks/worker'
-import userEvent from '@testing-library/user-event'
 import { AudioPlayerState } from '../../types'
 import { act } from 'react-dom/test-utils'
+import {
+    clickPause,
+    clickPlay,
+    clickStop,
+    pressArrowDown,
+    pressArrowUp,
+    pressSpace,
+} from '../../tests/utils'
 
 const worker = new WorkerMock('')
-
-const clickPlay = () => {
-    const button = screen.getByLabelText(/paused button/)
-    userEvent.click(button)
-}
-
-const clickStop = () => {
-    const button = screen.getByLabelText(/stop button/)
-    userEvent.click(button)
-}
-
-const clickPause = () => {
-    const button = screen.getByLabelText(/play button/)
-    userEvent.click(button)
-}
 
 const mockWorkerTimeEvent = (newTime: number) => {
     worker.callback({
@@ -117,19 +109,19 @@ describe('AudioPlayer', () => {
     describe('shortcuts', () => {
         it('should change the state then the space bar is pressed', async () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            userEvent.keyboard('{space}')
+            pressSpace()
             expect(onChangeState).toHaveBeenCalledTimes(1)
         })
         it('should change the state then arrowUp key is pressed', async () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            userEvent.keyboard('{arrowup}')
+            pressArrowUp()
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)
         })
         it('should change the state then arrowDown key is pressed', async () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            userEvent.keyboard('{arrowdown}')
+            pressArrowDown()
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)

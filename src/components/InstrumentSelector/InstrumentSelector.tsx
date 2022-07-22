@@ -45,7 +45,7 @@ export function InstrumentSelector({ value, onChange }: InstrumentSelectorProps)
     }
 
     return (
-        <Select onChange={handleChange} value={value}>
+        <Select onChange={handleChange} value={value} data-testid={'instrument-selector'}>
             {MIDI_INSTRUMENTS.map((instrument) => (
                 <option value={instrument} key={instrument}>
                     {instrument}
