@@ -45,11 +45,9 @@ export function ExtraSettingsPanel({
     return (
         <SideBar open={isOpen} onClose={onClose}>
             <div className={BASE_CLASS} role="toolbar" aria-orientation="vertical">
-                <Switch isOn={showNotes} onClick={handleClick}>
-                    Show notes
-                </Switch>
-                <h4>User Instrument</h4>
-                <div className={`${BASE_CLASS}__user-instrument`}>
+                <h2 className={'pd-b-lg'}>Settings</h2>
+                <h3 className={'pd-b-md'}>User Instrument</h3>
+                <div className={`${BASE_CLASS}__user-instrument pd-b-md`}>
                     <img
                         src={`img/svg/instruments/instrument_${userInstrument}.svg`}
                         alt={`instrument ${userInstrument}`}
@@ -57,17 +55,19 @@ export function ExtraSettingsPanel({
                     />
                     <InstrumentSelector onChange={onChangeInstrument} value={userInstrument} />
                 </div>
+                <Switch isOn={showNotes} onClick={handleClick} className={'pd-md'}>
+                    Show notes
+                </Switch>
                 {midiMetas ? (
                     <>
-                        <h4>File infos</h4>
-                        <p>Ticks per beat : {midiMetas.ticksPerBeat}</p>
-                        <p>Format : {midiMetas.format}</p>
-                        <h4>Music System</h4>
+                        <h3>File infos</h3>
+                        <p className={'pd-md'}>Format : {midiMetas.format}</p>
+                        <h3>Music System</h3>
                         <MusicSystemSelector
                             onChange={onChangeMusicSystem}
                             musicSystem={musicSystem}
                         />
-                        <h4>Tracks</h4>
+                        <h3>Tracks</h3>
                         <MidiTrackList
                             activeInstruments={activeInstruments}
                             tracks={midiMetas.tracksMetas}
