@@ -29,6 +29,7 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(function S
         >
             {children}
             <Button
+                role="switch"
                 onClick={onClick}
                 className={clsx({ [`${BASE_CLASS}--active`]: isOn })}
                 aria-checked={isOn}

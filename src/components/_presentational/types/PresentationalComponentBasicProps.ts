@@ -5,4 +5,5 @@ export interface PresentationalComponentBasicProps {
     style?: React.CSSProperties
     'aria-label'?: string
     'data-testid'?: string
+    role?: string
 }

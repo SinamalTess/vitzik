@@ -27,6 +27,11 @@ export const clickVisualizationAt = (clientX: number, clientY: number) => {
     fireEvent.click(loopEditor, { clientX, clientY })
 }
 
+export const clickChangeMidiModeSwitch = () => {
+    const button = screen.getByRole('switch')
+    userEvent.click(button)
+}
+
 export const selectInstrument = (newInstrument: InstrumentUserFriendlyName) => {
     const select = screen.getByTestId('instrument-selector')
     fireEvent.change(select, { value: newInstrument })

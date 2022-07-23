@@ -7,6 +7,7 @@ import { act } from 'react-dom/test-utils'
 import {
     clickPause,
     clickPlay,
+    clickProgressBarAt,
     clickStop,
     pressArrowDown,
     pressArrowUp,
@@ -110,21 +111,31 @@ describe('AudioPlayer', () => {
     })
 
     describe('shortcuts', () => {
-        it('should change the state then the space bar is pressed', async () => {
+        it('should change the state then the space bar is pressed', () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
             pressSpace()
             expect(onChangeState).toHaveBeenCalledTimes(1)
         })
-        it('should change the state then arrowUp key is pressed', async () => {
+
+        it('should change the state then arrowUp key is pressed', () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
             pressArrowUp()
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)
         })
-        it('should change the state then arrowDown key is pressed', async () => {
+
+        it('should change the state then arrowDown key is pressed', () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
             pressArrowDown()
+            expect(onChangeState).toHaveBeenCalledWith('seeking')
+            expect(onChangeState).toHaveBeenCalledWith('paused')
+            expect(onChangeState).toHaveBeenCalledTimes(2)
+        })
+
+        it('should change the state when the progressbar is clicked', () => {
+            render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
+            clickProgressBarAt(100)
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)

@@ -1,9 +1,10 @@
-import { screen, render, act, waitFor } from '@testing-library/react'
+import { screen, render, act } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 import App from './App'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'
 import {
+    clickChangeMidiModeSwitch,
     clickBPM,
     clickBPMValue,
     clickExtraSettings,
@@ -13,9 +14,9 @@ import {
     clickVolume,
     pressSpace,
     selectInstrument,
+    clickProgressBarAt,
+    dropValidFile,
 } from './tests/utils'
-import { dropValidFile } from './tests/utils/midiImporter'
-import { clickKey } from './tests/utils/keyboard'
 
 interface TooltipProps {
     children: ReactNode
@@ -72,15 +73,18 @@ describe('App', () => {
 
     it('should render', async () => {
         render(<App />)
+
         expect(screen.getByText('Import Midi')).toBeInTheDocument()
         expect(screen.getByText(/Music theory/i)).toBeInTheDocument()
+        expect(screen.getByText(/no input/i)).toBeVisible()
+        expect(screen.getByLabelText(/settings/)).toBeVisible()
         await checkPromise()
     })
 
     it('should let extra settings be opened', async () => {
         render(<App />)
-
         clickExtraSettings()
+
         expect(screen.getByText(/User Instrument/i)).toBeVisible()
         expect(screen.getByAltText(/Acoustic Grand Keyboard/i)).toBeVisible()
         await checkPromise()
@@ -89,6 +93,7 @@ describe('App', () => {
     it('should show audio player on midi upload', async () => {
         render(<App />)
         dropValidFile()
+
         expect(screen.getByText('02:33')).toBeInTheDocument()
         expect(screen.getByLabelText('volume')).toBeInTheDocument()
         expect(screen.getByLabelText('stop')).toBeInTheDocument()
@@ -100,6 +105,28 @@ describe('App', () => {
         render(<App />)
         dropValidFile()
         pressSpace()
+
+        expect(screen.getByLabelText('play')).toBeInTheDocument()
+        await checkPromise()
+    })
+
+    it('should pause when the space bar is pressed and the player was playing', async () => {
+        render(<App />)
+        dropValidFile()
+        pressSpace()
+        pressSpace()
+
+        expect(screen.getByLabelText('paused')).toBeInTheDocument()
+        await checkPromise()
+    })
+
+    it('should resume playing when the space bar is pressed and the player was paused', async () => {
+        render(<App />)
+        dropValidFile()
+        pressSpace()
+        pressSpace()
+        pressSpace()
+
         expect(screen.getByLabelText('play')).toBeInTheDocument()
         await checkPromise()
     })
@@ -108,6 +135,7 @@ describe('App', () => {
         render(<App />)
         dropValidFile()
         clickVolume()
+
         expect(screen.getByLabelText('muted')).toBeInTheDocument()
         await checkPromise()
     })
@@ -115,6 +143,7 @@ describe('App', () => {
     it('should show the first BPM value', async () => {
         render(<App />)
         dropValidFile()
+
         expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
         expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent('78')
         await checkPromise()
@@ -128,8 +157,20 @@ describe('App', () => {
         dropValidFile()
         clickBPM()
         clickBPMValue(speedValue)
+
         expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
         expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent(expectedBPM.toString())
+        await checkPromise()
+    })
+
+    it('should stop when the mode is `wait` and the next note is reached', async () => {
+        render(<App />)
+        dropValidFile()
+        clickChangeMidiModeSwitch()
+        clickProgressBarAt(2510)
+        clickPlay()
+
+        expect(screen.getByLabelText('play')).toBeInTheDocument()
         await checkPromise()
     })
 
@@ -151,6 +192,7 @@ describe('App', () => {
         dropValidFile()
         clickExtraSettings()
         selectInstrument('Ocarina')
+
         expect(screen.getByTestId('instrument-selector')).toHaveTextContent('Ocarina')
         expect(screen.getByText(/User Instrument/i)).toBeVisible()
         expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument
@@ -164,6 +206,7 @@ describe('App', () => {
         clickPlay()
         clickLoop()
         clickVisualizationAt(50, 50)
+
         expect(screen.getByLabelText('loop-line')).toBeVisible()
         expect(screen.getByLabelText('loop-line-text')).toHaveTextContent('00:01:800')
         await checkPromise()
