@@ -21,6 +21,7 @@ import { BpmSelector } from '../BpmSelector'
 import { LoopTimes } from '../../types/LoopTimes'
 
 interface SettingsProps {
+    showNotes: boolean
     worker: Worker
     appMode: AppMode
     midiMode: MidiMode
@@ -43,12 +44,14 @@ interface SettingsProps {
     onChangeIsEditingLoop: React.Dispatch<React.SetStateAction<boolean>>
     onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
     onMute: React.Dispatch<React.SetStateAction<boolean>>
+    onChangeShowNotes: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BASE_CLASS = 'settings'
 
 export const Settings = React.memo(function Settings({
     worker,
+    showNotes,
     appMode,
     midiMode,
     midiAccessMode,
@@ -70,6 +73,7 @@ export const Settings = React.memo(function Settings({
     onChangeLoopTimes,
     onMidiModeChange,
     onMute,
+    onChangeShowNotes,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const userInstrument = activeInstruments.find(
@@ -160,6 +164,7 @@ export const Settings = React.memo(function Settings({
                 onMidiOutputChange={onMidiOutputChange}
             />
             <ExtraSettingsPanel
+                showNotes={showNotes}
                 midiMetas={midiMetas}
                 musicSystem={musicSystem}
                 activeTracks={activeTracks}
@@ -170,6 +175,7 @@ export const Settings = React.memo(function Settings({
                 onChangeMusicSystem={onChangeMusicSystem}
                 onChangeActiveTracks={onChangeActiveTracks}
                 onChangeInstrument={onChangeInstrument}
+                onChangeShowNotes={onChangeShowNotes}
             />
         </div>
     )

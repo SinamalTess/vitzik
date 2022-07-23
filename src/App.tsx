@@ -49,6 +49,7 @@ function App() {
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
     const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
+    const [showNotes, setShowNotes] = useState(true)
 
     useTitle('Vitzik')
 
@@ -116,6 +117,7 @@ function App() {
                 )}
                 <Settings
                     worker={worker}
+                    showNotes={showNotes}
                     isEditingLoop={isEditingLoop}
                     activeInstruments={activeInstruments}
                     appMode={appMode}
@@ -137,6 +139,7 @@ function App() {
                     onChangeIsEditingLoop={setIsEditingLoop}
                     onMute={setIsMute}
                     onChangeLoopTimes={setLoopTimes}
+                    onChangeShowNotes={setShowNotes}
                 />
                 {midiInput ? (
                     <MidiMessageManager
@@ -176,6 +179,7 @@ function App() {
                     midiMode={midiMode}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     onKeyPressed={setActiveNotes}
+                    showNotes={showNotes}
                 />
                 {activeInstruments.map(({ channel, name, notes }) => {
                     return (

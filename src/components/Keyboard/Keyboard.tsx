@@ -27,6 +27,7 @@ interface KeyboardProps {
     midiMode: MidiMode
     onKeyPressed: (note: MidiInputActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
+    showNotes?: boolean
 }
 
 const KEYBOARD_VELOCITY = 100
@@ -100,6 +101,7 @@ export function Keyboard({
     midiMode,
     onKeyPressed,
     onAllMidiKeysPlayed,
+    showNotes = true,
 }: KeyboardProps) {
     const keys = getKeys(activeNotes, musicSystem)
 
@@ -186,7 +188,7 @@ export function Keyboard({
                         onMouseDown={() => handleMouseDown(note)}
                         onDragStart={handleDragStart}
                     >
-                        <span style={styleKeyName}>{keyTranslated}</span>
+                        {showNotes ? <span style={styleKeyName}>{keyTranslated}</span> : null}
                     </li>
                 )
             })}
