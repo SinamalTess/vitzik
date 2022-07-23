@@ -17,7 +17,7 @@ export const clickSpeedButton = (newSpeedValue: number) => {
     userEvent.click(button)
 }
 
-export const clickLoopButton = () => {
+export const clickSetLoopButton = () => {
     const button = screen.getByLabelText(/loop/)
     userEvent.click(button)
 }
@@ -25,6 +25,11 @@ export const clickLoopButton = () => {
 export const clickLoopEditorAt = (clientX: number, clientY: number) => {
     const loopEditor = screen.getByTestId('loop-editor')
     fireEvent.click(loopEditor, { clientX, clientY })
+}
+
+export const hoverLoopEditorAt = (clientX: number, clientY: number) => {
+    const loopEditor = screen.getByTestId('loop-editor')
+    userEvent.hover(loopEditor, { clientX, clientY })
 }
 
 export const clickMidiModeSwitch = () => {

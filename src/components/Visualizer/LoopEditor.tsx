@@ -115,9 +115,9 @@ export function LoopEditor({
             {...(allLinesDrawn ? null : props)}
         >
             {lines.length
-                ? lines.map((line) => {
-                      const y = height - (line - time) * ratio
-                      return <LoopLine y={y} timestamp={line} width={width} />
+                ? lines.map((timestamp) => {
+                      const y = height - (timestamp - time) * ratio
+                      return <LoopLine y={y} timestamp={timestamp} width={width} key={timestamp} />
                   })
                 : null}
             {previewLine ? (

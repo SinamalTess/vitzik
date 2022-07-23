@@ -4,15 +4,7 @@ import { AudioPlayer } from './AudioPlayer'
 import { WorkerMock } from '../../tests/mocks/worker'
 import { AudioPlayerState } from '../../types'
 import { act } from 'react-dom/test-utils'
-import {
-    clickPause,
-    clickPlay,
-    clickProgressBarAt,
-    clickStop,
-    pressArrowDown,
-    pressArrowUp,
-    pressSpace,
-} from '../../tests/utils'
+import { clickProgressBarAt, pressArrowDown, pressArrowUp } from '../../tests/utils'
 import { mockWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 
 const worker = new WorkerMock('')
@@ -57,12 +49,6 @@ describe('AudioPlayer', () => {
     })
 
     describe('shortcuts', () => {
-        it('should change the state then the space bar is pressed', () => {
-            render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            pressSpace()
-            expect(onChangeState).toHaveBeenCalledTimes(1)
-        })
-
         it('should change the state then arrowUp key is pressed', () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
             pressArrowUp()

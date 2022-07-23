@@ -21,14 +21,14 @@ describe('Tooltip', () => {
     })
 
     describe('When the "show" prop is "true"', () => {
-        it('should display the content', () => {
+        it('should display the content', async () => {
             render(
                 <Tooltip show>
                     <span>Click me</span>
                     <span>I am the content</span>
                 </Tooltip>
             )
-            expect(screen.getByText('I am the content')).toBeInTheDocument()
+            await screen.findByText('I am the content')
         })
     })
 

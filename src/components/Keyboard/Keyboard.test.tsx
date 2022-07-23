@@ -3,9 +3,7 @@ import React from 'react'
 import { Keyboard } from './Keyboard'
 import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import { MidiInputActiveNote, MidiMode } from '../../types'
-import App from '../../App'
-import { clickKey } from '../../tests/utils/keyboard'
-import { join } from 'lodash'
+import { clickKey } from '../../tests/utils'
 
 const props = {
     midiMode: 'autoplay' as MidiMode,

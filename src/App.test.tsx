@@ -1,4 +1,4 @@
-import { screen, render, act, waitFor } from '@testing-library/react'
+import { screen, render, act } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 import App from './App'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
@@ -8,7 +8,7 @@ import {
     clickBPMButton,
     clickSpeedButton,
     clickExtraSettings,
-    clickLoopButton,
+    clickSetLoopButton,
     clickPlay,
     clickLoopEditorAt,
     clickVolume,
@@ -19,9 +19,9 @@ import {
     dispatchMidiInputMessageEvent,
     clickStop,
     clickPause,
+    hoverLoopEditorAt,
 } from './tests/utils'
 import { MidiInputMock } from './tests/mocks/midiInput'
-import { mockWorkerTimeEvent } from './tests/utils/intervalWorkerEvent'
 
 interface TooltipProps {
     children: ReactNode
@@ -90,6 +90,7 @@ describe('App', () => {
 
             expect(screen.getByText(/Import Midi/i)).toBeVisible()
             expect(screen.getByText(/Music theory/i)).toBeVisible()
+            expect(screen.getByText(/Music theory/i)).toBeDisabled()
             expect(screen.getByText(/no input/i)).toBeVisible()
         })
     })
@@ -101,19 +102,28 @@ describe('App', () => {
         })
 
         describe('When no midi file is imported yet', () => {
-            it('should listen to midi event', async () => {
+            it('should play when receiving a note ON midi input message', async () => {
                 render(<App />)
 
                 await waitRequestMIDIAccessPromise()
-                dispatchMidiInputMessageEvent(midiInput, 'A0')
+                await dispatchMidiInputMessageEvent(midiInput, 'A0')
                 await waitSoundFontInstrumentPromise()
 
-                await waitFor(() => expect(screen.getByTestId('A0-active')).toBeInTheDocument())
+                expect(screen.getByTestId('A0-active')).toBeInTheDocument()
             })
-            it('should render the application initial state', async () => {
+            it('should stop playing when receiving note OFF midi input message', async () => {
                 render(<App />)
 
                 await waitRequestMIDIAccessPromise()
+                await dispatchMidiInputMessageEvent(midiInput, 'A0')
+                await dispatchMidiInputMessageEvent(midiInput, 'A0', false)
+                await waitSoundFontInstrumentPromise()
+
+                expect(screen.queryByTestId('A0-active')).not.toBeInTheDocument()
+            })
+            it('should render the initial state', async () => {
+                render(<App />)
+
                 await waitSoundFontInstrumentPromise()
 
                 expect(screen.getByText(/Import Midi/i)).toBeVisible()
@@ -148,26 +158,32 @@ describe('App', () => {
                     expect(screen.getByLabelText('stop')).toBeInTheDocument()
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
-                it('should play when the play button is clicked', () => {
+                it('should play when the play button is clicked', async () => {
                     render(<App />)
                     clickMidiExample()
                     clickPlay()
 
+                    await waitSoundFontInstrumentPromise()
+
                     expect(screen.getByLabelText('play')).toBeInTheDocument()
                 })
-                it('should stop when the stop button is clicked', () => {
+                it('should stop when the stop button is clicked', async () => {
                     render(<App />)
                     clickMidiExample()
                     clickPlay()
                     clickStop()
 
+                    await waitSoundFontInstrumentPromise()
+
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
-                it('should pause when the paused button is clicked', () => {
+                it('should pause when the paused button is clicked', async () => {
                     render(<App />)
                     clickMidiExample()
                     clickPlay()
                     clickPause()
+
+                    await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
@@ -242,8 +258,20 @@ describe('App', () => {
                     render(<App />)
                     clickMidiExample()
                     clickPlay()
-                    clickLoopButton()
+                    clickSetLoopButton()
                     clickLoopEditorAt(50, 50)
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByLabelText('loop-line')).toBeVisible()
+                    expect(screen.getByLabelText('loop-line-text')).toHaveTextContent('00:01:800')
+                })
+                it('should show a preview loop line on hover', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickPlay()
+                    clickSetLoopButton()
+                    hoverLoopEditorAt(50, 50)
 
                     await waitSoundFontInstrumentPromise()
 
