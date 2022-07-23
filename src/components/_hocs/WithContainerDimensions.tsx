@@ -6,7 +6,7 @@ interface WithParentDimensionsProps {
 }
 
 /*
-    HOC component that passes the width and height of the parent container to its children
+    HOC component that passes the width and height of the parent container to its children as props
 */
 export function WithContainerDimensions<P>(
     WrappedComponent: React.ComponentType<P & WithParentDimensionsProps>

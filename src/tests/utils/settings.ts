@@ -7,32 +7,32 @@ export const clickExtraSettings = () => {
     userEvent.click(button)
 }
 
-export const clickBPM = () => {
+export const clickBPMButton = () => {
     const button = screen.getByLabelText(/beats per minute/)
     userEvent.click(button)
 }
 
-export const clickBPMValue = (newSpeedValue: number) => {
+export const clickSpeedButton = (newSpeedValue: number) => {
     const button = screen.getByText(`x${newSpeedValue}`)
     userEvent.click(button)
 }
 
-export const clickLoop = () => {
+export const clickLoopButton = () => {
     const button = screen.getByLabelText(/loop/)
     userEvent.click(button)
 }
 
-export const clickVisualizationAt = (clientX: number, clientY: number) => {
+export const clickLoopEditorAt = (clientX: number, clientY: number) => {
     const loopEditor = screen.getByTestId('loop-editor')
     fireEvent.click(loopEditor, { clientX, clientY })
 }
 
-export const clickChangeMidiModeSwitch = () => {
+export const clickMidiModeSwitch = () => {
     const button = screen.getByRole('switch')
     userEvent.click(button)
 }
 
-export const selectInstrument = (newInstrument: InstrumentUserFriendlyName) => {
+export const changeUserInstrument = (newInstrument: InstrumentUserFriendlyName) => {
     const select = screen.getByTestId('instrument-selector')
     fireEvent.change(select, { value: newInstrument })
 }

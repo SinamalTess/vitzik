@@ -9,6 +9,7 @@ function BrokenComponent() {
 }
 
 describe('ErrorBoundary', () => {
+    // Hides the console.error()
     beforeEach(() => {
         jest.spyOn(console, 'error').mockImplementation(() => {})
     })

@@ -8,7 +8,7 @@ const props = {
 }
 
 describe('TextField', () => {
-    it('should display the text', () => {
+    it('should display the text value passed', () => {
         render(<TextField {...props}></TextField>)
         const button = screen.getByRole('textbox')
 

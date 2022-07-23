@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { usePrevious } from '../../_hooks'
-import { MIDI_MESSAGE_CONTROL, NOTE_ON } from '../../utils/const/midi_message_controls'
+import { MIDI_MESSAGE_CONTROL } from '../../utils/const/midi_message_controls'
 
 interface MidiMessageManagerProps {
     midiInput: MIDIInput

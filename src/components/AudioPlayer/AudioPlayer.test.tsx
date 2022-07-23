@@ -13,19 +13,9 @@ import {
     pressArrowUp,
     pressSpace,
 } from '../../tests/utils'
+import { mockWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 
 const worker = new WorkerMock('')
-
-const mockWorkerTimeEvent = (newTime: number) => {
-    const callbacks = worker.callback
-    callbacks.forEach((callback) =>
-        callback({
-            data: {
-                time: newTime,
-            },
-        })
-    )
-}
 
 const props = {
     state: 'stopped' as AudioPlayerState,
@@ -38,54 +28,10 @@ const props = {
 
 describe('AudioPlayer', () => {
     const onChangeState = jest.fn()
-    it('should render the player', () => {
-        render(<AudioPlayer {...props}></AudioPlayer>)
-
-        expect(screen.getByText('My song')).toBeInTheDocument()
-        expect(screen.getByText('00:01')).toBeInTheDocument()
-        expect(screen.getByLabelText('volume')).toBeInTheDocument()
-        expect(screen.getByLabelText('stop')).toBeInTheDocument()
-        expect(screen.getByLabelText('paused')).toBeInTheDocument()
-    })
-
-    describe('controls', () => {
-        it('should play when the play button is clicked', () => {
-            render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            clickPlay()
-
-            expect(onChangeState).toHaveBeenCalledWith('playing')
-        })
-        it('should stop when the stop button is clicked', () => {
-            render(
-                <AudioPlayer
-                    {...props}
-                    state={'playing'}
-                    onChangeState={onChangeState}
-                ></AudioPlayer>
-            )
-            clickStop()
-
-            expect(onChangeState).toHaveBeenCalledWith('stopped')
-        })
-
-        it('should pause when the paused button is clicked', () => {
-            render(
-                <AudioPlayer
-                    {...props}
-                    state={'playing'}
-                    onChangeState={onChangeState}
-                ></AudioPlayer>
-            )
-            mockWorkerTimeEvent(500)
-            clickPause()
-
-            expect(onChangeState).toHaveBeenCalledWith('paused')
-        })
-    })
 
     it('should stop when the end of the song is reached', () => {
         render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-        mockWorkerTimeEvent(1200)
+        mockWorkerTimeEvent(worker, 1200)
 
         expect(onChangeState).toHaveBeenCalledWith('stopped')
     })
@@ -101,7 +47,7 @@ describe('AudioPlayer', () => {
         )
 
         await act(async () => {
-            mockWorkerTimeEvent(600)
+            mockWorkerTimeEvent(worker, 600)
         })
 
         expect(onChangeState).toHaveBeenCalledWith('seeking')

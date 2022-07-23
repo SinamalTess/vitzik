@@ -33,33 +33,33 @@ function MyComponent({ listenToOutsideClicks }: MyComponentProps) {
     )
 }
 
-describe('useClickOutside', () => {
-    describe('If the condition is true', () => {
+describe('useClickOutside()', () => {
+    describe('When the condition is "true"', () => {
         it('should listen to outside clicks', () => {
             render(<MyComponent listenToOutsideClicks />)
             clickOutside()
 
             expect(onClickOutside).toHaveBeenCalled()
         })
-        it('should not call the callback if the click is inside', () => {
+        it('should not listen to inside clicks', () => {
             render(<MyComponent listenToOutsideClicks />)
             clickInside()
 
-            expect(onClickOutside).toBeCalledTimes(0)
+            expect(onClickOutside).not.toHaveBeenCalled()
         })
     })
-    describe('If the condition is false', () => {
+    describe('When the condition is "false"', () => {
         it('should not listen to outside clicks', () => {
             render(<MyComponent listenToOutsideClicks={false} />)
             clickOutside()
 
-            expect(onClickOutside).toBeCalledTimes(0)
+            expect(onClickOutside).not.toHaveBeenCalled()
         })
-        it('should not call the callback if the click is inside', () => {
+        it('should not listen to inside clicks', () => {
             render(<MyComponent listenToOutsideClicks={false} />)
             clickInside()
 
-            expect(onClickOutside).toBeCalledTimes(0)
+            expect(onClickOutside).not.toHaveBeenCalled()
         })
     })
 })

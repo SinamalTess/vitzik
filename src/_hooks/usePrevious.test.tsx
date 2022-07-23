@@ -11,7 +11,7 @@ function MyComponent({ myProp }: MyComponentProps) {
     return <div>{previousValue}</div>
 }
 
-describe('usePrevious', () => {
+describe('usePrevious()', () => {
     it('on first render should return the current value', () => {
         render(<MyComponent myProp={'hello'} />)
 
