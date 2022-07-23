@@ -34,7 +34,7 @@ export function MidiInputSelector({
         }
 
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
-    }, [onMidiInputChange])
+    }, [onMidiInputChange, onMidiOutputChange])
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedInput = event.target.value

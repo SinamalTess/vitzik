@@ -1,3 +1,5 @@
 export * from './audioPlayer'
 export * from './settings'
 export * from './midiImporter'
+export * from './keyboard'
+export * from './midiInput'

@@ -1,4 +1,4 @@
-import { screen, render, act } from '@testing-library/react'
+import { screen, render, act, waitFor } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 import App from './App'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
@@ -15,8 +15,10 @@ import {
     pressSpace,
     selectInstrument,
     clickProgressBarAt,
-    dropValidFile,
+    clickMidiExample,
+    dispatchMidiInputMessageEvent,
 } from './tests/utils'
+import { MidiInputMock } from './tests/mocks/midiInput'
 
 interface TooltipProps {
     children: ReactNode
@@ -25,16 +27,6 @@ interface TooltipProps {
 jest.mock('soundfont-player', () => ({
     instrument: jest.fn(),
 }))
-
-jest.mock('./components/MidiImporter', () => {
-    const midiJson = require('./tests/midi1.json')
-
-    return {
-        MidiImporter: ({ onMidiImport }: any) => {
-            return <div onDrop={() => onMidiImport('My song', midiJson)}> dropzone </div>
-        },
-    }
-})
 
 jest.mock('./components/_presentational/Tooltip', () => ({
     Tooltip: ({ children }: TooltipProps) => {
@@ -50,165 +42,231 @@ jest.mock('./components/_hocs/WithContainerDimensions', () => ({
     },
 }))
 
-const checkPromise = async () => {
+const midiInput = new MidiInputMock('Piano', 'Yamaha')
+
+const waitSoundFontInstrumentPromise = async () => {
     await act(async () => {
         await Soundfont.instrument
     })
 }
+const waitRequestMIDIAccessPromise = async () => {
+    await act(async () => {
+        await requestMIDIAccess
+    })
+}
+
+const setMidiInput = (midiInput?: MidiInputMock) => {
+    requestMIDIAccess.mockResolvedValue({
+        inputs: {
+            values: () => (midiInput ? [midiInput] : []),
+        },
+        outputs: {
+            values: () => [],
+        },
+    })
+}
+
+const setSoundFontInstrument = () => {
+    // @ts-ignore
+    Soundfont.instrument.mockResolvedValue({
+        listenToMidi: jest.fn(),
+    })
+}
 
 describe('App', () => {
-    beforeEach(async () => {
-        requestMIDIAccess.mockResolvedValue({
-            inputs: {
-                values: () => [],
-            },
-            outputs: {
-                values: () => [],
-            },
+    describe('When there is no midi input', () => {
+        beforeEach(() => {
+            setMidiInput()
+            setSoundFontInstrument()
         })
 
-        // @ts-ignore
-        Soundfont.instrument.mockResolvedValue('fakeInstrumentPlayer')
+        it('should not show any midi input selector', async () => {
+            render(<App />)
+
+            await waitSoundFontInstrumentPromise()
+
+            expect(screen.getByText(/Import Midi/i)).toBeVisible()
+            expect(screen.getByText(/Music theory/i)).toBeVisible()
+            expect(screen.getByText(/no input/i)).toBeVisible()
+        })
     })
 
-    it('should render', async () => {
-        render(<App />)
+    describe('When there is a midi input', () => {
+        beforeEach(async () => {
+            setMidiInput(midiInput)
+            setSoundFontInstrument()
+        })
 
-        expect(screen.getByText('Import Midi')).toBeInTheDocument()
-        expect(screen.getByText(/Music theory/i)).toBeInTheDocument()
-        expect(screen.getByText(/no input/i)).toBeVisible()
-        expect(screen.getByLabelText(/settings/)).toBeVisible()
-        await checkPromise()
-    })
+        describe('When no midi file is imported yet', () => {
+            it('should listen to midi event', async () => {
+                render(<App />)
 
-    it('should let extra settings be opened', async () => {
-        render(<App />)
-        clickExtraSettings()
+                await waitRequestMIDIAccessPromise()
+                dispatchMidiInputMessageEvent(midiInput, 'A0')
+                await waitSoundFontInstrumentPromise()
 
-        expect(screen.getByText(/User Instrument/i)).toBeVisible()
-        expect(screen.getByAltText(/Acoustic Grand Keyboard/i)).toBeVisible()
-        await checkPromise()
-    })
+                await waitFor(() => expect(screen.getByTestId('A0-active')).toBeInTheDocument())
+            })
+            it('should render the application initial state', async () => {
+                render(<App />)
 
-    it('should show audio player on midi upload', async () => {
-        render(<App />)
-        dropValidFile()
+                await waitRequestMIDIAccessPromise()
+                await waitSoundFontInstrumentPromise()
 
-        expect(screen.getByText('02:33')).toBeInTheDocument()
-        expect(screen.getByLabelText('volume')).toBeInTheDocument()
-        expect(screen.getByLabelText('stop')).toBeInTheDocument()
-        expect(screen.getByLabelText('paused')).toBeInTheDocument()
-        await checkPromise()
-    })
+                expect(screen.getByText(/Import Midi/i)).toBeVisible()
+                expect(screen.getByText(/Music theory/i)).toBeVisible()
+                expect(screen.getByText(/Piano - Yamaha/i)).toBeVisible()
+                expect(screen.getByLabelText(/settings/)).toBeVisible()
+            })
+            describe('When clicking on the settings button', () => {
+                it('should open the extra settings sidebar', async () => {
+                    render(<App />)
+                    clickExtraSettings()
 
-    it('should play when the space bar is pressed', async () => {
-        render(<App />)
-        dropValidFile()
-        pressSpace()
+                    await waitSoundFontInstrumentPromise()
 
-        expect(screen.getByLabelText('play')).toBeInTheDocument()
-        await checkPromise()
-    })
+                    expect(screen.getByText(/User Instrument/i)).toBeVisible()
+                    expect(screen.getByAltText(/Acoustic Grand Keyboard/i)).toBeVisible()
+                })
+            })
+        })
 
-    it('should pause when the space bar is pressed and the player was playing', async () => {
-        render(<App />)
-        dropValidFile()
-        pressSpace()
-        pressSpace()
+        describe('When a midi file is imported', () => {
+            describe('The audio player', () => {
+                it('should render', async () => {
+                    render(<App />)
+                    clickMidiExample()
 
-        expect(screen.getByLabelText('paused')).toBeInTheDocument()
-        await checkPromise()
-    })
+                    await waitSoundFontInstrumentPromise()
 
-    it('should resume playing when the space bar is pressed and the player was paused', async () => {
-        render(<App />)
-        dropValidFile()
-        pressSpace()
-        pressSpace()
-        pressSpace()
+                    expect(screen.getByText('02:33')).toBeInTheDocument()
+                    expect(screen.getByLabelText('volume')).toBeInTheDocument()
+                    expect(screen.getByLabelText('stop')).toBeInTheDocument()
+                    expect(screen.getByLabelText('paused')).toBeInTheDocument()
+                })
+                it('should mute when the volume button is clicked', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickVolume()
 
-        expect(screen.getByLabelText('play')).toBeInTheDocument()
-        await checkPromise()
-    })
+                    await waitSoundFontInstrumentPromise()
 
-    it('should mute when the volume button is clicked', async () => {
-        render(<App />)
-        dropValidFile()
-        clickVolume()
+                    expect(screen.getByLabelText('muted')).toBeInTheDocument()
+                })
+                it('should play when the space bar is pressed', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    pressSpace()
 
-        expect(screen.getByLabelText('muted')).toBeInTheDocument()
-        await checkPromise()
-    })
+                    await waitSoundFontInstrumentPromise()
 
-    it('should show the first BPM value', async () => {
-        render(<App />)
-        dropValidFile()
+                    expect(screen.getByLabelText('play')).toBeInTheDocument()
+                })
+                it('should pause when the space bar is pressed while the player was playing', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    pressSpace()
+                    pressSpace()
 
-        expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
-        expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent('78')
-        await checkPromise()
-    })
+                    await waitSoundFontInstrumentPromise()
 
-    it('should let the BPM value be changed', async () => {
-        const initialBPM = 78
-        const speedValue = 2
-        const expectedBPM = initialBPM * speedValue
-        render(<App />)
-        dropValidFile()
-        clickBPM()
-        clickBPMValue(speedValue)
+                    expect(screen.getByLabelText('paused')).toBeInTheDocument()
+                })
+                it('should resume playing when the space bar is pressed while the player was paused', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    pressSpace()
+                    pressSpace()
+                    pressSpace()
 
-        expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
-        expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent(expectedBPM.toString())
-        await checkPromise()
-    })
+                    await waitSoundFontInstrumentPromise()
 
-    it('should stop when the mode is `wait` and the next note is reached', async () => {
-        render(<App />)
-        dropValidFile()
-        clickChangeMidiModeSwitch()
-        clickProgressBarAt(2510)
-        clickPlay()
+                    expect(screen.getByLabelText('play')).toBeInTheDocument()
+                })
+            })
 
-        expect(screen.getByLabelText('play')).toBeInTheDocument()
-        await checkPromise()
-    })
+            describe('The settings', () => {
+                it('should show the first BPM value', async () => {
+                    render(<App />)
+                    clickMidiExample()
 
-    it('should show a track list in the extra settings', async () => {
-        render(<App />)
-        dropValidFile()
-        clickExtraSettings()
+                    await waitSoundFontInstrumentPromise()
 
-        expect(screen.getByText(/User Instrument/i)).toBeVisible()
-        expect(screen.getByAltText(/Acoustic Grand Keyboard/i)).toBeVisible()
-        expect(screen.getByText(/hide all/i)).toBeVisible()
-        expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument
-        expect(screen.getByText('Piano')).toBeVisible() // track name
-        await checkPromise()
-    })
+                    expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
+                    expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent('78')
+                })
+                it('should let the BPM value be changed', async () => {
+                    const initialBPM = 78
+                    const speedValue = 2
+                    const expectedBPM = initialBPM * speedValue
+                    render(<App />)
+                    clickMidiExample()
+                    clickBPM()
+                    clickBPMValue(speedValue)
 
-    it('should let the user instrument be changed in the extra settings', async () => {
-        render(<App />)
-        dropValidFile()
-        clickExtraSettings()
-        selectInstrument('Ocarina')
+                    await waitSoundFontInstrumentPromise()
 
-        expect(screen.getByTestId('instrument-selector')).toHaveTextContent('Ocarina')
-        expect(screen.getByText(/User Instrument/i)).toBeVisible()
-        expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument
-        expect(screen.getByText('Piano')).toBeVisible() // track name
-        await checkPromise()
-    })
+                    expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
+                    expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent(
+                        expectedBPM.toString()
+                    )
+                })
+                it('should allow the user to set times for the loop', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickPlay()
+                    clickLoop()
+                    clickVisualizationAt(50, 50)
 
-    it('should allow the user to set times for the loop', async () => {
-        render(<App />)
-        dropValidFile()
-        clickPlay()
-        clickLoop()
-        clickVisualizationAt(50, 50)
+                    await waitSoundFontInstrumentPromise()
 
-        expect(screen.getByLabelText('loop-line')).toBeVisible()
-        expect(screen.getByLabelText('loop-line-text')).toHaveTextContent('00:01:800')
-        await checkPromise()
+                    expect(screen.getByLabelText('loop-line')).toBeVisible()
+                    expect(screen.getByLabelText('loop-line-text')).toHaveTextContent('00:01:800')
+                })
+            })
+
+            describe('The visualizer', () => {
+                it('should stop when the mode is `wait` and the next note is reached', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickChangeMidiModeSwitch()
+                    clickProgressBarAt(2510)
+                    clickPlay()
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByLabelText('play')).toBeInTheDocument()
+                })
+            })
+
+            describe('The extra settings', () => {
+                it('should show a track list', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickExtraSettings()
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByText(/User Instrument/i)).toBeVisible()
+                    expect(screen.getByAltText(/Acoustic Grand Keyboard/i)).toBeVisible()
+                    expect(screen.getByText(/hide all/i)).toBeVisible()
+                    expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument
+                    expect(screen.getByText('Piano')).toBeVisible() // track name
+                })
+                it('should let the user instrument be changed', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickExtraSettings()
+                    selectInstrument('Ocarina')
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByTestId('instrument-selector')).toHaveTextContent('Ocarina')
+                    expect(screen.getByText(/User Instrument/i)).toBeVisible()
+                    expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument
+                    expect(screen.getByText('Piano')).toBeVisible() // track name
+                })
+            })
+        })
     })
 })

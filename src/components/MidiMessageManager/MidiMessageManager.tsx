@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { usePrevious } from '../../_hooks'
+import { MIDI_MESSAGE_CONTROL, NOTE_ON } from '../../utils/const/midi_message_controls'
 
 interface MidiMessageManagerProps {
     midiInput: MIDIInput
@@ -128,10 +129,10 @@ export function MidiMessageManager({
             const { command, note } = getMessage(message)
 
             switch (command) {
-                case 144: // noteOn
+                case MIDI_MESSAGE_CONTROL.NOTE_ON:
                     note.velocity > 0 ? addNote(note) : removeNote(note)
                     break
-                case 128: // noteOff
+                case MIDI_MESSAGE_CONTROL.NOTE_OFF:
                     removeNote(note)
                     break
             }

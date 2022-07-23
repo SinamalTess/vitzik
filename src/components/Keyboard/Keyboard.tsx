@@ -76,6 +76,7 @@ function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
             width,
             margin,
             background,
+            isActive,
         }
     })
 }
@@ -170,6 +171,7 @@ export function Keyboard({
                     styleKeyName,
                     keyTranslated,
                     note,
+                    isActive,
                 } = key
                 return (
                     <li
@@ -179,7 +181,7 @@ export function Keyboard({
                             margin,
                             background,
                         }}
-                        data-testid={name}
+                        data-testid={`${name}${isActive ? '-active' : ''}`}
                         className={classNames}
                         onMouseDown={() => handleMouseDown(note)}
                         onDragStart={handleDragStart}

@@ -82,8 +82,6 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
 
         const files = getFiles(event)
 
-        console.log(files)
-
         if (files.length) {
             parseMidiFile(files, onMidiImport)
         }

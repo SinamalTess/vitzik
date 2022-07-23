@@ -116,7 +116,7 @@ export const Settings = React.memo(function Settings({
     }
 
     return (
-        <div className={BASE_CLASS} role="toolbar">
+        <div className={BASE_CLASS} role="toolbar" data-testid={'settings'}>
             {midiMetas ? (
                 <>
                     <Tooltip showOnHover>
