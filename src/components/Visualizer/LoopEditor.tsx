@@ -7,14 +7,23 @@ interface LineProps {
     y: number
     width: number
     timestamp: number
+    'data-testid'?: string
 }
 
 function LoopLine({ y, width, timestamp }: LineProps) {
     const yText = y + 20
     return (
         <>
-            <line x1="0" y1={y} x2={width} y2={y} stroke="red" strokeWidth={1} />
-            <text x="20" y={yText} className="small" fill="red">
+            <line
+                x1="0"
+                y1={y}
+                x2={width}
+                y2={y}
+                stroke="red"
+                strokeWidth={1}
+                aria-label={'loop-line'}
+            />
+            <text x="20" y={yText} className="small" fill="red" aria-label={'loop-line-text'}>
                 {msToTime(timestamp, true)}
             </text>
         </>
@@ -102,6 +111,7 @@ export function LoopEditor({
             height={height}
             width="100%"
             className={BASE_CLASS}
+            data-testid={'loop-editor'}
             {...(allLinesDrawn ? null : props)}
         >
             {lines.length

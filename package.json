@@ -46,6 +46,7 @@
     "coveragePathIgnorePatterns": [
       "/src/stories",
       "/src/types",
+      "/src/tests",
       "/src/reportWebVitals.js",
       "/src/utils/const",
       "/index.js",

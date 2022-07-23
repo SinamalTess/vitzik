@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MidiImporter } from './MidiImporter'
 import * as reactDeviceDetect from 'react-device-detect'
-import { dragInvalidFile, dragValidFile } from '../../tests/utils/midiImporter'
+import { clickMidiExample, dragInvalidFile, dragValidFile } from '../../tests/utils/midiImporter'
 
 jest.mock('midi-json-parser', () => () => {})
 
@@ -13,6 +13,13 @@ describe('MidiImporter', () => {
         render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
 
         expect(screen.getByText(/Drag and drop a MIDI file to this dropzone/)).toBeInTheDocument()
+        expect(screen.getByText(/Example/i)).toBeInTheDocument()
+    })
+
+    it('should show an example button that load a midi song', () => {
+        render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
+        clickMidiExample()
+        expect(onMidiImport).toHaveBeenCalled()
     })
 
     it('should show an error message when the wrong file type is dragged over', () => {

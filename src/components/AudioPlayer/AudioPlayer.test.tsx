@@ -16,11 +16,14 @@ import {
 const worker = new WorkerMock('')
 
 const mockWorkerTimeEvent = (newTime: number) => {
-    worker.callback({
-        data: {
-            time: newTime,
-        },
-    })
+    const callbacks = worker.callback
+    callbacks.forEach((callback) =>
+        callback({
+            data: {
+                time: newTime,
+            },
+        })
+    )
 }
 
 const props = {
@@ -39,9 +42,9 @@ describe('AudioPlayer', () => {
 
         expect(screen.getByText('My song')).toBeInTheDocument()
         expect(screen.getByText('00:01')).toBeInTheDocument()
-        expect(screen.getByLabelText(/volume button/)).toBeInTheDocument()
-        expect(screen.getByLabelText(/stop button/)).toBeInTheDocument()
-        expect(screen.getByLabelText(/paused button/)).toBeInTheDocument()
+        expect(screen.getByLabelText('volume')).toBeInTheDocument()
+        expect(screen.getByLabelText('stop')).toBeInTheDocument()
+        expect(screen.getByLabelText('paused')).toBeInTheDocument()
     })
 
     describe('controls', () => {

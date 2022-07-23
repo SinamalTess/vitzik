@@ -12,12 +12,15 @@ const worker = new WorkerMock('')
 const midiJson = midi
 const midiMetas = getMidiMetas(midiJson as IMidiFile)
 
-const mockWorkerTimeEvent = () => {
-    worker.callback({
-        data: {
-            time: 10,
-        },
-    })
+const mockWorkerTimeEvent = (newTime: number) => {
+    const callbacks = worker.callback
+    callbacks.forEach((callback) =>
+        callback({
+            data: {
+                time: newTime,
+            },
+        })
+    )
 }
 
 jest.mock('../_hocs/WithContainerDimensions', () => ({
@@ -44,7 +47,7 @@ describe('Visualizer', () => {
         )
 
         await act(async () => {
-            mockWorkerTimeEvent()
+            mockWorkerTimeEvent(10)
         })
 
         const notes = screen.getAllByLabelText(/note/)

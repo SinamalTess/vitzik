@@ -19,7 +19,7 @@ import {
 } from '../../utils'
 import clsx from 'clsx'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
-import { findLast } from 'lodash'
+import { findLast, last } from 'lodash'
 
 interface KeyboardProps {
     activeNotes: ActiveNote[]
@@ -132,7 +132,7 @@ export function Keyboard({
            Sometimes the same note is hit at the same time but on different channels.
            We only remove the last note found and this is on purpose.
        */
-        const lastMidiNote = midiActiveNotes.at(-1)
+        const lastMidiNote = last(midiActiveNotes)
 
         if (lastMidiNote) {
             const activeKeysCopy = removeNotesFromActiveNotes(activeNotes, [note, lastMidiNote])

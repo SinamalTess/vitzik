@@ -1,4 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 const validFile = {
     dataTransfer: {
@@ -24,6 +25,11 @@ export const dragValidFile = () => {
 export const dragInvalidFile = () => {
     const dropzone = screen.getByText(/dropzone/)
     fireEvent.dragOver(dropzone, { ...invalidFile })
+}
+
+export const clickMidiExample = () => {
+    const button = screen.getByText(/Example/i)
+    userEvent.click(button)
 }
 
 export const dropValidFile = () => {

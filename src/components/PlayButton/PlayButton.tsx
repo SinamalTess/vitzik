@@ -21,7 +21,7 @@ export function PlayButton({ size, isPlaying, onClick }: PlayerControllerProps) 
         <Button
             onClick={onClick}
             variant={'link'}
-            aria-label={isPlaying ? 'play button' : 'paused button'}
+            aria-label={isPlaying ? 'play' : 'paused'}
             size={size}
         >
             <span className={classNames} aria-hidden="true">

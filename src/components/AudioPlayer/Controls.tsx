@@ -20,7 +20,7 @@ export function Controls({ isMute, state, onClickOnPlay, onStop, onMute }: Contr
                 icon="stop"
                 variant="link"
                 color="secondary"
-                aria-label={'stop button'}
+                aria-label={'stop'}
             />
             <PlayButton onClick={onClickOnPlay} isPlaying={state === 'playing'} />
             <SoundButton isMute={isMute} onMute={onMute} />

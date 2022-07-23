@@ -82,8 +82,8 @@ function App() {
         setActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
 
-        console.log(midiJSON)
-        console.log(metas)
+        // console.log(midiJSON)
+        // console.log(metas)
     }
 
     const handleAllMidiKeysPlayed = useCallback(

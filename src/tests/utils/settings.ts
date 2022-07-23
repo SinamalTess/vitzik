@@ -17,6 +17,16 @@ export const clickBPMValue = (newSpeedValue: number) => {
     userEvent.click(button)
 }
 
+export const clickLoop = () => {
+    const button = screen.getByLabelText(/loop/)
+    userEvent.click(button)
+}
+
+export const clickVisualizationAt = (clientX: number, clientY: number) => {
+    const loopEditor = screen.getByTestId('loop-editor')
+    fireEvent.click(loopEditor, { clientX, clientY })
+}
+
 export const selectInstrument = (newInstrument: InstrumentUserFriendlyName) => {
     const select = screen.getByTestId('instrument-selector')
     fireEvent.change(select, { value: newInstrument })

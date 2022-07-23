@@ -1,4 +1,4 @@
-import { screen, render, act } from '@testing-library/react'
+import { screen, render, act, waitFor } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 import App from './App'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
@@ -7,11 +7,15 @@ import {
     clickBPM,
     clickBPMValue,
     clickExtraSettings,
+    clickLoop,
+    clickPlay,
+    clickVisualizationAt,
     clickVolume,
     pressSpace,
     selectInstrument,
 } from './tests/utils'
 import { dropValidFile } from './tests/utils/midiImporter'
+import { clickKey } from './tests/utils/keyboard'
 
 interface TooltipProps {
     children: ReactNode
@@ -38,6 +42,12 @@ jest.mock('./components/_presentational/Tooltip', () => ({
 }))
 
 jest.mock('midi-json-parser', () => () => {})
+
+jest.mock('./components/_hocs/WithContainerDimensions', () => ({
+    WithContainerDimensions: (Component: any) => (props: any) => {
+        return <Component {...props} height={100} width={200} />
+    },
+}))
 
 const checkPromise = async () => {
     await act(async () => {
@@ -80,9 +90,9 @@ describe('App', () => {
         render(<App />)
         dropValidFile()
         expect(screen.getByText('02:33')).toBeInTheDocument()
-        expect(screen.getByLabelText(/volume button/)).toBeInTheDocument()
-        expect(screen.getByLabelText(/stop button/)).toBeInTheDocument()
-        expect(screen.getByLabelText(/paused button/)).toBeInTheDocument()
+        expect(screen.getByLabelText('volume')).toBeInTheDocument()
+        expect(screen.getByLabelText('stop')).toBeInTheDocument()
+        expect(screen.getByLabelText('paused')).toBeInTheDocument()
         await checkPromise()
     })
 
@@ -90,7 +100,7 @@ describe('App', () => {
         render(<App />)
         dropValidFile()
         pressSpace()
-        expect(screen.getByLabelText(/play button/)).toBeInTheDocument()
+        expect(screen.getByLabelText('play')).toBeInTheDocument()
         await checkPromise()
     })
 
@@ -98,7 +108,7 @@ describe('App', () => {
         render(<App />)
         dropValidFile()
         clickVolume()
-        expect(screen.getByLabelText(/muted button/)).toBeInTheDocument()
+        expect(screen.getByLabelText('muted')).toBeInTheDocument()
         await checkPromise()
     })
 
@@ -145,6 +155,17 @@ describe('App', () => {
         expect(screen.getByText(/User Instrument/i)).toBeVisible()
         expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument
         expect(screen.getByText('Piano')).toBeVisible() // track name
+        await checkPromise()
+    })
+
+    it('should allow the user to set times for the loop', async () => {
+        render(<App />)
+        dropValidFile()
+        clickPlay()
+        clickLoop()
+        clickVisualizationAt(50, 50)
+        expect(screen.getByLabelText('loop-line')).toBeVisible()
+        expect(screen.getByLabelText('loop-line-text')).toHaveTextContent('00:01:800')
         await checkPromise()
     })
 })

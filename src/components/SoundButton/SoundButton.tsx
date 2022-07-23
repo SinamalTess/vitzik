@@ -24,7 +24,7 @@ export function SoundButton({ size, isMute, onMute }: SoundButtonProps) {
             onClick={handleClick}
             variant="link"
             className={classNames}
-            aria-label={isMute ? 'muted button' : 'volume button'}
+            aria-label={isMute ? 'muted' : 'volume'}
             size={size}
         >
             <svg viewBox="0 0 108 96" aria-hidden="true">

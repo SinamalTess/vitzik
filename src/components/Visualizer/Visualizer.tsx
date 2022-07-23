@@ -188,7 +188,7 @@ export const Visualizer = WithContainerDimensions(
         if (!height || !width) return null
 
         return (
-            <div className={BASE_CLASS} ref={svgRef}>
+            <div className={BASE_CLASS} ref={svgRef} aria-label={'visualizer'}>
                 {[0, 1].map((index) => {
                     return (
                         <VisualizerSection

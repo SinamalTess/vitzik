@@ -2,11 +2,20 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { Keyboard } from './Keyboard'
 import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../utils/const'
-import { MidiInputActiveNote } from '../../types'
+import { MidiInputActiveNote, MidiMode } from '../../types'
+import App from '../../App'
+import { clickKey } from '../../tests/utils/keyboard'
+import { join } from 'lodash'
+
+const props = {
+    midiMode: 'autoplay' as MidiMode,
+    activeNotes: [],
+    onKeyPressed: () => {},
+}
 
 describe('Keyboard', () => {
     it('should render the proper number of keys', () => {
-        render(<Keyboard midiMode={'autoplay'} activeNotes={[]} onKeyPressed={() => {}}></Keyboard>)
+        render(<Keyboard {...props}></Keyboard>)
         const blackKeys = screen.getAllByText(/[a-g]\d/)
         const whiteKeys = screen.getAllByText(/[A-G]\d/)
 
@@ -29,17 +38,22 @@ describe('Keyboard', () => {
             channel: 0,
         }
 
-        render(
-            <Keyboard
-                midiMode={'autoplay'}
-                activeNotes={[whiteKey, blackKey]}
-                onKeyPressed={() => {}}
-            ></Keyboard>
-        )
+        render(<Keyboard {...props} activeNotes={[whiteKey, blackKey]}></Keyboard>)
         const correspondingWhiteKey = screen.getByTestId(/A0/)
         const correspondingBlackKey = screen.getByTestId(/Bb0/)
 
         expect(correspondingWhiteKey).toHaveClass('keyboard__whitekey--active')
         expect(correspondingBlackKey).toHaveClass('keyboard__blackkey--active')
+    })
+
+    it('should allow the keyboard to be played', async () => {
+        const onKeyPressed = jest.fn()
+        render(<Keyboard {...props} onKeyPressed={onKeyPressed}></Keyboard>)
+
+        clickKey('A1')
+
+        expect(onKeyPressed).toHaveBeenCalledWith([
+            { channel: 17, key: 33, name: 'A1', velocity: 100 },
+        ])
     })
 })
