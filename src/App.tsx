@@ -102,6 +102,7 @@ function App() {
             <div className="item topbar">
                 {midiMetas ? (
                     <AudioPlayer
+                        midiMetas={midiMetas}
                         midiSpeedFactor={midiSpeedFactor}
                         worker={worker}
                         state={audioPlayerState}

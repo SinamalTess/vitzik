@@ -163,6 +163,7 @@ export const Visualizer = WithContainerDimensions(
 
         useEffect(() => {
             function onTimeChange(message: MessageEvent) {
+                console.log('hello')
                 const { time } = message.data
                 animate(time)
                 calcCoordinates(time)

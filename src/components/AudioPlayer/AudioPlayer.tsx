@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { AudioPlayerState } from '../../types'
+import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { LoopTimes } from '../../types/LoopTimes'
 import { AudioPlayerKeyboardShortcuts } from './AudioPlayerKeyboardShortcuts'
@@ -9,6 +9,7 @@ import { IntervalWorkerManager } from './IntervalWorkerManager'
 
 interface AudioPlayerProps {
     worker: Worker
+    midiMetas: MidiMetas
     midiSpeedFactor?: number
     state: AudioPlayerState
     title?: string
@@ -24,6 +25,7 @@ const BASE_CLASS = 'audio-player'
 
 export const AudioPlayer = React.memo(function AudioPlayer({
     worker,
+    midiMetas,
     midiSpeedFactor = 1,
     state = 'stopped',
     isMute = false,
@@ -125,6 +127,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
         <div className={BASE_CLASS}>
             <IntervalWorkerManager
                 worker={worker}
+                midiMetas={midiMetas}
                 startAt={workerInitialTime}
                 state={state}
                 midiSpeedFactor={midiSpeedFactor}

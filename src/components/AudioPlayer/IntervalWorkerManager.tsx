@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { AudioPlayerState } from '../../types'
+import { AudioPlayerState, MidiMetas } from '../../types'
 import { usePrevious } from '../../_hooks'
 
 interface IntervalWorkerManagerProps {
     worker: Worker
+    midiMetas: MidiMetas
     state: AudioPlayerState
     startAt: number
     midiSpeedFactor: number
@@ -11,6 +12,7 @@ interface IntervalWorkerManagerProps {
 
 export function IntervalWorkerManager({
     worker,
+    midiMetas,
     midiSpeedFactor,
     startAt,
     state,
@@ -79,7 +81,7 @@ export function IntervalWorkerManager({
                 seekTo()
                 break
         }
-    }, [state, isStarted, midiSpeedFactor, startAt, worker])
+    }, [midiMetas, state, isStarted, midiSpeedFactor, startAt, worker]) // midiMetas is used here to force the visualization to redraw on midiImport
 
     return null
 }

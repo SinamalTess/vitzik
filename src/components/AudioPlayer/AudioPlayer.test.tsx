@@ -17,6 +17,14 @@ const props = {
     onMute: () => {},
     onChangeState: () => {},
     onToggleSound: () => {},
+    midiMetas: {
+        ticksPerBeat: 100,
+        midiDuration: 1000,
+        instruments: [],
+        format: 1,
+        tracksMetas: [],
+        allMsPerBeat: [],
+    },
 }
 
 describe('AudioPlayer', () => {
