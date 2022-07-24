@@ -1,7 +1,7 @@
 import { AlphabeticalNote } from '../../types'
 import { noteToKey } from '../../utils'
 import { MIDI_MESSAGE_CONTROL } from '../../utils/const/midi_message_controls'
-import { MidiInputMock } from '../mocks/midiInput'
+import { MidiInputMock } from '../mocks/requestMIDIAccess'
 import { act } from '@testing-library/react'
 
 export const dispatchMidiInputMessageEvent = async (
