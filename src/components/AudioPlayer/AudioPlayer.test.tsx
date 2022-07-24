@@ -16,6 +16,7 @@ const props = {
     duration: 1000,
     onMute: () => {},
     onChangeState: () => {},
+    onToggleSound: () => {},
 }
 
 describe('AudioPlayer', () => {

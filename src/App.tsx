@@ -110,7 +110,7 @@ function App() {
                         duration={midiMetas.midiDuration}
                         loopTimes={loopTimes}
                         onChangeState={setAudioPlayerState}
-                        onMute={setIsMute}
+                        onToggleSound={setIsMute}
                     />
                 ) : (
                     <div />

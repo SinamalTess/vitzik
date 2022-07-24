@@ -15,7 +15,7 @@ interface AudioPlayerProps {
     duration: number
     isMute?: boolean
     timeToNextNote?: number | null
-    onMute: (isMute: boolean) => void
+    onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     loopTimes?: LoopTimes
 }
@@ -31,7 +31,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
     title,
     duration,
     timeToNextNote = null,
-    onMute,
+    onToggleSound,
     onChangeState,
 }: AudioPlayerProps) {
     const isPlaying = state === 'playing'
@@ -140,7 +140,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
             <Controls
                 isMute={isMute}
                 state={state}
-                onMute={onMute}
+                onToggleSound={onToggleSound}
                 onClickOnPlay={handleClickOnPlay}
                 onStop={handleClickOnStop}
             />
@@ -149,6 +149,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
                 state={state}
                 onChangeState={onChangeState}
                 onChangeTime={setWorkerInitialTime}
+                onToggleSound={onToggleSound}
             />
         </div>
     )

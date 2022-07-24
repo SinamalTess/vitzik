@@ -7,6 +7,7 @@ interface AudioPlayerKeyboardShortcutsProps {
     state: AudioPlayerState
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onChangeTime: React.Dispatch<React.SetStateAction<number>>
+    onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export function AudioPlayerKeyboardShortcuts({
@@ -14,6 +15,7 @@ export function AudioPlayerKeyboardShortcuts({
     state,
     onChangeState,
     onChangeTime,
+    onToggleSound,
 }: AudioPlayerKeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const midiCurrentTime = useRef<number>(0)
@@ -39,11 +41,15 @@ export function AudioPlayerKeyboardShortcuts({
         })
     }
 
-    function onArrowUp() {
+    function onMKey() {
+        onToggleSound((isMute) => !isMute)
+    }
+
+    function onArrowUpKey() {
         seekFor(100)
     }
 
-    function onArrowDown() {
+    function onArrowDownKey() {
         seekFor(-100)
     }
 
@@ -51,7 +57,7 @@ export function AudioPlayerKeyboardShortcuts({
         onChangeState(prevState === 'stopped' ? 'paused' : prevState)
     }
 
-    const onSpace = useCallback(() => {
+    const onSpaceKey = useCallback(() => {
         onChangeState((audioPlayerState) => {
             switch (audioPlayerState) {
                 case 'stopped':
@@ -74,12 +80,16 @@ export function AudioPlayerKeyboardShortcuts({
         const restoreAudioPlayerPreviousState = () =>
             onChangeState(prevState === 'stopped' ? 'paused' : prevState)
 
-        const unsubscribe = registerShortcut('ArrowUp', onArrowUp, restoreAudioPlayerPreviousState)
+        const unsubscribe = registerShortcut(
+            'ArrowUp',
+            onArrowUpKey,
+            restoreAudioPlayerPreviousState
+        )
 
         return function cleanup() {
             unsubscribe()
         }
-    }, [onArrowUp])
+    }, [onArrowUpKey])
 
     useEffect(() => {
         if (state !== 'seeking') {
@@ -87,22 +97,30 @@ export function AudioPlayerKeyboardShortcuts({
         }
         const unsubscribe = registerShortcut(
             'ArrowDown',
-            onArrowDown,
+            onArrowDownKey,
             restoreAudioPlayerPreviousState
         )
 
         return function cleanup() {
             unsubscribe()
         }
-    }, [onArrowDown])
+    }, [onArrowDownKey])
 
     useEffect(() => {
-        const unsubscribe = registerShortcut('Space', onSpace)
+        const unsubscribe = registerShortcut('Space', onSpaceKey)
 
         return function cleanup() {
             unsubscribe()
         }
-    }, [onSpace])
+    }, [onSpaceKey])
+
+    useEffect(() => {
+        const unsubscribe = registerShortcut('KeyM', onMKey)
+
+        return function cleanup() {
+            unsubscribe()
+        }
+    }, [onMKey])
 
     return null
 }

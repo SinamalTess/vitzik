@@ -9,10 +9,10 @@ interface ControlsProps {
     state: AudioPlayerState
     onClickOnPlay: () => void
     onStop: () => void
-    onMute: (isMute: boolean) => void
+    onToggleSound: (isMute: boolean) => void
 }
 
-export function Controls({ isMute, state, onClickOnPlay, onStop, onMute }: ControlsProps) {
+export function Controls({ isMute, state, onClickOnPlay, onStop, onToggleSound }: ControlsProps) {
     return (
         <>
             <Button
@@ -23,7 +23,7 @@ export function Controls({ isMute, state, onClickOnPlay, onStop, onMute }: Contr
                 aria-label={'stop'}
             />
             <PlayButton onClick={onClickOnPlay} isPlaying={state === 'playing'} />
-            <SoundButton isMute={isMute} onMute={onMute} />
+            <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
         </>
     )
 }
