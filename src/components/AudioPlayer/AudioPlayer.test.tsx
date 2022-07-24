@@ -5,7 +5,7 @@ import { WorkerMock } from '../../tests/mocks/worker'
 import { AudioPlayerState } from '../../types'
 import { act } from 'react-dom/test-utils'
 import { clickProgressBarAt, pressKey } from '../../tests/utils'
-import { mockWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
+import { dispatchWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 
 const worker = new WorkerMock('')
 
@@ -24,7 +24,7 @@ describe('AudioPlayer', () => {
 
     it('should stop when the end of the song is reached', () => {
         render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-        mockWorkerTimeEvent(worker, 1200)
+        dispatchWorkerTimeEvent(worker, 1200)
 
         expect(onChangeState).toHaveBeenCalledWith('stopped')
     })
@@ -40,7 +40,7 @@ describe('AudioPlayer', () => {
         )
 
         await act(async () => {
-            mockWorkerTimeEvent(worker, 600)
+            dispatchWorkerTimeEvent(worker, 600)
         })
 
         expect(onChangeState).toHaveBeenCalledWith('seeking')

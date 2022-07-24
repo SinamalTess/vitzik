@@ -24,11 +24,11 @@ import { MidiAccessMode } from './types/MidiAccessMode'
 import { LoopTimes } from './types/LoopTimes'
 import { WebWorker } from './workers/WebWorker'
 // @ts-ignore
-import workerInterval from './workers/interval'
+import intervalWorker from './workers/intervalWorker.js'
 import { useTitle } from './_hooks/useTitle'
 
 const AUDIO_CONTEXT = new AudioContext()
-let worker: Worker = WebWorker(workerInterval)
+let worker: Worker = WebWorker(intervalWorker)
 
 function App() {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
@@ -82,6 +82,7 @@ function App() {
         setMidiMetas(metas)
         setActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
+        setAudioPlayerState('stopped')
 
         // console.log(midiJSON)
         // console.log(metas)

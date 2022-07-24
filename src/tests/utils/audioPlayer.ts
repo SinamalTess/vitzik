@@ -28,10 +28,6 @@ export const clickVolume = () => {
     }
 }
 
-export const pressKey = (key: string) => {
-    userEvent.keyboard(key)
-}
-
 export const clickProgressBarAt = (value: number) => {
     const progressbar = screen.getByRole('slider')
     fireEvent.mouseDown(progressbar)

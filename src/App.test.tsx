@@ -20,6 +20,8 @@ import {
     clickStop,
     clickPause,
     hoverLoopEditorAt,
+    clickAutoplaySwitch,
+    clickShowNotesSwitch,
 } from './tests/utils'
 import { instrumentPlayerMock } from './tests/mocks/SoundFont'
 
@@ -148,6 +150,19 @@ describe('App', () => {
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('play')).toBeInTheDocument()
+                })
+                it('should mute and unmute when the autoplay switch is clicked', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickAutoplaySwitch()
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByLabelText('muted')).toBeInTheDocument()
+
+                    clickAutoplaySwitch()
+
+                    expect(screen.queryByLabelText('muted')).not.toBeInTheDocument()
                 })
                 it('should mute and unmute when the (m) shortcut is used', async () => {
                     render(<App />)
@@ -332,6 +347,23 @@ describe('App', () => {
                     expect(screen.getByText(/User Instrument/i)).toBeVisible()
                     expect(screen.getByAltText(/Bright Acoustic Keyboard/i)).toBeVisible() // instrument from midi file
                     expect(screen.getByText('Piano')).toBeVisible() // track name
+                })
+                it('should hide the notes when the "show notes" switch is off', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    clickExtraSettings()
+                    clickShowNotesSwitch()
+
+                    await waitSoundFontInstrumentPromise()
+                    await waitRequestMIDIAccessPromise()
+                    await dispatchMidiInputMessageEvent(midiInput, 'A0')
+
+                    expect(screen.queryByText('A0')).not.toBeInTheDocument()
+
+                    clickExtraSettings()
+                    clickShowNotesSwitch()
+
+                    expect(screen.getByText('A0')).toBeInTheDocument()
                 })
             })
         })

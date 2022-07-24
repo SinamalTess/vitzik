@@ -37,6 +37,16 @@ export const clickMidiModeSwitch = () => {
     userEvent.click(button)
 }
 
+export const clickAutoplaySwitch = () => {
+    const button = screen.getByLabelText(/autoplay/i)
+    userEvent.click(button)
+}
+
+export const clickShowNotesSwitch = () => {
+    const button = screen.getByLabelText(/show notes/i)
+    userEvent.click(button)
+}
+
 export const changeUserInstrument = (newInstrument: InstrumentUserFriendlyName) => {
     const select = screen.getByTestId('instrument-selector')
     fireEvent.change(select, { value: newInstrument })
