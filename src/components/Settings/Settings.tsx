@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Settings.scss'
 import {
     Instrument,
@@ -19,6 +19,7 @@ import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { Divider } from '../_presentational/Divider'
 import { BpmSelector } from '../BpmSelector'
 import { LoopTimes } from '../../types/LoopTimes'
+import { registerShortcut } from '../../utils/keyboard_shortcuts'
 
 interface SettingsProps {
     showNotes: boolean
@@ -85,6 +86,18 @@ export const Settings = React.memo(function Settings({
         ? userInstrument.name
         : 'Acoustic Grand Keyboard'
 
+    useEffect(() => {
+        const onLKey = () => {
+            onChangeIsEditingLoop((isEditingLoops) => !isEditingLoops)
+            clearLoop()
+        }
+        const unsubscribe = registerShortcut('KeyL', onLKey)
+
+        return function cleanup() {
+            unsubscribe()
+        }
+    }, [])
+
     function handleMidiModeClick() {
         onMidiModeChange((midiMode) => {
             switch (midiMode) {
@@ -115,8 +128,12 @@ export const Settings = React.memo(function Settings({
     function handleClickOnLoop() {
         onChangeIsEditingLoop((isEditingLoop) => !isEditingLoop)
         if (isEditingLoop) {
-            onChangeLoopTimes([null, null]) // clears the loop times
+            clearLoop()
         }
+    }
+
+    function clearLoop() {
+        onChangeLoopTimes([null, null])
     }
 
     return (
@@ -129,10 +146,12 @@ export const Settings = React.memo(function Settings({
                             onClick={handleClickOnLoop}
                             variant="link"
                             color={isEditingLoop ? 'primary' : 'secondary'}
-                        >
-                            {isEditingLoop ? 'clear' : ''}
-                        </Button>
-                        Loop over a range of time
+                        ></Button>
+                        {`${
+                            isEditingLoop
+                                ? 'Exit the loop mode (l)'
+                                : 'Set a loop over a section (l)'
+                        }`}
                     </Tooltip>
                     <Divider orientation="vertical" />
                     <BpmSelector

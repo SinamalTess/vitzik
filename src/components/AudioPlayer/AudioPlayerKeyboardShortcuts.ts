@@ -41,10 +41,6 @@ export function AudioPlayerKeyboardShortcuts({
         })
     }
 
-    function onMKey() {
-        onToggleSound((isMute) => !isMute)
-    }
-
     function onArrowUpKey() {
         seekFor(100)
     }
@@ -115,12 +111,14 @@ export function AudioPlayerKeyboardShortcuts({
     }, [onSpaceKey])
 
     useEffect(() => {
+        const onMKey = () => onToggleSound((isMute) => !isMute)
+
         const unsubscribe = registerShortcut('KeyM', onMKey)
 
         return function cleanup() {
             unsubscribe()
         }
-    }, [onMKey])
+    }, [onToggleSound])
 
     return null
 }
