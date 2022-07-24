@@ -7,60 +7,78 @@ const onShow = jest.fn()
 const onHide = jest.fn()
 
 describe('Tooltip', () => {
+    it('should show an error when no children are passed', () => {
+        const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+        // @ts-ignore
+        render(<Tooltip></Tooltip>)
+
+        expect(consoleMock).toBeCalledWith('<Tooltip> was not passed any children')
+    })
+    it('should show an error when the children are not an array', () => {
+        const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+        render(
+            <Tooltip>
+                <span>Hello</span>
+            </Tooltip>
+        )
+
+        expect(consoleMock).toBeCalledWith('<Tooltip> expected an array of children')
+    })
     describe('When the "show" prop is "false"', () => {
-        it('should not display the content', () => {
+        it('should not display the tooltip', () => {
             render(
                 <Tooltip show={false}>
                     <span>Click me</span>
-                    <span>I am the content</span>
+                    <span>I am the tooltip</span>
                 </Tooltip>
             )
 
-            expect(screen.queryByText('I am the content')).not.toBeInTheDocument()
+            expect(screen.queryByText('I am the tooltip')).not.toBeInTheDocument()
         })
     })
 
     describe('When the "show" prop is "true"', () => {
-        it('should display the content', async () => {
+        it('should display the tooltip', async () => {
             render(
                 <Tooltip show>
                     <span>Click me</span>
-                    <span>I am the content</span>
+                    <span>I am the tooltip</span>
                 </Tooltip>
             )
-            await screen.findByText('I am the content')
+            await screen.findByText('I am the tooltip')
         })
     })
 
     describe('When the "showOnHover" prop is "true"', () => {
-        it('should show the content on mouseEnter', () => {
+        it('should show the tooltip on mouseEnter', () => {
             render(
                 <Tooltip showOnHover onShow={onShow} onHide={onHide}>
                     <span>Hover me</span>
-                    <span>I am the content</span>
+                    <span>I am the tooltip</span>
                 </Tooltip>
             )
             const reference = screen.getByText('Hover me')
             userEvent.hover(reference)
             expect(onShow).toHaveBeenCalled()
-            expect(screen.getByText('I am the content')).toBeInTheDocument()
+            expect(screen.getByText('I am the tooltip')).toBeInTheDocument()
             userEvent.unhover(reference)
             expect(onHide).toHaveBeenCalled()
-            expect(screen.queryByText('I am the content')).not.toBeInTheDocument()
+            expect(screen.queryByText('I am the tooltip')).not.toBeInTheDocument()
         })
 
-        it('should hide the content on mouseLeave', () => {
+        it('should hide the tooltip on mouseLeave', () => {
             render(
                 <Tooltip showOnHover onShow={onShow} onHide={onHide}>
                     <span>Hover me</span>
-                    <span>I am the content</span>
+                    <span>I am the tooltip</span>
                 </Tooltip>
             )
             const reference = screen.getByText('Hover me')
             userEvent.hover(reference)
             userEvent.unhover(reference)
             expect(onHide).toHaveBeenCalled()
-            expect(screen.queryByText('I am the content')).not.toBeInTheDocument()
+            expect(screen.queryByText('I am the tooltip')).not.toBeInTheDocument()
         })
     })
 })

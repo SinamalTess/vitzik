@@ -7,7 +7,7 @@ import { isArrayOfChildren } from '../utils/isArrayOfChildren'
 
 interface DropdownProps extends PresentationalComponentBasicProps {
     children: ReactNode
-    open: boolean
+    open?: boolean
 }
 
 export const BASE_CLASS = 'dropdown'

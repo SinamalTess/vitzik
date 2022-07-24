@@ -18,4 +18,22 @@ describe('ButtonGroup', () => {
             expect(button).toHaveClass('btn-sm')
         })
     })
+    it('should show an error when no children are passed', () => {
+        const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+        // @ts-ignore
+        render(<ButtonGroup></ButtonGroup>)
+
+        expect(consoleMock).toBeCalledWith('<ButtonGroup> was not passed any children')
+    })
+    it('should show an error when the children are not an array', () => {
+        const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+        render(
+            <ButtonGroup>
+                <Button>Hello</Button>
+            </ButtonGroup>
+        )
+
+        expect(consoleMock).toBeCalledWith('<ButtonGroup> expected an array of children')
+    })
 })
