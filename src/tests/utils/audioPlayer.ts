@@ -17,20 +17,19 @@ export const clickPause = () => {
 }
 
 export const clickVolume = () => {
-    const button = screen.getByLabelText('volume')
-    userEvent.click(button)
+    const button = screen.queryByLabelText('volume')
+    if (button) {
+        userEvent.click(button)
+    } else {
+        const button = screen.queryByLabelText('muted')
+        if (button) {
+            userEvent.click(button)
+        }
+    }
 }
 
-export const pressSpace = () => {
-    userEvent.keyboard('{space}')
-}
-
-export const pressArrowUp = () => {
-    userEvent.keyboard('{arrowup}')
-}
-
-export const pressArrowDown = () => {
-    userEvent.keyboard('{arrowdown}')
+export const pressKey = (key: string) => {
+    userEvent.keyboard(key)
 }
 
 export const clickProgressBarAt = (value: number) => {

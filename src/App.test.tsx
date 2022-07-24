@@ -1,7 +1,7 @@
 import { screen, render, act } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 import App from './App'
-import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
+import { midiAccessMock, requestMIDIAccess, MidiInputMock } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'
 import {
     clickMidiModeSwitch,
@@ -12,7 +12,7 @@ import {
     clickPlay,
     clickLoopEditorAt,
     clickVolume,
-    pressSpace,
+    pressKey,
     changeUserInstrument,
     clickProgressBarAt,
     clickMidiExample,
@@ -21,7 +21,7 @@ import {
     clickPause,
     hoverLoopEditorAt,
 } from './tests/utils'
-import { MidiInputMock } from './tests/mocks/midiInput'
+import { instrumentPlayerMock } from './tests/mocks/SoundFont'
 
 interface TooltipProps {
     children: ReactNode
@@ -58,29 +58,11 @@ const waitRequestMIDIAccessPromise = async () => {
     })
 }
 
-const setMidiInput = (midiInput?: MidiInputMock) => {
-    requestMIDIAccess.mockResolvedValue({
-        inputs: {
-            values: () => (midiInput ? [midiInput] : []),
-        },
-        outputs: {
-            values: () => [],
-        },
-    })
-}
-
-const setSoundFontInstrument = () => {
-    // @ts-ignore
-    Soundfont.instrument.mockResolvedValue({
-        listenToMidi: jest.fn(),
-    })
-}
-
 describe('App', () => {
     describe('When there is no midi input', () => {
         beforeEach(() => {
-            setMidiInput()
-            setSoundFontInstrument()
+            requestMIDIAccess.mockResolvedValue(midiAccessMock())
+            jest.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
         })
 
         it('should not show any midi input selector', async () => {
@@ -97,8 +79,8 @@ describe('App', () => {
 
     describe('When there is a midi input', () => {
         beforeEach(async () => {
-            setMidiInput(midiInput)
-            setSoundFontInstrument()
+            requestMIDIAccess.mockResolvedValue(midiAccessMock([midiInput]))
+            jest.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
         })
 
         describe('When no midi file is imported yet', () => {
@@ -167,6 +149,32 @@ describe('App', () => {
 
                     expect(screen.getByLabelText('play')).toBeInTheDocument()
                 })
+                it('should mute and unmute when the (m) shortcut is used', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    pressKey('{m}')
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByLabelText('muted')).toBeInTheDocument()
+
+                    pressKey('{m}')
+
+                    expect(screen.queryByLabelText('muted')).not.toBeInTheDocument()
+                })
+                it('should enter and exit loop mode when the (l) shortcut is used', async () => {
+                    render(<App />)
+                    clickMidiExample()
+                    pressKey('{l}')
+
+                    await waitSoundFontInstrumentPromise()
+
+                    expect(screen.getByTestId('loop-editor')).toBeInTheDocument()
+
+                    pressKey('{l}')
+
+                    expect(screen.queryByTestId('loop-editor')).not.toBeInTheDocument()
+                })
                 it('should stop when the stop button is clicked', async () => {
                     render(<App />)
                     clickMidiExample()
@@ -187,7 +195,7 @@ describe('App', () => {
 
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
-                it('should mute when the volume button is clicked', async () => {
+                it('should mute and unmute when the volume button is clicked', async () => {
                     render(<App />)
                     clickMidiExample()
                     clickVolume()
@@ -195,11 +203,15 @@ describe('App', () => {
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('muted')).toBeInTheDocument()
+
+                    clickVolume()
+
+                    expect(screen.getByLabelText('volume')).toBeInTheDocument()
                 })
                 it('should play when the space bar is pressed', async () => {
                     render(<App />)
                     clickMidiExample()
-                    pressSpace()
+                    pressKey('{space}')
 
                     await waitSoundFontInstrumentPromise()
 
@@ -208,8 +220,8 @@ describe('App', () => {
                 it('should pause when the space bar is pressed while the player was playing', async () => {
                     render(<App />)
                     clickMidiExample()
-                    pressSpace()
-                    pressSpace()
+                    pressKey('{space}')
+                    pressKey('{space}')
 
                     await waitSoundFontInstrumentPromise()
 
@@ -218,9 +230,9 @@ describe('App', () => {
                 it('should resume playing when the space bar is pressed while the player was paused', async () => {
                     render(<App />)
                     clickMidiExample()
-                    pressSpace()
-                    pressSpace()
-                    pressSpace()
+                    pressKey('{space}')
+                    pressKey('{space}')
+                    pressKey('{space}')
 
                     await waitSoundFontInstrumentPromise()
 

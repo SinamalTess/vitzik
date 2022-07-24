@@ -15,9 +15,9 @@ interface AudioPlayerProps {
     duration: number
     isMute?: boolean
     timeToNextNote?: number | null
-    onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
-    onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     loopTimes?: LoopTimes
+    onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
+    onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BASE_CLASS = 'audio-player'

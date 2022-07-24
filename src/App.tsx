@@ -178,8 +178,8 @@ function App() {
                     musicSystem={musicSystem}
                     midiMode={midiMode}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
-                    onKeyPressed={setActiveNotes}
                     showNotes={showNotes}
+                    onKeyPressed={setActiveNotes}
                 />
                 {activeInstruments.map(({ channel, name, notes }) => {
                     return (

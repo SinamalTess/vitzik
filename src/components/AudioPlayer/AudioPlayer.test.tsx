@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
 import { WorkerMock } from '../../tests/mocks/worker'
 import { AudioPlayerState } from '../../types'
 import { act } from 'react-dom/test-utils'
-import { clickProgressBarAt, pressArrowDown, pressArrowUp } from '../../tests/utils'
+import { clickProgressBarAt, pressKey } from '../../tests/utils'
 import { mockWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 
 const worker = new WorkerMock('')
@@ -52,7 +52,7 @@ describe('AudioPlayer', () => {
     describe('shortcuts', () => {
         it('should change the state then arrowUp key is pressed', () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            pressArrowUp()
+            pressKey('{arrowup}')
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)
@@ -60,7 +60,7 @@ describe('AudioPlayer', () => {
 
         it('should change the state then arrowDown key is pressed', () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            pressArrowDown()
+            pressKey('{arrowdown}')
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)

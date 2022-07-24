@@ -9,7 +9,7 @@ const onHide = jest.fn()
 describe('Tooltip', () => {
     it('should show an error when no children are passed', () => {
         const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
-        // @ts-ignore
+        // @ts-ignore (no children is intended for the test)
         render(<Tooltip></Tooltip>)
 
         expect(consoleMock).toBeCalledWith('<Tooltip> was not passed any children')

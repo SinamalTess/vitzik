@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 import { ModeSelector } from './'
-import { clickImportMode, clickLearningMode } from '../../tests/mocks/midiMode'
+import { clickImportMode, clickLearningMode } from '../../tests/utils/midiMode'
 
 jest.mock('../_presentational/Tooltip', () => ({
     Tooltip: ({ children }: any) => {

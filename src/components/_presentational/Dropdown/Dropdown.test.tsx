@@ -7,7 +7,7 @@ import { DropdownToggle } from '../DropdownToggle'
 describe('Dropdown', () => {
     it('should show an error when no children are passed', () => {
         const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
-        // @ts-ignore
+        // @ts-ignore (no children is intended for the test)
         render(<Dropdown></Dropdown>)
 
         expect(consoleMock).toBeCalledWith('<Dropdown> was not passed any children')

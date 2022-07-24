@@ -26,7 +26,7 @@ describe('usePrevious()', () => {
         expect(screen.getByText('hello')).toBeInTheDocument()
     })
 
-    it('on X render should return the previous value', () => {
+    it('on nth render should return the previous value', () => {
         const { rerender } = render(<MyComponent myProp={'hello'} />)
 
         rerender(<MyComponent myProp={'very nice to meet you'} />)
