@@ -1,7 +1,7 @@
-import { WorkerMock } from '../mocks/worker'
+import { IntervalWorkerMock } from '../mocks/intervalWorker'
 
-export const dispatchWorkerTimeEvent = (worker: WorkerMock, newTime: number) => {
-    const callbacks = worker.callback
+export const dispatchWorkerTimeEvent = (worker: IntervalWorkerMock, newTime: number) => {
+    const callbacks = worker.callbacks
     callbacks.forEach((callback) =>
         callback({
             data: {

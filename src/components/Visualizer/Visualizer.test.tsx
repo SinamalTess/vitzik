@@ -1,19 +1,19 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { Visualizer } from './Visualizer'
-import { WorkerMock } from '../../tests/mocks/worker'
+import { IntervalWorkerMock } from '../../tests/mocks/intervalWorker'
 import { DEFAULT_MIDI_INSTRUMENT } from '../../utils/const'
 import * as midi from './../../tests/midi1.json'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getMidiMetas } from '../../utils'
 import { act } from 'react-dom/test-utils'
 
-const worker = new WorkerMock('')
+const worker = new IntervalWorkerMock('')
 const midiJson = midi
 const midiMetas = getMidiMetas(midiJson as IMidiFile)
 
 const mockWorkerTimeEvent = (newTime: number) => {
-    const callbacks = worker.callback
+    const callbacks = worker.callbacks
     callbacks.forEach((callback) =>
         callback({
             data: {

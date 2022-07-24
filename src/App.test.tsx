@@ -24,6 +24,7 @@ import {
     clickShowNotesSwitch,
 } from './tests/utils'
 import { instrumentPlayerMock } from './tests/mocks/SoundFont'
+import userEvent from '@testing-library/user-event'
 
 interface TooltipProps {
     children: ReactNode

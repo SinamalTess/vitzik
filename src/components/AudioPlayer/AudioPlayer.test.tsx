@@ -1,13 +1,13 @@
 import { render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
-import { WorkerMock } from '../../tests/mocks/worker'
+import { IntervalWorkerMock } from '../../tests/mocks/intervalWorker'
 import { AudioPlayerState } from '../../types'
 import { act } from 'react-dom/test-utils'
 import { clickProgressBarAt, pressKey } from '../../tests/utils'
 import { dispatchWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 
-const worker = new WorkerMock('')
+const worker = new IntervalWorkerMock('')
 
 const props = {
     state: 'stopped' as AudioPlayerState,

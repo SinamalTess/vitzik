@@ -29,7 +29,12 @@ export const dragInvalidFile = () => {
 
 export const clickMidiExample = () => {
     const button = screen.getByText(/Example/i)
-    userEvent.click(button)
+    /*
+        Can't use userEvent.click() here because the button will remain focused.
+        In tests when we then execute a shortcut such as {space} after, this will cause a second click.
+        In the real environment the button disappears from the layout so this doesn't happen.
+    */
+    fireEvent.click(button)
 }
 
 export const dropValidFile = () => {

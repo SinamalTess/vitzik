@@ -5,35 +5,41 @@ export const dispatchEvent = jest.fn()
 export const removeEventListener = jest.fn()
 export const onerror = jest.fn()
 
-export class WorkerMock {
+export class IntervalWorkerMock {
     private url: string
     onmessage: (message: any) => void
     terminate: () => void
     addEventListener: (type: string, callback: Function) => void
-    removeEventListener: () => void
+    removeEventListener: (type: string, callback: Function) => void
     onmessageerror: () => void
     dispatchEvent: () => boolean
     onerror: () => void
-    callback: Function[]
+    callbacks: Function[]
     postMessage: (message: any) => void
 
     constructor(stringUrl: string) {
         this.url = stringUrl
         this.onmessage = () => {}
-        this.callback = []
+        this.callbacks = []
         this.terminate = terminate
         this.addEventListener = (type: string, callback: Function) => {
             // @ts-ignore
-            this.callback = [...this.callback, callback]
+            this.callbacks = [...this.callbacks, callback]
         }
-        this.removeEventListener = removeEventListener
+        this.removeEventListener = (type: string, callback: Function) => {
+            const indexCallback = this.callbacks.indexOf(callback)
+            const copyCallbacks = [...this.callbacks]
+            if (indexCallback) {
+                this.callbacks = copyCallbacks.splice(indexCallback, 1)
+            }
+        }
         this.onmessageerror = onmessageerror
         this.dispatchEvent = dispatchEvent
         this.onerror = onerror
         this.postMessage = (message: any) => {
             this.onmessage(message)
             const { code, startAt } = message
-            const callbacks = this.callback
+            const callbacks = this.callbacks
             if (code === 'start') {
                 callbacks.forEach((callback) =>
                     callback({
@@ -46,7 +52,7 @@ export class WorkerMock {
                 callbacks.forEach((callback) =>
                     callback({
                         data: {
-                            time: startAt + 10,
+                            time: startAt,
                         },
                     })
                 )
@@ -54,7 +60,7 @@ export class WorkerMock {
                 callbacks.forEach((callback) =>
                     callback({
                         data: {
-                            time: startAt + 10,
+                            time: 0,
                         },
                     })
                 )
@@ -62,7 +68,7 @@ export class WorkerMock {
                 callbacks.forEach((callback) =>
                     callback({
                         data: {
-                            time: startAt + 10,
+                            time: 10,
                         },
                     })
                 )
