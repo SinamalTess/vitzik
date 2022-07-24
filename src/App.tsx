@@ -54,6 +54,13 @@ function App() {
     useTitle('Vitzik')
 
     useEffect(() => {
+        if (midiMode === 'autoplay') {
+            // clears the next note in case one was set so the player can play without stopping
+            setTimeToNextNote(null)
+        }
+    }, [midiMode])
+
+    useEffect(() => {
         if (isMute) {
             /*
                 Suspends the progression of time in the audio context,
