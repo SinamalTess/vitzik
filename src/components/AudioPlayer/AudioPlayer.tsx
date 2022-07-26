@@ -133,6 +133,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
                 midiSpeedFactor={midiSpeedFactor}
             />
             <ProgressBar
+                loopTimes={loopTimes}
                 worker={worker}
                 duration={duration}
                 title={title}

@@ -90,7 +90,7 @@ function App() {
         setActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
         setActiveTracks(playableTracks.map(({ index }) => index))
         setAudioPlayerState('stopped')
-
+        setLoopTimes([null, null])
         // console.log(midiJSON)
         // console.log(metas)
     }

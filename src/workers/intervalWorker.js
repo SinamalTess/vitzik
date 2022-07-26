@@ -36,6 +36,10 @@ export default () => {
             postMessage({
                 time: timeElapsed,
             })
+        } else if (code === 'getTime') {
+            postMessage({
+                time: timeElapsed,
+            })
         }
     }
 }

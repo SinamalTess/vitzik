@@ -56,13 +56,16 @@ export function LoopEditor({
     const [time, setTime] = useState(0)
 
     useEffect(() => {
-        function onTimeChange(message: MessageEvent) {
+        worker.postMessage({
+            code: 'getTime',
+        })
+        function onMessage(message: MessageEvent) {
             const { time } = message.data
             setTime(time)
         }
-        worker.addEventListener('message', onTimeChange)
+        worker.addEventListener('message', onMessage)
         return function cleanup() {
-            worker.removeEventListener('message', onTimeChange)
+            worker.removeEventListener('message', onMessage)
         }
     }, [])
 
@@ -73,13 +76,14 @@ export function LoopEditor({
     }, [allLinesDrawn])
 
     function handleMouseMove(event: React.MouseEvent<SVGElement>) {
-        const timestamp = (height - (event.clientY - 40)) / ratio + time
+        const y = event.clientY - 40
+        const timestamp = (height - y) / ratio + time
         if (startLoop) {
             if (timestamp > startLoop) {
-                setPreviewLine(timestamp)
+                setPreviewLine(y)
             }
         } else {
-            setPreviewLine(timestamp)
+            setPreviewLine(y)
         }
     }
 
@@ -122,8 +126,8 @@ export function LoopEditor({
                 : null}
             {previewLine ? (
                 <LoopLine
-                    y={height - (previewLine - time) * ratio}
-                    timestamp={previewLine}
+                    y={previewLine}
+                    timestamp={(height - previewLine) / ratio + time}
                     width={width}
                 />
             ) : null}

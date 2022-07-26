@@ -10,13 +10,25 @@ interface RangeSliderPros extends PresentationalComponentBasicProps {
     step?: number
     onMouseUp?: (event: React.MouseEvent<HTMLInputElement>) => void
     onMouseDown?: (event: React.MouseEvent<HTMLInputElement>) => void
+    onMouseMove?: (event: React.MouseEvent<HTMLInputElement>) => void
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const BASE_CLASS = 'range-slider'
 
 export const RangeSlider = React.forwardRef<HTMLInputElement, RangeSliderPros>(function RangeSlider(
-    { style, value, className, min = 0, max = 100, step, onChange, onMouseUp, onMouseDown },
+    {
+        style,
+        value,
+        className,
+        min = 0,
+        max = 100,
+        step,
+        onMouseMove,
+        onChange,
+        onMouseUp,
+        onMouseDown,
+    },
     ref
 ) {
     function handleMouseUp(event: React.MouseEvent<HTMLInputElement>) {
@@ -28,6 +40,12 @@ export const RangeSlider = React.forwardRef<HTMLInputElement, RangeSliderPros>(f
     function handleMouseDown(event: React.MouseEvent<HTMLInputElement>) {
         if (onMouseDown) {
             onMouseDown(event)
+        }
+    }
+
+    function handleMouseMove(event: React.MouseEvent<HTMLInputElement>) {
+        if (onMouseMove) {
+            onMouseMove(event)
         }
     }
 
@@ -50,6 +68,7 @@ export const RangeSlider = React.forwardRef<HTMLInputElement, RangeSliderPros>(f
             onChange={handleChange}
             onMouseUp={handleMouseUp}
             onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
         />
     )
 })
