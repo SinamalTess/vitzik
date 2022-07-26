@@ -1,5 +1,5 @@
 import { Button } from '../_presentational/Button'
-import { PlayButton } from '../PlayButton'
+import { PlayButton } from './PlayButton'
 import { SoundButton } from '../SoundButton'
 import React from 'react'
 import { AudioPlayerState } from '../../types'

@@ -3,6 +3,7 @@ import { RangeSlider } from '../_presentational/RangeSlider'
 import React, { useEffect, useRef } from 'react'
 import { msToTime, normalizeTitle } from '../../utils'
 import { LoopTimes } from '../../types/LoopTimes'
+import './ProgressBar.scss'
 
 interface PreviewLoopProps {
     duration: number
@@ -44,7 +45,7 @@ const PreviewLoop = ({ duration, refProgressBar, loopTimes }: PreviewLoopProps) 
     )
 }
 
-const BASE_CLASS = 'audio-player__progress-bar'
+const BASE_CLASS = 'progress-bar'
 
 interface ProgressBarProps {
     worker: Worker
