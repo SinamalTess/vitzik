@@ -1,7 +1,7 @@
 @import 'src/style/mixins';
 @import 'src/style/vars';
 
-.visualizer__section {
+.midi-visualizer__section {
     position: absolute;
     @include addChannelColors(fill);
 }

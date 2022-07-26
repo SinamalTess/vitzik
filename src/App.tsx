@@ -12,7 +12,7 @@ import {
     ActiveNote,
     MidiMetas,
 } from './types'
-import { Preview } from './components/Preview'
+import { Visualizer } from './components/Visualizer'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { AudioPlayer } from './components/AudioPlayer'
 import { InstrumentPlayer } from './components/InstrumentPlayer'
@@ -165,7 +165,7 @@ function App() {
             <div className="item preview">
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
-                <Preview
+                <Visualizer
                     worker={worker}
                     loopTimes={loopTimes}
                     activeInstruments={activeInstruments}

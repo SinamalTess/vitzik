@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { VisualizerSection } from './VisualizerSection'
+import { MidiVisualizerSection } from './MidiVisualizerSection'
 import { render, screen } from '@testing-library/react'
 import { MidiVisualizerNoteCoordinates } from '../../types'
 import canvasMock from 'jest-canvas-mock'
@@ -29,7 +29,7 @@ const notesCoordinates: MidiVisualizerNoteCoordinates[] = [
     },
 ]
 
-describe('VisualizerSection', () => {
+describe('MidiVisualizerSection', () => {
     beforeEach(() => {
         // @ts-ignore
         useRef.mockReturnValue({
@@ -39,14 +39,14 @@ describe('VisualizerSection', () => {
 
     it('should render a section properly', () => {
         render(
-            <VisualizerSection
+            <MidiVisualizerSection
                 notesCoordinates={notesCoordinates}
                 width={100}
                 height={50}
                 index={0}
-            ></VisualizerSection>
+            ></MidiVisualizerSection>
         )
-        const section = screen.getByTestId('visualizer__section--0')
+        const section = screen.getByTestId('midi-visualizer__section--0')
 
         expect(section).toBeVisible()
     })

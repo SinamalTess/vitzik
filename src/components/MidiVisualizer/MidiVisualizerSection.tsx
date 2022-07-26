@@ -1,9 +1,9 @@
 import React from 'react'
-import './VisualizerSection.scss'
+import './MidiVisualizerSection.scss'
 import clsx from 'clsx'
 import { MidiVisualizerNoteCoordinates } from '../../types'
 
-interface VisualizerSectionProps {
+interface MidiVisualizerSectionProps {
     index: number
     height: number
     width: number
@@ -14,7 +14,7 @@ interface RectanglesProps {
     notesCoordinates: MidiVisualizerNoteCoordinates[]
 }
 
-const BASECLASS = `visualizer__section`
+const BASECLASS = `midi-visualizer__section`
 
 const Notes = React.memo(function Notes({ notesCoordinates }: RectanglesProps) {
     return (
@@ -36,12 +36,12 @@ const Notes = React.memo(function Notes({ notesCoordinates }: RectanglesProps) {
     )
 })
 
-export function VisualizerSection({
+export function MidiVisualizerSection({
     index,
     height,
     width,
     notesCoordinates,
-}: VisualizerSectionProps) {
+}: MidiVisualizerSectionProps) {
     const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
 
     return (

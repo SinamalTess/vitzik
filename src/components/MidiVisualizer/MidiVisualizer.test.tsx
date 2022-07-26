@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { Visualizer } from './Visualizer'
+import { MidiVisualizer } from './MidiVisualizer'
 import { IntervalWorkerMock } from '../../tests/mocks/intervalWorker'
 import { DEFAULT_MIDI_INSTRUMENT } from '../../utils/const'
 import * as midi from './../../tests/midi1.json'
@@ -29,10 +29,10 @@ jest.mock('../_hocs/WithContainerDimensions', () => ({
     },
 }))
 
-describe('Visualizer', () => {
+describe('MidiVisualizer', () => {
     it('render the proper notes', async () => {
         render(
-            <Visualizer
+            <MidiVisualizer
                 worker={worker as Worker}
                 midiMetas={midiMetas}
                 audioPlayerState={'playing'}

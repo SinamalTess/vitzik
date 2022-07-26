@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react'
 import { useRef } from 'react'
 import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
-import './VisualizerNotesTracks.scss'
+import './MidiVisualizerNotesTracks.scss'
 import { getWidthWhiteKey } from '../../utils'
 import clsx from 'clsx'
 
-interface VisualizerTracksProps {
+interface MidiVisualizerTracksProps {
     height: number
     width: number
 }
 
-const BASECLASS = `visualizer__notes-tracks`
+const BASECLASS = `midi-visualizer__notes-tracks`
 
 function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     ctx.canvas.height = h
@@ -29,7 +29,7 @@ function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     }
 }
 
-export function VisualizerNotesTracks({ height, width }: VisualizerTracksProps) {
+export function MidiVisualizerNotesTracks({ height, width }: MidiVisualizerTracksProps) {
     const refCanvas = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {

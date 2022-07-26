@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { msPerBeatToBeatPerMin } from '../../utils'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
-import { getMsPerBeatFromTime } from '../Visualizer/MidiVisualizerCoordinates'
+import { getMsPerBeatFromTime } from '../MidiVisualizer/MidiVisualizerFactory'
 
 interface BpmSelectorProps {
     worker: Worker
