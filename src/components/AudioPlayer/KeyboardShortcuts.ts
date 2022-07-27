@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { registerShortcut } from '../../utils/keyboard_shortcuts'
 import { AudioPlayerState } from '../../types'
+import { throttle } from 'lodash'
 
 interface KeyboardShortcutsProps {
     worker: Worker
@@ -122,11 +123,12 @@ export function KeyboardShortcuts({
 
     useEffect(() => {
         const onScroll = (e: WheelEvent) => {
+            const FACTOR = 20
             const { deltaY } = e
-            seekFor(deltaY)
+            seekFor(deltaY * FACTOR)
         }
 
-        document.addEventListener('wheel', onScroll)
+        document.addEventListener('wheel', throttle(onScroll, 100))
 
         return function cleanup() {
             document.removeEventListener('wheel', onScroll)
