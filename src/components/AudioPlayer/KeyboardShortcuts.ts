@@ -2,21 +2,21 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { registerShortcut } from '../../utils/keyboard_shortcuts'
 import { AudioPlayerState } from '../../types'
 
-interface AudioPlayerKeyboardShortcutsProps {
+interface KeyboardShortcutsProps {
     worker: Worker
     state: AudioPlayerState
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
-    onChangeTime: React.Dispatch<React.SetStateAction<number>>
+    onChangeInitialTime: React.Dispatch<React.SetStateAction<number>>
     onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function AudioPlayerKeyboardShortcuts({
+export function KeyboardShortcuts({
     worker,
     state,
     onChangeState,
-    onChangeTime,
+    onChangeInitialTime,
     onToggleSound,
-}: AudioPlayerKeyboardShortcutsProps) {
+}: KeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const midiCurrentTime = useRef<number>(0)
 
@@ -34,9 +34,9 @@ export function AudioPlayerKeyboardShortcuts({
     }, [worker])
 
     function seekFor(value: number) {
-        onChangeTime(midiCurrentTime.current)
+        onChangeInitialTime(midiCurrentTime.current)
         onChangeState('seeking')
-        onChangeTime((midiStartingTime) => {
+        onChangeInitialTime((midiStartingTime) => {
             return Math.max(0, midiStartingTime + value) // can't seek below 0
         })
     }

@@ -10,12 +10,12 @@ interface ModeSelectorProps {
 }
 
 export function ModeSelector({ onChange, appMode }: ModeSelectorProps) {
-    const isLearningMode = appMode === 'learning'
+    const isLearningMode = appMode === 'theory'
 
     return (
         <ButtonGroup>
             <Tooltip showOnHover>
-                <Button disabled onClick={() => onChange('learning')} active={isLearningMode}>
+                <Button disabled onClick={() => onChange('theory')} active={isLearningMode}>
                     Music theory
                 </Button>
                 Coming soon...

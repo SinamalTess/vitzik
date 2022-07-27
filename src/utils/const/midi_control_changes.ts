@@ -1,4 +1,4 @@
-export const Midi_control_changes = [
+export const MIDI_CONTROL_CHANGES = [
     'Bank Select',
     'Modulation wheel',
     'Breath control',

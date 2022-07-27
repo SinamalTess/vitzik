@@ -1,9 +1,9 @@
 import { Instrument } from './Instrument'
 
 export interface MsPerBeat {
-    timestamp: number
+    timestamp: number // ms
     value: number
-    delta: number
+    delta: number // ticks
 }
 
 export interface TrackMetas {
@@ -14,13 +14,13 @@ export interface TrackMetas {
         Time signature is defined as follows:
         4/4 would be four quarter-notes per Bar (MIDI default),
         4/2 would be four half-notes per Bar (or 8 quarter notes),
-        4/8 would be four eighth-notes per Bar (or 2 quarter notes), and
+        4/8 would be four eighth-notes per Bar (or 2 quarter notes),
         2/4 would be two quarter-notes per Bar.
     */
     timeSignature?: {
-        denominator: number // Bottom number : How many quarter notes there are in a beat
+        denominator: number // Bottom number = how many quarter notes there are in a beat
         metronome: number
-        numerator: number // Top number : Number of beats in a Bar
+        numerator: number // Top number = number of beats in a bar
         thirtyseconds: number
     }
     keySignature?: {
@@ -36,7 +36,7 @@ export interface MidiMetas {
     ticksPerBeat: number
     midiDuration: number
     instruments: Instrument[]
-    format: number
+    format: number // 0, 1, 2
     tracksMetas: TrackMetas[]
     allMsPerBeat: MsPerBeat[]
 }

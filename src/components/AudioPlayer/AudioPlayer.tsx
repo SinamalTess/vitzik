@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { LoopTimes } from '../../types/LoopTimes'
-import { AudioPlayerKeyboardShortcuts } from './AudioPlayerKeyboardShortcuts'
+import { KeyboardShortcuts } from './KeyboardShortcuts'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
@@ -37,8 +37,8 @@ export const AudioPlayer = React.memo(function AudioPlayer({
     onChangeState,
 }: AudioPlayerProps) {
     const isPlaying = state === 'playing'
-    const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const [startLoop, endLoop] = loopTimes
+    const [prevState, setPrevState] = useState<AudioPlayerState>(state)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
 
     const checkIsEnd = useCallback(
@@ -148,11 +148,11 @@ export const AudioPlayer = React.memo(function AudioPlayer({
                 onClickOnPlay={handleClickOnPlay}
                 onStop={handleClickOnStop}
             />
-            <AudioPlayerKeyboardShortcuts
+            <KeyboardShortcuts
                 worker={worker}
                 state={state}
                 onChangeState={onChangeState}
-                onChangeTime={setWorkerInitialTime}
+                onChangeInitialTime={setWorkerInitialTime}
                 onToggleSound={onToggleSound}
             />
         </div>

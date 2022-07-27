@@ -6,10 +6,10 @@ import '@testing-library/jest-dom'
 import 'jest-canvas-mock'
 import { IntervalWorkerMock } from './tests/mocks/intervalWorker'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
-import { AudioContext } from './tests/mocks/AudioContext'
+import { AudioContextMock } from './tests/mocks/AudioContextMock'
 
 // Mocks
 global.URL.createObjectURL = () => {}
 global.Worker = IntervalWorkerMock
 global.navigator.requestMIDIAccess = requestMIDIAccess
-global.AudioContext = AudioContext
+global.AudioContextMock = AudioContextMock

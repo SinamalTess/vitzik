@@ -10,7 +10,7 @@ import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from '../../utils/const'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
     getInitialMsPerBeat,
-    getKey,
+    getKeyFomNote,
     getNoteMetas,
     getWidthKeys,
     isBlackKey as checkIsBlackKey,
@@ -185,7 +185,7 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
                     isNoteOffEvent(event) ||
                     (isNoteOnEvent(event) && event.noteOn.velocity === 0)
                 ) {
-                    const key = getKey(event)
+                    const key = getKeyFomNote(event)
                     const correspondingNoteOnIndex = notesBeingProcessed.findIndex(
                         (note) => note.key === key
                     )

@@ -11,15 +11,15 @@ interface PreviewLoopProps {
     loopTimes: LoopTimes
 }
 
-const PreviewLoop = ({ duration, refProgressBar, loopTimes }: PreviewLoopProps) => {
+const LoopPreview = ({ duration, refProgressBar, loopTimes }: PreviewLoopProps) => {
     const [startLoop, endLoop] = loopTimes
 
     if (!startLoop || !refProgressBar.current) return null
 
-    const left = getX(startLoop)
-    const width = endLoop ? getX(endLoop) - left : 0
+    const left = getXPosition(startLoop)
+    const width = endLoop ? getXPosition(endLoop) - left : 0
 
-    function getX(time: number) {
+    function getXPosition(time: number) {
         const { clientWidth } = refProgressBar.current as HTMLInputElement
         const ratio = duration / clientWidth
         return time / ratio
@@ -109,7 +109,7 @@ export function ProgressBar({
                         onMouseUp={onMouseUp}
                     />
                     {loopTimes ? (
-                        <PreviewLoop
+                        <LoopPreview
                             loopTimes={loopTimes}
                             duration={duration}
                             refProgressBar={refBar}

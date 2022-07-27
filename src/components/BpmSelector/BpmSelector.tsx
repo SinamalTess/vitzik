@@ -2,7 +2,7 @@ import { Tooltip } from '../_presentational/Tooltip'
 import { Button } from '../_presentational/Button'
 import { ButtonGroup } from '../_presentational/ButtonGroup'
 import React, { useEffect, useState } from 'react'
-import { msPerBeatToBeatPerMin } from '../../utils'
+import { msPerBeatToBpm } from '../../utils'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
 import { getMsPerBeatFromTime } from '../MidiVisualizer/MidiVisualizerFactory'
@@ -38,9 +38,9 @@ const SPEED_FACTORS = [
     },
 ]
 
-function getBPM(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
+function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
     const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
-    return Math.round(msPerBeatToBeatPerMin(msPerBeat) / midiSpeedFactor)
+    return Math.round(msPerBeatToBpm(msPerBeat) / midiSpeedFactor)
 }
 
 export function BpmSelector({
@@ -50,16 +50,17 @@ export function BpmSelector({
     onChangeMidiSpeedFactor,
 }: BpmSelectorProps) {
     const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false)
+    const speedFactor = SPEED_FACTORS.find(({ factor }) => factor === midiSpeedFactor)
+    const speed = speedFactor ? speedFactor.speed : 1
     const [bpm, setBpm] = useState(0)
-    const speed = SPEED_FACTORS.find(({ factor }) => factor === midiSpeedFactor)?.speed
 
     useEffect(() => {
-        const newBpm = getBPM(allMsPerBeat, 0, midiSpeedFactor)
+        const newBpm = getBpmFromTime(allMsPerBeat, 0, midiSpeedFactor)
         setBpm(newBpm)
 
         function onTimeChange(message: MessageEvent) {
             const { time } = message.data
-            const newBpm = getBPM(allMsPerBeat, time, midiSpeedFactor)
+            const newBpm = getBpmFromTime(allMsPerBeat, time, midiSpeedFactor)
             setBpm(newBpm)
         }
 

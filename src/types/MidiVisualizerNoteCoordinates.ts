@@ -8,9 +8,9 @@ export interface MidiVisualizerNoteCoordinates extends CanvasRectangle {
     */
     name?: AlphabeticalNote
     key: number
-    velocity: number
-    duration: number // milliseconds
+    velocity: number // [0 - 127]
+    duration: number // ms
     id: string
-    channel: number
-    startingTime: number
+    channel: number // [0 - 15]
+    startingTime: number // ms
 }

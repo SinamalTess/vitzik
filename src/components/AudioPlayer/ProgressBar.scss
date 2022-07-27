@@ -4,6 +4,8 @@
 $width: 500px;
 
 .progress-bar {
+    display: flex;
+    align-items: center;
     &__preview {
         position: relative;
     }
@@ -15,6 +17,7 @@ $width: 500px;
     }
 
     &__track-title {
+        display: inline-block;
         max-width: 150px;
         white-space: nowrap;
         overflow: hidden;

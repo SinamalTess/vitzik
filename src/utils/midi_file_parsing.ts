@@ -31,7 +31,7 @@ export const getFormat = (midiJson: IMidiFile): number => midiJson.format
 const programNumberToInstrument = (programNumber: number): InstrumentUserFriendlyName =>
     MIDI_INSTRUMENTS[programNumber]
 
-export const getKey = (note: MidiJsonNote) =>
+export const getKeyFomNote = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
 
 export const getVelocity = (note: MidiJsonNote) =>
@@ -40,13 +40,13 @@ export const getVelocity = (note: MidiJsonNote) =>
 const microSPerBeatToMsPerBeat = (microsecondsPerQuarter: number) =>
     Math.round(microsecondsPerQuarter / 1000)
 
-export const msPerBeatToBeatPerMin = (msPerBeat: number) => (1000 * 60) / msPerBeat
+export const msPerBeatToBpm = (msPerBeat: number) => (1000 * 60) / msPerBeat
 
-export const beatPerMinToMsPerBeat = (beatPerMin: number) => (60 * 1000) / beatPerMin
+export const bpmToMsPerBeat = (beatPerMin: number) => (60 * 1000) / beatPerMin
 
 export const getNoteMetas = (note: MidiJsonNote): MidiInputActiveNote => {
     const { channel } = note
-    const key = getKey(note)
+    const key = getKeyFomNote(note)
     const name = keyToNote(key)
     const velocity = getVelocity(note)
 

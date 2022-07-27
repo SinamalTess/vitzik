@@ -21,7 +21,7 @@ describe('ModeSelector', () => {
     })
 
     it('should call onChange() callback with "import" mode', () => {
-        render(<ModeSelector appMode={'learning'} onChange={onChange}></ModeSelector>)
+        render(<ModeSelector appMode={'theory'} onChange={onChange}></ModeSelector>)
         clickImportMode()
 
         expect(onChange).toHaveBeenCalledWith('import')

@@ -1,1 +1,1 @@
-export type AppMode = 'learning' | 'import'
+export type AppMode = 'theory' | 'import'

@@ -5,11 +5,6 @@ export interface Rectangle {
     y2: number
 }
 
-export interface Point {
-    x: number
-    y: number
-}
-
 export interface CanvasRectangle {
     w: number // width (px)
     h: number // height (px)
