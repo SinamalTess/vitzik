@@ -120,5 +120,18 @@ export function KeyboardShortcuts({
         }
     }, [onToggleSound])
 
+    useEffect(() => {
+        const onScroll = (e: WheelEvent) => {
+            const { deltaY } = e
+            seekFor(deltaY)
+        }
+
+        document.addEventListener('wheel', onScroll)
+
+        return function cleanup() {
+            document.removeEventListener('wheel', onScroll)
+        }
+    }, [])
+
     return null
 }

@@ -20,6 +20,7 @@ import {
     isTrackNameEvent,
 } from './midi_events'
 import { assign, findLast, last, max, sortBy, uniqBy } from 'lodash'
+import { isPositive } from './maths'
 
 export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
 
@@ -69,10 +70,7 @@ export function normalizeTitle(title: string) {
 
 export function getTicksPerBeat(midiJson: IMidiFile) {
     const { division } = midiJson
-    const value = Math.sign(division)
-    const isValuePositive = value === 0 || value === 1
-
-    if (isValuePositive) {
+    if (isPositive(division)) {
         // The "division" is equal to the ticks per beat (beat = quarter note)
         return division
     } else {
