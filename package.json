@@ -119,13 +119,13 @@
     "@types/vexflow": "^1.2.38",
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint-plugin-unused-imports": "^2.0.0",
+    "gh-pages": "^4.0.0",
     "husky": "^8.0.0",
     "jest-canvas-mock": "^2.4.0",
     "prettier": "^2.6.2",
     "sass": "^1.52.1",
+    "save-dev": "*",
     "typescript": "^4.7.2",
-    "webpack": "^5.72.1",
-    "gh-pages": "^4.0.0",
-    "save-dev": "*"
+    "webpack": "^5.72.1"
   }
 }
