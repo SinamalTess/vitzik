@@ -4,7 +4,7 @@ import './MidIimporter.scss'
 import clsx from 'clsx'
 import { isDesktop } from 'react-device-detect'
 import { Button } from '../_presentational/Button'
-import * as TURKISH_MARCH from '../../tests/midi1.json'
+import { TURKISH_MARCH } from '../../utils/const'
 import { parseArrayBuffer } from 'midi-json-parser'
 
 interface MidiImporterProps {
