@@ -24,6 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false --coverage",
     "test:watch": "react-scripts test --coverage",
+    "test:staged": "react-scripts test --findRelatedTests",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
@@ -35,7 +36,7 @@
       "prettier --write --ignore-unknown"
     ],
     "**/*.{js, ts}": [
-      "react-scripts jest --findRelatedTests"
+      "test:staged"
     ]
   },
   "jest": {

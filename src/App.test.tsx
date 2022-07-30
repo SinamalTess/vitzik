@@ -75,7 +75,7 @@ describe('App', () => {
 
             expect(screen.getByText(/Import Midi/i)).toBeVisible()
             expect(screen.getByText(/Music theory/i)).toBeVisible()
-            expect(screen.getByText(/Music theory/i)).toBeDisabled()
+            expect(screen.getByText(/Musicoijoj theory/i)).toBeDisabled()
             expect(screen.getByText(/no input/i)).toBeVisible()
         })
     })

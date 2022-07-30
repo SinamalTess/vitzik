@@ -5,12 +5,12 @@ interface WithParentDimensionsProps {
     width: number
 }
 
+type WrappedComponentProps<P> = React.ComponentType<P & WithParentDimensionsProps>
+
 /*
     HOC component that passes the "width" and "height" of the parent container to its children as props.
 */
-export function WithContainerDimensions<P>(
-    WrappedComponent: React.ComponentType<P & WithParentDimensionsProps>
-) {
+export function WithContainerDimensions<P>(WrappedComponent: WrappedComponentProps<P>) {
     const ComponentWithContainerDimensions = (props: P) => {
         const ref = useRef<HTMLDivElement>(null)
 
