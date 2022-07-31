@@ -58,17 +58,17 @@ describe('AudioPlayer', () => {
     })
 
     describe('shortcuts', () => {
-        it('should change the state then arrowUp key is pressed', () => {
+        it('should change the state then arrowUp key is pressed', async () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            pressKey('{arrowup}')
+            await pressKey('{arrowup}')
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)
         })
 
-        it('should change the state then arrowDown key is pressed', () => {
+        it('should change the state then arrowDown key is pressed', async () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            pressKey('{arrowdown}')
+            await pressKey('{arrowdown}')
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)

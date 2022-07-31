@@ -1,29 +1,29 @@
 import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-export const clickPlay = () => {
+export const clickPlay = async () => {
     const button = screen.getByLabelText('paused')
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickStop = () => {
+export const clickStop = async () => {
     const button = screen.getByLabelText('stop')
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickPause = () => {
+export const clickPause = async () => {
     const button = screen.getByLabelText('play')
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickVolume = () => {
+export const clickVolume = async () => {
     const button = screen.queryByLabelText('volume')
     if (button) {
-        userEvent.click(button)
+        await userEvent.click(button)
     } else {
         const button = screen.queryByLabelText('muted')
         if (button) {
-            userEvent.click(button)
+            await userEvent.click(button)
         }
     }
 }

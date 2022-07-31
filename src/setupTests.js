@@ -12,4 +12,4 @@ import { AudioContextMock } from './tests/mocks/AudioContextMock'
 global.URL.createObjectURL = () => {}
 global.Worker = IntervalWorkerMock
 global.navigator.requestMIDIAccess = requestMIDIAccess
-global.AudioContextMock = AudioContextMock
+global.AudioContext = AudioContextMock

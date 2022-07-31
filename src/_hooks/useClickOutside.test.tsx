@@ -7,14 +7,14 @@ interface MyComponentProps {
     listenToOutsideClicks: boolean
 }
 
-const clickInside = () => {
+const clickInside = async () => {
     const button = screen.getByTestId(/inside/)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-const clickOutside = () => {
+const clickOutside = async () => {
     const button = screen.getByTestId(/outside/)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
 const onClickOutside = jest.fn()
@@ -35,29 +35,29 @@ function MyComponent({ listenToOutsideClicks }: MyComponentProps) {
 
 describe('useClickOutside()', () => {
     describe('When the condition is "true"', () => {
-        it('should listen to outside clicks', () => {
+        it('should listen to outside clicks', async () => {
             render(<MyComponent listenToOutsideClicks />)
-            clickOutside()
+            await clickOutside()
 
             expect(onClickOutside).toHaveBeenCalled()
         })
-        it('should not listen to inside clicks', () => {
+        it('should not listen to inside clicks', async () => {
             render(<MyComponent listenToOutsideClicks />)
-            clickInside()
+            await clickInside()
 
             expect(onClickOutside).not.toHaveBeenCalled()
         })
     })
     describe('When the condition is "false"', () => {
-        it('should not listen to outside clicks', () => {
+        it('should not listen to outside clicks', async () => {
             render(<MyComponent listenToOutsideClicks={false} />)
-            clickOutside()
+            await clickOutside()
 
             expect(onClickOutside).not.toHaveBeenCalled()
         })
-        it('should not listen to inside clicks', () => {
+        it('should not listen to inside clicks', async () => {
             render(<MyComponent listenToOutsideClicks={false} />)
-            clickInside()
+            await clickInside()
 
             expect(onClickOutside).not.toHaveBeenCalled()
         })

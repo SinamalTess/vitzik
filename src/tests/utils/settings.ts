@@ -2,24 +2,24 @@ import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { InstrumentUserFriendlyName } from '../../types'
 
-export const clickExtraSettings = () => {
+export const clickExtraSettings = async () => {
     const button = screen.getByLabelText(/settings/)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickBPMButton = () => {
+export const clickBPMButton = async () => {
     const button = screen.getByLabelText(/beats per minute/)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickSpeedButton = (newSpeedValue: number) => {
+export const clickSpeedButton = async (newSpeedValue: number) => {
     const button = screen.getByText(`x${newSpeedValue}`)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickSetLoopButton = () => {
+export const clickSetLoopButton = async () => {
     const button = screen.getByLabelText(/loop/)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
 export const clickLoopEditorAt = (clientX: number, clientY: number) => {
@@ -27,24 +27,25 @@ export const clickLoopEditorAt = (clientX: number, clientY: number) => {
     fireEvent.click(loopEditor, { clientX, clientY })
 }
 
-export const hoverLoopEditorAt = (clientX: number, clientY: number) => {
+export const hoverLoopEditorAt = async (clientX: number, clientY: number) => {
     const loopEditor = screen.getByTestId('loop-editor')
-    userEvent.hover(loopEditor, { clientX, clientY })
+    // @ts-ignore
+    await userEvent.hover(loopEditor, { clientX, clientY })
 }
 
-export const clickMidiModeSwitch = () => {
+export const clickMidiModeSwitch = async () => {
     const button = screen.getByRole('switch')
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickAutoplaySwitch = () => {
+export const clickAutoplaySwitch = async () => {
     const button = screen.getByLabelText(/autoplay/i)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
-export const clickShowNotesSwitch = () => {
+export const clickShowNotesSwitch = async () => {
     const button = screen.getByLabelText(/show notes/i)
-    userEvent.click(button)
+    await userEvent.click(button)
 }
 
 export const changeUserInstrument = (newInstrument: InstrumentUserFriendlyName) => {

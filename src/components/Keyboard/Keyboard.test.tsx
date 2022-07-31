@@ -47,7 +47,7 @@ describe('Keyboard', () => {
     it('should allow the keyboard to be played', async () => {
         render(<Keyboard {...props}></Keyboard>)
 
-        clickKey('A1')
+        await clickKey('A1')
 
         expect(props.onKeyPressed).toHaveBeenCalledWith([
             { channel: 17, key: 33, name: 'A1', velocity: 100 },
