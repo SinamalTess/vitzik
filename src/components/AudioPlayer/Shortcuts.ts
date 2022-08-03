@@ -83,20 +83,22 @@ export function Shortcuts({
     useKeyboardShortcut('ArrowUp', onArrowUpKey, restoreAudioPlayerPreviousState)
 
     useEffect(() => {
-        const onScroll = (e: WheelEvent) => {
+        const onScroll = throttle((e: WheelEvent) => {
             const FACTOR = 20
             const { deltaY } = e
             seekFor(deltaY * FACTOR)
-        }
+        }, 100)
 
         if (shortcuts.includes('wheel')) {
-            document.addEventListener('wheel', throttle(onScroll, 100))
+            document.addEventListener('wheel', onScroll)
+        } else {
+            document.removeEventListener('wheel', onScroll)
         }
 
         return function cleanup() {
             document.removeEventListener('wheel', onScroll)
         }
-    }, [])
+    }, [shortcuts])
 
     return null
 }
