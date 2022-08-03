@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { registerKeyboardShortcut } from '../../utils/keyboard_shortcuts'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { AudioPlayerState } from '../../types'
 import { throttle } from 'lodash'
+import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
+import { ShortcutsContext } from '../ShortcutsContext'
 
 interface KeyboardShortcutsProps {
     worker: Worker
@@ -19,6 +20,7 @@ export function Shortcuts({
     onToggleSound,
 }: KeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
+    const { shortcuts } = useContext(ShortcutsContext)
     const midiCurrentTime = useRef<number>(0)
 
     useEffect(() => {
@@ -73,53 +75,12 @@ export function Shortcuts({
         if (state !== 'seeking') {
             setPrevState(state)
         }
+    }, [onArrowDownKey, onArrowUpKey])
 
-        const restoreAudioPlayerPreviousState = () =>
-            onChangeState(prevState === 'stopped' ? 'paused' : prevState)
-
-        const unsubscribe = registerKeyboardShortcut(
-            'ArrowUp',
-            onArrowUpKey,
-            restoreAudioPlayerPreviousState
-        )
-
-        return function cleanup() {
-            unsubscribe()
-        }
-    }, [onArrowUpKey])
-
-    useEffect(() => {
-        if (state !== 'seeking') {
-            setPrevState(state)
-        }
-        const unsubscribe = registerKeyboardShortcut(
-            'ArrowDown',
-            onArrowDownKey,
-            restoreAudioPlayerPreviousState
-        )
-
-        return function cleanup() {
-            unsubscribe()
-        }
-    }, [onArrowDownKey])
-
-    useEffect(() => {
-        const unsubscribe = registerKeyboardShortcut('Space', onSpaceKey)
-
-        return function cleanup() {
-            unsubscribe()
-        }
-    }, [onSpaceKey])
-
-    useEffect(() => {
-        const onMKey = () => onToggleSound((isMute) => !isMute)
-
-        const unsubscribe = registerKeyboardShortcut('KeyM', onMKey)
-
-        return function cleanup() {
-            unsubscribe()
-        }
-    }, [onToggleSound])
+    useKeyboardShortcut('KeyM', () => onToggleSound((isMute) => !isMute))
+    useKeyboardShortcut('Space', onSpaceKey)
+    useKeyboardShortcut('ArrowDown', onArrowDownKey, restoreAudioPlayerPreviousState)
+    useKeyboardShortcut('ArrowUp', onArrowUpKey, restoreAudioPlayerPreviousState)
 
     useEffect(() => {
         const onScroll = (e: WheelEvent) => {
@@ -128,7 +89,9 @@ export function Shortcuts({
             seekFor(deltaY * FACTOR)
         }
 
-        document.addEventListener('wheel', throttle(onScroll, 100))
+        if (shortcuts.includes('wheel')) {
+            document.addEventListener('wheel', throttle(onScroll, 100))
+        }
 
         return function cleanup() {
             document.removeEventListener('wheel', onScroll)

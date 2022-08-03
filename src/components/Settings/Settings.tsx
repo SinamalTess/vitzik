@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Settings.scss'
 import {
     Instrument,
@@ -19,7 +19,8 @@ import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { Divider } from '../_presentational/Divider'
 import { BpmSelector } from '../BpmSelector'
 import { LoopTimes } from '../../types/LoopTimes'
-import { registerKeyboardShortcut } from '../../utils/keyboard_shortcuts'
+import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
+import { ShortcutsContext } from '../ShortcutsContext'
 
 interface SettingsProps {
     showNotes: boolean
@@ -77,6 +78,7 @@ export const Settings = React.memo(function Settings({
     onChangeShowNotes,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const { setShortcuts } = useContext(ShortcutsContext)
     const userInstrument = activeInstruments.find(
         (instrument) => instrument.channel === MIDI_INPUT_CHANNEL
     )
@@ -87,16 +89,19 @@ export const Settings = React.memo(function Settings({
         : 'Acoustic Grand Keyboard'
 
     useEffect(() => {
-        const onLKey = () => {
-            onChangeIsEditingLoop((isEditingLoops) => !isEditingLoops)
-            clearLoop()
+        if (isOpen) {
+            setShortcuts((shortcuts) =>
+                shortcuts.filter((activeShortcut) => activeShortcut !== 'wheel')
+            )
+        } else {
+            setShortcuts((shortcuts) => [...shortcuts, 'wheel'])
         }
-        const unsubscribe = registerKeyboardShortcut('KeyL', onLKey)
+    }, [isOpen])
 
-        return function cleanup() {
-            unsubscribe()
-        }
-    }, [])
+    useKeyboardShortcut('KeyL', () => {
+        onChangeIsEditingLoop((isEditingLoops) => !isEditingLoops)
+        clearLoop()
+    })
 
     function handleMidiModeClick() {
         onMidiModeChange((midiMode) => {

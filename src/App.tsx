@@ -26,6 +26,8 @@ import { WebWorker } from './workers/WebWorker'
 // @ts-ignore
 import intervalWorker from './workers/intervalWorker.js'
 import { useTitle } from './_hooks/useTitle'
+import { ActiveShortcut } from './types/ActiveShortcut'
+import { ShortcutsContext } from './components/ShortcutsContext'
 
 const AUDIO_CONTEXT = new AudioContext()
 let worker: Worker = WebWorker(intervalWorker)
@@ -50,6 +52,7 @@ function App() {
     const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
     const [showNotes, setShowNotes] = useState(true)
+    const [shortcuts, setShortcuts] = useState<ActiveShortcut[]>([])
 
     useTitle('Vitzik')
 
@@ -105,108 +108,113 @@ function App() {
     )
 
     return (
-        <div className="container">
-            <div className="item topbar">
-                {midiMetas ? (
-                    <AudioPlayer
-                        midiMetas={midiMetas}
-                        midiSpeedFactor={midiSpeedFactor}
+        <ShortcutsContext.Provider value={{ shortcuts, setShortcuts }}>
+            <div className="container">
+                <div className="item topbar">
+                    {midiMetas ? (
+                        <AudioPlayer
+                            midiMetas={midiMetas}
+                            midiSpeedFactor={midiSpeedFactor}
+                            worker={worker}
+                            state={audioPlayerState}
+                            isMute={isMute}
+                            timeToNextNote={timeToNextNote}
+                            title={midiTitle}
+                            duration={midiMetas.midiDuration}
+                            loopTimes={loopTimes}
+                            onChangeState={setAudioPlayerState}
+                            onToggleSound={setIsMute}
+                        />
+                    ) : (
+                        <div />
+                    )}
+                    <Settings
                         worker={worker}
-                        state={audioPlayerState}
-                        isMute={isMute}
-                        timeToNextNote={timeToNextNote}
-                        title={midiTitle}
-                        duration={midiMetas.midiDuration}
-                        loopTimes={loopTimes}
-                        onChangeState={setAudioPlayerState}
-                        onToggleSound={setIsMute}
-                    />
-                ) : (
-                    <div />
-                )}
-                <Settings
-                    worker={worker}
-                    showNotes={showNotes}
-                    isEditingLoop={isEditingLoop}
-                    activeInstruments={activeInstruments}
-                    appMode={appMode}
-                    midiSpeedFactor={midiSpeedFactor}
-                    midiMetas={midiMetas}
-                    midiMode={midiMode}
-                    midiAccessMode={midiAccessMode}
-                    musicSystem={musicSystem}
-                    activeTracks={activeTracks}
-                    onMidiInputChange={setMidiInput}
-                    onMidiOutputChange={setMidiOutput}
-                    onChangeAppMode={setAppMode}
-                    onChangeMidiSpeedFactor={setMidiSpeedFactor}
-                    onChangeMusicSystem={setMusicSystem}
-                    onChangeInstrument={setActiveInstruments}
-                    onChangeActiveTracks={setActiveTracks}
-                    onMidiModeChange={setMidiMode}
-                    onMidiAccessModeChange={setMidiAccessMode}
-                    onChangeIsEditingLoop={setIsEditingLoop}
-                    onMute={setIsMute}
-                    onChangeLoopTimes={setLoopTimes}
-                    onChangeShowNotes={setShowNotes}
-                />
-                {midiInput ? (
-                    <MidiMessageManager
+                        showNotes={showNotes}
+                        isEditingLoop={isEditingLoop}
+                        activeInstruments={activeInstruments}
+                        appMode={appMode}
+                        midiSpeedFactor={midiSpeedFactor}
+                        midiMetas={midiMetas}
+                        midiMode={midiMode}
                         midiAccessMode={midiAccessMode}
-                        audioPlayerState={audioPlayerState}
-                        midiInput={midiInput}
-                        midiOutput={midiOutput}
-                        activeNotes={activeNotes}
-                        onChangeActiveNotes={setActiveNotes}
-                        onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
+                        musicSystem={musicSystem}
+                        activeTracks={activeTracks}
+                        onMidiInputChange={setMidiInput}
+                        onMidiOutputChange={setMidiOutput}
+                        onChangeAppMode={setAppMode}
+                        onChangeMidiSpeedFactor={setMidiSpeedFactor}
+                        onChangeMusicSystem={setMusicSystem}
+                        onChangeInstrument={setActiveInstruments}
+                        onChangeActiveTracks={setActiveTracks}
+                        onMidiModeChange={setMidiMode}
+                        onMidiAccessModeChange={setMidiAccessMode}
+                        onChangeIsEditingLoop={setIsEditingLoop}
+                        onMute={setIsMute}
+                        onChangeLoopTimes={setLoopTimes}
+                        onChangeShowNotes={setShowNotes}
                     />
-                ) : null}
-            </div>
-            <div className="item preview">
-                {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
-                <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
-                <Visualizer
-                    worker={worker}
-                    loopTimes={loopTimes}
-                    activeInstruments={activeInstruments}
-                    midiMode={midiMode}
-                    isEditingLoop={isEditingLoop}
-                    midiFile={midiFile}
-                    midiMetas={midiMetas}
-                    audioPlayerState={audioPlayerState}
-                    activeTracks={activeTracks}
-                    onChangeActiveNotes={setActiveNotes}
-                    onChangeTimeToNextNote={setTimeToNextNote}
-                    onChangeActiveInstruments={setActiveInstruments}
-                    onChangeLoopTimes={setLoopTimes}
-                />
-            </div>
-            <div className="item">
-                <Keyboard
-                    activeNotes={activeNotes}
-                    musicSystem={musicSystem}
-                    midiMode={midiMode}
-                    onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
-                    showNotes={showNotes}
-                    onKeyPressed={setActiveNotes}
-                />
-                {activeInstruments.map(({ channel, name, notes }) => {
-                    return (
-                        <InstrumentPlayer
+                    {midiInput ? (
+                        <MidiMessageManager
+                            midiAccessMode={midiAccessMode}
                             audioPlayerState={audioPlayerState}
                             midiInput={midiInput}
-                            audioContext={AUDIO_CONTEXT}
-                            key={`${name}-${channel}`}
-                            isMute={isMute}
+                            midiOutput={midiOutput}
                             activeNotes={activeNotes}
-                            instrumentName={name}
-                            notesToLoad={[...notes]}
-                            channel={channel}
+                            onChangeActiveNotes={setActiveNotes}
+                            onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                         />
-                    )
-                })}
+                    ) : null}
+                </div>
+                <div className="item preview">
+                    {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
+                    <MidiImporter
+                        isMidiImported={Boolean(midiMetas)}
+                        onMidiImport={handleMidiImport}
+                    />
+                    <Visualizer
+                        worker={worker}
+                        loopTimes={loopTimes}
+                        activeInstruments={activeInstruments}
+                        midiMode={midiMode}
+                        isEditingLoop={isEditingLoop}
+                        midiFile={midiFile}
+                        midiMetas={midiMetas}
+                        audioPlayerState={audioPlayerState}
+                        activeTracks={activeTracks}
+                        onChangeActiveNotes={setActiveNotes}
+                        onChangeTimeToNextNote={setTimeToNextNote}
+                        onChangeActiveInstruments={setActiveInstruments}
+                        onChangeLoopTimes={setLoopTimes}
+                    />
+                </div>
+                <div className="item">
+                    <Keyboard
+                        activeNotes={activeNotes}
+                        musicSystem={musicSystem}
+                        midiMode={midiMode}
+                        onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
+                        showNotes={showNotes}
+                        onKeyPressed={setActiveNotes}
+                    />
+                    {activeInstruments.map(({ channel, name, notes }) => {
+                        return (
+                            <InstrumentPlayer
+                                audioPlayerState={audioPlayerState}
+                                midiInput={midiInput}
+                                audioContext={AUDIO_CONTEXT}
+                                key={`${name}-${channel}`}
+                                isMute={isMute}
+                                activeNotes={activeNotes}
+                                instrumentName={name}
+                                notesToLoad={[...notes]}
+                                channel={channel}
+                            />
+                        )
+                    })}
+                </div>
             </div>
-        </div>
+        </ShortcutsContext.Provider>
     )
 }
 
