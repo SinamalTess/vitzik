@@ -68,7 +68,7 @@ describe('AudioPlayer', () => {
 
         it('should change the state then arrowDown key is pressed', async () => {
             render(<AudioPlayer {...props} onChangeState={onChangeState}></AudioPlayer>)
-            await pressKey('{arrowdsown}')
+            await pressKey('{arrowdown}')
             expect(onChangeState).toHaveBeenCalledWith('seeking')
             expect(onChangeState).toHaveBeenCalledWith('paused')
             expect(onChangeState).toHaveBeenCalledTimes(2)
