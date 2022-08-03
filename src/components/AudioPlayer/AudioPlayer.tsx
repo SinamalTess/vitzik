@@ -40,7 +40,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
     const isPlaying = state === 'playing'
     const [startLoop, endLoop] = loopTimes
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
-    const { shortcuts, setShortcuts } = useContext(ShortcutsContext)
+    const { setShortcuts } = useContext(ShortcutsContext)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
 
     const checkIsEnd = useCallback(

@@ -19,7 +19,7 @@ export function Select({
     'data-testid': dataTestid,
     onChange,
 }: SelectProps) {
-    const classNames = clsx(BASE_CLASS, 'mg-sm', className)
+    const classNames = clsx(BASE_CLASS, 'pd-md', className)
     return (
         <select
             className={classNames}
