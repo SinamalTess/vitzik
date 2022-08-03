@@ -7,12 +7,22 @@ import { AudioPlayerState } from '../../types'
 interface ControlsProps {
     isMute: boolean
     state: AudioPlayerState
-    onClickOnPlay: () => void
+    onPlay: () => void
     onStop: () => void
     onToggleSound: (isMute: boolean) => void
+    onPlayButtonBlur?: () => void
+    onPlayButtonFocus?: () => void
 }
 
-export function Controls({ isMute, state, onClickOnPlay, onStop, onToggleSound }: ControlsProps) {
+export function Controls({
+    isMute,
+    state,
+    onPlay,
+    onStop,
+    onToggleSound,
+    onPlayButtonBlur,
+    onPlayButtonFocus,
+}: ControlsProps) {
     return (
         <>
             <Button
@@ -22,7 +32,12 @@ export function Controls({ isMute, state, onClickOnPlay, onStop, onToggleSound }
                 color="secondary"
                 aria-label={'stop'}
             />
-            <PlayButton onClick={onClickOnPlay} isPlaying={state === 'playing'} />
+            <PlayButton
+                onClick={onPlay}
+                isPlaying={state === 'playing'}
+                onBlur={onPlayButtonBlur}
+                onFocus={onPlayButtonFocus}
+            />
             <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
         </>
     )

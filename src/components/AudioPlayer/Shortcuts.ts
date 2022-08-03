@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { registerShortcut } from '../../utils/keyboard_shortcuts'
+import { registerKeyboardShortcut } from '../../utils/keyboard_shortcuts'
 import { AudioPlayerState } from '../../types'
 import { throttle } from 'lodash'
 
@@ -11,7 +11,7 @@ interface KeyboardShortcutsProps {
     onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function KeyboardShortcuts({
+export function Shortcuts({
     worker,
     state,
     onChangeState,
@@ -77,7 +77,7 @@ export function KeyboardShortcuts({
         const restoreAudioPlayerPreviousState = () =>
             onChangeState(prevState === 'stopped' ? 'paused' : prevState)
 
-        const unsubscribe = registerShortcut(
+        const unsubscribe = registerKeyboardShortcut(
             'ArrowUp',
             onArrowUpKey,
             restoreAudioPlayerPreviousState
@@ -92,7 +92,7 @@ export function KeyboardShortcuts({
         if (state !== 'seeking') {
             setPrevState(state)
         }
-        const unsubscribe = registerShortcut(
+        const unsubscribe = registerKeyboardShortcut(
             'ArrowDown',
             onArrowDownKey,
             restoreAudioPlayerPreviousState
@@ -104,7 +104,7 @@ export function KeyboardShortcuts({
     }, [onArrowDownKey])
 
     useEffect(() => {
-        const unsubscribe = registerShortcut('Space', onSpaceKey)
+        const unsubscribe = registerKeyboardShortcut('Space', onSpaceKey)
 
         return function cleanup() {
             unsubscribe()
@@ -114,7 +114,7 @@ export function KeyboardShortcuts({
     useEffect(() => {
         const onMKey = () => onToggleSound((isMute) => !isMute)
 
-        const unsubscribe = registerShortcut('KeyM', onMKey)
+        const unsubscribe = registerKeyboardShortcut('KeyM', onMKey)
 
         return function cleanup() {
             unsubscribe()

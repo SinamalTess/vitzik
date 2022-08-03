@@ -19,7 +19,7 @@ import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { Divider } from '../_presentational/Divider'
 import { BpmSelector } from '../BpmSelector'
 import { LoopTimes } from '../../types/LoopTimes'
-import { registerShortcut } from '../../utils/keyboard_shortcuts'
+import { registerKeyboardShortcut } from '../../utils/keyboard_shortcuts'
 
 interface SettingsProps {
     showNotes: boolean
@@ -91,7 +91,7 @@ export const Settings = React.memo(function Settings({
             onChangeIsEditingLoop((isEditingLoops) => !isEditingLoops)
             clearLoop()
         }
-        const unsubscribe = registerShortcut('KeyL', onLKey)
+        const unsubscribe = registerKeyboardShortcut('KeyL', onLKey)
 
         return function cleanup() {
             unsubscribe()

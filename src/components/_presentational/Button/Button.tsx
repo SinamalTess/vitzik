@@ -17,6 +17,8 @@ interface ButtonProps extends PresentationalComponentBasicProps {
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
     onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void
     onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void
+    onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void
+    onFocus?: (event: React.FocusEvent<HTMLButtonElement>) => void
 }
 
 const BASE_CLASS = 'btn'
@@ -37,6 +39,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
         onClick = () => {},
         onMouseEnter = () => {},
         onMouseLeave = () => {},
+        onBlur = () => {},
+        onFocus = () => {},
     },
     ref
 ) {
@@ -63,6 +67,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
             onClick={onClick}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
+            onBlur={onBlur}
+            onFocus={onFocus}
         >
             {icon ? (
                 <Icon

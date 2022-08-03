@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AudioPlayerState, MidiMetas } from '../../types'
 import './AudioPlayer.scss'
 import { LoopTimes } from '../../types/LoopTimes'
-import { KeyboardShortcuts } from './KeyboardShortcuts'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
+import { ShortcutsContext } from '../ShortcutsContext'
+import { Shortcuts } from './Shortcuts'
 
 interface AudioPlayerProps {
     worker: Worker
@@ -39,6 +40,7 @@ export const AudioPlayer = React.memo(function AudioPlayer({
     const isPlaying = state === 'playing'
     const [startLoop, endLoop] = loopTimes
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
+    const { shortcuts, setShortcuts } = useContext(ShortcutsContext)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
 
     const checkIsEnd = useCallback(
@@ -101,11 +103,11 @@ export const AudioPlayer = React.memo(function AudioPlayer({
         setWorkerInitialTime(parseFloat(value))
     }
 
-    function handleClickOnPlay() {
+    function handleOnPlay() {
         onChangeState(isPlaying ? 'paused' : 'playing')
     }
 
-    function handleClickOnStop() {
+    function handleOnStop() {
         onChangeState('stopped')
     }
 
@@ -121,6 +123,16 @@ export const AudioPlayer = React.memo(function AudioPlayer({
         } else {
             onChangeState(prevState)
         }
+    }
+
+    function handlePlayBlur() {
+        setShortcuts((shortcuts) => [...shortcuts, 'Space'])
+    }
+
+    function handlePlayFocus() {
+        setShortcuts((shortcuts) =>
+            shortcuts.filter((activeShortcut) => activeShortcut !== 'Space')
+        )
     }
 
     return (
@@ -145,10 +157,12 @@ export const AudioPlayer = React.memo(function AudioPlayer({
                 isMute={isMute}
                 state={state}
                 onToggleSound={onToggleSound}
-                onClickOnPlay={handleClickOnPlay}
-                onStop={handleClickOnStop}
+                onStop={handleOnStop}
+                onPlay={handleOnPlay}
+                onPlayButtonBlur={handlePlayBlur}
+                onPlayButtonFocus={handlePlayFocus}
             />
-            <KeyboardShortcuts
+            <Shortcuts
                 worker={worker}
                 state={state}
                 onChangeState={onChangeState}

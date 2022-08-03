@@ -1,4 +1,4 @@
-export function registerShortcut(
+export function registerKeyboardShortcut(
     code: string,
     callbackKeyDown: Function,
     callbackKeyUp?: Function
