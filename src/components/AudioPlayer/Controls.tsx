@@ -28,7 +28,7 @@ export function Controls({
             <Button
                 onClick={onStop}
                 icon="stop"
-                variant="link"
+                variant="text"
                 color="secondary"
                 aria-label={'stop'}
             />

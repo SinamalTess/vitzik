@@ -24,7 +24,7 @@ export function SoundButton({ size, isMute, onToggleSound }: SoundButtonProps) {
         <Tooltip showOnHover>
             <Button
                 onClick={handleClick}
-                variant="link"
+                variant="text"
                 className={classNames}
                 aria-label={isMute ? 'muted' : 'volume'}
                 size={size}

@@ -143,7 +143,7 @@ export const Settings = React.memo(function Settings({
                         <Button
                             icon={'loop'}
                             onClick={handleClickOnLoop}
-                            variant="link"
+                            variant="text"
                             color={isEditingLoop ? 'primary' : 'secondary'}
                         ></Button>
                         {`${

@@ -24,7 +24,7 @@ export function PlayButton({ size, isPlaying, onClick, onBlur, onFocus }: Player
         <Tooltip showOnHover>
             <Button
                 onClick={onClick}
-                variant={'link'}
+                variant={'text'}
                 aria-label={isPlaying ? 'play' : 'paused'}
                 size={size}
                 onBlur={onBlur}

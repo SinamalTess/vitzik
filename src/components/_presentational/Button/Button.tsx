@@ -4,7 +4,7 @@ import { Icon } from '../Icon'
 import { CSSSpacingSize, CSSColor, IconName, PresentationalComponentBasicProps } from '../types'
 import clsx from 'clsx'
 
-type ButtonVariant = 'outlined' | 'filled' | 'link'
+type ButtonVariant = 'outlined' | 'filled' | 'text'
 
 interface ButtonProps extends PresentationalComponentBasicProps {
     disabled?: boolean
@@ -34,7 +34,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
         children,
         size = 'md',
         color = 'primary',
-        variant,
+        variant = 'filled',
         className,
         onClick = () => {},
         onMouseEnter = () => {},
@@ -49,8 +49,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
         { [`${BASE_CLASS}-${size}`]: size },
         { [`pd-${size}`]: size },
         { [`${BASE_CLASS}--active`]: active },
-        { [`${BASE_CLASS}--outline`]: variant === 'outlined' },
-        { [`${BASE_CLASS}--link`]: variant === 'link' },
+        { [`${BASE_CLASS}--${variant}`]: variant },
         { [`${BASE_CLASS}--disabled`]: disabled },
         { [`${BASE_CLASS}--${color}`]: color },
         className
