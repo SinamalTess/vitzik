@@ -42,6 +42,8 @@
 
     &--link {
         background-color: transparent;
+        text-transform: none;
+        text-decoration: underline;
     }
 
     &--disabled {

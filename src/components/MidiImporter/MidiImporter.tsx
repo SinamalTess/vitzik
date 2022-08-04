@@ -115,7 +115,10 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
                 return isDesktop ? (
                     <>
                         Drag and drop a MIDI file to this dropzone, or try with an
-                        <Button onClick={handleClick}> example </Button>
+                        <Button onClick={handleClick} variant={'link'}>
+                            {' '}
+                            example{' '}
+                        </Button>
                     </>
                 ) : (
                     'Select a MIDI file to import'
