@@ -116,8 +116,7 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
                     <>
                         Drag and drop a MIDI file to this dropzone, or try with an
                         <Button onClick={handleClick} variant={'link'}>
-                            {' '}
-                            example{' '}
+                            example
                         </Button>
                     </>
                 ) : (

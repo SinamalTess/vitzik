@@ -1,10 +1,10 @@
 export type IconName =
-    | 'reset'
+    | 'linkedin'
     | 'stop'
     | 'eye-open'
     | 'eye-half-closed'
     | 'eye-closed'
     | 'loop'
     | 'usb'
-    | 'midi'
+    | 'github'
     | 'settings'

@@ -1,15 +1,23 @@
 import React from 'react'
-import { PresentationalComponentBasicProps } from '../types'
+import { IconName, PresentationalComponentBasicProps } from '../types'
+import { Icon } from '../Icon'
+import './Link.scss'
 
 interface LinkProps extends PresentationalComponentBasicProps {
     children: string
     href: string
+    icon?: IconName
 }
 
-export function Link({ href, children, style }: LinkProps) {
+const BASE_CLASS = 'link'
+
+export function Link({ href, children, style, icon }: LinkProps) {
     return (
-        <a href={href} style={style} target="_blank" rel="noreferrer">
-            {children}
-        </a>
+        <>
+            <a href={href} style={style} target="_blank" rel="noreferrer" className={BASE_CLASS}>
+                {icon ? <Icon className={'mg-sm'} name={icon} /> : null}
+                {children}
+            </a>
+        </>
     )
 }

@@ -1,7 +1,8 @@
 @font-face {
     font-family: 'Custom Icons';
     font-display: swap;
-    src: url('fonts/icons.woff') format('woff');
+    src: url('fonts/icons.woff') format('woff'), url('fonts/icons.woff2') format('woff2'),
+        url('fonts/icons.otf') format('otf'), url('fonts/icons.ttf') format('ttf');
 }
 
 // Maps the icons to characters in the font
@@ -20,12 +21,12 @@
             content: 'b';
         }
     }
-    &-reset {
+    &-linkedin {
         &::before {
             content: 'c';
         }
     }
-    &-midi {
+    &-github {
         &::before {
             content: 'd';
         }

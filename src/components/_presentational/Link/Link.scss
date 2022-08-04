@@ -1,0 +1,6 @@
+@use 'sass:map';
+@import '../../../style/vars';
+
+.link {
+    color: map-get($theme-colors, 'primary');
+}
