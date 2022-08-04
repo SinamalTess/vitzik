@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './Settings.scss'
 import {
     Instrument,
@@ -88,16 +88,6 @@ export const Settings = React.memo(function Settings({
         ? userInstrument.name
         : 'Acoustic Grand Keyboard'
 
-    useEffect(() => {
-        if (isOpen) {
-            setShortcuts((shortcuts) =>
-                shortcuts.filter((activeShortcut) => activeShortcut !== 'wheel')
-            )
-        } else {
-            setShortcuts((shortcuts) => [...shortcuts, 'wheel'])
-        }
-    }, [isOpen])
-
     useKeyboardShortcut('KeyL', () => {
         onChangeIsEditingLoop((isEditingLoops) => !isEditingLoops)
         clearLoop()
@@ -118,10 +108,14 @@ export const Settings = React.memo(function Settings({
 
     function handleClickOnExtraSettings() {
         setIsOpen((isOpen) => !isOpen)
+        setShortcuts((shortcuts) =>
+            shortcuts.filter((activeShortcut) => activeShortcut !== 'wheel')
+        )
     }
 
     function handleCloseExtraSettings() {
         setIsOpen(false)
+        setShortcuts((shortcuts) => [...shortcuts, 'wheel'])
     }
 
     function handleMidiAccessModeClick() {
