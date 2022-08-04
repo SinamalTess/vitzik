@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 
 const validFile = {
     dataTransfer: {
@@ -26,7 +26,7 @@ export const dragInvalidFile = () => {
     fireEvent.dragOver(dropzone, { ...invalidFile })
 }
 
-export const clickMidiExample = () => {
+export const clickMidiExample = async () => {
     const button = screen.getByText(/Example/i)
     /*
         Can't use userEvent.click() here because the button will remain focused.
@@ -34,6 +34,7 @@ export const clickMidiExample = () => {
         In the real environment the button disappears from the layout so this doesn't happen.
     */
     fireEvent.click(button)
+    await waitFor(() => expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent('135'))
 }
 
 export const dropValidFile = () => {

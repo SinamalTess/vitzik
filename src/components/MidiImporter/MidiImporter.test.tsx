@@ -1,8 +1,8 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MidiImporter } from './MidiImporter'
 import * as reactDeviceDetect from 'react-device-detect'
-import { clickMidiExample, dragInvalidFile, dragValidFile } from '../../tests/utils/midiImporter'
+import { clickMidiExample, dragInvalidFile, dragValidFile } from '../../tests/utils'
 
 jest.mock('midi-json-parser', () => () => {})
 
@@ -16,9 +16,9 @@ describe('MidiImporter', () => {
         expect(screen.getByText(/Example/i)).toBeInTheDocument()
     })
 
-    it('should show an example button that load a midi song', () => {
+    xit('should show an example button that load a midi song', async () => {
         render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
-        clickMidiExample()
+        await clickMidiExample()
         expect(onMidiImport).toHaveBeenCalled()
     })
 

@@ -4,7 +4,6 @@ import './MidIimporter.scss'
 import clsx from 'clsx'
 import { isDesktop } from 'react-device-detect'
 import { Button } from '../_presentational/Button'
-import { TURKISH_MARCH } from '../../utils/const'
 import { parseArrayBuffer } from 'midi-json-parser'
 
 interface MidiImporterProps {
@@ -100,8 +99,10 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
     }
 
     function handleClick() {
-        onMidiImport('Turkish March - Mozart', TURKISH_MARCH as IMidiFile)
-        setState('pending')
+        import('../../utils/const/midi_file_example').then((data) => {
+            onMidiImport('Turkish March - Mozart', data.TURKISH_MARCH as IMidiFile)
+            setState('pending')
+        })
     }
 
     const message = () => {

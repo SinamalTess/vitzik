@@ -129,7 +129,7 @@ describe('App', () => {
             describe('The audio player', () => {
                 it('should render', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
 
                     await waitSoundFontInstrumentPromise()
 
@@ -141,7 +141,7 @@ describe('App', () => {
                 })
                 it('should play when the play button is clicked', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickPlay()
 
                     await waitSoundFontInstrumentPromise()
@@ -150,7 +150,7 @@ describe('App', () => {
                 })
                 it('should mute and unmute when the autoplay switch is clicked', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickAutoplaySwitch()
 
                     await waitSoundFontInstrumentPromise()
@@ -163,7 +163,7 @@ describe('App', () => {
                 })
                 it('should mute and unmute when the (m) shortcut is used', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await pressKey('{m}')
 
                     await waitSoundFontInstrumentPromise()
@@ -176,7 +176,7 @@ describe('App', () => {
                 })
                 it('should enter and exit loop mode when the (l) shortcut is used', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await pressKey('{l}')
 
                     await waitSoundFontInstrumentPromise()
@@ -189,7 +189,7 @@ describe('App', () => {
                 })
                 it('should stop when the stop button is clicked', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickPlay()
                     await clickStop()
 
@@ -199,7 +199,7 @@ describe('App', () => {
                 })
                 it('should pause when the paused button is clicked', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickPlay()
                     await clickPause()
 
@@ -209,7 +209,7 @@ describe('App', () => {
                 })
                 it('should mute and unmute when the volume button is clicked', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickVolume()
 
                     await waitSoundFontInstrumentPromise()
@@ -222,7 +222,7 @@ describe('App', () => {
                 })
                 it('should play when the space bar is pressed', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await pressKey('[space]')
 
                     await waitSoundFontInstrumentPromise()
@@ -231,7 +231,7 @@ describe('App', () => {
                 })
                 it('should pause when the space bar is pressed while the player was playing', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await pressKey('[space]')
                     await pressKey('[space]')
 
@@ -241,7 +241,7 @@ describe('App', () => {
                 })
                 it('should resume playing when the space bar is pressed while the player was paused', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await pressKey('[space]')
                     await pressKey('[space]')
                     await pressKey('[space]')
@@ -255,7 +255,7 @@ describe('App', () => {
             describe('The settings', () => {
                 it('should show the first BPM value', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
 
                     await waitSoundFontInstrumentPromise()
 
@@ -267,7 +267,7 @@ describe('App', () => {
                     const speedValue = 2
                     const expectedBPM = initialBPM * speedValue
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickBPMButton()
                     await clickSpeedButton(speedValue)
 
@@ -280,7 +280,7 @@ describe('App', () => {
                 })
                 it('should allow the user to set times for the loop', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickPlay()
                     await clickSetLoopButton()
                     clickLoopEditorAt(50, 50)
@@ -292,7 +292,7 @@ describe('App', () => {
                 })
                 it('should show a preview loop line on hover', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickPlay()
                     await clickSetLoopButton()
                     await hoverLoopEditorAt(50, 50)
@@ -307,7 +307,7 @@ describe('App', () => {
             describe('The extra settings', () => {
                 it('should show a track list', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickExtraSettings()
 
                     await waitSoundFontInstrumentPromise()
@@ -318,7 +318,7 @@ describe('App', () => {
                 })
                 it('should let the user instrument be changed', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickExtraSettings()
                     changeUserInstrument('Ocarina')
 
@@ -329,7 +329,7 @@ describe('App', () => {
                 })
                 it('should hide the notes when the "show notes" switch is off', async () => {
                     render(<App />)
-                    clickMidiExample()
+                    await clickMidiExample()
                     await clickExtraSettings()
                     await clickShowNotesSwitch()
 
