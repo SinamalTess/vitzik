@@ -1,11 +1,10 @@
-@use 'sass:map';
 @import '../../../style/vars';
 
 select {
     background-color: map-get($theme-colors-variants, 'dark-secondary');
     border-radius: 5px;
     border: none;
-    color: map.get($theme-colors, 'primary');
+    color: map-get($theme-colors, 'primary');
     cursor: pointer;
     letter-spacing: 1px;
     option {

@@ -1,9 +1,8 @@
-@use 'sass:map';
 @import '../../../style/vars';
 @import '../../../style/mixins';
 
 .btn {
-    color: darken(map.get($theme-colors, 'primary'), 20%);
+    color: darken(map-get($theme-colors, 'primary'), 20%);
     border: none;
     cursor: pointer;
     border-radius: 5px;
@@ -31,7 +30,7 @@
     &--outline {
         border: 1px solid map-get($theme-colors, 'primary');
         background-color: transparent;
-        color: map.get($theme-colors, 'primary');
+        color: map-get($theme-colors, 'primary');
         &:hover,
         &:focus {
             border: 1px solid lighten(map-get($theme-colors, 'primary'), 25%);
