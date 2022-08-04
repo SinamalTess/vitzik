@@ -10,7 +10,7 @@ $width: 33%;
     top: 0;
     transform: translateX(100%);
     position: fixed;
-    background-color: map-get($theme-colors-variants, 'light-secondary');
+    background-color: map-get($theme-colors, 'light-secondary');
     z-index: 3;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     &-enter,

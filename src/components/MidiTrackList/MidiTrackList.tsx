@@ -113,6 +113,7 @@ export function MidiTrackList({
                 <ListItemSecondaryAction>
                     <Button
                         size={'sm'}
+                        variant={'outlined'}
                         icon={allChecked ? 'eye-closed' : 'eye-open'}
                         onClick={() => handleClick('all')}
                     >

@@ -3,7 +3,7 @@
 .midi-input {
     padding-right: map-get($theme-spacing-sizes, 'md');
     &--error {
-        color: map-get($theme-colors-variants, 'disabled');
+        color: map-get($theme-colors, 'disabled');
     }
 
     .tooltip--active {

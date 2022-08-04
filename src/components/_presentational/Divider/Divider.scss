@@ -4,10 +4,10 @@
     display: block;
     height: 1px;
     border: 0;
-    border-top: 1px solid map-get($theme-colors-variants, 'light-secondary');
+    border-top: 1px solid map-get($theme-colors, 'light-secondary');
     &--vertical {
         border: none;
-        border-left: 1px solid map-get($theme-colors-variants, 'light-secondary');
+        border-left: 1px solid map-get($theme-colors, 'light-secondary');
         height: auto;
         width: 1px;
         flex-shrink: 0;

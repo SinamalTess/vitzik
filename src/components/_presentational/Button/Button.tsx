@@ -51,7 +51,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
         { [`${BASE_CLASS}--active`]: active },
         { [`${BASE_CLASS}--${variant}`]: variant },
         { [`${BASE_CLASS}--disabled`]: disabled },
-        { [`${BASE_CLASS}--${color}`]: color },
+        { [`${BASE_CLASS}--${variant}--${color}`]: color },
         className
     )
 

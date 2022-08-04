@@ -30,12 +30,12 @@ $width: 500px;
         overflow: hidden;
         width: $width;
         -webkit-appearance: none;
-        background-color: map-get($theme-colors-variants, 'dark-secondary');
+        background-color: map-get($theme-colors, 'dark-secondary');
 
         &::-webkit-slider-runnable-track {
             height: 10px;
             -webkit-appearance: none;
-            color: map-get($theme-colors-variants, 'dark-secondary');
+            color: map-get($theme-colors, 'dark-secondary');
             margin-top: -1px;
         }
 
@@ -43,7 +43,7 @@ $width: 500px;
             width: 5px;
             -webkit-appearance: none;
             height: 10px;
-            background: map-get($theme-colors-variants, 'light-secondary');
+            background: map-get($theme-colors, 'light-secondary');
             box-shadow: -$width 0 0 $width map-get($theme-colors, 'primary');
         }
 
@@ -52,7 +52,7 @@ $width: 500px;
             background-color: map-get($theme-colors, 'primary');
         }
         &::-moz-range-track {
-            background-color: map-get($theme-colors-variants, 'dark-secondary');
+            background-color: map-get($theme-colors, 'dark-secondary');
         }
 
         /* IE*/
@@ -60,7 +60,7 @@ $width: 500px;
             background-color: map-get($theme-colors, 'primary');
         }
         &::-ms-fill-upper {
-            background-color: map-get($theme-colors-variants, 'dark-secondary');
+            background-color: map-get($theme-colors, 'dark-secondary');
         }
     }
 

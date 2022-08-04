@@ -1,17 +1,31 @@
-$theme-colors: (
+@import './src/style/mixins';
+
+$colors: (
     'primary': #00e2dc,
     'secondary': #282c34,
-    'success': #28a745,
-    'info': #17a2b8,
-    'disabled': #505050,
-    'warning': #ffc107,
+    'disabled': #868686,
+    'success': #00e087,
+    'info': #3449bf,
+    'warning': #f27405,
+    'error': #8c0303,
+    'text': #cecece,
 );
 
-$theme-colors-variants: (
-    'dark-secondary': darken(map-get($theme-colors, 'secondary'), 5),
-    'light-secondary': lighten(map-get($theme-colors, 'secondary'), 5),
-    'text': lighten(map-get($theme-colors, 'secondary'), 75),
-);
+$theme-colors: ();
+
+@function create_colour_map($key, $color, $percentage, $opacity) {
+    $map: (
+        #{$key}: #{$color},
+        'light-#{$key}': lighten($color, $percentage),
+        'dark-#{$key}': darken($color, $percentage),
+        'trans-#{$key}': transparentize($color, $opacity)
+    );
+    @return $map;
+}
+
+@each $key, $value in $colors {
+    $theme-colors: map-merge($theme-colors, create_colour_map($key, $value, 5, 1));
+}
 
 $theme-font-sizes: (
     'sm': 0.6rem,

@@ -1,8 +1,8 @@
 @import '../../../style/vars';
 
 .text-field {
-    background-color: map-get($theme-colors-variants, 'dark-secondary');
-    color: map-get($theme-colors-variants, 'light-secondary');
+    background-color: map-get($theme-colors, 'dark-secondary');
+    color: map-get($theme-colors, 'light-secondary');
     border-radius: 5px;
     padding: map-get($theme-spacing-sizes, 'sm');
     input {
