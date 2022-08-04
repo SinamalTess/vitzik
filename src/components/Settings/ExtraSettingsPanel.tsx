@@ -44,7 +44,7 @@ export function ExtraSettingsPanel({
 
     return (
         <SideBar open={isOpen} onClose={onClose}>
-            <div className={BASE_CLASS} role="toolbar" aria-orientation="vertical">
+            <div className={`${BASE_CLASS} pd-lg`} role="toolbar" aria-orientation="vertical">
                 <h2 className={'pd-b-lg'}>Settings</h2>
                 <h3 className={'pd-b-md'}>User Instrument</h3>
                 <div className={`${BASE_CLASS}__user-instrument pd-b-md`}>

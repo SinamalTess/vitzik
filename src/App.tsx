@@ -25,9 +25,10 @@ import { LoopTimes } from './types/LoopTimes'
 import { WebWorker } from './workers/WebWorker'
 // @ts-ignore
 import intervalWorker from './workers/intervalWorker.js'
-import { useTitle } from './_hooks/useTitle'
+import { useTitle } from './_hooks'
 import { ActiveShortcut } from './types/ActiveShortcut'
 import { ShortcutsContext } from './components/ShortcutsContext'
+import { Infos } from './components/Infos'
 
 const AUDIO_CONTEXT = new AudioContext()
 let worker: Worker = WebWorker(intervalWorker)
@@ -126,7 +127,7 @@ function App() {
                             onToggleSound={setIsMute}
                         />
                     ) : (
-                        <div />
+                        <Infos />
                     )}
                     <Settings
                         worker={worker}

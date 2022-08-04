@@ -1,9 +1,8 @@
 @use 'sass:map';
-@import 'src/style/vars';
-@import 'src/style/glitch';
+@import '../../style/vars';
+@import '../../style/glitch';
 
 .extra-settings {
-    padding: map-get($theme-spacing-sizes, 'lg');
     &__user-instrument {
         display: flex;
         align-items: center;
