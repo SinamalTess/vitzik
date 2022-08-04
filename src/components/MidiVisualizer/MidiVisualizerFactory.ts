@@ -18,7 +18,8 @@ import {
     isNoteOffEvent,
     isNoteOnEvent,
 } from '../../utils'
-import { findLast, minBy } from 'lodash'
+import findLast from 'lodash/findLast'
+import minBy from 'lodash/minBy'
 
 interface PartialNote extends MidiVisualizerNoteCoordinates {
     deltaAcc: number

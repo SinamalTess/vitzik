@@ -19,7 +19,12 @@ import {
     isTimeSignatureEvent,
     isTrackNameEvent,
 } from './midi_events'
-import { assign, findLast, last, max, sortBy, uniqBy } from 'lodash'
+import assign from 'lodash/assign'
+import findLast from 'lodash/findLast'
+import last from 'lodash/last'
+import max from 'lodash/max'
+import sortBy from 'lodash/sortBy'
+import uniqBy from 'lodash/uniqBy'
 import { isPositive } from './maths'
 
 export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))

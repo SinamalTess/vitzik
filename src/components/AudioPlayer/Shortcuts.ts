@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { AudioPlayerState } from '../../types'
-import { throttle } from 'lodash'
+import throttle from 'lodash/throttle'
 import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
 import { ShortcutsContext } from '../ShortcutsContext'
 

@@ -8,7 +8,8 @@ import {
     MidiMode,
     MidiVisualizerNoteCoordinates,
 } from '../../types'
-import { findLast, isEqual } from 'lodash'
+import findLast from 'lodash/findLast'
+import isEqual from 'lodash/isEqual'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSection } from './MidiVisualizerSection'
 import { MidiVisualizerNotesTracks } from './MidiVisualizerNotesTracks'

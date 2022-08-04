@@ -19,7 +19,8 @@ import {
 } from '../../utils'
 import clsx from 'clsx'
 import { MIDI_CHANNEL_COLORS } from '../../utils/const'
-import { findLast, last } from 'lodash'
+import findLast from 'lodash/findLast'
+import last from 'lodash/last'
 
 interface KeyboardProps {
     activeNotes: ActiveNote[]
