@@ -3,11 +3,14 @@ import { Icon } from '../_presentational/Icon'
 import { Select } from '../_presentational/Select'
 import { Tooltip } from '../_presentational/Tooltip'
 import './MidiInputSelector.scss'
+import { Link } from '../_presentational/Link'
 
 interface MidiInputSelectorProps {
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
     onMidiOutputChange: React.Dispatch<React.SetStateAction<MIDIOutput | null>>
 }
+
+type MidiInputState = 'pending' | 'available' | 'error'
 
 const BASE_CLASS = 'midi-input'
 
@@ -21,19 +24,27 @@ export function MidiInputSelector({
 }: MidiInputSelectorProps) {
     const [midiInputs, setMidiInputs] = useState<MIDIInput[]>([])
     const [midiOutputs, setMidiOutputs] = useState<MIDIOutput[]>([])
+    const [state, setState] = useState<MidiInputState>('pending')
 
     useEffect(() => {
         function onMIDISuccess(midiAccess: MIDIAccess) {
             const inputs: MIDIInput[] = [...midiAccess.inputs.values()] // turn into array
             const outputs: MIDIOutput[] = [...midiAccess.outputs.values()] // turn into array
 
-            setMidiInputs(inputs)
-            setMidiOutputs(outputs)
-            onMidiInputChange(inputs[0])
-            onMidiOutputChange(outputs[0])
+            if (inputs.length) {
+                setMidiInputs(inputs)
+                setMidiOutputs(outputs)
+                onMidiInputChange(inputs[0])
+                onMidiOutputChange(outputs[0])
+                setState('available')
+            }
         }
 
-        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
+        } else {
+            setState('error')
+        }
     }, [onMidiInputChange, onMidiOutputChange])
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -44,21 +55,42 @@ export function MidiInputSelector({
         }
     }
 
-    return midiInputs.length ? (
-        <Select onChange={handleChange}>
-            {midiInputs.map((midiInput) => (
-                <option
-                    value={midiInput.id}
-                    key={midiInput.id}
-                >{`${midiInput.name} - ${midiInput.manufacturer}`}</option>
-            ))}
-        </Select>
-    ) : (
-        <span className={`${BASE_CLASS}--not-found`}>
-            <Tooltip showOnHover>
-                <Icon name="usb">No input found</Icon>
-                Try connecting an instrument to your computer via USB
-            </Tooltip>
-        </span>
-    )
+    switch (state) {
+        case 'pending':
+            return (
+                <span className={`${BASE_CLASS}`}>
+                    <Tooltip showOnHover>
+                        <Icon name="usb">No input found</Icon>
+                        Try connecting an instrument to your computer via USB
+                    </Tooltip>
+                </span>
+            )
+        case 'available':
+            return (
+                <Select onChange={handleChange}>
+                    {midiInputs.map((midiInput) => (
+                        <option
+                            value={midiInput.id}
+                            key={midiInput.id}
+                        >{`${midiInput.name} - ${midiInput.manufacturer}`}</option>
+                    ))}
+                </Select>
+            )
+        case 'error':
+            return (
+                <span className={`${BASE_CLASS} ${BASE_CLASS}--${state}`}>
+                    <Tooltip showOnHover>
+                        <Icon name="usb">Midi API not available</Icon>
+                        <>
+                            Your browser doesn't support the MIDI API. You can see the list of
+                            supported browser
+                            <Link href="https://caniuse.com/midi">here</Link>
+                            .<br />
+                            You can can still use the midi import feature, but connecting an
+                            instrument via USB won't work.
+                        </>
+                    </Tooltip>
+                </span>
+            )
+    }
 }

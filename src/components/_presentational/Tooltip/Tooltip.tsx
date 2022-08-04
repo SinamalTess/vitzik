@@ -59,10 +59,7 @@ export function Tooltip({
     const [isOpen, setOpen] = useState(false)
     const isVisible = isOpen || show
 
-    let modifiers = [
-        { name: 'offset', options: { offset: referenceWidth ? [0, 0] : offset } },
-        { name: 'arrow', options: { element: arrowElement } },
-    ]
+    let modifiers = [{ name: 'arrow', options: { element: arrowElement } }]
 
     if (referenceWidth) {
         // @ts-ignore
@@ -116,15 +113,21 @@ export function Tooltip({
                     ref={setPopperElement}
                     style={styleTooltip}
                     {...attributes.popper}
+                    {...props}
                 >
-                    {arrow ? (
-                        <div
-                            ref={setArrowElement}
-                            style={styles.arrow}
-                            className={`${BASE_CLASS}__arrow`}
-                        />
-                    ) : null}
-                    {tooltipChild}
+                    <div
+                        className={`${BASE_CLASS}__content`}
+                        style={{ margin: `${offset[1]}px ${offset[0]}px` }}
+                    >
+                        {arrow ? (
+                            <div
+                                ref={setArrowElement}
+                                style={styles.arrow}
+                                className={`${BASE_CLASS}__arrow`}
+                            />
+                        ) : null}
+                        {tooltipChild}
+                    </div>
                 </span>
             ) : null}
         </>
