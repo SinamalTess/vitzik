@@ -52,7 +52,7 @@ interface SettingsProps {
 
 const BASE_CLASS = 'settings'
 
-export const Settings = React.memo(function Settings({
+export function Settings({
     worker,
     showNotes,
     appMode,
@@ -203,4 +203,4 @@ export const Settings = React.memo(function Settings({
             />
         </div>
     )
-})
+}

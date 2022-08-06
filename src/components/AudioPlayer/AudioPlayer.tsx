@@ -24,7 +24,7 @@ interface AudioPlayerProps {
 
 const BASE_CLASS = 'audio-player'
 
-export const AudioPlayer = React.memo(function AudioPlayer({
+export function AudioPlayer({
     worker,
     midiMetas,
     midiSpeedFactor = 1,
@@ -171,4 +171,4 @@ export const AudioPlayer = React.memo(function AudioPlayer({
             />
         </div>
     )
-})
+}
