@@ -183,6 +183,7 @@ export function Keyboard({
                             width,
                             margin,
                             background,
+                            boxShadow: isActive ? `0 -10px 20px ${background}` : '',
                         }}
                         data-testid={`${name}${isActive ? '-active' : ''}`}
                         className={classNames}

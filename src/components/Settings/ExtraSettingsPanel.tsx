@@ -6,6 +6,7 @@ import { Instrument, InstrumentUserFriendlyName, MidiMetas, MusicSystem } from '
 import './ExtraSettingsPanel.scss'
 import { MidiTrackList } from '../MidiTrackList'
 import { Switch } from '../_presentational/Switch'
+import { InstrumentImage } from '../InstrumentImage'
 
 interface ExtraSettingsPanelProps {
     isOpen: boolean
@@ -16,6 +17,7 @@ interface ExtraSettingsPanelProps {
     activeTracks: number[]
     activeInstruments: Instrument[]
     onClose: () => void
+    loadedInstrumentPlayers: InstrumentUserFriendlyName[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -32,6 +34,7 @@ export function ExtraSettingsPanel({
     midiMetas,
     activeTracks,
     activeInstruments,
+    loadedInstrumentPlayers,
     onClose,
     onChangeMusicSystem,
     onChangeActiveTracks,
@@ -48,11 +51,7 @@ export function ExtraSettingsPanel({
                 <h2 className={'pd-b-lg'}>Settings</h2>
                 <h3 className={'pd-b-md'}>User Instrument</h3>
                 <div className={`${BASE_CLASS}__user-instrument pd-b-md`}>
-                    <img
-                        src={`img/svg/instruments/instrument_${userInstrument}.svg`}
-                        alt={`instrument ${userInstrument}`}
-                        style={{ width: 48 }}
-                    />
+                    <InstrumentImage instrumentName={userInstrument} size={48} />
                     <InstrumentSelector onChange={onChangeInstrument} value={userInstrument} />
                 </div>
                 <Switch isOn={showNotes} onClick={handleClick} className={'pd-md'}>
@@ -69,10 +68,11 @@ export function ExtraSettingsPanel({
                         />
                         <h3>Tracks</h3>
                         <MidiTrackList
+                            loadedInstrumentPlayers={loadedInstrumentPlayers}
                             activeInstruments={activeInstruments}
                             tracks={midiMetas.tracksMetas}
                             activeTracks={activeTracks}
-                            instruments={midiMetas.instruments}
+                            allInstruments={midiMetas.instruments}
                             onChangeActiveTracks={onChangeActiveTracks}
                         />
                     </>

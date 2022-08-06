@@ -29,6 +29,7 @@ describe('InstrumentPlayer', () => {
         instrumentName: 'Acoustic Grand Keyboard' as InstrumentUserFriendlyName,
         soundfont: 'FatBoy' as SoundFont,
         channel: 0,
+        onChangeLoadedInstrumentPlayers: () => {},
     }
 
     it('should load the passed instrument', async () => {

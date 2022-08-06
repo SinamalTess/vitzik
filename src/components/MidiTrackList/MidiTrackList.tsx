@@ -3,27 +3,37 @@ import { ListItem } from '../_presentational/ListItem'
 import { ListItemSecondaryAction } from '../_presentational/ListItemSecondaryAction'
 import { Button } from '../_presentational/Button'
 import { List } from '../_presentational/List'
-import { Instrument, TrackMetas } from '../../types'
+import { Instrument, InstrumentUserFriendlyName, TrackMetas } from '../../types'
 import './MidiTrackList.scss'
-import { msToTime } from '../../utils'
 import { Tooltip } from '../_presentational/Tooltip'
 import { Divider } from '../_presentational/Divider'
+import { ChannelList } from './ChannelList'
 
 interface MidiTrackListProps {
     tracks: TrackMetas[]
     activeTracks: number[]
-    instruments: Instrument[]
+    loadedInstrumentPlayers: InstrumentUserFriendlyName[]
+    allInstruments: Instrument[]
     activeInstruments: Instrument[]
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
 }
 
+export interface ChannelInfos {
+    isActive: boolean
+    instrumentName: InstrumentUserFriendlyName
+    instrumentState: 'pending' | 'loaded'
+    timestamp: number
+    channel: number
+}
+
 const BASE_CLASS = 'midi-track-list'
 
-function getChannelInstruments(
+function getChannelInfos(
     channel: number,
-    instruments: Instrument[],
-    activeInstruments: Instrument[]
-) {
+    allInstruments: Instrument[],
+    activeInstruments: Instrument[],
+    loadedInstrumentPlayers: InstrumentUserFriendlyName[]
+): ChannelInfos[] {
     const isInstrumentActive = (instrument: Instrument) =>
         activeInstruments.some(
             ({ timestamp, name, channel }) =>
@@ -32,34 +42,51 @@ function getChannelInstruments(
                 channel === instrument.channel
         )
 
-    return instruments
+    const getInstrumentState = (instrument: Instrument) => {
+        const existingInstrumentPlayerIndex = loadedInstrumentPlayers.findIndex(
+            (loadedInstrumentPlayer) => loadedInstrumentPlayer === instrument.name
+        )
+        return existingInstrumentPlayerIndex >= 0 ? 'loaded' : 'pending'
+    }
+
+    return allInstruments
         .filter((instrument) => instrument.channel === channel)
-        .map((instrument) => ({
-            ...instrument,
-            isActive: isInstrumentActive(instrument),
-        }))
+        .map((instrument) => {
+            const { name: instrumentName, channel, timestamp } = instrument
+            return {
+                channel,
+                instrumentName,
+                timestamp,
+                isActive: isInstrumentActive(instrument),
+                instrumentState: getInstrumentState(instrument),
+            }
+        })
 }
 
-function getListItem(
+function getTrackInfos(
     playableTracks: TrackMetas[],
-    instruments: Instrument[],
+    allInstruments: Instrument[],
     activeTracks: number[],
-    activeInstruments: Instrument[]
+    activeInstruments: Instrument[],
+    loadedInstrumentPlayers: InstrumentUserFriendlyName[]
 ) {
     return playableTracks.map(({ channels, index, names }) => {
         // turns Set into Array
-        const channelsInstruments = [...channels].reduce(
-            (acc, val) => acc.concat(getChannelInstruments(val, instruments, activeInstruments)),
-            [] as any[]
+        const channelsInfos = [...channels].reduce(
+            (acc, val) =>
+                acc.concat(
+                    getChannelInfos(val, allInstruments, activeInstruments, loadedInstrumentPlayers)
+                ),
+            [] as ChannelInfos[]
         )
 
-        const isActiveTrack = activeTracks.some((activeTrack) => activeTrack === index)
+        const isActive = activeTracks.some((activeTrack) => activeTrack === index)
 
         return {
             index,
             names,
-            channelsInstruments,
-            isActiveTrack,
+            channelsInfos,
+            isActive,
         }
     })
 }
@@ -67,15 +94,22 @@ function getListItem(
 export function MidiTrackList({
     tracks,
     activeTracks,
-    instruments,
+    allInstruments,
     activeInstruments,
+    loadedInstrumentPlayers,
     onChangeActiveTracks,
 }: MidiTrackListProps) {
     const playableTracks = tracks.filter((track) => track.isPlayable)
-    const allChecked = activeTracks.length === playableTracks.length
+    const allTracksChecked = activeTracks.length === playableTracks.length
     const playableTracksIndexes = playableTracks.map(({ index }) => index)
 
-    const listItem = getListItem(playableTracks, instruments, activeTracks, activeInstruments)
+    const trackInfos = getTrackInfos(
+        playableTracks,
+        allInstruments,
+        activeTracks,
+        activeInstruments,
+        loadedInstrumentPlayers
+    )
 
     function selectAllPlayableTracks() {
         onChangeActiveTracks([...playableTracksIndexes])
@@ -97,7 +131,7 @@ export function MidiTrackList({
     }
 
     function handleClick(value: number | string) {
-        if (value === 'all' && !allChecked) {
+        if (value === 'all' && !allTracksChecked) {
             selectAllPlayableTracks()
         } else if (value === 'all') {
             unselectAllPlayableTracks()
@@ -114,21 +148,21 @@ export function MidiTrackList({
                     <Button
                         size={'sm'}
                         variant={'outlined'}
-                        icon={allChecked ? 'eye-closed' : 'eye-open'}
+                        icon={allTracksChecked ? 'eye-closed' : 'eye-open'}
                         onClick={() => handleClick('all')}
                     >
-                        {allChecked ? 'Hide All' : 'Show all'}
+                        {allTracksChecked ? 'Hide All' : 'Show all'}
                     </Button>
                 </ListItemSecondaryAction>
             </ListItem>
             {playableTracks
-                ? listItem.map(({ index, names, channelsInstruments, isActiveTrack }) => {
+                ? trackInfos.map(({ index, names, channelsInfos, isActive }) => {
                       return (
                           <ListItem key={index}>
                               <ListItemSecondaryAction>
                                   <span className={`${BASE_CLASS}__track-index`}>{index}</span>
                                   <Button
-                                      icon={isActiveTrack ? 'eye-open' : 'eye-closed'}
+                                      icon={isActive ? 'eye-open' : 'eye-closed'}
                                       onClick={() => handleClick(index)}
                                   />
                               </ListItemSecondaryAction>
@@ -142,35 +176,7 @@ export function MidiTrackList({
                                           Track Name
                                       </Tooltip>
                                   ) : null}
-                                  <List variant="transparent">
-                                      {channelsInstruments.map(
-                                          ({ channel, isActive, timestamp, name }) => (
-                                              <ListItem key={index + channel + timestamp}>
-                                                  <Tooltip showOnHover>
-                                                      <span
-                                                          className={
-                                                              isActive
-                                                                  ? `channel channel--${channel}`
-                                                                  : 'channel'
-                                                          }
-                                                      >
-                                                          CH : {channel}
-                                                      </span>
-                                                      <span>
-                                                          starting time : {msToTime(timestamp)}
-                                                      </span>
-                                                  </Tooltip>
-                                                  <img
-                                                      className={'pd-r-md pd-l-md'}
-                                                      src={`img/svg/instruments/instrument_${name}.svg`}
-                                                      alt={`instrument ${name}`}
-                                                      style={{ width: 24 }}
-                                                  />
-                                                  {name}
-                                              </ListItem>
-                                          )
-                                      )}
-                                  </List>
+                                  <ChannelList channels={channelsInfos} />
                               </div>
                           </ListItem>
                       )

@@ -1,0 +1,1 @@
+export { InstrumentImage } from './InstrumentImage'

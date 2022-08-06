@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react'
-import Soundfont, { Player, InstrumentName } from 'soundfont-player'
+import React, { useEffect, useState } from 'react'
+import Soundfont, { InstrumentName, Player } from 'soundfont-player'
 import { msToSec } from '../../utils'
 import {
-    InstrumentUserFriendlyName,
     ActiveNote,
-    isMidiVisualizerActiveNote,
     AlphabeticalNote,
     AudioPlayerState,
+    InstrumentUserFriendlyName,
+    isMidiVisualizerActiveNote,
 } from '../../types'
 import {
+    MIDI_INPUT_CHANNEL,
     MIDI_INSTRUMENTS,
     MIDI_INSTRUMENTS_FATBOY,
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
-    MIDI_INPUT_CHANNEL,
 } from '../../utils/const'
 import { usePrevious } from '../../_hooks'
 
@@ -27,6 +27,9 @@ interface InstrumentPlayerProps {
     notesToLoad: AlphabeticalNote[]
     soundfont?: SoundFont
     channel: number
+    onChangeLoadedInstrumentPlayers: React.Dispatch<
+        React.SetStateAction<InstrumentUserFriendlyName[]>
+    >
 }
 
 export type SoundFont = 'FluidR3_GM' | 'FatBoy' | 'MusyngKite'
@@ -72,6 +75,7 @@ export function InstrumentPlayer({
     channel,
     audioPlayerState,
     soundfont = 'MusyngKite',
+    onChangeLoadedInstrumentPlayers,
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
     const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
@@ -117,13 +121,14 @@ export function InstrumentPlayer({
                 notes: notesToLoad, // We pass only the notes required to play the midi song for better performances.
             })
                 .then((instrumentPlayer) => {
+                    updateLoadedInstrumentPlayers()
+                    console.log(instrumentName)
                     setInstrumentPlayer(instrumentPlayer)
                 })
                 .catch(() => {
                     console.error(`Failed to start the instrument ${instrumentName} audio`)
                 })
         }
-
         startInstrument()
     }, [instrumentName, isMute, soundfont])
 
@@ -147,6 +152,19 @@ export function InstrumentPlayer({
             playNote(note, instrumentPlayer)
         })
     }, [activeNotes, instrumentPlayer, isMute])
+
+    function updateLoadedInstrumentPlayers() {
+        onChangeLoadedInstrumentPlayers((loadedInstrumentPlayers) => {
+            const existingInstrument = loadedInstrumentPlayers.findIndex(
+                (loadedInstrumentPlayer) => loadedInstrumentPlayer === instrumentName
+            )
+            if (existingInstrument >= 0) {
+                return [...loadedInstrumentPlayers]
+            } else {
+                return [...loadedInstrumentPlayers, instrumentName]
+            }
+        })
+    }
 
     return null
 }

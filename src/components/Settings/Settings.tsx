@@ -1,12 +1,14 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import './Settings.scss'
 import {
-    Instrument,
     MusicSystem,
     MidiMode,
     AppMode,
     MidiMetas,
     InstrumentUserFriendlyName,
+    Instrument,
+    MidiAccessMode,
+    LoopTimes,
 } from '../../types'
 import { ModeSelector } from '../ModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
@@ -15,10 +17,8 @@ import { Button } from '../_presentational/Button'
 import { ExtraSettingsPanel } from './ExtraSettingsPanel'
 import { Tooltip } from '../_presentational/Tooltip'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
-import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { Divider } from '../_presentational/Divider'
 import { BpmSelector } from '../BpmSelector'
-import { LoopTimes } from '../../types/LoopTimes'
 import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
 import { ShortcutsContext } from '../ShortcutsContext'
 
@@ -33,6 +33,7 @@ interface SettingsProps {
     activeTracks: number[]
     midiSpeedFactor: number
     isEditingLoop: boolean
+    loadedInstrumentPlayers: InstrumentUserFriendlyName[]
     activeInstruments: Instrument[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
@@ -63,6 +64,7 @@ export const Settings = React.memo(function Settings({
     isEditingLoop,
     midiSpeedFactor,
     activeInstruments,
+    loadedInstrumentPlayers,
     onChangeMusicSystem,
     onChangeAppMode,
     onChangeInstrument,
@@ -113,10 +115,13 @@ export const Settings = React.memo(function Settings({
         )
     }
 
-    function handleCloseExtraSettings() {
-        setIsOpen(false)
-        setShortcuts((shortcuts) => [...shortcuts, 'wheel'])
-    }
+    const handleCloseExtraSettings = useCallback(
+        function handleCloseExtraSettings() {
+            setIsOpen(false)
+            setShortcuts((shortcuts) => [...shortcuts, 'wheel'])
+        },
+        [setShortcuts]
+    )
 
     function handleMidiAccessModeClick() {
         onMidiAccessModeChange((midiAccessMode) =>
@@ -182,6 +187,7 @@ export const Settings = React.memo(function Settings({
                 onMidiOutputChange={onMidiOutputChange}
             />
             <ExtraSettingsPanel
+                loadedInstrumentPlayers={loadedInstrumentPlayers}
                 showNotes={showNotes}
                 midiMetas={midiMetas}
                 musicSystem={musicSystem}

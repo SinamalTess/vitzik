@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
 import {
+    Instrument,
     ActiveNote,
     AudioPlayerState,
-    Instrument,
     MidiMetas,
     MidiMode,
     MidiVisualizerNoteCoordinates,
