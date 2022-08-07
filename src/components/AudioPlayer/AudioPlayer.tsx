@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { AudioPlayerState, MidiMetas } from '../../types'
+import { AudioPlayerState, MidiMetas, LoopTimes } from '../../types'
 import './AudioPlayer.scss'
-import { LoopTimes } from '../../types/LoopTimes'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
@@ -40,10 +39,10 @@ export function AudioPlayer({
     const isPlaying = state === 'playing'
     const [startLoop, endLoop] = loopTimes
     const [prevState, setPrevState] = useState<AudioPlayerState>(state)
-    const { setShortcuts } = useContext(ShortcutsContext)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
+    const { setShortcuts } = useContext(ShortcutsContext)
 
-    const checkIsEnd = useCallback(
+    const checkIsEndOfSong = useCallback(
         (time: number) => {
             if (time > duration) {
                 onChangeState('stopped')
@@ -84,11 +83,11 @@ export function AudioPlayer({
     const workerListener = useCallback(
         (message: MessageEvent) => {
             const { time } = message.data
-            checkIsEnd(time)
+            checkIsEndOfSong(time)
             checkIsEndOfLoop(time)
             checkForWaitMode(time)
         },
-        [checkIsEnd, checkIsEndOfLoop, checkForWaitMode]
+        [checkIsEndOfSong, checkIsEndOfLoop, checkForWaitMode]
     )
 
     useEffect(() => {
@@ -103,11 +102,11 @@ export function AudioPlayer({
         setWorkerInitialTime(parseFloat(value))
     }
 
-    function handleOnPlay() {
+    function handlePlay() {
         onChangeState(isPlaying ? 'paused' : 'playing')
     }
 
-    function handleOnStop() {
+    function handleStop() {
         onChangeState('stopped')
     }
 
@@ -125,11 +124,11 @@ export function AudioPlayer({
         }
     }
 
-    function handlePlayBlur() {
+    function handlePlayButtonBlur() {
         setShortcuts((shortcuts) => [...shortcuts, 'Space'])
     }
 
-    function handlePlayFocus() {
+    function handlePlayButtonFocus() {
         setShortcuts((shortcuts) =>
             shortcuts.filter((activeShortcut) => activeShortcut !== 'Space')
         )
@@ -157,10 +156,10 @@ export function AudioPlayer({
                 isMute={isMute}
                 state={state}
                 onToggleSound={onToggleSound}
-                onStop={handleOnStop}
-                onPlay={handleOnPlay}
-                onPlayButtonBlur={handlePlayBlur}
-                onPlayButtonFocus={handlePlayFocus}
+                onStop={handleStop}
+                onPlay={handlePlay}
+                onPlayButtonBlur={handlePlayButtonBlur}
+                onPlayButtonFocus={handlePlayButtonFocus}
             />
             <Shortcuts
                 worker={worker}

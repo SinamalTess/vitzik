@@ -1,4 +1,4 @@
-@mixin crossbrowser($property, $value) {
+@mixin cross-browser($property, $value) {
     -webkit-#{$property}: $value;
     -moz-#{$property}: $value;
     -ms-#{$property}: $value;
@@ -6,7 +6,7 @@
     #{$property}: $value;
 }
 
-@mixin addSpacingSizes($property) {
+@mixin add-spacing-sizes($property) {
     &-none {
         #{$property}: map-get($theme-spacing-sizes, 'none');
     }
@@ -21,7 +21,7 @@
     }
 }
 
-@mixin addFontSizes($property) {
+@mixin add-font-sizes($property) {
     &-sm {
         #{$property}: map-get($theme-font-sizes, 'sm');
     }
@@ -33,11 +33,11 @@
     }
 }
 
-@mixin addChannelColors($property) {
+@mixin add-channel-colors($property) {
     .channel {
         @for $i from 0 through 15 {
             &--#{$i} {
-                #{$property}: map-get($channel-colors, #{$i});
+                @content (map-get($channel-colors, #{$i}));
             }
         }
     }

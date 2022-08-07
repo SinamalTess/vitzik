@@ -4,33 +4,33 @@
 @import 'src/style/fonts';
 
 .pd {
-    @include addSpacingSizes(padding);
+    @include add-spacing-sizes(padding);
     &-t {
-        @include addSpacingSizes(padding-top);
+        @include add-spacing-sizes(padding-top);
     }
     &-b {
-        @include addSpacingSizes(padding-bottom);
+        @include add-spacing-sizes(padding-bottom);
     }
     &-l {
-        @include addSpacingSizes(padding-left);
+        @include add-spacing-sizes(padding-left);
     }
     &-r {
-        @include addSpacingSizes(padding-right);
+        @include add-spacing-sizes(padding-right);
     }
 }
 
 .mg {
-    @include addSpacingSizes(margin);
+    @include add-spacing-sizes(margin);
     &-t {
-        @include addSpacingSizes(margin-top);
+        @include add-spacing-sizes(margin-top);
     }
     &-b {
-        @include addSpacingSizes(margin-bottom);
+        @include add-spacing-sizes(margin-bottom);
     }
     &-l {
-        @include addSpacingSizes(margin-left);
+        @include add-spacing-sizes(margin-left);
     }
     &-r {
-        @include addSpacingSizes(margin-right);
+        @include add-spacing-sizes(margin-right);
     }
 }

@@ -2,5 +2,5 @@
 @import '../../../style/vars';
 
 .icon {
-    @include addFontSizes(font-size);
+    @include add-font-sizes(font-size);
 }

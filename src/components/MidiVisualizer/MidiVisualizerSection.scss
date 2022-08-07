@@ -3,5 +3,7 @@
 
 .midi-visualizer__section {
     position: absolute;
-    @include addChannelColors(fill);
+    @include add-channel-colors(background) using ($color) {
+        fill: $color;
+    }
 }

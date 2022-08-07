@@ -20,5 +20,7 @@
         font-weight: map-get($theme-font-weights, 'bold');
         font-size: map-get($theme-font-sizes, 'sm');
     }
-    @include addChannelColors(background-color);
+    @include add-channel-colors(background) using ($color) {
+        background-color: $color;
+    }
 }

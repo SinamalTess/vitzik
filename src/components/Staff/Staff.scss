@@ -5,10 +5,10 @@
         display: block;
         margin: 0 auto;
         animation: fadeIn 5s;
-        @include crossbrowser(animation, fadeIn 0.25s);
+        @include cross-browser(animation, fadeIn 0.25s);
 
         .vf-stavenote {
-            @include crossbrowser(animation, fadeIn 0.25s);
+            @include cross-browser(animation, fadeIn 0.25s);
         }
     }
 

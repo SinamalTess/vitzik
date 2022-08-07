@@ -21,39 +21,6 @@ export function IntervalWorkerManager({
     const prevMidiSpeedFactor = usePrevious(midiSpeedFactor)
 
     useEffect(() => {
-        const start = () => {
-            setIsStarted(true)
-            if (!isStarted) {
-                worker.postMessage({
-                    code: 'start',
-                    startAt,
-                    midiSpeedFactor,
-                })
-            }
-        }
-
-        const pause = () => {
-            setIsStarted(false)
-            worker.postMessage({
-                code: 'paused',
-            })
-        }
-
-        const seekTo = () => {
-            setIsStarted(false)
-            worker.postMessage({
-                code: 'seeking',
-                startAt,
-            })
-        }
-
-        const stop = () => {
-            setIsStarted(false)
-            worker.postMessage({
-                code: 'stopped',
-            })
-        }
-
         if (prevMidiSpeedFactor !== midiSpeedFactor) {
             setIsStarted(false)
             worker.postMessage({
@@ -69,16 +36,33 @@ export function IntervalWorkerManager({
 
         switch (state) {
             case 'playing':
-                start()
+                setIsStarted(true)
+                if (!isStarted) {
+                    worker.postMessage({
+                        code: 'start',
+                        startAt,
+                        midiSpeedFactor,
+                    })
+                }
                 break
             case 'stopped':
-                stop()
+                setIsStarted(false)
+                worker.postMessage({
+                    code: 'stopped',
+                })
                 break
             case 'paused':
-                pause()
+                setIsStarted(false)
+                worker.postMessage({
+                    code: 'paused',
+                })
                 break
             case 'seeking':
-                seekTo()
+                setIsStarted(false)
+                worker.postMessage({
+                    code: 'seeking',
+                    startAt,
+                })
                 break
         }
     }, [midiMetas, state, isStarted, midiSpeedFactor, startAt, worker]) // midiMetas is used here to force the visualization to redraw on midiImport

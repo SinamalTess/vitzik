@@ -18,7 +18,6 @@ import {
     translateNoteToMusicSystem,
 } from '../../utils'
 import clsx from 'clsx'
-import { MIDI_CHANNEL_COLORS } from '../../utils/const'
 import findLast from 'lodash/findLast'
 import last from 'lodash/last'
 
@@ -60,12 +59,12 @@ function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
         const keyTranslated =
             musicSystem !== 'alphabetical' ? translateNoteToMusicSystem(name, musicSystem) : name
         const { width, margin } = getStyles(name)
-        const background = isActive ? MIDI_CHANNEL_COLORS[lastActiveKey.channel] : ''
         const classNames = clsx(
             { [`${BASE_CLASS}__blackkey`]: isBlackKey },
             { [`${BASE_CLASS}__whitekey`]: !isBlackKey },
             { [`${BASE_CLASS}__blackkey--active`]: isActive && isBlackKey },
             { [`${BASE_CLASS}__whitekey--active`]: isActive && !isBlackKey },
+            { [`channel--${lastActiveKey?.channel}`]: isActive },
             [`${name}`]
         )
 
@@ -77,7 +76,6 @@ function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
             name,
             width,
             margin,
-            background,
             isActive,
         }
     })
@@ -169,7 +167,6 @@ export function Keyboard({
                     name,
                     width,
                     margin,
-                    background,
                     classNames,
                     styleKeyName,
                     keyTranslated,
@@ -182,8 +179,6 @@ export function Keyboard({
                         style={{
                             width,
                             margin,
-                            background,
-                            boxShadow: isActive ? `0 -10px 20px ${background}` : '',
                         }}
                         data-testid={`${name}${isActive ? '-active' : ''}`}
                         className={classNames}
