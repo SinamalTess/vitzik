@@ -3,4 +3,5 @@
 
 .icon {
     @include add-font-sizes(font-size);
+    text-decoration: none; // Text buttons can be underline
 }
