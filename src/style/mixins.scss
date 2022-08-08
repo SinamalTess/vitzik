@@ -35,7 +35,7 @@
 
 @mixin add-channel-colors($property) {
     .channel {
-        @for $i from 0 through 15 {
+        @for $i from 0 through length($channel-colors) {
             &--#{$i} {
                 @content (map-get($channel-colors, #{$i}));
             }

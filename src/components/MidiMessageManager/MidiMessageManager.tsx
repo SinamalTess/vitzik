@@ -5,11 +5,11 @@ import {
     MidiInputActiveNote,
     AlphabeticalNote,
     isMidiVisualizerActiveNote,
+    MidiAccessMode,
 } from '../../types'
 import { keyToNote, removeNotesFromActiveNotes } from '../../utils'
 import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
-import { MidiAccessMode } from '../../types/MidiAccessMode'
 import { usePrevious } from '../../_hooks'
 import { MIDI_MESSAGE_CONTROL } from '../../utils/const/midi_message_controls'
 
@@ -127,7 +127,6 @@ export function MidiMessageManager({
 
         function handleMIDIMessage(message: MIDIMessageEvent) {
             const { command, note } = getMessage(message)
-
             switch (command) {
                 case MIDI_MESSAGE_CONTROL.NOTE_ON:
                     note.velocity > 0 ? addNote(note) : removeNote(note)
