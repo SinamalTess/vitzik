@@ -7,9 +7,10 @@ import {
     MidiMetas,
     MidiMode,
     MidiVisualizerNoteCoordinates,
+    LoopTimes,
 } from '../../types'
-import findLast from 'lodash/findLast'
 import isEqual from 'lodash/isEqual'
+import uniqBy from 'lodash/uniqBy'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSection } from './MidiVisualizerSection'
 import { MidiVisualizerNotesTracks } from './MidiVisualizerNotesTracks'
@@ -17,7 +18,6 @@ import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { getSectionCoordinates, init, mergeNotesCoordinates } from './MidiVisualizerFactory'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
-import { LoopTimes } from '../../types/LoopTimes'
 
 interface MidiVisualizerProps {
     worker: Worker
@@ -39,6 +39,8 @@ interface MidiVisualizerProps {
 
 const MS_PER_SECTION = 2000
 export const BASE_CLASS = 'midi-visualizer'
+export const isUserChannel = (channel: number) =>
+    channel === KEYBOARD_CHANNEL || channel === MIDI_INPUT_CHANNEL
 
 export const MidiVisualizer = WithContainerDimensions(
     ({
@@ -61,6 +63,11 @@ export const MidiVisualizer = WithContainerDimensions(
         const svgRef = useRef<HTMLDivElement>(null)
         let animation = useRef<number>(0)
         const [coordinates, setCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>([])
+        const midiTrackInstruments = activeInstruments.filter(
+            ({ channel }) => !isUserChannel(channel)
+        )
+        const { instruments } = midiMetas
+        const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
 
         const coordinatesFactory = useMemo(
             () => init(midiMetas, height, width, MS_PER_SECTION),
@@ -79,37 +86,26 @@ export const MidiVisualizer = WithContainerDimensions(
 
         const updateInstruments = useCallback(
             (time: number) => {
-                const newInstruments = activeInstruments.map((activeInstrument) => {
-                    const sameChannelInstruments = midiMetas.instruments.filter(
-                        (instrument) => instrument.channel === activeInstrument.channel
-                    )
-                    if (sameChannelInstruments.length) {
-                        return (
-                            findLast(
-                                sameChannelInstruments,
-                                (sameChannelInstrument) => sameChannelInstrument.timestamp <= time
-                            ) ?? activeInstrument
-                        )
-                    }
-                    return activeInstrument
-                })
+                const allInstruments = [...instruments]
+                    .filter(({ timestamp }) => timestamp <= time)
+                    .sort((a, b) => b.delta - a.delta) // sort by largest delta first
 
-                if (!isEqual(newInstruments, activeInstruments)) {
+                const newInstruments = uniqBy(allInstruments, 'channel')
+
+                if (!isEqual(newInstruments, midiTrackInstruments)) {
                     onChangeInstruments(newInstruments)
                 }
             },
             [activeInstruments, midiMetas.instruments, onChangeInstruments]
         )
 
-        const updateTimeToNextNote = useCallback(
+        const setTimeToNextNote = useCallback(
             (time: number) => {
-                if (midiMode === 'wait') {
-                    const timeToNextNote = coordinatesFactory.getTimeToNextNote(
-                        activeTracksCoordinates,
-                        time
-                    )
-                    onChangeTimeToNextNote(timeToNextNote)
-                }
+                const timeToNextNote = coordinatesFactory.getTimeToNextNote(
+                    activeTracksCoordinates,
+                    time
+                )
+                onChangeTimeToNextNote(timeToNextNote)
             },
             [midiMode, coordinatesFactory, activeTracksCoordinates, onChangeTimeToNextNote]
         )
@@ -168,8 +164,12 @@ export const MidiVisualizer = WithContainerDimensions(
                 animate(time)
                 calcCoordinates(time)
                 updateActiveNotes(time)
-                updateTimeToNextNote(time)
-                updateInstruments(time)
+                if (midiMode === 'wait') {
+                    setTimeToNextNote(time)
+                }
+                if (isMultiInstrumentsTrack) {
+                    updateInstruments(time)
+                }
             }
 
             worker.addEventListener('message', onTimeChange)
@@ -182,7 +182,7 @@ export const MidiVisualizer = WithContainerDimensions(
             calcCoordinates,
             updateActiveNotes,
             updateInstruments,
-            updateTimeToNextNote,
+            setTimeToNextNote,
             worker,
         ])
 

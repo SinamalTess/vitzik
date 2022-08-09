@@ -49,16 +49,15 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
         return 0
     }
 
-    const getIndexSectionPlaying = (midiCurrentTime: number) =>
-        Math.floor(midiCurrentTime / msPerSection)
+    const getIndexSectionPlaying = (time: number) => Math.floor(time / msPerSection)
 
-    function getPercentageTopSection(midiCurrentTime: number) {
-        const exactNbSectionPassed = midiCurrentTime / msPerSection
+    function getPercentageTopSection(time: number) {
+        const exactNbSectionPassed = time / msPerSection
         const percentageTop = +((exactNbSectionPassed % 1) * 100).toFixed(2)
         const percentage1 = `${100 - percentageTop}%`
         const percentage2 = `-${percentageTop}%`
-        const sectionPlaying = getIndexSectionPlaying(midiCurrentTime)
-        const isIndexEven = isEven(sectionPlaying)
+        const indexSectionPlaying = getIndexSectionPlaying(time)
+        const isIndexEven = isEven(indexSectionPlaying)
 
         return {
             0: isIndexEven ? percentage2 : percentage1,
@@ -66,8 +65,8 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
         }
     }
 
-    function getIndexToDraw(midiCurrentTime: number, audioPlayerState: AudioPlayerState) {
-        const indexSectionPlaying = getIndexSectionPlaying(midiCurrentTime)
+    function getIndexToDraw(time: number, audioPlayerState: AudioPlayerState) {
+        const indexSectionPlaying = getIndexSectionPlaying(time)
         const isIndexEven = isEven(indexSectionPlaying)
         if (indexSectionPlaying === 0) {
             return {
@@ -206,13 +205,10 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
         return notesCoordinates
     }
 
-    function getTimeToNextNote(
-        notesCoordinates: SectionNoteCoordinates[],
-        midiCurrentTime: number
-    ) {
+    function getTimeToNextNote(notesCoordinates: SectionNoteCoordinates[], time: number) {
         if (!notesCoordinates.length) return null
 
-        const indexSectionPlaying = getIndexSectionPlaying(midiCurrentTime)
+        const indexSectionPlaying = getIndexSectionPlaying(time)
         const nbSectionsLeft = notesCoordinates.length - indexSectionPlaying
         const maxNbSectionsToCheck = Math.max(nbSectionsLeft, 5) // to have better performance we limit the search to only a few sections ahead
 
@@ -221,9 +217,7 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
             const section = notesCoordinates.find((section) => key in section)
             if (section) {
                 const sectionNotes: MidiVisualizerNoteCoordinates[] = Object.values(section)[0]
-                const nextNotes = sectionNotes.filter(
-                    ({ startingTime }) => startingTime > midiCurrentTime
-                )
+                const nextNotes = sectionNotes.filter(({ startingTime }) => startingTime > time)
                 const firstNextNote = minBy(nextNotes, 'startingTime')
                 if (firstNextNote) {
                     return firstNextNote.startingTime
@@ -236,15 +230,15 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
 
     function getActiveNotes(
         notesCoordinates: SectionNoteCoordinates[],
-        midiCurrentTime: number
+        time: number
     ): MidiVisualizerActiveNote[] {
-        const sectionPlaying = getIndexSectionPlaying(midiCurrentTime)
+        const sectionPlaying = getIndexSectionPlaying(time)
         const section = notesCoordinates.find((section) => sectionPlaying.toString() in section)
         if (section) {
             const sectionNotes = Object.values(section)[0]
             const activeNotesCoordinates = sectionNotes.filter(
                 ({ startingTime, duration }: MidiVisualizerNoteCoordinates) =>
-                    startingTime <= midiCurrentTime && startingTime + duration > midiCurrentTime
+                    startingTime <= time && startingTime + duration > time
             )
 
             return noteCoordinatesToActiveNotes(activeNotesCoordinates)
@@ -262,10 +256,10 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
     }
 }
 
-export function getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], midiCurrentTime: number) {
+export function getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], time: number) {
     return (
-        findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= midiCurrentTime) ??
-        allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= midiCurrentTime)
+        findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
+        allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
     )
 }
 

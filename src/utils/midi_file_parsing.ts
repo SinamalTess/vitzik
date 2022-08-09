@@ -121,7 +121,7 @@ export function deltaToTime(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBe
 }
 
 export function getInitialInstruments(instruments: Instrument[]) {
-    return uniqBy(instruments, 'channel')
+    return uniqBy(instruments, 'channel').filter(({ timestamp }) => timestamp <= 0)
 }
 
 export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
