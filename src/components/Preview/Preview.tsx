@@ -102,7 +102,7 @@ export function Preview({
         onChangeAudioPlayerState('stopped')
         onChangeLoopTimes([null, null])
         // console.log(midiJSON)
-        console.log(metas)
+        // console.log(metas)
     }
 
     useEffect(() => {

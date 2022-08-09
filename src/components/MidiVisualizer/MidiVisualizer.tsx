@@ -40,7 +40,7 @@ interface MidiVisualizerProps {
 const MS_PER_SECTION = 2000
 export const BASE_CLASS = 'midi-visualizer'
 export const isUserChannel = (channel: number) =>
-    channel === KEYBOARD_CHANNEL || channel === MIDI_INPUT_CHANNEL
+    [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
 
 export const MidiVisualizer = WithContainerDimensions(
     ({
@@ -68,6 +68,7 @@ export const MidiVisualizer = WithContainerDimensions(
         )
         const { instruments } = midiMetas
         const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
+        const svgs = svgRef.current?.getElementsByTagName('svg')
 
         const coordinatesFactory = useMemo(
             () => init(midiMetas, height, width, MS_PER_SECTION),
@@ -118,12 +119,14 @@ export const MidiVisualizer = WithContainerDimensions(
                 )
 
                 onChangeActiveNotes((activeNotes: ActiveNote[]) => {
-                    const midiInputNotes = activeNotes.filter(({ channel }) =>
-                        [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
-                    )
-                    return isEqual(newActiveNotes, activeNotes)
-                        ? activeNotes
-                        : [...newActiveNotes, ...midiInputNotes]
+                    if (isEqual(newActiveNotes, activeNotes)) {
+                        return activeNotes
+                    } else {
+                        const userNotes = activeNotes.filter(({ channel }) =>
+                            isUserChannel(channel)
+                        )
+                        return [...newActiveNotes, ...userNotes]
+                    }
                 })
             },
             [coordinatesFactory, activeTracksCoordinates, onChangeActiveNotes]
@@ -145,17 +148,16 @@ export const MidiVisualizer = WithContainerDimensions(
             (time: number) => {
                 function animationStep() {
                     const top = coordinatesFactory.getPercentageTopSection(time)
-                    const svgs = svgRef.current?.getElementsByTagName('svg')
 
                     if (svgs) {
-                        svgs[0].style.transform = `scaleY(-1) translateY(${top[0]})`
-                        svgs[1].style.transform = `scaleY(-1) translateY(${top[1]})`
+                        svgs[0].style.transform = `translateY(${top[0]})`
+                        svgs[1].style.transform = `translateY(${top[1]})`
                     }
                 }
 
                 animation.current = window.requestAnimationFrame(animationStep)
             },
-            [coordinatesFactory]
+            [coordinatesFactory, svgs]
         )
 
         useEffect(() => {
