@@ -13,9 +13,9 @@ import isEqual from 'lodash/isEqual'
 import uniqBy from 'lodash/uniqBy'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSection } from './MidiVisualizerSection'
-import { MidiVisualizerNotesTracks } from './MidiVisualizerNotesTracks'
+import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
-import { getSectionCoordinates, init, mergeNotesCoordinates } from './MidiVisualizerFactory'
+import { MidiVisualizerFactory } from './MidiVisualizerFactory'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 
@@ -59,28 +59,30 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     onChangeTimeToNextNote,
     onChangeLoopTimes,
 }: MidiVisualizerProps) {
-    const svgRef = useRef<HTMLDivElement>(null)
+    const ref = useRef<HTMLDivElement>(null)
     let animation = useRef<number>(0)
-    const [coordinates, setCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>([])
+    const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>(
+        []
+    )
 
     const midiTrackInstruments = activeInstruments.filter(({ channel }) => !isUserChannel(channel))
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
-    const svgs = svgRef.current?.getElementsByTagName('svg')
+    const svgs = ref.current?.getElementsByTagName('svg')
 
-    const coordinatesFactory = useMemo(
-        () => init(midiMetas, height, width, MS_PER_SECTION),
+    const midiVisualizerFactory = useMemo(
+        () => new MidiVisualizerFactory(midiMetas, height, width, MS_PER_SECTION),
         [height, midiMetas, width]
     )
 
-    const allCoordinates = useMemo(
-        () => coordinatesFactory.getNotesCoordinates(midiFile),
-        [coordinatesFactory, midiFile]
+    const notesCoordinates = useMemo(
+        () => midiVisualizerFactory.getNotesCoordinates(midiFile),
+        [midiVisualizerFactory, midiFile]
     )
 
     const activeTracksCoordinates = useMemo(
-        () => mergeNotesCoordinates(activeTracks, allCoordinates),
-        [allCoordinates, activeTracks]
+        () => MidiVisualizerFactory.mergeNotesCoordinates(activeTracks, notesCoordinates),
+        [notesCoordinates, activeTracks]
     )
 
     const setInstruments = useCallback(
@@ -100,18 +102,21 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 
     const setTimeToNextNote = useCallback(
         (time: number) => {
-            const timeToNextNote = coordinatesFactory.getTimeToNextNote(
+            const timeToNextNote = midiVisualizerFactory.getTimeToNextNote(
                 activeTracksCoordinates,
                 time
             )
             onChangeTimeToNextNote(timeToNextNote)
         },
-        [midiMode, coordinatesFactory, activeTracksCoordinates, onChangeTimeToNextNote]
+        [midiMode, midiVisualizerFactory, activeTracksCoordinates, onChangeTimeToNextNote]
     )
 
     const setActiveNotes = useCallback(
         (time: number) => {
-            const newActiveNotes = coordinatesFactory.getActiveNotes(activeTracksCoordinates, time)
+            const newActiveNotes = midiVisualizerFactory.getActiveNotes(
+                activeTracksCoordinates,
+                time
+            )
 
             onChangeActiveNotes((activeNotes: ActiveNote[]) => {
                 if (isEqual(newActiveNotes, activeNotes)) {
@@ -122,25 +127,33 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 }
             })
         },
-        [coordinatesFactory, activeTracksCoordinates, onChangeActiveNotes]
+        [midiVisualizerFactory, activeTracksCoordinates, onChangeActiveNotes]
     )
 
     const calcCoordinates = useCallback(
         (time: number) => {
-            const indexToDraw = coordinatesFactory.getIndexToDraw(time, audioPlayerState)
+            const indexToDraw = midiVisualizerFactory.getIndexToDraw(time, audioPlayerState)
 
-            setCoordinates([
-                getSectionCoordinates(activeTracksCoordinates, indexToDraw[0], height),
-                getSectionCoordinates(activeTracksCoordinates, indexToDraw[1], height),
+            setSectionCoordinates([
+                MidiVisualizerFactory.getSectionCoordinates(
+                    activeTracksCoordinates,
+                    indexToDraw[0],
+                    height
+                ),
+                MidiVisualizerFactory.getSectionCoordinates(
+                    activeTracksCoordinates,
+                    indexToDraw[1],
+                    height
+                ),
             ])
         },
-        [activeTracksCoordinates, audioPlayerState, coordinatesFactory, height]
+        [activeTracksCoordinates, audioPlayerState, midiVisualizerFactory, height]
     )
 
     const animate = useCallback(
         (time: number) => {
             function animationStep() {
-                const top = coordinatesFactory.getPercentageTopSection(time)
+                const top = midiVisualizerFactory.getPercentageTopSection(time)
 
                 if (svgs) {
                     svgs[0].style.transform = `translateY(${top[0]})`
@@ -150,7 +163,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 
             animation.current = window.requestAnimationFrame(animationStep)
         },
-        [coordinatesFactory, svgs]
+        [midiVisualizerFactory, svgs]
     )
 
     useEffect(() => {
@@ -186,27 +199,27 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }
 
     useEffect(() => {
-        if (svgRef.current && height && width) {
+        if (ref.current && height && width) {
             redrawVisualization()
         }
-    }, [height, width, svgRef.current])
+    }, [height, width, ref.current])
 
     if (!height || !width) return null
 
     return (
-        <div className={BASE_CLASS} ref={svgRef} aria-label={'visualizer'}>
+        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'}>
             {[0, 1].map((index) => {
                 return (
                     <MidiVisualizerSection
                         index={index}
                         key={index}
-                        notesCoordinates={coordinates[index]}
+                        notesCoordinates={sectionCoordinates[index]}
                         height={height}
                         width={width}
                     />
                 )
             })}
-            <MidiVisualizerNotesTracks height={height} width={width} />
+            <MidiVisualizerVerticalLines height={height} width={width} />
             {isEditingLoop && loopTimestamps ? (
                 <LoopEditor
                     intervalWorker={intervalWorker}

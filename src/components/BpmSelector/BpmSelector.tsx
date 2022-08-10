@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { msPerBeatToBeatsPerMin } from '../../utils'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
-import { getMsPerBeatFromTime } from '../MidiVisualizer/MidiVisualizerFactory'
+import { MidiVisualizerFactory } from '../MidiVisualizer/MidiVisualizerFactory'
 
 interface BpmSelectorProps {
     intervalWorker: Worker
@@ -39,7 +39,7 @@ const SPEED_FACTORS = [
 ]
 
 function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
-    const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
+    const msPerBeat = MidiVisualizerFactory.getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
     return Math.round(msPerBeatToBeatsPerMin(msPerBeat) / midiSpeedFactor)
 }
 

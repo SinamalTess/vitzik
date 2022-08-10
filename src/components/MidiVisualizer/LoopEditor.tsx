@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
 import { msToHumanReadableTime } from '../../utils'
+import { Line } from './svgElements/Line'
 
 interface LineProps {
     y: number
@@ -15,15 +16,7 @@ function LoopLine({ y, width, timestamp, color = 'red' }: LineProps) {
     const yText = y + 20
     return (
         <>
-            <line
-                x1="0"
-                y1={y}
-                x2={width}
-                y2={y}
-                stroke={color}
-                strokeWidth={1}
-                aria-label={'loop-line'}
-            />
+            <Line x1={0} y1={y} x2={width} color={color} aria-label={'loop-line'} />
             <text x="20" y={yText} className="small" fill={color} aria-label={'loop-line-text'}>
                 {msToHumanReadableTime(timestamp, true)}
             </text>

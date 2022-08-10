@@ -2,6 +2,7 @@ import React from 'react'
 import './MidiVisualizerSection.scss'
 import clsx from 'clsx'
 import { MidiVisualizerNoteCoordinates } from '../../types'
+import { Rectangle } from './svgElements/Rectangle'
 
 interface MidiVisualizerSectionProps {
     index: number
@@ -20,16 +21,16 @@ const Notes = React.memo(function Notes({ notesCoordinates }: RectanglesProps) {
     return (
         <>
             {notesCoordinates.map(({ channel, y, x, w, h, id, name }) => (
-                <rect
+                <Rectangle
                     aria-label={`${name} note`}
                     key={id}
                     className={`channel--${channel}`}
                     x={x}
                     y={y}
-                    rx="5"
-                    ry="5"
-                    width={w}
-                    height={h}
+                    rx={5}
+                    ry={5}
+                    w={w}
+                    h={h}
                 />
             ))}
         </>

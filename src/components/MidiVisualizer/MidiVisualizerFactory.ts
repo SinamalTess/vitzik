@@ -29,71 +29,37 @@ export interface SectionNoteCoordinates {
     [sectionIndex: number]: MidiVisualizerNoteCoordinates[]
 }
 
-export function init(midiMetas: MidiMetas, height: number, width: number, msPerSection: number) {
-    const { ticksPerBeat } = midiMetas
-    let msPerBeat = getInitialMsPerBeat(midiMetas.allMsPerBeat)
-    const ratioSection = height / msPerSection
+export class MidiVisualizerFactory {
+    ratioSection: number
+    midiMetas: MidiMetas
+    msPerBeat: number
+    width: number
+    height: number
+    msPerSection: number
 
-    function getMsPerBeatFromDelta(delta: number) {
-        return findLast(midiMetas.allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
+    constructor(midiMetas: MidiMetas, height: number, width: number, msPerSection: number) {
+        this.midiMetas = midiMetas
+        this.msPerBeat = getInitialMsPerBeat(midiMetas.allMsPerBeat)
+        this.ratioSection = height / msPerSection
+        this.width = width
+        this.height = height
+        this.msPerSection = msPerSection
     }
 
-    function deltaToTime(delta: number) {
-        const lastMsPerBeat = getMsPerBeatFromDelta(delta)
-
-        if (lastMsPerBeat) {
-            const { timestamp, delta: lastDelta, value } = lastMsPerBeat
-            return timestamp + ((delta - lastDelta) / ticksPerBeat) * value
-        }
-
-        return 0
+    static getMsPerBeatFromTime = (allMsPerBeat: MsPerBeat[], time: number) => {
+        return (
+            findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
+            allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
+        )
     }
 
-    const getIndexSectionPlaying = (time: number) => Math.floor(time / msPerSection)
+    static getNoteId = (trackIndex: number, note: MidiInputActiveNote) =>
+        `${trackIndex}-${note.channel}-${note.name}`
 
-    function getPercentageTopSection(time: number) {
-        const exactNbSectionPassed = time / msPerSection
-        const percentageTop = +((exactNbSectionPassed % 1) * 100).toFixed(2)
-        const percentage1 = `${100 - percentageTop}%`
-        const percentage2 = `-${percentageTop}%`
-        const indexSectionPlaying = getIndexSectionPlaying(time)
-        const isIndexEven = isEven(indexSectionPlaying)
-
-        return {
-            0: isIndexEven ? percentage2 : percentage1,
-            1: isIndexEven ? percentage1 : percentage2,
-        }
-    }
-
-    function getIndexToDraw(time: number, audioPlayerState: AudioPlayerState) {
-        const indexSectionPlaying = getIndexSectionPlaying(time)
-        const isIndexEven = isEven(indexSectionPlaying)
-        if (indexSectionPlaying === 0) {
-            return {
-                0: 0,
-                1: 1,
-            }
-        } else {
-            if (audioPlayerState === 'playing') {
-                const sectionToRedraw: number = isIndexEven ? 1 : 0
-                return {
-                    0: indexSectionPlaying,
-                    1: indexSectionPlaying,
-                    [sectionToRedraw]: indexSectionPlaying + 1,
-                }
-            } else {
-                return {
-                    0: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
-                    1: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
-                }
-            }
-        }
-    }
-
-    function getNotePartialCoordinates(note: MidiInputActiveNote, deltaAcc: number) {
+    getNotePartialCoordinates = (note: MidiInputActiveNote, deltaAcc: number) => {
         const { name, key } = note
-        const startingTime = deltaToTime(deltaAcc)
-        const y = ratioSection * startingTime
+        const startingTime = this.deltaToTime(deltaAcc)
+        const y = this.ratioSection * startingTime
 
         /*
             Some notes don't have associated names because they are just frequencies.
@@ -104,7 +70,7 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
         */
         if (name) {
             const isBlackKey = checkIsBlackKey(name)
-            const { widthWhiteKey, widthBlackKey } = getWidthKeys(width)
+            const { widthWhiteKey, widthBlackKey } = getWidthKeys(this.width)
             const previousKeys = NOTE_NAMES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
             const nbPreviousWhiteKeys = previousKeys.filter((note) => !checkIsBlackKey(note)).length
             const margin = isBlackKey ? widthBlackKey : widthWhiteKey / 4
@@ -131,84 +97,116 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
         }
     }
 
-    function addNoteToSection(
-        note: MidiVisualizerNoteCoordinates,
-        notesCoordinatesInTrack: SectionNoteCoordinates[]
-    ) {
-        const startingSection = Math.floor(note.startingTime / msPerSection) // arrays start at 0, so we use floor to get number below
-        const endingSection = Math.floor((note.startingTime + note.duration) / msPerSection)
+    noteCoordinatesToActiveNotes = (
+        noteCoordinates: MidiVisualizerNoteCoordinates[]
+    ): MidiVisualizerActiveNote[] =>
+        noteCoordinates.map(({ startingTime, name, velocity, id, duration, key, channel }) => ({
+            name,
+            velocity,
+            duration,
+            id,
+            key,
+            channel,
+            startingTime,
+        }))
 
-        for (let i = startingSection; i <= endingSection; i++) {
-            const indexSection = notesCoordinatesInTrack.findIndex((section) => section[i])
-            if (indexSection >= 0) {
-                notesCoordinatesInTrack[indexSection] = {
-                    [i]: [...notesCoordinatesInTrack[indexSection][i], note],
+    getMsPerBeatFromDelta = (delta: number) => {
+        return findLast(this.midiMetas.allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
+    }
+
+    deltaToTime = (delta: number) => {
+        const lastMsPerBeat = this.getMsPerBeatFromDelta(delta)
+
+        if (lastMsPerBeat) {
+            const { timestamp, delta: lastDelta, value } = lastMsPerBeat
+            return timestamp + ((delta - lastDelta) / this.midiMetas.ticksPerBeat) * value
+        }
+
+        return 0
+    }
+
+    getIndexSectionPlaying = (time: number) => Math.floor(time / this.msPerSection)
+
+    getPercentageTopSection = (time: number) => {
+        const exactNbSectionPassed = time / this.msPerSection
+        const percentageTop = +((exactNbSectionPassed % 1) * 100).toFixed(2)
+        const percentage1 = `${100 - percentageTop}%`
+        const percentage2 = `-${percentageTop}%`
+        const indexSectionPlaying = this.getIndexSectionPlaying(time)
+        const isIndexEven = isEven(indexSectionPlaying)
+
+        return {
+            0: isIndexEven ? percentage2 : percentage1,
+            1: isIndexEven ? percentage1 : percentage2,
+        }
+    }
+
+    getIndexToDraw = (time: number, audioPlayerState: AudioPlayerState) => {
+        const indexSectionPlaying = this.getIndexSectionPlaying(time)
+        const isIndexEven = isEven(indexSectionPlaying)
+        if (indexSectionPlaying === 0) {
+            return {
+                0: 0,
+                1: 1,
+            }
+        } else {
+            if (audioPlayerState === 'playing') {
+                const sectionToRedraw: number = isIndexEven ? 1 : 0
+                return {
+                    0: indexSectionPlaying,
+                    1: indexSectionPlaying,
+                    [sectionToRedraw]: indexSectionPlaying + 1,
                 }
             } else {
-                notesCoordinatesInTrack.push({ [i]: [note] })
+                return {
+                    0: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
+                    1: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
+                }
             }
         }
     }
 
-    function getNotesCoordinates(midiFile: IMidiFile) {
-        const { tracks } = midiFile
-
-        let notesCoordinates: SectionNoteCoordinates[][] = []
-
-        tracks.forEach((track) => {
-            let deltaAcc = 0
-            let notesBeingProcessed: PartialNote[] = []
-            let notesCoordinatesInTrack: {
-                [sectionIndex: number]: MidiVisualizerNoteCoordinates[]
-            }[] = []
-
-            track.forEach((event, index) => {
-                deltaAcc = deltaAcc + event.delta
-
-                const lastMsPerBeat = getMsPerBeatFromDelta(deltaAcc)
-
-                if (lastMsPerBeat && lastMsPerBeat.value !== msPerBeat) {
-                    msPerBeat = lastMsPerBeat.value
-                }
-
-                if (isNoteOnEvent(event)) {
-                    const midiNote = getNoteMetas(event)
-                    const notePartialCoordinates = getNotePartialCoordinates(midiNote, deltaAcc)
-
-                    notesBeingProcessed.push({
-                        ...notePartialCoordinates,
-                        ...midiNote,
-                        duration: 0, // is replaced by the actual value after the noteOff event is received
-                        id: getNoteId(index, midiNote),
-                    })
-                } else if (
-                    isNoteOffEvent(event) ||
-                    (isNoteOnEvent(event) && event.noteOn.velocity === 0)
-                ) {
-                    const key = getKeyFromNote(event)
-                    const correspondingNoteOnIndex = notesBeingProcessed.findIndex(
-                        (note) => note.key === key
-                    )
-                    if (correspondingNoteOnIndex !== -1) {
-                        const note = { ...notesBeingProcessed[correspondingNoteOnIndex] }
-                        note.duration = deltaToTime(deltaAcc) - note.startingTime
-                        note.h = ratioSection * note.duration
-                        addNoteToSection(note, notesCoordinatesInTrack)
-                        notesBeingProcessed.splice(correspondingNoteOnIndex, 1)
-                    }
-                }
-            })
-
-            notesCoordinates.push(notesCoordinatesInTrack)
+    static getSectionCoordinates = (
+        notesCoordinates: SectionNoteCoordinates[] | undefined,
+        indexToDraw: number,
+        height: number
+    ): MidiVisualizerNoteCoordinates[] => {
+        if (!notesCoordinates) return []
+        const section = notesCoordinates.find((section) => indexToDraw.toString() in section)
+        const coordinates: MidiVisualizerNoteCoordinates[] = section
+            ? Object.values(section)[0]
+            : []
+        return coordinates.map((coordinate) => {
+            return {
+                ...coordinate,
+                y: coordinate.y - indexToDraw * height,
+            }
         })
-
-        return notesCoordinates
     }
 
-    function getTimeToNextNote(notesCoordinates: SectionNoteCoordinates[], time: number) {
+    getActiveNotes = (
+        notesCoordinates: SectionNoteCoordinates[],
+        time: number
+    ): MidiVisualizerActiveNote[] => {
+        const sectionPlaying = this.getIndexSectionPlaying(time)
+        const section = notesCoordinates.find((section) => sectionPlaying.toString() in section)
+        if (section) {
+            const sectionNotes = Object.values(section)[0]
+            const activeNotesCoordinates = sectionNotes.filter(
+                ({ startingTime, duration }: MidiVisualizerNoteCoordinates) =>
+                    startingTime <= time && startingTime + duration > time
+            )
+
+            return this.noteCoordinatesToActiveNotes(activeNotesCoordinates)
+        }
+
+        return []
+    }
+
+    getTimeToNextNote = (notesCoordinates: SectionNoteCoordinates[], time: number) => {
         if (!notesCoordinates.length) return null
 
-        const indexSectionPlaying = getIndexSectionPlaying(time)
+        const indexSectionPlaying = this.getIndexSectionPlaying(time)
         const nbSectionsLeft = notesCoordinates.length - indexSectionPlaying
         const maxNbSectionsToCheck = Math.max(nbSectionsLeft, 5) // to have better performance we limit the search to only a few sections ahead
 
@@ -228,104 +226,115 @@ export function init(midiMetas: MidiMetas, height: number, width: number, msPerS
         return null
     }
 
-    function getActiveNotes(
-        notesCoordinates: SectionNoteCoordinates[],
-        time: number
-    ): MidiVisualizerActiveNote[] {
-        const sectionPlaying = getIndexSectionPlaying(time)
-        const section = notesCoordinates.find((section) => sectionPlaying.toString() in section)
-        if (section) {
-            const sectionNotes = Object.values(section)[0]
-            const activeNotesCoordinates = sectionNotes.filter(
-                ({ startingTime, duration }: MidiVisualizerNoteCoordinates) =>
-                    startingTime <= time && startingTime + duration > time
-            )
+    addNoteToSection = (
+        note: MidiVisualizerNoteCoordinates,
+        notesCoordinatesInTrack: SectionNoteCoordinates[]
+    ) => {
+        const startingSection = Math.floor(note.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
+        const endingSection = Math.floor((note.startingTime + note.duration) / this.msPerSection)
 
-            return noteCoordinatesToActiveNotes(activeNotesCoordinates)
-        }
-
-        return []
-    }
-
-    return {
-        getActiveNotes,
-        getTimeToNextNote,
-        getNotesCoordinates,
-        getIndexToDraw,
-        getPercentageTopSection,
-    }
-}
-
-export function getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], time: number) {
-    return (
-        findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
-        allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
-    )
-}
-
-const getNoteId = (trackIndex: number, note: MidiInputActiveNote) =>
-    `${trackIndex}-${note.channel}-${note.name}`
-
-export function mergeNotesCoordinates(
-    activeTracks: number[],
-    noteCoordinates: SectionNoteCoordinates[][]
-): SectionNoteCoordinates[] {
-    if (
-        !activeTracks.length ||
-        !noteCoordinates.length ||
-        activeTracks.length > noteCoordinates.length
-    ) {
-        return []
-    }
-
-    let mergedCoordinates: SectionNoteCoordinates[] = []
-
-    const coordinatesActiveTracks = activeTracks.map((track) => noteCoordinates[track]).flat(1)
-
-    coordinatesActiveTracks.forEach((section) => {
-        const sectionKey = Object.keys(section)[0]
-        const existingSectionIndex = mergedCoordinates.findIndex(
-            (section) => sectionKey.toString() in section
-        )
-        if (existingSectionIndex >= 0) {
-            const previousValues = Object.values(mergedCoordinates[existingSectionIndex])[0]
-            const currentValues = Object.values(section)[0]
-            mergedCoordinates[existingSectionIndex] = {
-                [sectionKey]: [...previousValues, ...currentValues],
+        for (let i = startingSection; i <= endingSection; i++) {
+            const indexSection = notesCoordinatesInTrack.findIndex((section) => section[i])
+            if (indexSection >= 0) {
+                notesCoordinatesInTrack[indexSection] = {
+                    [i]: [...notesCoordinatesInTrack[indexSection][i], note],
+                }
+            } else {
+                notesCoordinatesInTrack.push({ [i]: [note] })
             }
-        } else {
-            mergedCoordinates.push(section)
         }
-    })
+    }
 
-    return mergedCoordinates
-}
-
-const noteCoordinatesToActiveNotes = (
-    noteCoordinates: MidiVisualizerNoteCoordinates[]
-): MidiVisualizerActiveNote[] =>
-    noteCoordinates.map(({ startingTime, name, velocity, id, duration, key, channel }) => ({
-        name,
-        velocity,
-        duration,
-        id,
-        key,
-        channel,
-        startingTime,
-    }))
-
-export function getSectionCoordinates(
-    notesCoordinates: SectionNoteCoordinates[] | undefined,
-    indexToDraw: number,
-    height: number
-): MidiVisualizerNoteCoordinates[] {
-    if (!notesCoordinates) return []
-    const section = notesCoordinates.find((section) => indexToDraw.toString() in section)
-    const coordinates: MidiVisualizerNoteCoordinates[] = section ? Object.values(section)[0] : []
-    return coordinates.map((coordinate) => {
-        return {
-            ...coordinate,
-            y: coordinate.y - indexToDraw * height,
+    static mergeNotesCoordinates = (
+        activeTracks: number[],
+        noteCoordinates: SectionNoteCoordinates[][]
+    ): SectionNoteCoordinates[] => {
+        if (
+            !activeTracks.length ||
+            !noteCoordinates.length ||
+            activeTracks.length > noteCoordinates.length
+        ) {
+            return []
         }
-    })
+
+        let mergedCoordinates: SectionNoteCoordinates[] = []
+
+        const coordinatesActiveTracks = activeTracks.map((track) => noteCoordinates[track]).flat(1)
+
+        coordinatesActiveTracks.forEach((section) => {
+            const sectionKey = Object.keys(section)[0]
+            const existingSectionIndex = mergedCoordinates.findIndex(
+                (section) => sectionKey.toString() in section
+            )
+            if (existingSectionIndex >= 0) {
+                const previousValues = Object.values(mergedCoordinates[existingSectionIndex])[0]
+                const currentValues = Object.values(section)[0]
+                mergedCoordinates[existingSectionIndex] = {
+                    [sectionKey]: [...previousValues, ...currentValues],
+                }
+            } else {
+                mergedCoordinates.push(section)
+            }
+        })
+
+        return mergedCoordinates
+    }
+
+    getNotesCoordinates = (midiFile: IMidiFile) => {
+        const { tracks } = midiFile
+
+        let notesCoordinates: SectionNoteCoordinates[][] = []
+
+        tracks.forEach((track) => {
+            let deltaAcc = 0
+            let notesBeingProcessed: PartialNote[] = []
+            let notesCoordinatesInTrack: {
+                [sectionIndex: number]: MidiVisualizerNoteCoordinates[]
+            }[] = []
+
+            track.forEach((event, index) => {
+                deltaAcc = deltaAcc + event.delta
+
+                const lastMsPerBeat = this.getMsPerBeatFromDelta(deltaAcc)
+
+                if (lastMsPerBeat && lastMsPerBeat.value !== this.msPerBeat) {
+                    this.msPerBeat = lastMsPerBeat.value
+                }
+
+                if (isNoteOnEvent(event)) {
+                    const midiNote = getNoteMetas(event)
+                    const notePartialCoordinates = this.getNotePartialCoordinates(
+                        midiNote,
+                        deltaAcc
+                    )
+
+                    notesBeingProcessed.push({
+                        ...notePartialCoordinates,
+                        ...midiNote,
+                        duration: 0, // is replaced by the actual value after the noteOff event is received
+                        id: MidiVisualizerFactory.getNoteId(index, midiNote),
+                    })
+                } else if (
+                    isNoteOffEvent(event) ||
+                    (isNoteOnEvent(event) && event.noteOn.velocity === 0)
+                ) {
+                    const key = getKeyFromNote(event)
+                    const correspondingNoteOnIndex = notesBeingProcessed.findIndex(
+                        (note) => note.key === key
+                    )
+                    if (correspondingNoteOnIndex !== -1) {
+                        const note = { ...notesBeingProcessed[correspondingNoteOnIndex] }
+                        note.duration = this.deltaToTime(deltaAcc) - note.startingTime
+                        note.h = this.ratioSection * note.duration
+                        this.addNoteToSection(note, notesCoordinatesInTrack)
+                        notesBeingProcessed.splice(correspondingNoteOnIndex, 1)
+                    }
+                }
+            })
+
+            notesCoordinates.push(notesCoordinatesInTrack)
+        })
+
+        return notesCoordinates
+    }
 }
