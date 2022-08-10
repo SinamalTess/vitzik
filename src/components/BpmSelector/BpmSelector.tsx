@@ -2,13 +2,13 @@ import { Tooltip } from '../_presentational/Tooltip'
 import { Button } from '../_presentational/Button'
 import { ButtonGroup } from '../_presentational/ButtonGroup'
 import React, { useEffect, useState } from 'react'
-import { msPerBeatToBpm } from '../../utils'
+import { msPerBeatToBeatsPerMin } from '../../utils'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
 import { getMsPerBeatFromTime } from '../MidiVisualizer/MidiVisualizerFactory'
 
 interface BpmSelectorProps {
-    worker: Worker
+    intervalWorker: Worker
     midiSpeedFactor: number
     allMsPerBeat: MsPerBeat[]
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
@@ -40,11 +40,11 @@ const SPEED_FACTORS = [
 
 function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
     const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
-    return Math.round(msPerBeatToBpm(msPerBeat) / midiSpeedFactor)
+    return Math.round(msPerBeatToBeatsPerMin(msPerBeat) / midiSpeedFactor)
 }
 
 export function BpmSelector({
-    worker,
+    intervalWorker,
     midiSpeedFactor,
     allMsPerBeat,
     onChangeMidiSpeedFactor,
@@ -64,12 +64,12 @@ export function BpmSelector({
             setBpm(newBpm)
         }
 
-        worker.addEventListener('message', onTimeChange)
+        intervalWorker.addEventListener('message', onTimeChange)
 
         return function cleanup() {
-            worker.removeEventListener('message', onTimeChange)
+            intervalWorker.removeEventListener('message', onTimeChange)
         }
-    }, [allMsPerBeat, midiSpeedFactor, worker])
+    }, [allMsPerBeat, midiSpeedFactor, intervalWorker])
 
     function handleChange(value: number) {
         onChangeMidiSpeedFactor(value)

@@ -1,6 +1,6 @@
 import { ListItem } from '../_presentational/ListItem'
 import { Tooltip } from '../_presentational/Tooltip'
-import { msToTime } from '../../utils'
+import { msToHumanReadableTime } from '../../utils'
 import { InstrumentImage } from '../InstrumentImage'
 import { Loader } from '../_presentational/Loader/Loader'
 import { List } from '../_presentational/List'
@@ -20,7 +20,7 @@ export function ChannelList({ channels }: ChannelListProp) {
                         <span className={isActive ? `channel channel--${channel}` : 'channel'}>
                             CH : {channel}
                         </span>
-                        <span>starting time : {msToTime(timestamp)}</span>
+                        <span>starting time : {msToHumanReadableTime(timestamp)}</span>
                     </Tooltip>
                     <InstrumentImage instrumentName={instrumentName} />
                     {instrumentName}

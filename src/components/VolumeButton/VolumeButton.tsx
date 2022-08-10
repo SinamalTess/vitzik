@@ -1,11 +1,11 @@
 import React from 'react'
 import { Button } from '../_presentational/Button'
-import './SoundButton.scss'
+import './VolumeButton.scss'
 import clsx from 'clsx'
 import { CSSSpacingSize } from '../_presentational/types'
 import { Tooltip } from '../_presentational/Tooltip'
 
-interface SoundButtonProps {
+interface VolumeButtonProps {
     size?: CSSSpacingSize
     isMute: boolean
     onToggleSound: (isMute: boolean) => void
@@ -13,7 +13,7 @@ interface SoundButtonProps {
 
 const BASE_CLASS = 'volume-icon'
 
-export function SoundButton({ size, isMute, onToggleSound }: SoundButtonProps) {
+export function VolumeButton({ size, isMute, onToggleSound }: VolumeButtonProps) {
     function handleClick() {
         onToggleSound(!isMute)
     }

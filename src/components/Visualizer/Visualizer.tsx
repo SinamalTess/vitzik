@@ -1,15 +1,21 @@
 import { MidiVisualizer } from '../MidiVisualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { AudioPlayerState, MidiMetas, ActiveNote, MidiMode, Instrument } from '../../types'
+import {
+    AudioPlayerState,
+    MidiMetas,
+    ActiveNote,
+    MidiMode,
+    Instrument,
+    LoopTimestamps,
+} from '../../types'
 import { ErrorBoundary } from '../_presentational/ErrorBoundary'
-import { LoopTimes } from '../../types/LoopTimes'
 
 interface VisualizerProps {
-    worker: Worker
+    intervalWorker: Worker
     activeInstruments: Instrument[]
     midiMode: MidiMode
-    loopTimes: LoopTimes
+    loopTimestamps: LoopTimestamps
     isEditingLoop: boolean
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
@@ -18,12 +24,12 @@ interface VisualizerProps {
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
-    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
+    onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
 }
 
 export const Visualizer = React.memo(function Preview({
-    worker,
-    loopTimes,
+    intervalWorker,
+    loopTimestamps,
     activeInstruments,
     midiMode,
     isEditingLoop,
@@ -34,14 +40,14 @@ export const Visualizer = React.memo(function Preview({
     onChangeActiveNotes,
     onChangeTimeToNextNote,
     onChangeActiveInstruments,
-    onChangeLoopTimes,
+    onChangeLoopTimestamps,
 }: VisualizerProps) {
     return (
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <MidiVisualizer
-                    worker={worker}
-                    loopTimes={loopTimes}
+                    intervalWorker={intervalWorker}
+                    loopTimestamps={loopTimestamps}
                     activeInstruments={activeInstruments}
                     midiFile={midiFile}
                     midiMode={midiMode}
@@ -52,7 +58,7 @@ export const Visualizer = React.memo(function Preview({
                     onChangeActiveNotes={onChangeActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}
                     onChangeInstruments={onChangeActiveInstruments}
-                    onChangeLoopTimes={onChangeLoopTimes}
+                    onChangeLoopTimes={onChangeLoopTimestamps}
                 />
             ) : null}
         </ErrorBoundary>

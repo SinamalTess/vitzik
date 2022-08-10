@@ -23,9 +23,9 @@ const isClickInside = (elements: Element[], target: Node) =>
 export const useClickOutside = (
     elements: Element[],
     callback: Function,
-    condition: boolean = true
+    shouldListen: boolean = true
 ) => {
-    const [listening, setListening] = useState(false)
+    const [isListening, setIsListening] = useState(false)
     const events = ['click', 'touchstart']
 
     useEffect(() => {
@@ -37,14 +37,14 @@ export const useClickOutside = (
 
         function listenForOutsideClicks() {
             events.forEach((eventType) => {
-                if (listening) return
+                if (isListening) return
                 if (elements.every((element) => !element)) return // if all elements are null/undefined we stop here
-                setListening(true)
+                setIsListening(true)
                 document.addEventListener(eventType, onClick)
             })
         }
 
-        if (condition) {
+        if (shouldListen) {
             listenForOutsideClicks()
         }
 
@@ -52,7 +52,7 @@ export const useClickOutside = (
             events.forEach((type) => {
                 document.removeEventListener(type, onClick)
             })
-            setListening(false)
+            setIsListening(false)
         }
-    }, [condition])
+    }, [shouldListen])
 }

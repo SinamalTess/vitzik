@@ -121,8 +121,7 @@ export function InstrumentPlayer({
                 notes: notesToLoad, // We pass only the notes required to play the midi song for better performances.
             })
                 .then((instrumentPlayer) => {
-                    updateLoadedInstrumentPlayers()
-                    console.log(instrumentName)
+                    setLoadedInstrumentPlayers()
                     setInstrumentPlayer(instrumentPlayer)
                 })
                 .catch(() => {
@@ -153,7 +152,7 @@ export function InstrumentPlayer({
         })
     }, [activeNotes, instrumentPlayer, isMute])
 
-    function updateLoadedInstrumentPlayers() {
+    function setLoadedInstrumentPlayers() {
         onChangeLoadedInstrumentPlayers((loadedInstrumentPlayers) => {
             const existingInstrument = loadedInstrumentPlayers.findIndex(
                 (loadedInstrumentPlayer) => loadedInstrumentPlayer === instrumentName

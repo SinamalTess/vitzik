@@ -15,7 +15,7 @@ import {
     isBlackKey as checkIsBlackKey,
     noteToKey,
     removeNotesFromActiveNotes,
-    translateNoteToMusicSystem,
+    translateNoteTo,
 } from '../../utils'
 import clsx from 'clsx'
 import findLast from 'lodash/findLast'
@@ -57,7 +57,7 @@ function getKeys(activeNotes: ActiveNote[], musicSystem: MusicSystem) {
         const isActive = Boolean(lastActiveKey)
         const styleKeyName = isActive ? { display: 'block' } : {}
         const keyTranslated =
-            musicSystem !== 'alphabetical' ? translateNoteToMusicSystem(name, musicSystem) : name
+            musicSystem !== 'alphabetical' ? translateNoteTo(name, musicSystem) : name
         const { width, margin } = getStyles(name)
         const classNames = clsx(
             { [`${BASE_CLASS}__blackkey`]: isBlackKey },

@@ -1,1 +1,0 @@
-export { SoundButton } from './SoundButton'

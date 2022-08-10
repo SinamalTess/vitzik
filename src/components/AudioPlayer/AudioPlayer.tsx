@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { AudioPlayerState, MidiMetas, LoopTimes } from '../../types'
+import { AudioPlayerState, MidiMetas, LoopTimestamps } from '../../types'
 import './AudioPlayer.scss'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
@@ -8,15 +8,15 @@ import { ShortcutsContext } from '../ShortcutsContext'
 import { Shortcuts } from './Shortcuts'
 
 interface AudioPlayerProps {
-    worker: Worker
+    intervalWorker: Worker
     midiMetas: MidiMetas
     midiSpeedFactor?: number
-    state: AudioPlayerState
+    playerState: AudioPlayerState
     title?: string
     duration: number
     isMute?: boolean
     timeToNextNote?: number | null
-    loopTimes?: LoopTimes
+    loopTimes?: LoopTimestamps
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -24,10 +24,10 @@ interface AudioPlayerProps {
 const BASE_CLASS = 'audio-player'
 
 export function AudioPlayer({
-    worker,
+    intervalWorker,
     midiMetas,
     midiSpeedFactor = 1,
-    state = 'stopped',
+    playerState = 'stopped',
     isMute = false,
     loopTimes = [null, null],
     title,
@@ -36,9 +36,9 @@ export function AudioPlayer({
     onToggleSound,
     onChangeState,
 }: AudioPlayerProps) {
-    const isPlaying = state === 'playing'
+    const isPlaying = playerState === 'playing'
     const [startLoop, endLoop] = loopTimes
-    const [prevState, setPrevState] = useState<AudioPlayerState>(state)
+    const [prevPlayerState, setPrevPlayerState] = useState<AudioPlayerState>(playerState)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
     const { setShortcuts } = useContext(ShortcutsContext)
 
@@ -56,7 +56,7 @@ export function AudioPlayer({
             // if loops are defined we restart at the beginning of the loop if the end is reached
             if (startLoop && endLoop && time > endLoop) {
                 // TODO: fix cause this can be 0
-                const previousState = state
+                const previousState = playerState
                 onChangeState('seeking')
                 setWorkerInitialTime(startLoop - 100 ?? 0) // starts a bit before the loop start
                 /*
@@ -67,7 +67,7 @@ export function AudioPlayer({
                 }, 100)
             }
         },
-        [state, endLoop, onChangeState, startLoop]
+        [playerState, endLoop, onChangeState, startLoop]
     )
 
     const checkForWaitMode = useCallback(
@@ -91,11 +91,11 @@ export function AudioPlayer({
     )
 
     useEffect(() => {
-        worker.addEventListener('message', workerListener)
+        intervalWorker.addEventListener('message', workerListener)
         return function cleanup() {
-            worker.removeEventListener('message', workerListener)
+            intervalWorker.removeEventListener('message', workerListener)
         }
-    }, [worker, workerListener])
+    }, [intervalWorker, workerListener])
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
@@ -111,16 +111,16 @@ export function AudioPlayer({
     }
 
     function handleMouseDown() {
-        setPrevState(state)
+        setPrevPlayerState(playerState)
         onChangeState('seeking')
     }
 
     function handleMouseUp(event: React.MouseEvent<HTMLInputElement>) {
         const { value } = event.target as HTMLInputElement
-        if (parseInt(value) > 0 && prevState === 'stopped') {
+        if (parseInt(value) > 0 && prevPlayerState === 'stopped') {
             onChangeState('paused')
         } else {
-            onChangeState(prevState)
+            onChangeState(prevPlayerState)
         }
     }
 
@@ -137,15 +137,15 @@ export function AudioPlayer({
     return (
         <div className={BASE_CLASS}>
             <IntervalWorkerManager
-                worker={worker}
+                intervalWorker={intervalWorker}
                 midiMetas={midiMetas}
                 startAt={workerInitialTime}
-                state={state}
+                playerState={playerState}
                 midiSpeedFactor={midiSpeedFactor}
             />
             <ProgressBar
-                loopTimes={loopTimes}
-                worker={worker}
+                loopTimestamps={loopTimes}
+                intervalWorker={intervalWorker}
                 duration={duration}
                 title={title}
                 onChange={handleChange}
@@ -154,7 +154,7 @@ export function AudioPlayer({
             />
             <Controls
                 isMute={isMute}
-                state={state}
+                playerState={playerState}
                 onToggleSound={onToggleSound}
                 onStop={handleStop}
                 onPlay={handlePlay}
@@ -162,8 +162,8 @@ export function AudioPlayer({
                 onPlayButtonFocus={handlePlayButtonFocus}
             />
             <Shortcuts
-                worker={worker}
-                state={state}
+                intervalWorker={intervalWorker}
+                playerState={playerState}
                 onChangeState={onChangeState}
                 onChangeInitialTime={setWorkerInitialTime}
                 onToggleSound={onToggleSound}

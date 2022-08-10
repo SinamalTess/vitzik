@@ -10,8 +10,8 @@ import { dispatchWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 const worker = new IntervalWorkerMock('')
 
 const props = {
-    state: 'stopped' as AudioPlayerState,
-    worker: worker as Worker,
+    playerState: 'stopped' as AudioPlayerState,
+    intervalWorker: worker as Worker,
     title: 'My song',
     duration: 1000,
     onMute: () => {},
@@ -41,7 +41,7 @@ describe('AudioPlayer', () => {
         render(
             <AudioPlayer
                 {...props}
-                state={'playing'}
+                playerState={'playing'}
                 loopTimes={[200, 500]}
                 onChangeState={onChangeState}
             ></AudioPlayer>

@@ -1,7 +1,7 @@
-import { CanvasRectangle } from './Canvas'
+import { RectangleCoordinates } from './RectangleCoordinates'
 import { AlphabeticalNote } from './Notes'
 
-export interface MidiVisualizerNoteCoordinates extends CanvasRectangle {
+export interface MidiVisualizerNoteCoordinates extends RectangleCoordinates {
     /*
         Some notes don't have associated names because they are just frequencies
         See : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies

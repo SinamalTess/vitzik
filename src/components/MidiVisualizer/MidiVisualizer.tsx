@@ -7,7 +7,7 @@ import {
     MidiMetas,
     MidiMode,
     MidiVisualizerNoteCoordinates,
-    LoopTimes,
+    LoopTimestamps,
 } from '../../types'
 import isEqual from 'lodash/isEqual'
 import uniqBy from 'lodash/uniqBy'
@@ -20,11 +20,11 @@ import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 
 interface MidiVisualizerProps {
-    worker: Worker
+    intervalWorker: Worker
     activeInstruments: Instrument[]
     midiFile: IMidiFile
     midiMode?: MidiMode
-    loopTimes?: LoopTimes
+    loopTimestamps?: LoopTimestamps
     isEditingLoop?: boolean
     midiMetas: MidiMetas
     audioPlayerState: AudioPlayerState
@@ -34,7 +34,7 @@ interface MidiVisualizerProps {
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
-    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
+    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimestamps>>
 }
 
 const MS_PER_SECTION = 2000
@@ -44,11 +44,11 @@ export const isUserChannel = (channel: number) =>
 
 export const MidiVisualizer = WithContainerDimensions(
     ({
-        worker,
+        intervalWorker,
         activeInstruments,
         midiMode = 'autoplay',
         midiFile,
-        loopTimes,
+        loopTimestamps,
         isEditingLoop,
         midiMetas,
         audioPlayerState,
@@ -174,10 +174,10 @@ export const MidiVisualizer = WithContainerDimensions(
                 }
             }
 
-            worker.addEventListener('message', onTimeChange)
+            intervalWorker.addEventListener('message', onTimeChange)
 
             return function cleanup() {
-                worker.removeEventListener('message', onTimeChange)
+                intervalWorker.removeEventListener('message', onTimeChange)
             }
         }, [
             animate,
@@ -185,7 +185,7 @@ export const MidiVisualizer = WithContainerDimensions(
             updateActiveNotes,
             updateInstruments,
             setTimeToNextNote,
-            worker,
+            intervalWorker,
         ])
 
         if (!height || !width) return null
@@ -204,14 +204,14 @@ export const MidiVisualizer = WithContainerDimensions(
                     )
                 })}
                 <MidiVisualizerNotesTracks height={height} width={width} />
-                {isEditingLoop && loopTimes ? (
+                {isEditingLoop && loopTimestamps ? (
                     <LoopEditor
-                        worker={worker}
-                        loopTimes={loopTimes}
+                        intervalWorker={intervalWorker}
+                        loopTimestamps={loopTimestamps}
                         width={width}
                         height={height}
                         msPerSection={MS_PER_SECTION}
-                        onChangeLoopTimes={onChangeLoopTimes}
+                        onChangeLoopTimestamps={onChangeLoopTimes}
                     />
                 ) : null}
             </div>

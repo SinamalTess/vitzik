@@ -32,29 +32,29 @@ export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => is
 export const getNbTicksInTrack = (track: TMidiEvent[]) =>
     track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
 
-export const getFormat = (midiJson: IMidiFile): number => midiJson.format
+export const getMidiFormat = (midiJson: IMidiFile): number => midiJson.format
 
 const programNumberToInstrument = (programNumber: number): InstrumentUserFriendlyName =>
     MIDI_INSTRUMENTS[programNumber]
 
-export const getKeyFomNote = (note: MidiJsonNote) =>
+export const getKeyFromNote = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
 
-export const getVelocity = (note: MidiJsonNote) =>
+export const getNoteVelocity = (note: MidiJsonNote) =>
     isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
 
 const microSPerBeatToMsPerBeat = (microsecondsPerQuarter: number) =>
     Math.round(microsecondsPerQuarter / 1000)
 
-export const msPerBeatToBpm = (msPerBeat: number) => (1000 * 60) / msPerBeat
+export const msPerBeatToBeatsPerMin = (msPerBeat: number) => (1000 * 60) / msPerBeat
 
-export const bpmToMsPerBeat = (beatPerMin: number) => (60 * 1000) / beatPerMin
+export const beatsPerMinToMsPerBeat = (beatPerMin: number) => (60 * 1000) / beatPerMin
 
 export const getNoteMetas = (note: MidiJsonNote): MidiInputActiveNote => {
     const { channel } = note
-    const key = getKeyFomNote(note)
+    const key = getKeyFromNote(note)
     const name = keyToNote(key)
-    const velocity = getVelocity(note)
+    const velocity = getNoteVelocity(note)
 
     return {
         key,
@@ -64,7 +64,7 @@ export const getNoteMetas = (note: MidiJsonNote): MidiInputActiveNote => {
     }
 }
 
-export function normalizeTitle(title: string) {
+export function normalizeMidiTitle(title: string) {
     const normalizedTitle = title.replace('_', ' ')
     const results = normalizedTitle.match(/.midi|.mid/) ?? []
     if (results.length > 0) {
@@ -109,7 +109,7 @@ export function getMsPerBeatFromDelta(delta: number, allMsPerBeat: MsPerBeat[]) 
     return findLast(allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
 }
 
-export function deltaToTime(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBeat: number) {
+export function deltaToTimestamp(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBeat: number) {
     const lastMsPerBeat = getMsPerBeatFromDelta(delta, allMsPerBeat)
 
     if (lastMsPerBeat) {
@@ -252,14 +252,14 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             // calculates final timestamp of instruments
             return {
                 ...instrument,
-                timestamp: deltaToTime(allMsPerBeat, delta, ticksPerBeat),
+                timestamp: deltaToTimestamp(allMsPerBeat, delta, ticksPerBeat),
             }
         })
 
     return {
         ticksPerBeat,
         midiDuration: getMidiDuration(allMsPerBeat, nbTicks, ticksPerBeat),
-        format: getFormat(midiJson),
+        format: getMidiFormat(midiJson),
         instruments: sortBy(finalInstruments, 'delta'),
         tracksMetas,
         allMsPerBeat,

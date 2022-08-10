@@ -1,12 +1,12 @@
 import { Button } from '../_presentational/Button'
 import { PlayButton } from './PlayButton'
-import { SoundButton } from '../SoundButton'
+import { VolumeButton } from '../VolumeButton'
 import React from 'react'
 import { AudioPlayerState } from '../../types'
 
 interface ControlsProps {
     isMute: boolean
-    state: AudioPlayerState
+    playerState: AudioPlayerState
     onPlay: () => void
     onStop: () => void
     onToggleSound: (isMute: boolean) => void
@@ -16,7 +16,7 @@ interface ControlsProps {
 
 export function Controls({
     isMute,
-    state,
+    playerState,
     onPlay,
     onStop,
     onToggleSound,
@@ -34,11 +34,11 @@ export function Controls({
             />
             <PlayButton
                 onClick={onPlay}
-                isPlaying={state === 'playing'}
+                isPlaying={playerState === 'playing'}
                 onBlur={onPlayButtonBlur}
                 onFocus={onPlayButtonFocus}
             />
-            <SoundButton isMute={isMute} onToggleSound={onToggleSound} />
+            <VolumeButton isMute={isMute} onToggleSound={onToggleSound} />
         </>
     )
 }

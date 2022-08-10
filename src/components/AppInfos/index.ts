@@ -1,0 +1,1 @@
+export { AppInfos } from './AppInfos'

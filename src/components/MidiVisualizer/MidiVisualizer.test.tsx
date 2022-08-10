@@ -33,7 +33,7 @@ describe('MidiVisualizer', () => {
     it('render the proper notes', async () => {
         render(
             <MidiVisualizer
-                worker={worker as Worker}
+                intervalWorker={worker as Worker}
                 midiMetas={midiMetas}
                 audioPlayerState={'playing'}
                 activeInstruments={[DEFAULT_MIDI_INSTRUMENT]}

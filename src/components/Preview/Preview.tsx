@@ -14,7 +14,7 @@ import {
     MidiMetas,
     MidiMode,
     MusicSystem,
-    LoopTimes,
+    LoopTimestamps,
 } from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getInitialInstruments, getMidiMetas } from '../../utils'
@@ -27,7 +27,7 @@ interface PreviewProps {
     showNotes: boolean
     timeToNextNote: number | null
     midiTitle: string
-    loopTimes: LoopTimes
+    loopTimes: LoopTimestamps
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
     midiInput: MIDIInput | null
@@ -41,7 +41,7 @@ interface PreviewProps {
     isEditingLoop: boolean
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onMidiTitleChange: React.Dispatch<React.SetStateAction<string>>
-    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
+    onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onChangeMidiMetas: React.Dispatch<React.SetStateAction<MidiMetas | null>>
@@ -70,7 +70,7 @@ export function Preview({
     isEditingLoop,
     onChangeActiveInstruments,
     onMidiTitleChange,
-    onChangeLoopTimes,
+    onChangeLoopTimestamps,
     onChangeActiveTracks,
     onChangeAudioPlayerState,
     onChangeMidiMetas,
@@ -100,7 +100,7 @@ export function Preview({
         onChangeActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
         onChangeActiveTracks(playableTracks.map(({ index }) => index))
         onChangeAudioPlayerState('stopped')
-        onChangeLoopTimes([null, null])
+        onChangeLoopTimestamps([null, null])
         // console.log(midiJSON)
         // console.log(metas)
     }
@@ -139,8 +139,8 @@ export function Preview({
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 <Visualizer
-                    worker={worker}
-                    loopTimes={loopTimes}
+                    intervalWorker={worker}
+                    loopTimestamps={loopTimes}
                     activeInstruments={activeInstruments}
                     midiMode={midiMode}
                     isEditingLoop={isEditingLoop}
@@ -151,7 +151,7 @@ export function Preview({
                     onChangeActiveNotes={setActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}
                     onChangeActiveInstruments={onChangeActiveInstruments}
-                    onChangeLoopTimes={onChangeLoopTimes}
+                    onChangeLoopTimestamps={onChangeLoopTimestamps}
                 />
             </div>
             <div className="item">
@@ -159,8 +159,8 @@ export function Preview({
                     activeNotes={activeNotes}
                     musicSystem={musicSystem}
                     midiMode={midiMode}
-                    onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     showNotes={showNotes}
+                    onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     onKeyPressed={setActiveNotes}
                 />
                 {activeInstruments.map(({ channel, name, notes }) => {

@@ -8,9 +8,9 @@ import {
     InstrumentUserFriendlyName,
     Instrument,
     MidiAccessMode,
-    LoopTimes,
+    LoopTimestamps,
 } from '../../types'
-import { ModeSelector } from '../ModeSelector'
+import { AppModeSelector } from '../AppModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
 import { Switch } from '../_presentational/Switch'
 import { Button } from '../_presentational/Button'
@@ -45,7 +45,7 @@ interface SettingsProps {
     onMidiAccessModeChange: React.Dispatch<React.SetStateAction<MidiAccessMode>>
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onChangeIsEditingLoop: React.Dispatch<React.SetStateAction<boolean>>
-    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimes>>
+    onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onMute: React.Dispatch<React.SetStateAction<boolean>>
     onChangeShowNotes: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -74,7 +74,7 @@ export function Settings({
     onMidiAccessModeChange,
     onChangeMidiSpeedFactor,
     onChangeIsEditingLoop,
-    onChangeLoopTimes,
+    onChangeLoopTimestamps,
     onMidiModeChange,
     onMute,
     onChangeShowNotes,
@@ -137,7 +137,7 @@ export function Settings({
     }
 
     function clearLoop() {
-        onChangeLoopTimes([null, null])
+        onChangeLoopTimestamps([null, null])
     }
 
     return (
@@ -157,14 +157,14 @@ export function Settings({
                                 : 'Set a loop over a section (l)'
                         }`}
                     </Tooltip>
-                    <Divider orientation="vertical" />
+                    <Divider variant="vertical" />
                     <BpmSelector
-                        worker={worker}
+                        intervalWorker={worker}
                         midiSpeedFactor={midiSpeedFactor}
                         onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
                         allMsPerBeat={midiMetas.allMsPerBeat}
                     />
-                    <Divider orientation="vertical" />
+                    <Divider variant="vertical" />
                     <Tooltip showOnHover>
                         <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
                             Autoplay
@@ -181,7 +181,7 @@ export function Settings({
             <Button icon={'settings'} onClick={handleClickOnExtraSettings}>
                 {nbTracks ? ` ${nbTracks} track${nbTracks > 1 ? 's' : ''}` : null}
             </Button>
-            <ModeSelector onChange={onChangeAppMode} appMode={appMode} />
+            <AppModeSelector onChange={onChangeAppMode} appMode={appMode} />
             <MidiInputSelector
                 onMidiInputChange={onMidiInputChange}
                 onMidiOutputChange={onMidiOutputChange}

@@ -53,16 +53,16 @@ export function MidiMessageManager({
 }: MidiMessageManagerProps) {
     const [notesBeingHeld, setNotesBeingHeld] = useState<MidiInputActiveNote[]>([])
     const [midiNotesAlreadyPlayed, setMidiNotesAlreadyPlayed] = useState<Set<string>>(new Set())
-    const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
+    const prevActiveNotes = usePrevious<ActiveNote[]>(activeNotes)
 
     useEffect(() => {
         // /!\ EXPERIMENTAL /!\
         if (midiAccessMode === 'output' && midiOutput && activeNotes.length) {
             let newNotes = activeNotes
 
-            if (prevActiveKeys) {
+            if (prevActiveNotes) {
                 const isNewNote = (note: ActiveNote) =>
-                    !prevActiveKeys.find(
+                    !prevActiveNotes.find(
                         (prevActiveKey) =>
                             'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
                     )

@@ -1,18 +1,18 @@
 import { Tooltip } from '../_presentational/Tooltip'
 import { RangeSlider } from '../_presentational/RangeSlider'
 import React, { useEffect, useRef } from 'react'
-import { msToTime, normalizeTitle } from '../../utils'
-import { LoopTimes } from '../../types/LoopTimes'
+import { msToHumanReadableTime, normalizeMidiTitle } from '../../utils'
+import { LoopTimestamps } from '../../types'
 import './ProgressBar.scss'
 
 interface PreviewLoopProps {
     duration: number
     refProgressBar: React.RefObject<HTMLInputElement>
-    loopTimes: LoopTimes
+    loopTimestamps: LoopTimestamps
 }
 
-const LoopPreview = ({ duration, refProgressBar, loopTimes }: PreviewLoopProps) => {
-    const [startLoop, endLoop] = loopTimes
+const LoopPreview = ({ duration, refProgressBar, loopTimestamps }: PreviewLoopProps) => {
+    const [startLoop, endLoop] = loopTimestamps
 
     if (!startLoop || !refProgressBar.current) return null
 
@@ -36,9 +36,9 @@ const LoopPreview = ({ duration, refProgressBar, loopTimes }: PreviewLoopProps) 
             ></span>
             {startLoop ? (
                 <>
-                    {`start loop: ${msToTime(startLoop)}`}
+                    {`start loop: ${msToHumanReadableTime(startLoop)}`}
                     <br />
-                    {endLoop ? `end loop: ${msToTime(endLoop)}` : null}
+                    {endLoop ? `end loop: ${msToHumanReadableTime(endLoop)}` : null}
                 </>
             ) : null}
         </Tooltip>
@@ -48,45 +48,45 @@ const LoopPreview = ({ duration, refProgressBar, loopTimes }: PreviewLoopProps) 
 const BASE_CLASS = 'progress-bar'
 
 interface ProgressBarProps {
-    worker: Worker
+    intervalWorker: Worker
     duration: number
     title?: string
-    loopTimes?: LoopTimes
+    loopTimestamps?: LoopTimestamps
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     onMouseDown: (event: React.MouseEvent<HTMLInputElement>) => void
     onMouseUp: (event: React.MouseEvent<HTMLInputElement>) => void
 }
 
 export function ProgressBar({
-    worker,
+    intervalWorker,
     duration,
     title,
-    loopTimes,
+    loopTimestamps,
     onChange,
     onMouseDown,
     onMouseUp,
 }: ProgressBarProps) {
     const refTime = useRef<HTMLSpanElement>(null)
     const refBar = useRef<HTMLInputElement>(null)
-    const totalTime = msToTime(duration)
-    const titleWithoutExtension = normalizeTitle(title ?? '')
+    const totalTime = msToHumanReadableTime(duration)
+    const titleWithoutExtension = normalizeMidiTitle(title ?? '')
 
     useEffect(() => {
         if (refTime.current && refBar.current) {
-            refTime.current.innerText = msToTime(0)
+            refTime.current.innerText = msToHumanReadableTime(0)
             refBar.current.value = '0'
         }
         function onTimeChange(message: MessageEvent) {
             const { time } = message.data
-            const readableTime = msToTime(time)
+            const readableTime = msToHumanReadableTime(time)
             if (refTime.current && refBar.current) {
                 refTime.current.innerText = readableTime
                 refBar.current.value = time
             }
         }
-        worker.addEventListener('message', onTimeChange)
+        intervalWorker.addEventListener('message', onTimeChange)
         return function cleanup() {
-            worker.removeEventListener('message', onTimeChange)
+            intervalWorker.removeEventListener('message', onTimeChange)
         }
     }, [])
 
@@ -108,9 +108,9 @@ export function ProgressBar({
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                     />
-                    {loopTimes ? (
+                    {loopTimestamps ? (
                         <LoopPreview
-                            loopTimes={loopTimes}
+                            loopTimestamps={loopTimestamps}
                             duration={duration}
                             refProgressBar={refBar}
                         />

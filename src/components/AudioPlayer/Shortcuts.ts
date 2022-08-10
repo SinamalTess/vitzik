@@ -5,21 +5,21 @@ import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
 import { ShortcutsContext } from '../ShortcutsContext'
 
 interface KeyboardShortcutsProps {
-    worker: Worker
-    state: AudioPlayerState
+    intervalWorker: Worker
+    playerState: AudioPlayerState
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onChangeInitialTime: React.Dispatch<React.SetStateAction<number>>
     onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export function Shortcuts({
-    worker,
-    state,
+    intervalWorker,
+    playerState,
     onChangeState,
     onChangeInitialTime,
     onToggleSound,
 }: KeyboardShortcutsProps) {
-    const [prevState, setPrevState] = useState<AudioPlayerState>(state)
+    const [prevState, setPrevState] = useState<AudioPlayerState>(playerState)
     const { shortcuts } = useContext(ShortcutsContext)
     const midiCurrentTime = useRef<number>(0)
 
@@ -29,12 +29,12 @@ export function Shortcuts({
             midiCurrentTime.current = time
         }
 
-        worker.addEventListener('message', onTimeUpdate)
+        intervalWorker.addEventListener('message', onTimeUpdate)
 
         return function cleanup() {
-            worker.removeEventListener('message', onTimeUpdate)
+            intervalWorker.removeEventListener('message', onTimeUpdate)
         }
-    }, [worker])
+    }, [intervalWorker])
 
     function seekFor(value: number) {
         onChangeInitialTime(midiCurrentTime.current)
@@ -72,8 +72,8 @@ export function Shortcuts({
     }, [onChangeState])
 
     useEffect(() => {
-        if (state !== 'seeking') {
-            setPrevState(state)
+        if (playerState !== 'seeking') {
+            setPrevState(playerState)
         }
     }, [onArrowDownKey, onArrowUpKey])
 

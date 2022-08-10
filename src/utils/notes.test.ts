@@ -1,10 +1,4 @@
-import {
-    keyToNote,
-    translateNoteToMusicSystem,
-    noteToKey,
-    isSpecialNote,
-    isBlackKey,
-} from './index'
+import { keyToNote, translateNoteTo, noteToKey, isSpecialNote, isBlackKey } from './index'
 
 describe('keyToNote()', () => {
     it('should convert MIDI piano key number to an alphabetical note', () => {
@@ -24,10 +18,10 @@ describe('noteToKey()', () => {
 
 describe('translateNote()', () => {
     it('should translate a given note to the music system provided', () => {
-        expect(translateNoteToMusicSystem('A0', 'german')).toBe('A0')
-        expect(translateNoteToMusicSystem('C4', 'syllabic')).toBe('Do4')
-        expect(translateNoteToMusicSystem('A0', 'syllabic')).toBe('La0')
-        expect(translateNoteToMusicSystem('A0', 'alphabetical')).toBe('A0')
+        expect(translateNoteTo('A0', 'german')).toBe('A0')
+        expect(translateNoteTo('C4', 'syllabic')).toBe('Do4')
+        expect(translateNoteTo('A0', 'syllabic')).toBe('La0')
+        expect(translateNoteTo('A0', 'alphabetical')).toBe('A0')
     })
 })
 

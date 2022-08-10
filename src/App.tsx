@@ -10,7 +10,7 @@ import {
     Instrument,
     InstrumentUserFriendlyName,
     MidiAccessMode,
-    LoopTimes,
+    LoopTimestamps,
 } from './types'
 import { AudioPlayer } from './components/AudioPlayer'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
@@ -18,7 +18,7 @@ import { WebWorker } from './workers/WebWorker'
 // @ts-ignore
 import intervalWorker from './workers/intervalWorker.js'
 import { useTitle } from './_hooks'
-import { Infos } from './components/Infos'
+import { AppInfos } from './components/AppInfos'
 import { ShortcutsContextProvider } from './components/ShortcutsContext/ShortcutsContext'
 import { Preview } from './components/Preview'
 
@@ -39,7 +39,7 @@ function App() {
     const [midiInput, setMidiInput] = useState<MIDIInput | null>(null)
     const [midiOutput, setMidiOutput] = useState<MIDIOutput | null>(null)
     const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
-    const [loopTimes, setLoopTimes] = useState<LoopTimes>([null, null])
+    const [loopTimestamps, setLoopTimestamps] = useState<LoopTimestamps>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
     const [showNotes, setShowNotes] = useState(true)
     const [loadedInstrumentPlayers, setLoadedInstrumentPlayers] = useState<
@@ -63,18 +63,18 @@ function App() {
                         <AudioPlayer
                             midiMetas={midiMetas}
                             midiSpeedFactor={midiSpeedFactor}
-                            worker={worker}
-                            state={audioPlayerState}
+                            intervalWorker={worker}
+                            playerState={audioPlayerState}
                             isMute={isMute}
                             timeToNextNote={timeToNextNote}
                             title={midiTitle}
                             duration={midiMetas.midiDuration}
-                            loopTimes={loopTimes}
+                            loopTimes={loopTimestamps}
                             onChangeState={setAudioPlayerState}
                             onToggleSound={setIsMute}
                         />
                     ) : (
-                        <Infos />
+                        <AppInfos />
                     )}
                     <Settings
                         worker={worker}
@@ -100,7 +100,7 @@ function App() {
                         onMidiAccessModeChange={setMidiAccessMode}
                         onChangeIsEditingLoop={setIsEditingLoop}
                         onMute={setIsMute}
-                        onChangeLoopTimes={setLoopTimes}
+                        onChangeLoopTimestamps={setLoopTimestamps}
                         onChangeShowNotes={setShowNotes}
                     />
                 </div>
@@ -114,7 +114,7 @@ function App() {
                     audioPlayerState={audioPlayerState}
                     midiInput={midiInput}
                     midiOutput={midiOutput}
-                    loopTimes={loopTimes}
+                    loopTimes={loopTimestamps}
                     midiAccessMode={midiAccessMode}
                     worker={worker}
                     activeInstruments={activeInstruments}
@@ -122,7 +122,7 @@ function App() {
                     midiMode={midiMode}
                     musicSystem={musicSystem}
                     onMidiTitleChange={setMidiTitle}
-                    onChangeLoopTimes={setLoopTimes}
+                    onChangeLoopTimestamps={setLoopTimestamps}
                     onChangeActiveInstruments={setActiveInstruments}
                     onChangeActiveTracks={setActiveTracks}
                     onChangeAudioPlayerState={setAudioPlayerState}

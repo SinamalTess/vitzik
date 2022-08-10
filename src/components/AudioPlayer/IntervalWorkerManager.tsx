@@ -3,19 +3,19 @@ import { AudioPlayerState, MidiMetas } from '../../types'
 import { usePrevious } from '../../_hooks'
 
 interface IntervalWorkerManagerProps {
-    worker: Worker
+    intervalWorker: Worker
     midiMetas: MidiMetas
-    state: AudioPlayerState
+    playerState: AudioPlayerState
     startAt: number
     midiSpeedFactor: number
 }
 
 export function IntervalWorkerManager({
-    worker,
+    intervalWorker,
     midiMetas,
     midiSpeedFactor,
     startAt,
-    state,
+    playerState,
 }: IntervalWorkerManagerProps) {
     const [isStarted, setIsStarted] = useState(false)
     const prevMidiSpeedFactor = usePrevious(midiSpeedFactor)
@@ -23,22 +23,22 @@ export function IntervalWorkerManager({
     useEffect(() => {
         if (prevMidiSpeedFactor !== midiSpeedFactor) {
             setIsStarted(false)
-            worker.postMessage({
+            intervalWorker.postMessage({
                 code: 'paused',
             })
             setIsStarted(true)
-            worker.postMessage({
+            intervalWorker.postMessage({
                 code: 'start',
                 startAt,
                 midiSpeedFactor,
             })
         }
 
-        switch (state) {
+        switch (playerState) {
             case 'playing':
                 setIsStarted(true)
                 if (!isStarted) {
-                    worker.postMessage({
+                    intervalWorker.postMessage({
                         code: 'start',
                         startAt,
                         midiSpeedFactor,
@@ -47,25 +47,25 @@ export function IntervalWorkerManager({
                 break
             case 'stopped':
                 setIsStarted(false)
-                worker.postMessage({
+                intervalWorker.postMessage({
                     code: 'stopped',
                 })
                 break
             case 'paused':
                 setIsStarted(false)
-                worker.postMessage({
+                intervalWorker.postMessage({
                     code: 'paused',
                 })
                 break
             case 'seeking':
                 setIsStarted(false)
-                worker.postMessage({
+                intervalWorker.postMessage({
                     code: 'seeking',
                     startAt,
                 })
                 break
         }
-    }, [midiMetas, state, isStarted, midiSpeedFactor, startAt, worker]) // midiMetas is used here to force the visualization to redraw on midiImport
+    }, [midiMetas, playerState, isStarted, midiSpeedFactor, startAt, intervalWorker]) // midiMetas is used here to force the visualization to redraw on midiImport
 
     return null
 }

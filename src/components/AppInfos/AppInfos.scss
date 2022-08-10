@@ -1,6 +1,6 @@
 @import '../../style/vars';
 
-.infos {
+.app-infos {
     &__keyboard-shortcuts {
         span {
             background-color: map-get($theme-colors, 'dark-secondary');

@@ -1,7 +1,7 @@
 import React, { ReactNode, useState } from 'react'
 import { ActiveShortcut } from '../../types/ActiveShortcut'
 
-interface ShortcutsContextInterface {
+interface IShortcutsContext {
     shortcuts: ActiveShortcut[]
     setShortcuts: React.Dispatch<React.SetStateAction<ActiveShortcut[]>>
 }
@@ -10,7 +10,7 @@ interface ShortcutsContextProviderProps {
     children: ReactNode
 }
 
-export const ShortcutsContext = React.createContext<ShortcutsContextInterface>({
+export const ShortcutsContext = React.createContext<IShortcutsContext>({
     shortcuts: [],
     setShortcuts: () => {},
 })

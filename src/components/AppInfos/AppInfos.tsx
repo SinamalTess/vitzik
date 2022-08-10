@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { Link } from '../_presentational/Link'
 import { Button } from '../_presentational/Button'
 import { SideBar } from '../_presentational/SideBar'
-import './Infos.scss'
+import './AppInfos.scss'
 
-const BASE_CLASS = 'infos'
+const BASE_CLASS = 'app-infos'
 
-export function Infos() {
+export function AppInfos() {
     const [isOpen, setIsOpen] = useState(false)
 
     function handleClose() {

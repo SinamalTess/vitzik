@@ -166,7 +166,7 @@ export function MidiTrackList({
                                       onClick={() => handleClick(index)}
                                   />
                               </ListItemSecondaryAction>
-                              <Divider orientation={'vertical'} />
+                              <Divider variant={'vertical'} />
                               <div>
                                   {names.length ? (
                                       <Tooltip showOnHover placement={'right'}>

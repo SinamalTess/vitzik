@@ -4,12 +4,12 @@ import React from 'react'
 import { AppMode } from '../../types'
 import { Tooltip } from '../_presentational/Tooltip'
 
-interface ModeSelectorProps {
+interface AppModeSelectorProps {
     appMode: AppMode
     onChange: (mode: AppMode) => void
 }
 
-export function ModeSelector({ onChange, appMode }: ModeSelectorProps) {
+export function AppModeSelector({ onChange, appMode }: AppModeSelectorProps) {
     const isLearningMode = appMode === 'theory'
 
     return (
