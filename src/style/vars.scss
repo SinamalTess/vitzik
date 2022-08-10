@@ -13,7 +13,7 @@ $colors: (
 
 $theme-colors: ();
 
-@function create_colour_map($key, $color, $percentage, $opacity) {
+@function create-colour-map($key, $color, $percentage, $opacity) {
     $map: (
         #{$key}: #{$color},
         'light-#{$key}': lighten($color, $percentage),
@@ -24,7 +24,7 @@ $theme-colors: ();
 }
 
 @each $key, $value in $colors {
-    $theme-colors: map-merge($theme-colors, create_colour_map($key, $value, 5, 1));
+    $theme-colors: map-merge($theme-colors, create-colour-map($key, $value, 5, 1));
 }
 
 $theme-font-sizes: (

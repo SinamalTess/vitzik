@@ -16,7 +16,7 @@ describe('noteToKey()', () => {
     })
 })
 
-describe('translateNote()', () => {
+describe('translateNoteTo()', () => {
     it('should translate a given note to the music system provided', () => {
         expect(translateNoteTo('A0', 'german')).toBe('A0')
         expect(translateNoteTo('C4', 'syllabic')).toBe('Do4')
