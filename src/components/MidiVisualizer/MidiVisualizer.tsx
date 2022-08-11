@@ -9,8 +9,6 @@ import {
     MidiVisualizerNoteCoordinates,
     LoopTimestamps,
 } from '../../types'
-import isEqual from 'lodash/isEqual'
-import uniqBy from 'lodash/uniqBy'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSection } from './MidiVisualizerSection'
 import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
@@ -18,6 +16,7 @@ import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { MidiVisualizerFactory } from './MidiVisualizerFactory'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
+import { MidiEventsManager } from './MidiEventsManager'
 
 interface MidiVisualizerProps {
     intervalWorker: Worker
@@ -65,9 +64,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         []
     )
 
-    const midiTrackInstruments = activeInstruments.filter(({ channel }) => !isUserChannel(channel))
-    const { instruments } = midiMetas
-    const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
     const svgs = ref.current?.getElementsByTagName('svg')
 
     const midiVisualizerFactory = useMemo(
@@ -83,51 +79,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const activeTracksCoordinates = useMemo(
         () => MidiVisualizerFactory.mergeNotesCoordinates(activeTracks, notesCoordinates),
         [notesCoordinates, activeTracks]
-    )
-
-    const setInstruments = useCallback(
-        (time: number) => {
-            const allInstruments = [...instruments]
-                .filter(({ timestamp }) => timestamp <= time)
-                .sort((a, b) => b.delta - a.delta) // sort by largest delta first
-
-            const newInstruments = uniqBy(allInstruments, 'channel')
-
-            if (!isEqual(newInstruments, midiTrackInstruments)) {
-                onChangeInstruments(newInstruments)
-            }
-        },
-        [activeInstruments, midiMetas.instruments, onChangeInstruments]
-    )
-
-    const setTimeToNextNote = useCallback(
-        (time: number) => {
-            const timeToNextNote = midiVisualizerFactory.getTimeToNextNote(
-                activeTracksCoordinates,
-                time
-            )
-            onChangeTimeToNextNote(timeToNextNote)
-        },
-        [midiMode, midiVisualizerFactory, activeTracksCoordinates, onChangeTimeToNextNote]
-    )
-
-    const setActiveNotes = useCallback(
-        (time: number) => {
-            const newActiveNotes = midiVisualizerFactory.getActiveNotes(
-                activeTracksCoordinates,
-                time
-            )
-
-            onChangeActiveNotes((activeNotes: ActiveNote[]) => {
-                if (isEqual(newActiveNotes, activeNotes)) {
-                    return activeNotes
-                } else {
-                    const userNotes = activeNotes.filter(({ channel }) => isUserChannel(channel))
-                    return [...newActiveNotes, ...userNotes]
-                }
-            })
-        },
-        [midiVisualizerFactory, activeTracksCoordinates, onChangeActiveNotes]
     )
 
     const calcCoordinates = useCallback(
@@ -171,13 +122,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             const { time } = message.data
             animate(time)
             calcCoordinates(time)
-            setActiveNotes(time)
-            if (midiMode === 'wait') {
-                setTimeToNextNote(time)
-            }
-            if (isMultiInstrumentsTrack) {
-                setInstruments(time)
-            }
         }
 
         intervalWorker.addEventListener('message', onTimeChange)
@@ -185,14 +129,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         return function cleanup() {
             intervalWorker.removeEventListener('message', onTimeChange)
         }
-    }, [
-        animate,
-        calcCoordinates,
-        setActiveNotes,
-        setInstruments,
-        setTimeToNextNote,
-        intervalWorker,
-    ])
+    }, [animate, calcCoordinates, intervalWorker])
 
     function redrawVisualization() {
         intervalWorker.postMessage({ code: 'getTime' })
@@ -230,6 +167,17 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                     onChangeLoopTimestamps={onChangeLoopTimes}
                 />
             ) : null}
+            <MidiEventsManager
+                intervalWorker={intervalWorker}
+                midiMode={midiMode}
+                midiMetas={midiMetas}
+                midiVisualizerFactory={midiVisualizerFactory}
+                activeInstruments={activeInstruments}
+                activeTracksCoordinates={activeTracksCoordinates}
+                onChangeActiveNotes={onChangeActiveNotes}
+                onChangeInstruments={onChangeInstruments}
+                onChangeTimeToNextNote={onChangeTimeToNextNote}
+            />
         </div>
     )
 })
