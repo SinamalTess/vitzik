@@ -1,14 +1,7 @@
 import { MidiVisualizer } from '../MidiVisualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import {
-    AudioPlayerState,
-    MidiMetas,
-    ActiveNote,
-    MidiMode,
-    Instrument,
-    LoopTimestamps,
-} from '../../types'
+import { MidiMetas, ActiveNote, MidiMode, Instrument, LoopTimestamps } from '../../types'
 import { ErrorBoundary } from '../_presentational/ErrorBoundary'
 
 interface VisualizerProps {
@@ -20,7 +13,6 @@ interface VisualizerProps {
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
     activeTracks: number[]
-    audioPlayerState: AudioPlayerState
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
@@ -36,7 +28,6 @@ export const Visualizer = React.memo(function Preview({
     midiFile,
     midiMetas,
     activeTracks,
-    audioPlayerState,
     onChangeActiveNotes,
     onChangeTimeToNextNote,
     onChangeActiveInstruments,
@@ -53,7 +44,6 @@ export const Visualizer = React.memo(function Preview({
                     midiMode={midiMode}
                     midiMetas={midiMetas}
                     isEditingLoop={isEditingLoop}
-                    audioPlayerState={audioPlayerState}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}

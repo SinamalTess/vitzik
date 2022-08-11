@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
 import {
     Instrument,
     ActiveNote,
-    AudioPlayerState,
     MidiMetas,
     MidiMode,
     MidiVisualizerNoteCoordinates,
@@ -26,7 +25,6 @@ interface MidiVisualizerProps {
     loopTimestamps?: LoopTimestamps
     isEditingLoop?: boolean
     midiMetas: MidiMetas
-    audioPlayerState: AudioPlayerState
     activeTracks: number[]
     height?: number
     width?: number
@@ -49,7 +47,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     loopTimestamps,
     isEditingLoop,
     midiMetas,
-    audioPlayerState,
     activeTracks,
     height = 0,
     width = 0,
@@ -59,7 +56,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     onChangeLoopTimes,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
-    let animation = useRef<number>(0)
     const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>(
         []
     )
@@ -81,9 +77,15 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         [notesCoordinates, activeTracks]
     )
 
-    const calcCoordinates = useCallback(
-        (time: number) => {
-            const indexToDraw = midiVisualizerFactory.getIndexToDraw(time, audioPlayerState)
+    useEffect(() => {
+        if (ref.current && height && width) {
+            redrawVisualization()
+        }
+    }, [height, width, ref.current])
+
+    useEffect(() => {
+        const getCoordinates = (time: number) => {
+            const indexToDraw = midiVisualizerFactory.getIndexToDraw(time)
 
             setSectionCoordinates([
                 MidiVisualizerFactory.getSectionCoordinates(
@@ -97,12 +99,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                     height
                 ),
             ])
-        },
-        [activeTracksCoordinates, audioPlayerState, midiVisualizerFactory, height]
-    )
+        }
 
-    const animate = useCallback(
-        (time: number) => {
+        const animate = (time: number) => {
             function animationStep() {
                 const top = midiVisualizerFactory.getPercentageTopSection(time)
 
@@ -112,16 +111,13 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 }
             }
 
-            animation.current = window.requestAnimationFrame(animationStep)
-        },
-        [midiVisualizerFactory, svgs]
-    )
+            window.requestAnimationFrame(animationStep)
+        }
 
-    useEffect(() => {
         function onTimeChange(message: MessageEvent) {
             const { time } = message.data
             animate(time)
-            calcCoordinates(time)
+            getCoordinates(time)
         }
 
         intervalWorker.addEventListener('message', onTimeChange)
@@ -129,17 +125,11 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         return function cleanup() {
             intervalWorker.removeEventListener('message', onTimeChange)
         }
-    }, [animate, calcCoordinates, intervalWorker])
+    }, [activeTracksCoordinates, height, intervalWorker, midiVisualizerFactory, svgs])
 
     function redrawVisualization() {
         intervalWorker.postMessage({ code: 'getTime' })
     }
-
-    useEffect(() => {
-        if (ref.current && height && width) {
-            redrawVisualization()
-        }
-    }, [height, width, ref.current])
 
     if (!height || !width) return null
 

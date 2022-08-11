@@ -106,7 +106,7 @@ export function Preview({
     }
 
     useEffect(() => {
-        if (isMute) {
+        if (isMute || audioPlayerState === 'paused' || audioPlayerState === 'stopped') {
             /*
                 Suspends the progression of time in the audio context,
                 temporarily halting audio hardware access and reducing CPU/battery usage in the process.
@@ -121,7 +121,7 @@ export function Preview({
             }
             resume().catch((e) => console.error(e))
         }
-    }, [isMute])
+    }, [isMute, audioPlayerState])
     return (
         <>
             <div className="item preview">
@@ -146,7 +146,6 @@ export function Preview({
                     isEditingLoop={isEditingLoop}
                     midiFile={midiFile}
                     midiMetas={midiMetas}
-                    audioPlayerState={audioPlayerState}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={setActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}

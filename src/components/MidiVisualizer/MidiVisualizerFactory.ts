@@ -1,5 +1,4 @@
 import {
-    AudioPlayerState,
     MidiInputActiveNote,
     MidiMetas,
     MidiVisualizerActiveNote,
@@ -141,7 +140,7 @@ export class MidiVisualizerFactory {
         }
     }
 
-    getIndexToDraw = (time: number, audioPlayerState: AudioPlayerState) => {
+    getIndexToDraw = (time: number) => {
         const indexSectionPlaying = this.getIndexSectionPlaying(time)
         const isIndexEven = isEven(indexSectionPlaying)
         if (indexSectionPlaying === 0) {
@@ -150,7 +149,7 @@ export class MidiVisualizerFactory {
                 1: 1,
             }
         } else {
-            if (audioPlayerState === 'playing') {
+            if (time === 0) {
                 const sectionToRedraw: number = isIndexEven ? 1 : 0
                 return {
                     0: indexSectionPlaying,

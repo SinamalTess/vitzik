@@ -35,7 +35,6 @@ describe('MidiVisualizer', () => {
             <MidiVisualizer
                 intervalWorker={worker as Worker}
                 midiMetas={midiMetas}
-                audioPlayerState={'playing'}
                 activeInstruments={[DEFAULT_MIDI_INSTRUMENT]}
                 activeTracks={[1]}
                 midiFile={midiJson as IMidiFile}
