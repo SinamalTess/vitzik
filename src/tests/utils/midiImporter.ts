@@ -34,7 +34,7 @@ export const clickMidiExample = async () => {
         In the real environment the button disappears from the layout so this doesn't happen.
     */
     fireEvent.click(button)
-    await waitFor(() => expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent('135'))
+    await screen.findByText('135')
 }
 
 export const dropValidFile = () => {

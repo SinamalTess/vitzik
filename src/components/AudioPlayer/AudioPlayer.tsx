@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { AudioPlayerState, MidiMetas, LoopTimestamps } from '../../types'
 import './AudioPlayer.scss'
 import { ProgressBar } from './ProgressBar'
@@ -6,6 +6,7 @@ import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
 import { ShortcutsContext } from '../ShortcutsContext'
 import { Shortcuts } from './Shortcuts'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface AudioPlayerProps {
     intervalWorker: Worker
@@ -81,8 +82,7 @@ export function AudioPlayer({
     )
 
     const workerListener = useCallback(
-        (message: MessageEvent) => {
-            const { time } = message.data
+        (time: number) => {
             checkIsEndOfSong(time)
             checkIsEndOfLoop(time)
             checkForWaitMode(time)
@@ -90,12 +90,7 @@ export function AudioPlayer({
         [checkIsEndOfSong, checkIsEndOfLoop, checkForWaitMode]
     )
 
-    useEffect(() => {
-        intervalWorker.addEventListener('message', workerListener)
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', workerListener)
-        }
-    }, [intervalWorker, workerListener])
+    useIntervalWorker(intervalWorker, workerListener)
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target

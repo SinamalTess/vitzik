@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import { ActiveNote, Instrument, MidiMetas, MidiMode } from '../../types'
 import { isUserChannel } from './MidiVisualizer'
 import { MidiVisualizerFactory, SectionNoteCoordinates } from './MidiVisualizerFactory'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface MidiEventsManagerProps {
     intervalWorker: Worker
@@ -31,6 +32,18 @@ export function MidiEventsManager({
     const midiTrackInstruments = activeInstruments.filter(({ channel }) => !isUserChannel(channel))
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
+
+    useIntervalWorker(intervalWorker, onTimeChange)
+
+    function onTimeChange(time: number) {
+        setActiveNotes(time)
+        if (midiMode === 'wait') {
+            setTimeToNextNote(time)
+        }
+        if (isMultiInstrumentsTrack) {
+            setInstruments(time)
+        }
+    }
 
     const setInstruments = useCallback(
         (time: number) => {
@@ -77,23 +90,5 @@ export function MidiEventsManager({
         [midiVisualizerFactory, activeTracksCoordinates, onChangeActiveNotes]
     )
 
-    useEffect(() => {
-        function onTimeChange(message: MessageEvent) {
-            const { time } = message.data
-            setActiveNotes(time)
-            if (midiMode === 'wait') {
-                setTimeToNextNote(time)
-            }
-            if (isMultiInstrumentsTrack) {
-                setInstruments(time)
-            }
-        }
-
-        intervalWorker.addEventListener('message', onTimeChange)
-
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', onTimeChange)
-        }
-    }, [setActiveNotes, setInstruments, setTimeToNextNote, intervalWorker])
     return null
 }

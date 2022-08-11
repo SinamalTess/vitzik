@@ -3,6 +3,7 @@ import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
 import { msToHumanReadableTime } from '../../utils'
 import { Line } from './svgElements/Line'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface LineProps {
     y: number
@@ -51,18 +52,12 @@ export function LoopEditor({
     const yToTimestamp = (y: number) => (height - y) / ratio + time
     const timestampToY = (timestamp: number) => height - (timestamp - time) * ratio
 
+    useIntervalWorker(intervalWorker, setTime)
+
     useEffect(() => {
         intervalWorker.postMessage({
             code: 'getTime',
         })
-        function onMessage(message: MessageEvent) {
-            const { time } = message.data
-            setTime(time)
-        }
-        intervalWorker.addEventListener('message', onMessage)
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', onMessage)
-        }
     }, [])
 
     useEffect(() => {

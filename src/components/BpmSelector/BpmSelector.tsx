@@ -6,6 +6,7 @@ import { msPerBeatToBeatsPerMin } from '../../utils'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
 import { MidiVisualizerFactory } from '../MidiVisualizer/MidiVisualizerFactory'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface BpmSelectorProps {
     intervalWorker: Worker
@@ -54,22 +55,17 @@ export function BpmSelector({
     const speed = speedFactor ? speedFactor.speed : 1
     const [bpm, setBpm] = useState(0)
 
+    useIntervalWorker(intervalWorker, onTimeChange)
+
+    function onTimeChange(time: number) {
+        const newBpm = getBpmFromTime(allMsPerBeat, time, midiSpeedFactor)
+        setBpm(newBpm)
+    }
+
     useEffect(() => {
         const newBpm = getBpmFromTime(allMsPerBeat, 0, midiSpeedFactor)
         setBpm(newBpm)
-
-        function onTimeChange(message: MessageEvent) {
-            const { time } = message.data
-            const newBpm = getBpmFromTime(allMsPerBeat, time, midiSpeedFactor)
-            setBpm(newBpm)
-        }
-
-        intervalWorker.addEventListener('message', onTimeChange)
-
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', onTimeChange)
-        }
-    }, [allMsPerBeat, midiSpeedFactor, intervalWorker])
+    }, [midiSpeedFactor])
 
     function handleChange(value: number) {
         onChangeMidiSpeedFactor(value)

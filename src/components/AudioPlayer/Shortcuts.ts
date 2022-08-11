@@ -3,6 +3,7 @@ import { AudioPlayerState } from '../../types'
 import throttle from 'lodash/throttle'
 import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
 import { ShortcutsContext } from '../ShortcutsContext'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface KeyboardShortcutsProps {
     intervalWorker: Worker
@@ -23,18 +24,11 @@ export function Shortcuts({
     const { shortcuts } = useContext(ShortcutsContext)
     const midiCurrentTime = useRef<number>(0)
 
-    useEffect(() => {
-        function onTimeUpdate(message: MessageEvent) {
-            const { time } = message.data
-            midiCurrentTime.current = time
-        }
+    useIntervalWorker(intervalWorker, onTimeChange)
 
-        intervalWorker.addEventListener('message', onTimeUpdate)
-
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', onTimeUpdate)
-        }
-    }, [intervalWorker])
+    function onTimeChange(time: number) {
+        midiCurrentTime.current = time
+    }
 
     function seekFor(value: number) {
         onChangeInitialTime(midiCurrentTime.current)
