@@ -1,4 +1,4 @@
-@import './src/style/mixins';
+@use '../style/functions/create-colour-map' as *;
 
 $colors: (
     'primary': #00e2dc,
@@ -12,16 +12,6 @@ $colors: (
 );
 
 $theme-colors: ();
-
-@function create-colour-map($key, $color, $percentage, $opacity) {
-    $map: (
-        #{$key}: #{$color},
-        'light-#{$key}': lighten($color, $percentage),
-        'dark-#{$key}': darken($color, $percentage),
-        'trans-#{$key}': transparentize($color, $opacity)
-    );
-    @return $map;
-}
 
 @each $key, $value in $colors {
     $theme-colors: map-merge($theme-colors, create-colour-map($key, $value, 5, 1));

@@ -1,0 +1,11 @@
+@use '../../style/vars' as *;
+
+@mixin add-channel-colors() {
+    .channel {
+        @for $i from 0 through length($channel-colors) {
+            &--#{$i} {
+                @content (map-get($channel-colors, #{$i}));
+            }
+        }
+    }
+}

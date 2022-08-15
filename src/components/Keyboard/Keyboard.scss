@@ -1,12 +1,12 @@
 @import '../../style/vars';
-@import '../../style/mixins';
+@import '../../style/mixins/index';
 
 .keyboard {
     padding: 0;
     margin: 0;
     height: 100%;
 
-    @include add-channel-colors(background) using ($color) {
+    @include add-channel-colors() using ($color) {
         box-shadow: 0 0 40px $color;
         background: $color;
     }

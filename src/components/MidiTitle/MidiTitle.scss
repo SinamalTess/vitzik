@@ -1,5 +1,5 @@
 @import '../../style/vars';
-@import '../../style/glitch';
+@import '../../style/mixins/add-glitch-effect';
 
 .midi-title {
     height: 100%;
@@ -38,6 +38,6 @@
         font-size: 3em;
         text-transform: uppercase;
         max-width: 80%;
-        @include addGlitchEffect();
+        @include add-glitch-effect();
     }
 }

@@ -1,4 +1,4 @@
-@import 'src/style/mixins';
+@import '../../style/mixins/index';
 @import 'src/style/vars';
 
 .midi-track-list {
@@ -20,7 +20,7 @@
         font-weight: map-get($theme-font-weights, 'bold');
         font-size: map-get($theme-font-sizes, 'sm');
     }
-    @include add-channel-colors(background) using ($color) {
+    @include add-channel-colors() using ($color) {
         background-color: $color;
     }
 }

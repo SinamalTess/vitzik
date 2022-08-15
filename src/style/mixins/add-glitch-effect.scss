@@ -42,7 +42,7 @@
     }
 }
 
-@mixin addGlitchEffect() {
+@mixin add-glitch-effect() {
     position: relative;
     // Creates a copy before our text.
     &::before {

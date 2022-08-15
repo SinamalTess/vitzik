@@ -1,0 +1,9 @@
+@function create-colour-map($key, $color, $percentage, $opacity) {
+    $map: (
+        #{$key}: #{$color},
+        'light-#{$key}': lighten($color, $percentage),
+        'dark-#{$key}': darken($color, $percentage),
+        'trans-#{$key}': transparentize($color, $opacity)
+    );
+    @return $map;
+}
