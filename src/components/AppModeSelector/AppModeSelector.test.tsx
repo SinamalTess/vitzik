@@ -12,8 +12,8 @@ jest.mock('../_presentational/Tooltip', () => ({
 describe('AppModeSelector', () => {
     const onChange = jest.fn()
 
+    // for now the button is disabled
     xit('should call onChange() callback with "learning" mode', async () => {
-        // for now the button is disabled
         render(<AppModeSelector appMode={'import'} onChange={onChange}></AppModeSelector>)
         await clickLearningMode()
 

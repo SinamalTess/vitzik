@@ -30,11 +30,11 @@ export function Shortcuts({
         midiCurrentTime.current = time
     }
 
-    function seekFor(value: number) {
+    function seekFor(ms: number) {
         onChangeInitialTime(midiCurrentTime.current)
         onChangeState('seeking')
         onChangeInitialTime((midiStartingTime) => {
-            return Math.max(0, midiStartingTime + value) // can't seek below 0
+            return Math.max(0, midiStartingTime + ms) // can't seek below 0
         })
     }
 

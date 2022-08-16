@@ -16,14 +16,24 @@ describe('MidiImporter', () => {
         expect(screen.getByText(/Example/i)).toBeInTheDocument()
     })
 
-    xit('should show an example button that load a midi song', async () => {
+    it('should show an example button that load a midi song', async () => {
         render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
-        await clickMidiExample()
-        expect(onMidiImport).toHaveBeenCalled()
+
+        const button = screen.getByText(/Example/i)
+        fireEvent.click(button)
+
+        await waitFor(() => {
+            expect(onMidiImport).toHaveBeenCalledWith('Turkish March - Mozart', {
+                division: 240,
+                format: 0,
+                tracks: expect.anything(),
+            })
+        })
     })
 
     it('should show an error message when the wrong file type is dragged over', () => {
         render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
+
         dragInvalidFile()
 
         expect(screen.getByText(/We only support MIDI files/)).toBeInTheDocument()
@@ -31,6 +41,7 @@ describe('MidiImporter', () => {
 
     it('should show a valid message when the right file type is dragged over', () => {
         render(<MidiImporter isMidiImported={false} onMidiImport={onMidiImport} />)
+
         dragValidFile()
 
         expect(screen.getByText(/valid/)).toBeInTheDocument()

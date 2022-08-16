@@ -34,7 +34,7 @@ function MyComponent({ shouldListen }: MyComponentProps) {
 }
 
 describe('useClickOutside()', () => {
-    describe('When the condition is "true"', () => {
+    describe('When the "shouldListen" is "true"', () => {
         it('should listen to outside clicks', async () => {
             render(<MyComponent shouldListen />)
             await clickOutside()
@@ -48,7 +48,7 @@ describe('useClickOutside()', () => {
             expect(onClickOutside).not.toHaveBeenCalled()
         })
     })
-    describe('When the condition is "false"', () => {
+    describe('When "shouldListen" is "false"', () => {
         it('should not listen to outside clicks', async () => {
             render(<MyComponent shouldListen={false} />)
             await clickOutside()

@@ -17,13 +17,13 @@ function MyComponent() {
 
 describe('useKeyboardShortcut()', () => {
     describe('When the component initializes', () => {
-        xit('should register the shortcut in the context', async () => {
+        it('should register the shortcut in the context', async () => {
             render(
                 <ShortcutsContextProvider>
                     <MyComponent />
                 </ShortcutsContextProvider>
             )
-            expect(screen.getByText('ArrowUp')).toBeVisible()
+            expect(screen.getByText(/ArrowUp/)).toBeVisible()
         })
     })
 })
