@@ -8,14 +8,12 @@ import {
 import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from '../../utils/const'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
-    getInitialMsPerBeat,
-    getKeyFromNote,
-    getNoteMetas,
     getWidthKeys,
     isBlackKey as checkIsBlackKey,
     isEven,
     isNoteOffEvent,
     isNoteOnEvent,
+    MidiFactory,
 } from '../../utils'
 import findLast from 'lodash/findLast'
 import minBy from 'lodash/minBy'
@@ -38,7 +36,7 @@ export class MidiVisualizerFactory {
 
     constructor(midiMetas: MidiMetas, height: number, width: number, msPerSection: number) {
         this.midiMetas = midiMetas
-        this.msPerBeat = getInitialMsPerBeat(midiMetas.allMsPerBeat)
+        this.msPerBeat = MidiFactory.Time().getInitialMsPerBeatValue(midiMetas.allMsPerBeat)
         this.ratioSection = height / msPerSection
         this.width = width
         this.height = height
@@ -301,7 +299,7 @@ export class MidiVisualizerFactory {
                 }
 
                 if (isNoteOnEvent(event)) {
-                    const midiNote = getNoteMetas(event)
+                    const midiNote = MidiFactory.Note(event).getMetas()
                     const notePartialCoordinates = this.getNotePartialCoordinates(
                         midiNote,
                         deltaAcc
@@ -317,7 +315,7 @@ export class MidiVisualizerFactory {
                     isNoteOffEvent(event) ||
                     (isNoteOnEvent(event) && event.noteOn.velocity === 0)
                 ) {
-                    const key = getKeyFromNote(event)
+                    const key = MidiFactory.Note(event).getKey()
                     const correspondingNoteOnIndex = notesBeingProcessed.findIndex(
                         (note) => note.key === key
                     )

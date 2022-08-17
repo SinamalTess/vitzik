@@ -2,11 +2,11 @@ import { Tooltip } from '../_presentational/Tooltip'
 import { Button } from '../_presentational/Button'
 import { ButtonGroup } from '../_presentational/ButtonGroup'
 import React, { useEffect, useState } from 'react'
-import { msPerBeatToBeatsPerMin } from '../../utils'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
 import { MidiVisualizerFactory } from '../MidiVisualizer/MidiVisualizerFactory'
 import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
+import { MidiFactory } from '../../utils'
 
 interface BpmSelectorProps {
     intervalWorker: Worker
@@ -39,9 +39,10 @@ const SPEED_FACTORS = [
     },
 ]
 
-function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
+function getBPMFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
     const msPerBeat = MidiVisualizerFactory.getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
-    return Math.round(msPerBeatToBeatsPerMin(msPerBeat) / midiSpeedFactor)
+    const BPM = MidiFactory.Time().msPerBeatToBPM(msPerBeat)
+    return Math.round(BPM / midiSpeedFactor)
 }
 
 export function BpmSelector({
@@ -58,12 +59,12 @@ export function BpmSelector({
     useIntervalWorker(intervalWorker, onTimeChange)
 
     function onTimeChange(time: number) {
-        const newBpm = getBpmFromTime(allMsPerBeat, time, midiSpeedFactor)
+        const newBpm = getBPMFromTime(allMsPerBeat, time, midiSpeedFactor)
         setBpm(newBpm)
     }
 
     useEffect(() => {
-        const newBpm = getBpmFromTime(allMsPerBeat, 0, midiSpeedFactor)
+        const newBpm = getBPMFromTime(allMsPerBeat, 0, midiSpeedFactor)
         setBpm(newBpm)
     }, [midiSpeedFactor])
 

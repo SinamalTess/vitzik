@@ -17,7 +17,7 @@ import {
     LoopTimestamps,
 } from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { getInitialInstruments, getMidiMetas } from '../../utils'
+import { getMidiMetas, MidiFactory } from '../../utils'
 import { DEFAULT_INSTRUMENTS } from '../../utils/const'
 
 const AUDIO_CONTEXT = new AudioContext()
@@ -92,7 +92,7 @@ export function Preview({
         const metas = getMidiMetas(midiJSON)
         const playableTracks = metas.tracksMetas.filter((track) => track.isPlayable)
         const { instruments } = metas
-        const initialInstruments = getInitialInstruments(instruments)
+        const initialInstruments = MidiFactory.getInitialInstruments(instruments)
 
         onMidiTitleChange(title)
         setMidiFile(midiJSON)

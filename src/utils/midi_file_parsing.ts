@@ -1,10 +1,8 @@
-import { IMidiFile, TMidiEvent } from 'midi-json-parser-worker'
+import { IMidiFile } from 'midi-json-parser-worker'
 import {
     InstrumentUserFriendlyName,
     MidiMetas,
     TrackMetas,
-    MidiJsonNote,
-    MidiInputActiveNote,
     MsPerBeat,
     AlphabeticalNote,
     Instrument,
@@ -20,126 +18,19 @@ import {
     isTrackNameEvent,
 } from './midi_events'
 import assign from 'lodash/assign'
-import findLast from 'lodash/findLast'
 import last from 'lodash/last'
-import max from 'lodash/max'
 import sortBy from 'lodash/sortBy'
-import uniqBy from 'lodash/uniqBy'
-import { isPositive } from './maths'
+import { MidiFactory } from './MidiFactory'
 
-export const isTrackPlayable = (track: TMidiEvent[]) => track.some((event) => isNoteOnEvent(event))
-
-export const getNbTicksInTrack = (track: TMidiEvent[]) =>
-    track.reduce((acc, nextEvent) => acc + nextEvent.delta, 0)
-
-export const getMidiFormat = (midiJson: IMidiFile): number => midiJson.format
-
-const programNumberToInstrument = (programNumber: number): InstrumentUserFriendlyName =>
+const programNumberToInstrumentName = (programNumber: number): InstrumentUserFriendlyName =>
     MIDI_INSTRUMENTS[programNumber]
-
-export const getKeyFromNote = (note: MidiJsonNote) =>
-    isNoteOnEvent(note) ? note.noteOn.noteNumber : note.noteOff.noteNumber
-
-export const getNoteVelocity = (note: MidiJsonNote) =>
-    isNoteOnEvent(note) ? note.noteOn.velocity : note.noteOff.velocity
-
-const microSPerBeatToMsPerBeat = (microsecondsPerQuarter: number) =>
-    Math.round(microsecondsPerQuarter / 1000)
-
-export const msPerBeatToBeatsPerMin = (msPerBeat: number) => (1000 * 60) / msPerBeat
-
-export const beatsPerMinToMsPerBeat = (beatPerMin: number) => (60 * 1000) / beatPerMin
-
-export const getNoteMetas = (note: MidiJsonNote): MidiInputActiveNote => {
-    const { channel } = note
-    const key = getKeyFromNote(note)
-    const name = keyToNote(key)
-    const velocity = getNoteVelocity(note)
-
-    return {
-        key,
-        name,
-        velocity,
-        channel,
-    }
-}
-
-export function normalizeMidiTitle(title: string) {
-    const normalizedTitle = title.replace('_', ' ')
-    const results = normalizedTitle.match(/.midi|.mid/) ?? []
-    if (results.length > 0) {
-        return normalizedTitle.slice(0, normalizedTitle.length - results[0].length)
-    }
-    return normalizedTitle
-}
-
-export function getTicksPerBeat(midiJson: IMidiFile) {
-    const { division } = midiJson
-    if (isPositive(division)) {
-        // The "division" is equal to the ticks per beat (beat = quarter note)
-        return division
-    } else {
-        // The file is using SMPTE units (ticks per frame)
-        throw new Error(
-            'Congratulations you have found a SMPTE formatted midi file, a rare gem, I have no idea how to process it...yet'
-        )
-    }
-}
-
-export function getInitialMsPerBeat(allMsPerBeats: MsPerBeat[]) {
-    return allMsPerBeats.reduce((acc, value) => {
-        // sometimes multiple tempo with delta = 0 exists, this returns the last
-        if (acc.delta === value.delta) {
-            return value
-        } else {
-            return acc
-        }
-    }).value
-}
-
-function getAllMsPerBeat(trackMetas: TrackMetas[]) {
-    const allMsPerBeat = trackMetas.reduce((acc, val) => {
-        return [...acc, ...val.msPerBeat]
-    }, [] as MsPerBeat[])
-
-    return sortBy(allMsPerBeat, 'delta').flat(1)
-}
-
-export function getMsPerBeatFromDelta(delta: number, allMsPerBeat: MsPerBeat[]) {
-    return findLast(allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
-}
-
-export function deltaToTimestamp(allMsPerBeat: MsPerBeat[], delta: number, ticksPerBeat: number) {
-    const lastMsPerBeat = getMsPerBeatFromDelta(delta, allMsPerBeat)
-
-    if (lastMsPerBeat) {
-        const { timestamp, delta: lastDelta, value } = lastMsPerBeat
-        return timestamp + ((delta - lastDelta) / ticksPerBeat) * value
-    }
-
-    return 0
-}
-
-export function getInitialInstruments(instruments: Instrument[]) {
-    return uniqBy(instruments, 'channel').filter(({ timestamp }) => timestamp <= 0)
-}
-
-export function getMidiDuration(allMsPerBeat: MsPerBeat[], nbTicks: number, ticksPerBeat: number) {
-    const lastMsPerBeat = last(allMsPerBeat)
-
-    if (lastMsPerBeat) {
-        const { value, timestamp, delta } = lastMsPerBeat
-        const timeLeft = ((nbTicks - delta) / ticksPerBeat) * value
-        return timestamp + timeLeft
-    }
-
-    return 0
-}
 
 export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
     let tracksMetas: TrackMetas[] = []
     let instruments: Instrument[] = []
-    const ticksPerBeat = getTicksPerBeat(midiJson)
+    let allMsPerBeat: MsPerBeat[] = []
+    const midiFactory = new MidiFactory(midiJson)
+    const ticksPerBeat = midiFactory.getTicksPerBeat()
 
     midiJson.tracks.forEach((track, index) => {
         let deltaAcc = 0
@@ -152,7 +43,9 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             msPerBeat: [],
         }
 
-        if (isTrackPlayable(track)) {
+        const isPlayable = MidiFactory.Track(track).isPlayable()
+
+        if (isPlayable) {
             assign(trackMetas, {
                 isPlayable: true,
             })
@@ -172,10 +65,11 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
                     channel,
                     delta: deltaAcc,
                     timestamp: 0, // to be replaced once we know allMsPerBeat values
-                    name: programNumberToInstrument(programNumber),
+                    name: programNumberToInstrumentName(programNumber),
                     index: programNumber,
                     notes: new Set(),
                 } as Instrument
+
                 instruments.push(instrument)
             }
 
@@ -201,31 +95,32 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             }
 
             if (isSetTempoEvent(event)) {
-                const { microsecondsPerQuarter } = event.setTempo
+                const { microsecondsPerQuarter: microSPerBeat } = event.setTempo
+                const lastMsPerBeat = last(trackMetas.msPerBeat)
+                const newMsPerBeatValue = MidiFactory.Time().microSPerBeatToMsPerBeat(microSPerBeat)
+                let newTimestamp = (deltaAcc / ticksPerBeat) * newMsPerBeatValue
 
-                const previousMsPerBeat = last(trackMetas.msPerBeat)
-                const currentMsPerBeatValue = microSPerBeatToMsPerBeat(microsecondsPerQuarter)
-                let newTimestamp = (deltaAcc / ticksPerBeat) * currentMsPerBeatValue
-
-                if (previousMsPerBeat) {
-                    const { value, delta, timestamp } = previousMsPerBeat
+                if (lastMsPerBeat) {
+                    const { value, delta, timestamp } = lastMsPerBeat
                     newTimestamp = ((deltaAcc - delta) / ticksPerBeat) * value + timestamp
                 }
 
+                const msPerBeat = {
+                    value: newMsPerBeatValue,
+                    timestamp: newTimestamp,
+                    delta: deltaAcc,
+                }
+
                 assign(trackMetas, {
-                    msPerBeat: [
-                        ...trackMetas.msPerBeat,
-                        {
-                            value: currentMsPerBeatValue,
-                            timestamp: newTimestamp,
-                            delta: deltaAcc,
-                        },
-                    ],
+                    msPerBeat: [...trackMetas.msPerBeat, msPerBeat],
                 })
+
+                allMsPerBeat.push(msPerBeat)
             }
 
             if (isTimeSignatureEvent(event)) {
                 const { timeSignature } = event
+
                 assign(trackMetas, {
                     timeSignature,
                 })
@@ -233,6 +128,7 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
 
             if (isKeySignatureEvent(event)) {
                 const { keySignature } = event
+
                 assign(trackMetas, {
                     keySignature,
                 })
@@ -242,26 +138,22 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
         tracksMetas.push(trackMetas)
     })
 
-    const allMsPerBeat = getAllMsPerBeat(tracksMetas)
-    const nbTicks = max(midiJson.tracks.map((track) => getNbTicksInTrack(track))) ?? 0 // TODO: this would only work for format 0 and 1
-
-    const finalInstruments = instruments
-        .filter((instrument) => instrument.notes.size) // remove instruments without notes
-        .map((instrument) => {
-            const { delta } = instrument
-            // calculates final timestamp of instruments
-            return {
-                ...instrument,
-                timestamp: deltaToTimestamp(allMsPerBeat, delta, ticksPerBeat),
-            }
-        })
+    const instrumentsWithNotes = instruments.filter((instrument) => instrument.notes.size)
+    const instrumentsWithTimestamp = instrumentsWithNotes.map((instrument) => {
+        const { delta } = instrument
+        // calculates final timestamp of instruments
+        return {
+            ...instrument,
+            timestamp: MidiFactory.Time().deltaToTimestamp(allMsPerBeat, delta, ticksPerBeat),
+        }
+    })
 
     return {
         ticksPerBeat,
-        midiDuration: getMidiDuration(allMsPerBeat, nbTicks, ticksPerBeat),
-        format: getMidiFormat(midiJson),
-        instruments: sortBy(finalInstruments, 'delta'),
+        midiDuration: midiFactory.getDuration(allMsPerBeat),
+        format: midiFactory.getFormat(),
+        instruments: sortBy(instrumentsWithTimestamp, 'delta'),
         tracksMetas,
-        allMsPerBeat,
+        allMsPerBeat: sortBy(allMsPerBeat, 'delta'),
     }
 }

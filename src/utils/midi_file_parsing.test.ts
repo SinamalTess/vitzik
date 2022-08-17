@@ -1,13 +1,8 @@
-import {
-    getInitialMsPerBeat,
-    getMidiDuration,
-    getMidiMetas,
-    getNbTicksInTrack,
-    isTrackPlayable,
-} from './midi_file_parsing'
+import { getMidiMetas } from './midi_file_parsing'
 import * as midi from './../tests/midi1.json'
 import { IMidiFile, TMidiEvent } from 'midi-json-parser-worker'
 import { MidiMetas, MsPerBeat } from '../types'
+import { MidiFactory } from './MidiFactory'
 
 describe('getMidiMetas()', () => {
     it('should extract midi file infos from midi json', () => {
@@ -116,7 +111,7 @@ describe('getMidiMetas()', () => {
     })
 })
 
-describe('isTrackPlayable()', () => {
+describe('MidiFactory.Track().isPlayable()', () => {
     it('should return `true` if the provided track contains notes', () => {
         const track: TMidiEvent[] = [
             {
@@ -137,7 +132,7 @@ describe('isTrackPlayable()', () => {
             },
         ]
 
-        expect(isTrackPlayable(track)).toBe(true)
+        expect(MidiFactory.Track(track).isPlayable()).toBe(true)
     })
 
     it("should return `false` if the provided track doesn't notes", () => {
@@ -154,11 +149,11 @@ describe('isTrackPlayable()', () => {
             },
         ]
 
-        expect(isTrackPlayable(track)).toBe(false)
+        expect(MidiFactory.Track(track).isPlayable()).toBe(false)
     })
 })
 
-describe('getNbTicksInTrack()', () => {
+describe('MidiFactory.Track.getNbTicks()', () => {
     it('should return the number of ticks (= delta sum) in a track', () => {
         const track: TMidiEvent[] = [
             {
@@ -179,34 +174,17 @@ describe('getNbTicksInTrack()', () => {
             },
         ]
 
-        expect(getNbTicksInTrack(track)).toBe(50)
+        expect(MidiFactory.Track(track).getNbTicks()).toBe(50)
     })
 })
 
 describe('getMidiDuration()', () => {
     it('should return the total duration of a midi file', () => {
-        const allMsPerBeats: MsPerBeat[] = [
-            {
-                timestamp: 0,
-                value: 500,
-                delta: 0,
-            },
-            {
-                timestamp: 0,
-                value: 600,
-                delta: 0,
-            },
-            {
-                timestamp: 600,
-                value: 850,
-                delta: 50,
-            },
-        ]
+        const midiJson = midi as IMidiFile
+        const midiFactory = new MidiFactory(midiJson)
+        const allMsPerBeats = getMidiMetas(midiJson).allMsPerBeat
 
-        const nbTicks = 500
-        const ticksPerBeat = 50
-
-        expect(getMidiDuration(allMsPerBeats, nbTicks, ticksPerBeat)).toBe(8250)
+        expect(midiFactory.getDuration(allMsPerBeats)).toBe(153042.091796875)
     })
 })
 
@@ -230,6 +208,6 @@ describe('getInitialMsPerBeat()', () => {
             },
         ]
 
-        expect(getInitialMsPerBeat(allMsPerBeats)).toBe(600)
+        expect(MidiFactory.Time().getInitialMsPerBeatValue(allMsPerBeats)).toBe(600)
     })
 })
