@@ -9,7 +9,6 @@ import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 import { MidiFactory } from '../../utils'
 
 interface BpmSelectorProps {
-    intervalWorker: Worker
     midiSpeedFactor: number
     allMsPerBeat: MsPerBeat[]
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
@@ -46,7 +45,6 @@ function getBPMFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor
 }
 
 export function BpmSelector({
-    intervalWorker,
     midiSpeedFactor,
     allMsPerBeat,
     onChangeMidiSpeedFactor,
@@ -56,7 +54,7 @@ export function BpmSelector({
     const speed = speedFactor ? speedFactor.speed : 1
     const [bpm, setBpm] = useState(0)
 
-    useIntervalWorker(intervalWorker, onTimeChange)
+    useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
         const newBpm = getBPMFromTime(allMsPerBeat, time, midiSpeedFactor)

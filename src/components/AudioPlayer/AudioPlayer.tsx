@@ -1,15 +1,14 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { AudioPlayerState, MidiMetas, LoopTimestamps } from '../../types'
 import './AudioPlayer.scss'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
-import { ShortcutsContext } from '../ShortcutsContext'
+import { AppContext } from '../_contexts'
 import { Shortcuts } from './Shortcuts'
 import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface AudioPlayerProps {
-    intervalWorker: Worker
     midiMetas: MidiMetas
     midiSpeedFactor?: number
     playerState: AudioPlayerState
@@ -25,7 +24,6 @@ interface AudioPlayerProps {
 const BASE_CLASS = 'audio-player'
 
 export function AudioPlayer({
-    intervalWorker,
     midiMetas,
     midiSpeedFactor = 1,
     playerState = 'stopped',
@@ -41,56 +39,44 @@ export function AudioPlayer({
     const [startLoop, endLoop] = loopTimes
     const [prevPlayerState, setPrevPlayerState] = useState<AudioPlayerState>(playerState)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
-    const { setShortcuts } = useContext(ShortcutsContext)
+    const { setShortcuts } = useContext(AppContext)
 
-    const checkIsEndOfSong = useCallback(
-        (time: number) => {
-            if (time > duration) {
-                onChangeState('stopped')
-            }
-        },
-        [duration, onChangeState]
-    )
+    function checkIsEndOfSong(time: number) {
+        if (time > duration) {
+            onChangeState('stopped')
+        }
+    }
 
-    const checkIsEndOfLoop = useCallback(
-        (time: number) => {
-            // if loops are defined we restart at the beginning of the loop if the end is reached
-            if (startLoop && endLoop && time > endLoop) {
-                // TODO: fix cause this can be 0
-                const previousState = playerState
-                onChangeState('seeking')
-                setWorkerInitialTime(startLoop - 100 ?? 0) // starts a bit before the loop start
-                /*
+    function checkIsEndOfLoop(time: number) {
+        // if loops are defined we restart at the beginning of the loop if the end is reached
+        if (startLoop && endLoop && time > endLoop) {
+            // TODO: fix cause this can be 0
+            const previousState = playerState
+            onChangeState('seeking')
+            setWorkerInitialTime(startLoop - 100 ?? 0) // starts a bit before the loop start
+            /*
                 Yeah, this setTimeout() is ugly...but otherwise the state is not restored, and we can't use flushSync here
             */
-                setTimeout(() => {
-                    onChangeState(previousState)
-                }, 100)
-            }
-        },
-        [playerState, endLoop, onChangeState, startLoop]
-    )
+            setTimeout(() => {
+                onChangeState(previousState)
+            }, 100)
+        }
+    }
 
-    const checkForWaitMode = useCallback(
-        (time: number) => {
-            // in `wait` mode we pause until the user hits the right keys
-            if (timeToNextNote && time >= timeToNextNote) {
-                onChangeState('paused')
-            }
-        },
-        [timeToNextNote, onChangeState]
-    )
+    function checkForWaitMode(time: number) {
+        // in `wait` mode we pause until the user hits the right keys
+        if (timeToNextNote && time >= timeToNextNote) {
+            onChangeState('paused')
+        }
+    }
 
-    const workerListener = useCallback(
-        (time: number) => {
-            checkIsEndOfSong(time)
-            checkIsEndOfLoop(time)
-            checkForWaitMode(time)
-        },
-        [checkIsEndOfSong, checkIsEndOfLoop, checkForWaitMode]
-    )
+    function onTimeChange(time: number) {
+        checkIsEndOfSong(time)
+        checkIsEndOfLoop(time)
+        checkForWaitMode(time)
+    }
 
-    useIntervalWorker(intervalWorker, workerListener)
+    useIntervalWorker(onTimeChange)
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
@@ -132,7 +118,6 @@ export function AudioPlayer({
     return (
         <div className={BASE_CLASS}>
             <IntervalWorkerManager
-                intervalWorker={intervalWorker}
                 midiMetas={midiMetas}
                 startAt={workerInitialTime}
                 playerState={playerState}
@@ -140,7 +125,6 @@ export function AudioPlayer({
             />
             <ProgressBar
                 loopTimestamps={loopTimes}
-                intervalWorker={intervalWorker}
                 duration={duration}
                 title={title}
                 onChange={handleChange}
@@ -157,7 +141,6 @@ export function AudioPlayer({
                 onPlayButtonFocus={handlePlayButtonFocus}
             />
             <Shortcuts
-                intervalWorker={intervalWorker}
                 playerState={playerState}
                 onChangeState={onChangeState}
                 onChangeInitialTime={setWorkerInitialTime}

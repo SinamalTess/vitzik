@@ -7,7 +7,6 @@ import { MidiVisualizerFactory, SectionNoteCoordinates } from './MidiVisualizerF
 import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface MidiEventsManagerProps {
-    intervalWorker: Worker
     midiMetas: MidiMetas
     midiMode: MidiMode
     midiVisualizerFactory: MidiVisualizerFactory
@@ -19,7 +18,6 @@ interface MidiEventsManagerProps {
 }
 
 export function MidiEventsManager({
-    intervalWorker,
     midiMetas,
     activeInstruments,
     midiVisualizerFactory,
@@ -33,7 +31,7 @@ export function MidiEventsManager({
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
 
-    useIntervalWorker(intervalWorker, onTimeChange)
+    useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
         setActiveNotes(time)

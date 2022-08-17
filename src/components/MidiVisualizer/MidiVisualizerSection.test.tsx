@@ -46,8 +46,8 @@ describe('MidiVisualizerSection', () => {
                 index={0}
             ></MidiVisualizerSection>
         )
-        const section = screen.getByTestId('midi-visualizer__section--0')
 
+        const section = screen.getByTestId('midi-visualizer__section--0')
         expect(section).toBeVisible()
     })
 })

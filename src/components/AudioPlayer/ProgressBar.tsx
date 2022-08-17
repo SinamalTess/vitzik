@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import { msToHumanReadableTime, normalizeMidiTitle } from '../../utils'
 import { LoopTimestamps } from '../../types'
 import './ProgressBar.scss'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface PreviewLoopProps {
     duration: number
@@ -48,7 +49,6 @@ const LoopPreview = ({ duration, refProgressBar, loopTimestamps }: PreviewLoopPr
 const BASE_CLASS = 'progress-bar'
 
 interface ProgressBarProps {
-    intervalWorker: Worker
     duration: number
     title?: string
     loopTimestamps?: LoopTimestamps
@@ -58,7 +58,6 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({
-    intervalWorker,
     duration,
     title,
     loopTimestamps,
@@ -71,22 +70,20 @@ export function ProgressBar({
     const totalTime = msToHumanReadableTime(duration)
     const titleWithoutExtension = normalizeMidiTitle(title ?? '')
 
+    useIntervalWorker(onTimeChange)
+
+    function onTimeChange(time: number) {
+        const readableTime = msToHumanReadableTime(time)
+        if (refTime.current && refBar.current) {
+            refTime.current.innerText = readableTime
+            refBar.current.value = time.toString()
+        }
+    }
+
     useEffect(() => {
         if (refTime.current && refBar.current) {
             refTime.current.innerText = msToHumanReadableTime(0)
             refBar.current.value = '0'
-        }
-        function onTimeChange(message: MessageEvent) {
-            const { time } = message.data
-            const readableTime = msToHumanReadableTime(time)
-            if (refTime.current && refBar.current) {
-                refTime.current.innerText = readableTime
-                refBar.current.value = time
-            }
-        }
-        intervalWorker.addEventListener('message', onTimeChange)
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', onTimeChange)
         }
     }, [])
 

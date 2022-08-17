@@ -2,11 +2,10 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { AudioPlayerState } from '../../types'
 import throttle from 'lodash/throttle'
 import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
-import { ShortcutsContext } from '../ShortcutsContext'
+import { AppContext } from '../_contexts'
 import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
 
 interface KeyboardShortcutsProps {
-    intervalWorker: Worker
     playerState: AudioPlayerState
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onChangeInitialTime: React.Dispatch<React.SetStateAction<number>>
@@ -14,17 +13,16 @@ interface KeyboardShortcutsProps {
 }
 
 export function Shortcuts({
-    intervalWorker,
     playerState,
     onChangeState,
     onChangeInitialTime,
     onToggleSound,
 }: KeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(playerState)
-    const { shortcuts } = useContext(ShortcutsContext)
+    const { shortcuts } = useContext(AppContext)
     const midiCurrentTime = useRef<number>(0)
 
-    useIntervalWorker(intervalWorker, onTimeChange)
+    useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
         midiCurrentTime.current = time

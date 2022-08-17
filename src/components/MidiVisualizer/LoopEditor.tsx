@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
 import { msToHumanReadableTime } from '../../utils'
 import { Line } from './svgElements/Line'
 import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
+import { AppContext } from '../_contexts'
 
 interface LineProps {
     y: number
@@ -28,7 +29,6 @@ function LoopLine({ y, width, timestamp, color = 'red' }: LineProps) {
 export const BASE_CLASS = 'loop-editor'
 
 interface LoopEditorProps {
-    intervalWorker: Worker
     loopTimestamps: LoopTimestamps
     height: number
     width: number
@@ -37,7 +37,6 @@ interface LoopEditorProps {
 }
 
 export function LoopEditor({
-    intervalWorker,
     loopTimestamps,
     height,
     width,
@@ -47,15 +46,16 @@ export function LoopEditor({
     const ratio = height / msPerSection
     const allLinesDrawn = !loopTimestamps.includes(null)
     const [previewLineY, setPreviewLineY] = useState(0)
+    const { intervalWorker } = useContext(AppContext)
     const [loopStartTimestamp, loopEndTimestamp] = loopTimestamps
     const [time, setTime] = useState(0)
     const yToTimestamp = (y: number) => (height - y) / ratio + time
     const timestampToY = (timestamp: number) => height - (timestamp - time) * ratio
 
-    useIntervalWorker(intervalWorker, setTime)
+    useIntervalWorker(setTime)
 
     useEffect(() => {
-        intervalWorker.postMessage({
+        intervalWorker?.postMessage({
             code: 'getTime',
         })
     }, [])

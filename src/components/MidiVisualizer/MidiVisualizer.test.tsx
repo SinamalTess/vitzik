@@ -1,27 +1,15 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, intervalWorker } from '../../tests/utils/customRender'
 import React from 'react'
 import { MidiVisualizer } from './MidiVisualizer'
-import { IntervalWorkerMock } from '../../tests/mocks/intervalWorker'
 import { DEFAULT_MIDI_INSTRUMENT } from '../../utils/const'
 import * as midi from './../../tests/midi1.json'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getMidiMetas } from '../../utils'
 import { act } from 'react-dom/test-utils'
+import { dispatchWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
 
-const worker = new IntervalWorkerMock('')
 const midiJson = midi
 const midiMetas = getMidiMetas(midiJson as IMidiFile)
-
-const mockWorkerTimeEvent = (newTime: number) => {
-    const callbacks = worker.callbacks
-    callbacks.forEach((callback) =>
-        callback({
-            data: {
-                time: newTime,
-            },
-        })
-    )
-}
 
 jest.mock('../_hocs/WithContainerDimensions', () => ({
     WithContainerDimensions: (Component: any) => (props: any) => {
@@ -33,7 +21,6 @@ describe('MidiVisualizer', () => {
     it('render the proper notes', async () => {
         render(
             <MidiVisualizer
-                intervalWorker={worker as Worker}
                 midiMetas={midiMetas}
                 activeInstruments={[DEFAULT_MIDI_INSTRUMENT]}
                 activeTracks={[1]}
@@ -46,11 +33,10 @@ describe('MidiVisualizer', () => {
         )
 
         await act(async () => {
-            mockWorkerTimeEvent(10)
+            dispatchWorkerTimeEvent(intervalWorker, 1200)
         })
 
         const notes = screen.getAllByLabelText(/note/)
-
         expect(notes.length).toBe(26)
     })
 })

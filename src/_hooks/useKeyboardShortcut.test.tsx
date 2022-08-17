@@ -1,11 +1,10 @@
 import React, { useContext } from 'react'
 import { useKeyboardShortcut } from './useKeyboardShortcut'
-import { render, screen } from '@testing-library/react'
-import { ShortcutsContext } from '../components/ShortcutsContext'
-import { ShortcutsContextProvider } from '../components/ShortcutsContext/ShortcutsContext'
+import { render, screen } from '../tests/utils/customRender'
+import { AppContext } from '../components/_contexts'
 
 function MyComponent() {
-    const { shortcuts, setShortcuts } = useContext(ShortcutsContext)
+    const { shortcuts, setShortcuts } = useContext(AppContext)
     const code = 'ArrowUp'
     const onKeyDown = jest.fn()
     const onKeyUp = jest.fn()
@@ -18,11 +17,8 @@ function MyComponent() {
 describe('useKeyboardShortcut()', () => {
     describe('When the component initializes', () => {
         it('should register the shortcut in the context', async () => {
-            render(
-                <ShortcutsContextProvider>
-                    <MyComponent />
-                </ShortcutsContextProvider>
-            )
+            render(<MyComponent />)
+
             expect(screen.getByText(/ArrowUp/)).toBeVisible()
         })
     })

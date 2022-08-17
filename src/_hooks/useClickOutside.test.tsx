@@ -37,12 +37,14 @@ describe('useClickOutside()', () => {
     describe('When the "shouldListen" is "true"', () => {
         it('should listen to outside clicks', async () => {
             render(<MyComponent shouldListen />)
+
             await clickOutside()
 
             expect(onClickOutside).toHaveBeenCalled()
         })
         it('should not listen to inside clicks', async () => {
             render(<MyComponent shouldListen />)
+
             await clickInside()
 
             expect(onClickOutside).not.toHaveBeenCalled()
@@ -51,12 +53,14 @@ describe('useClickOutside()', () => {
     describe('When "shouldListen" is "false"', () => {
         it('should not listen to outside clicks', async () => {
             render(<MyComponent shouldListen={false} />)
+
             await clickOutside()
 
             expect(onClickOutside).not.toHaveBeenCalled()
         })
         it('should not listen to inside clicks', async () => {
             render(<MyComponent shouldListen={false} />)
+
             await clickInside()
 
             expect(onClickOutside).not.toHaveBeenCalled()

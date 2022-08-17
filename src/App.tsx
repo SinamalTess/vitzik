@@ -14,15 +14,10 @@ import {
 } from './types'
 import { AudioPlayer } from './components/AudioPlayer'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
-import { WebWorker } from './workers/WebWorker'
-// @ts-ignore
-import intervalWorker from './workers/intervalWorker.js'
 import { useTitle } from './_hooks'
 import { AppInfos } from './components/AppInfos'
-import { ShortcutsContextProvider } from './components/ShortcutsContext/ShortcutsContext'
 import { Preview } from './components/Preview'
-
-let worker: Worker = WebWorker(intervalWorker)
+import { AppContextProvider } from './components/_contexts'
 
 function App() {
     const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
@@ -56,14 +51,13 @@ function App() {
     }, [midiMode])
 
     return (
-        <ShortcutsContextProvider>
+        <AppContextProvider>
             <div className="container">
                 <div className="item topbar">
                     {midiMetas ? (
                         <AudioPlayer
                             midiMetas={midiMetas}
                             midiSpeedFactor={midiSpeedFactor}
-                            intervalWorker={worker}
                             playerState={audioPlayerState}
                             isMute={isMute}
                             timeToNextNote={timeToNextNote}
@@ -77,7 +71,6 @@ function App() {
                         <AppInfos />
                     )}
                     <Settings
-                        worker={worker}
                         showNotes={showNotes}
                         isEditingLoop={isEditingLoop}
                         activeInstruments={activeInstruments}
@@ -116,7 +109,6 @@ function App() {
                     midiOutput={midiOutput}
                     loopTimes={loopTimestamps}
                     midiAccessMode={midiAccessMode}
-                    worker={worker}
                     activeInstruments={activeInstruments}
                     isEditingLoop={isEditingLoop}
                     midiMode={midiMode}
@@ -131,7 +123,7 @@ function App() {
                     onChangeLoadedInstrumentPlayers={setLoadedInstrumentPlayers}
                 />
             </div>
-        </ShortcutsContextProvider>
+        </AppContextProvider>
     )
 }
 

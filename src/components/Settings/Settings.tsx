@@ -20,11 +20,10 @@ import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { Divider } from '../_presentational/Divider'
 import { BpmSelector } from '../BpmSelector'
 import { useKeyboardShortcut } from '../../_hooks/useKeyboardShortcut'
-import { ShortcutsContext } from '../ShortcutsContext'
+import { AppContext } from '../_contexts'
 
 interface SettingsProps {
     showNotes: boolean
-    worker: Worker
     appMode: AppMode
     midiMode: MidiMode
     midiAccessMode: MidiAccessMode
@@ -53,7 +52,6 @@ interface SettingsProps {
 const BASE_CLASS = 'settings'
 
 export function Settings({
-    worker,
     showNotes,
     appMode,
     midiMode,
@@ -80,7 +78,7 @@ export function Settings({
     onChangeShowNotes,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const { setShortcuts } = useContext(ShortcutsContext)
+    const { setShortcuts } = useContext(AppContext)
     const userInstrument = activeInstruments.find(
         (instrument) => instrument.channel === MIDI_INPUT_CHANNEL
     )
@@ -159,7 +157,6 @@ export function Settings({
                     </Tooltip>
                     <Divider variant="vertical" />
                     <BpmSelector
-                        intervalWorker={worker}
                         midiSpeedFactor={midiSpeedFactor}
                         onChangeMidiSpeedFactor={onChangeMidiSpeedFactor}
                         allMsPerBeat={midiMetas.allMsPerBeat}

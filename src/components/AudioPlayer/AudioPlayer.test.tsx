@@ -1,18 +1,13 @@
-import { render, waitFor } from '@testing-library/react'
+import { render, waitFor, intervalWorker } from '../../tests/utils/customRender'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
-import { IntervalWorkerMock } from '../../tests/mocks/intervalWorker'
 import { AudioPlayerState } from '../../types'
 import { act } from 'react-dom/test-utils'
 import { clickProgressBarAt, pressKey } from '../../tests/utils'
 import { dispatchWorkerTimeEvent } from '../../tests/utils/intervalWorkerEvent'
-import { ShortcutsContextProvider } from '../ShortcutsContext/ShortcutsContext'
-
-const worker = new IntervalWorkerMock('')
 
 const props = {
     playerState: 'stopped' as AudioPlayerState,
-    intervalWorker: worker as Worker,
     title: 'My song',
     duration: 1000,
     onMute: jest.fn(),
@@ -29,12 +24,16 @@ const props = {
 }
 
 describe('AudioPlayer', () => {
-    it('should stop when the end of the song is reached', () => {
+    it('should stop when the end of the song is reached', async () => {
         render(<AudioPlayer {...props}></AudioPlayer>)
 
-        dispatchWorkerTimeEvent(worker, 1200)
+        await act(async () => {
+            dispatchWorkerTimeEvent(intervalWorker, 1200)
+        })
 
-        expect(props.onChangeState).toHaveBeenCalledWith('stopped')
+        await waitFor(() => {
+            expect(props.onChangeState).toHaveBeenCalledWith('stopped')
+        })
     })
 
     it('should stop playing if the end of a loop is reached and restore the previous player state', async () => {
@@ -43,7 +42,7 @@ describe('AudioPlayer', () => {
         )
 
         await act(async () => {
-            dispatchWorkerTimeEvent(worker, 600)
+            dispatchWorkerTimeEvent(intervalWorker, 600)
         })
 
         expect(props.onChangeState).toHaveBeenCalledWith('seeking')
@@ -54,11 +53,7 @@ describe('AudioPlayer', () => {
 
     describe('shortcuts', () => {
         it('should change the state when arrowUp key is pressed', async () => {
-            render(
-                <ShortcutsContextProvider>
-                    <AudioPlayer {...props}></AudioPlayer>
-                </ShortcutsContextProvider>
-            )
+            render(<AudioPlayer {...props}></AudioPlayer>)
 
             await pressKey('{arrowup}')
 
@@ -68,11 +63,7 @@ describe('AudioPlayer', () => {
         })
 
         it('should change the state when arrowDown key is pressed', async () => {
-            render(
-                <ShortcutsContextProvider>
-                    <AudioPlayer {...props}></AudioPlayer>
-                </ShortcutsContextProvider>
-            )
+            render(<AudioPlayer {...props}></AudioPlayer>)
 
             await pressKey('{arrowdown}')
 

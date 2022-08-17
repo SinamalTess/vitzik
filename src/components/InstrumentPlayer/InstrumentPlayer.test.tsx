@@ -34,7 +34,6 @@ describe('InstrumentPlayer', () => {
 
     it('should load the passed instrument', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
-
         render(<InstrumentPlayer {...props}></InstrumentPlayer>)
 
         await waitFor(() => {
@@ -48,7 +47,6 @@ describe('InstrumentPlayer', () => {
 
     it('should load the passed soundfont', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
-
         render(<InstrumentPlayer {...props} soundfont={'FatBoy'}></InstrumentPlayer>)
 
         await waitFor(() => {
@@ -65,7 +63,6 @@ describe('InstrumentPlayer', () => {
 
     it('should load the requested notes', async () => {
         ;(Soundfont.instrument as Mock).mockResolvedValueOnce('fakeInstrumentPlayer')
-
         render(<InstrumentPlayer {...props} notesToLoad={['A0']}></InstrumentPlayer>)
 
         await waitFor(() => {

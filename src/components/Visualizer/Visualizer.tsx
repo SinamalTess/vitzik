@@ -5,7 +5,6 @@ import { MidiMetas, ActiveNote, MidiMode, Instrument, LoopTimestamps } from '../
 import { ErrorBoundary } from '../_presentational/ErrorBoundary'
 
 interface VisualizerProps {
-    intervalWorker: Worker
     activeInstruments: Instrument[]
     midiMode: MidiMode
     loopTimestamps: LoopTimestamps
@@ -20,7 +19,6 @@ interface VisualizerProps {
 }
 
 export const Visualizer = React.memo(function Preview({
-    intervalWorker,
     loopTimestamps,
     activeInstruments,
     midiMode,
@@ -37,7 +35,6 @@ export const Visualizer = React.memo(function Preview({
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <MidiVisualizer
-                    intervalWorker={intervalWorker}
                     loopTimestamps={loopTimestamps}
                     activeInstruments={activeInstruments}
                     midiFile={midiFile}

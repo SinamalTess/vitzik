@@ -36,7 +36,6 @@ interface PreviewProps {
     midiAccessMode: MidiAccessMode
     midiMetas: MidiMetas | null
     midiMode: MidiMode
-    worker: Worker
     activeInstruments: Instrument[]
     isEditingLoop: boolean
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -63,7 +62,6 @@ export function Preview({
     midiMode,
     musicSystem,
     midiAccessMode,
-    worker,
     midiTitle,
     activeInstruments,
     audioPlayerState,
@@ -139,7 +137,6 @@ export function Preview({
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 <Visualizer
-                    intervalWorker={worker}
                     loopTimestamps={loopTimes}
                     activeInstruments={activeInstruments}
                     midiMode={midiMode}

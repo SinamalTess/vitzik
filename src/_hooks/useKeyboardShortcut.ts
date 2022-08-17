@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { registerKeyboardShortcut } from '../utils/keyboard_shortcuts'
-import { ShortcutsContext } from '../components/ShortcutsContext'
+import { AppContext } from '../components/_contexts'
 
 /*
     Custom hook that subscribes a keyboard shortcut and adds it to the context.
@@ -12,7 +12,7 @@ export const useKeyboardShortcut = (
     callbackKeyDown: Function,
     callbackKeyUp?: Function
 ) => {
-    const { shortcuts, setShortcuts } = useContext(ShortcutsContext)
+    const { shortcuts, setShortcuts } = useContext(AppContext)
 
     useEffect(() => {
         setShortcuts((shortcuts) => [...shortcuts, code])

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
 import {
     Instrument,
@@ -16,9 +16,10 @@ import { MidiVisualizerFactory } from './MidiVisualizerFactory'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 import { MidiEventsManager } from './MidiEventsManager'
+import { useIntervalWorker } from '../../_hooks/useIntervalWorker'
+import { AppContext } from '../_contexts'
 
 interface MidiVisualizerProps {
-    intervalWorker: Worker
     activeInstruments: Instrument[]
     midiFile: IMidiFile
     midiMode?: MidiMode
@@ -40,7 +41,6 @@ export const isUserChannel = (channel: number) =>
     [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
 
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
-    intervalWorker,
     activeInstruments,
     midiMode = 'autoplay',
     midiFile,
@@ -59,6 +59,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>(
         []
     )
+    const { intervalWorker } = useContext(AppContext)
 
     const svgs = ref.current?.getElementsByTagName('svg')
 
@@ -83,52 +84,45 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         }
     }, [height, width, ref.current])
 
-    useEffect(() => {
-        const getCoordinates = (time: number) => {
-            const indexToDraw = midiVisualizerFactory.getIndexToDraw(time)
+    useIntervalWorker(onTimeChange)
 
-            setSectionCoordinates([
-                MidiVisualizerFactory.getSectionCoordinates(
-                    activeTracksCoordinates,
-                    indexToDraw[0],
-                    height
-                ),
-                MidiVisualizerFactory.getSectionCoordinates(
-                    activeTracksCoordinates,
-                    indexToDraw[1],
-                    height
-                ),
-            ])
-        }
+    const getCoordinates = (time: number) => {
+        const indexToDraw = midiVisualizerFactory.getIndexToDraw(time)
 
-        const animate = (time: number) => {
-            function animationStep() {
-                const top = midiVisualizerFactory.getPercentageTopSection(time)
+        setSectionCoordinates([
+            MidiVisualizerFactory.getSectionCoordinates(
+                activeTracksCoordinates,
+                indexToDraw[0],
+                height
+            ),
+            MidiVisualizerFactory.getSectionCoordinates(
+                activeTracksCoordinates,
+                indexToDraw[1],
+                height
+            ),
+        ])
+    }
 
-                if (svgs) {
-                    svgs[0].style.transform = `translateY(${top[0]})`
-                    svgs[1].style.transform = `translateY(${top[1]})`
-                }
+    const animate = (time: number) => {
+        function animationStep() {
+            const top = midiVisualizerFactory.getPercentageTopSection(time)
+
+            if (svgs) {
+                svgs[0].style.transform = `translateY(${top[0]})`
+                svgs[1].style.transform = `translateY(${top[1]})`
             }
-
-            window.requestAnimationFrame(animationStep)
         }
 
-        function onTimeChange(message: MessageEvent) {
-            const { time } = message.data
-            animate(time)
-            getCoordinates(time)
-        }
+        window.requestAnimationFrame(animationStep)
+    }
 
-        intervalWorker.addEventListener('message', onTimeChange)
-
-        return function cleanup() {
-            intervalWorker.removeEventListener('message', onTimeChange)
-        }
-    }, [activeTracksCoordinates, height, intervalWorker, midiVisualizerFactory, svgs])
+    function onTimeChange(time: number) {
+        animate(time)
+        getCoordinates(time)
+    }
 
     function redrawVisualization() {
-        intervalWorker.postMessage({ code: 'getTime' })
+        intervalWorker?.postMessage({ code: 'getTime' })
     }
 
     if (!height || !width) return null
@@ -149,7 +143,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             <MidiVisualizerVerticalLines height={height} width={width} />
             {isEditingLoop && loopTimestamps ? (
                 <LoopEditor
-                    intervalWorker={intervalWorker}
                     loopTimestamps={loopTimestamps}
                     width={width}
                     height={height}
@@ -158,7 +151,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 />
             ) : null}
             <MidiEventsManager
-                intervalWorker={intervalWorker}
                 midiMode={midiMode}
                 midiMetas={midiMetas}
                 midiVisualizerFactory={midiVisualizerFactory}

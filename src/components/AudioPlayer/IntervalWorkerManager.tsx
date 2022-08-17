@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AudioPlayerState, MidiMetas } from '../../types'
 import { usePrevious } from '../../_hooks'
+import { AppContext } from '../_contexts'
 
 interface IntervalWorkerManagerProps {
-    intervalWorker: Worker
     midiMetas: MidiMetas
     playerState: AudioPlayerState
     startAt: number
@@ -11,7 +11,6 @@ interface IntervalWorkerManagerProps {
 }
 
 export function IntervalWorkerManager({
-    intervalWorker,
     midiMetas,
     midiSpeedFactor,
     startAt,
@@ -19,15 +18,16 @@ export function IntervalWorkerManager({
 }: IntervalWorkerManagerProps) {
     const [isStarted, setIsStarted] = useState(false)
     const prevMidiSpeedFactor = usePrevious(midiSpeedFactor)
+    const { intervalWorker } = useContext(AppContext)
 
     useEffect(() => {
         if (prevMidiSpeedFactor !== midiSpeedFactor) {
             setIsStarted(false)
-            intervalWorker.postMessage({
+            intervalWorker?.postMessage({
                 code: 'paused',
             })
             setIsStarted(true)
-            intervalWorker.postMessage({
+            intervalWorker?.postMessage({
                 code: 'start',
                 startAt,
                 midiSpeedFactor,
@@ -38,7 +38,7 @@ export function IntervalWorkerManager({
             case 'playing':
                 setIsStarted(true)
                 if (!isStarted) {
-                    intervalWorker.postMessage({
+                    intervalWorker?.postMessage({
                         code: 'start',
                         startAt,
                         midiSpeedFactor,
@@ -47,19 +47,19 @@ export function IntervalWorkerManager({
                 break
             case 'stopped':
                 setIsStarted(false)
-                intervalWorker.postMessage({
+                intervalWorker?.postMessage({
                     code: 'stopped',
                 })
                 break
             case 'paused':
                 setIsStarted(false)
-                intervalWorker.postMessage({
+                intervalWorker?.postMessage({
                     code: 'paused',
                 })
                 break
             case 'seeking':
                 setIsStarted(false)
-                intervalWorker.postMessage({
+                intervalWorker?.postMessage({
                     code: 'seeking',
                     startAt,
                 })

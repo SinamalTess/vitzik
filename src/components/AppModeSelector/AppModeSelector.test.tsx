@@ -15,6 +15,7 @@ describe('AppModeSelector', () => {
     // for now the button is disabled
     xit('should call onChange() callback with "learning" mode', async () => {
         render(<AppModeSelector appMode={'import'} onChange={onChange}></AppModeSelector>)
+
         await clickLearningMode()
 
         expect(onChange).toHaveBeenCalledWith('learning')
@@ -22,6 +23,7 @@ describe('AppModeSelector', () => {
 
     it('should call onChange() callback with "import" mode', async () => {
         render(<AppModeSelector appMode={'theory'} onChange={onChange}></AppModeSelector>)
+
         await clickImportMode()
 
         expect(onChange).toHaveBeenCalledWith('import')

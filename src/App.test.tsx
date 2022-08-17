@@ -115,8 +115,8 @@ describe('App', () => {
             describe('When clicking on the settings button', () => {
                 it('should open the extra settings sidebar', async () => {
                     render(<App />)
-                    await clickExtraSettings()
 
+                    await clickExtraSettings()
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByText(/User Instrument/i)).toBeVisible()
@@ -129,8 +129,8 @@ describe('App', () => {
             describe('The audio player', () => {
                 it('should render', async () => {
                     render(<App />)
-                    await clickMidiExample()
 
+                    await clickMidiExample()
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getAllByText('Turkish March - Mozart')[0]).toBeInTheDocument()
@@ -141,18 +141,18 @@ describe('App', () => {
                 })
                 it('should play when the play button is clicked', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickPlay()
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('play')).toBeInTheDocument()
                 })
                 it('should mute and unmute when the autoplay switch is clicked', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickAutoplaySwitch()
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('muted')).toBeInTheDocument()
@@ -163,9 +163,9 @@ describe('App', () => {
                 })
                 it('should mute and unmute when the (m) shortcut is used', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await pressKey('{m}')
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('muted')).toBeInTheDocument()
@@ -176,9 +176,9 @@ describe('App', () => {
                 })
                 it('should enter and exit loop mode when the (l) shortcut is used', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await pressKey('{l}')
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByTestId('loop-editor')).toBeInTheDocument()
@@ -189,29 +189,29 @@ describe('App', () => {
                 })
                 it('should stop when the stop button is clicked', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickPlay()
                     await clickStop()
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
                 it('should pause when the paused button is clicked', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickPlay()
                     await clickPause()
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
                 it('should mute and unmute when the volume button is clicked', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickVolume()
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('muted')).toBeInTheDocument()
@@ -222,30 +222,30 @@ describe('App', () => {
                 })
                 it('should play when the space bar is pressed', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await pressKey('[space]')
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('play')).toBeInTheDocument()
                 })
                 it('should pause when the space bar is pressed while the player was playing', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await pressKey('[space]')
                     await pressKey('[space]')
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('paused')).toBeInTheDocument()
                 })
                 it('should resume playing when the space bar is pressed while the player was paused', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await pressKey('[space]')
                     await pressKey('[space]')
                     await pressKey('[space]')
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('play')).toBeInTheDocument()
@@ -255,8 +255,8 @@ describe('App', () => {
             describe('The settings', () => {
                 it('should show the first BPM value', async () => {
                     render(<App />)
-                    await clickMidiExample()
 
+                    await clickMidiExample()
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
@@ -267,10 +267,10 @@ describe('App', () => {
                     const speedValue = 2
                     const expectedBPM = initialBPM * speedValue
                     render(<App />)
+
                     await clickMidiExample()
                     await clickBPMButton()
                     await clickSpeedButton(speedValue)
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
@@ -280,11 +280,11 @@ describe('App', () => {
                 })
                 it('should allow the user to set times for the loop', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickPlay()
                     await clickSetLoopButton()
                     clickLoopEditorAt(50, 50)
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('loop-line')).toBeVisible()
@@ -292,11 +292,11 @@ describe('App', () => {
                 })
                 it('should show a preview loop line on hover', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickPlay()
                     await clickSetLoopButton()
                     await hoverLoopEditorAt(50, 50)
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText('loop-line')).toBeVisible()
@@ -307,9 +307,9 @@ describe('App', () => {
             describe('The extra settings', () => {
                 it('should show a track list', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickExtraSettings()
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByText(/User Instrument/i)).toBeVisible()
@@ -318,10 +318,10 @@ describe('App', () => {
                 })
                 it('should let the user instrument be changed', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickExtraSettings()
                     changeUserInstrument('Ocarina')
-
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByTestId('instrument-selector')).toHaveTextContent('Ocarina')
@@ -329,10 +329,10 @@ describe('App', () => {
                 })
                 it('should hide the notes when the "show notes" switch is off', async () => {
                     render(<App />)
+
                     await clickMidiExample()
                     await clickExtraSettings()
                     await clickShowNotesSwitch()
-
                     await waitSoundFontInstrumentPromise()
                     await waitRequestMIDIAccessPromise()
                     await dispatchMidiInputMessageEvent(midiInput, 'A0')
