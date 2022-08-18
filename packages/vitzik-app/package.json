@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts ../vitzik-app/build",
+    "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false --coverage",
     "test:watch": "react-scripts test --coverage",
     "test:staged": "react-scripts test --findRelatedTests --watchAll=false --passWithNoTests",
