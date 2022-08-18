@@ -1,0 +1,46 @@
+@import '../src/style/vars';
+@import url('https://fonts.googleapis.com/css2?family=Jura:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Jura', 'Lato', 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    input,
+    textarea,
+    button,
+    select {
+        font-family: 'Jura', 'Lato', 'Segoe UI', 'Roboto', sans-serif;
+    }
+}
+
+#root {
+    height: 100vh;
+    width: 100vw;
+    font-size: map-get($theme-font-sizes, 'md');
+    color: map-get($theme-colors, 'text');
+}
+
+.container {
+    background-color: #282c34;
+    display: grid;
+    height: 100vh;
+    width: 100vw;
+    grid-template-columns: 1fr;
+    grid-template-rows: 40px 75% 1fr;
+    grid-template-areas:
+        'header'
+        'main'
+        'piano';
+    .topbar {
+        height: 100%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+        display: flex;
+        justify-content: space-between;
+        z-index: 1;
+        background-color: map-get($theme-colors, 'secondary');
+    }
+    .preview {
+        position: relative;
+    }
+}

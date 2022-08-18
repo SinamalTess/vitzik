@@ -1,0 +1,87 @@
+@import '../../../../vitzik-domain/src/style/vars';
+@import '../../../../vitzik-domain/src/style/mixins/index';
+
+.btn {
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: map-get($theme-font-weights, 'bold');
+    text-transform: uppercase;
+
+    &--filled {
+        background-color: map-get($theme-colors, 'light-secondary');
+        &--primary {
+            color: map-get($theme-colors, 'primary');
+            &:hover,
+            &:focus {
+                text-shadow: 0 0 5px transparentize(map-get($theme-colors, 'light-primary'), 0.2);
+            }
+        }
+        &--secondary {
+            color: map-get($theme-colors, 'text');
+            &:hover,
+            &:focus {
+                text-shadow: 0 0 5px transparentize(map-get($theme-colors, 'light-text'), 0.2);
+            }
+        }
+    }
+
+    &--outlined {
+        background-color: transparent;
+        &--primary {
+            color: map-get($theme-colors, 'primary');
+            border: 1px solid map-get($theme-colors, 'primary');
+            &:hover,
+            &:focus {
+                border: 1px solid map-get($theme-colors, 'light-primary');
+                color: map-get($theme-colors, 'light-primary');
+            }
+        }
+        &--secondary {
+            color: map-get($theme-colors, 'text');
+            border: 1px solid map-get($theme-colors, 'text');
+            &:hover,
+            &:focus {
+                border: 1px solid map-get($theme-colors, 'light-text');
+                color: map-get($theme-colors, 'light-text');
+            }
+        }
+    }
+
+    &--text {
+        background-color: transparent;
+        text-transform: none;
+        text-decoration: underline;
+        &--primary {
+            color: map-get($theme-colors, 'primary');
+            &:hover,
+            &:focus {
+                text-shadow: 0 0 5px transparentize(map-get($theme-colors, 'light-primary'), 0.2);
+            }
+        }
+        &--secondary {
+            color: map-get($theme-colors, 'text');
+            &:hover,
+            &:focus {
+                text-shadow: 0 0 5px transparentize(map-get($theme-colors, 'light-text'), 0.2);
+            }
+        }
+    }
+
+    &--active {
+        color: map-get($theme-colors, 'light-primary');
+        background-color: lighten(map-get($theme-colors, 'light-secondary'), 10);
+    }
+
+    &--disabled {
+        background-color: map-get($theme-colors, 'dark-disabled');
+        color: map-get($theme-colors, 'light-disabled');
+        cursor: not-allowed;
+        &:hover,
+        &:focus {
+            text-shadow: none;
+        }
+    }
+
+    @include add-font-sizes(font-size);
+}

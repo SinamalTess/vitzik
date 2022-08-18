@@ -1,9 +1,0 @@
-@import '../../../style/vars';
-
-.link {
-    color: map-get($theme-colors, 'primary');
-    &:hover,
-    &:focus {
-        text-shadow: 0 0 5px transparentize(map-get($theme-colors, 'light-primary'), 0.2);
-    }
-}

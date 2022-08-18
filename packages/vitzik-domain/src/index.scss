@@ -1,0 +1,35 @@
+@import '../src/style/icons';
+@import '../src/style/vars';
+@import '../src/style/mixins/index';
+
+.pd {
+    @include add-spacing-sizes(padding);
+    &-t {
+        @include add-spacing-sizes(padding-top);
+    }
+    &-b {
+        @include add-spacing-sizes(padding-bottom);
+    }
+    &-l {
+        @include add-spacing-sizes(padding-left);
+    }
+    &-r {
+        @include add-spacing-sizes(padding-right);
+    }
+}
+
+.mg {
+    @include add-spacing-sizes(margin);
+    &-t {
+        @include add-spacing-sizes(margin-top);
+    }
+    &-b {
+        @include add-spacing-sizes(margin-bottom);
+    }
+    &-l {
+        @include add-spacing-sizes(margin-left);
+    }
+    &-r {
+        @include add-spacing-sizes(margin-right);
+    }
+}

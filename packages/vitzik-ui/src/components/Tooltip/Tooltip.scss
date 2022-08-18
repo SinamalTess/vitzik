@@ -1,0 +1,52 @@
+@import '../../../../vitzik-domain/src/style/vars';
+@import '../../../../vitzik-domain/src/style/mixins/add-glitch-effect';
+
+.tooltip {
+    visibility: hidden;
+
+    &__content {
+        background-color: map-get($theme-colors, 'dark-secondary');
+        padding: map-get($theme-spacing-sizes, 'sm') map-get($theme-spacing-sizes, 'md');
+        border-radius: 5px;
+        font-size: map-get($theme-font-sizes, 'sm');
+        z-index: 4;
+    }
+
+    [data-popper-placement^='top'] &__arrow {
+        bottom: 4px;
+    }
+
+    [data-popper-placement^='bottom'] &__arrow {
+        top: 4px;
+    }
+
+    [data-popper-placement^='left'] &__arrow {
+        right: 4px;
+    }
+
+    [data-popper-placement^='right'] &__arrow {
+        left: -4px;
+    }
+
+    &--active {
+        visibility: visible;
+        .tooltip {
+            &__arrow,
+            &__arrow::before {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                background: inherit;
+            }
+
+            &__arrow {
+                visibility: hidden;
+                &::before {
+                    visibility: visible;
+                    content: '';
+                    transform: rotate(45deg);
+                }
+            }
+        }
+    }
+}
