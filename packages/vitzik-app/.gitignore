@@ -6,7 +6,7 @@
 .pnp.js
 
 # testing
-/packages/vitzik-domain/coverage
+/coverage
 
 # production
 /build

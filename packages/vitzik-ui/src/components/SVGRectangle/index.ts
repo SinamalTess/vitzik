@@ -1,0 +1,1 @@
+export { SVGRectangle } from './SVGRectangle'

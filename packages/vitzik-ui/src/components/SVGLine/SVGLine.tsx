@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface LineProps {
+interface SVGLineProps {
     x1: number
     x2?: number
     y1: number
@@ -9,7 +9,14 @@ interface LineProps {
     'aria-label'?: string
 }
 
-export function Line({ x1, x2 = x1, y1, y2 = y1, color, 'aria-label': ariaLabel }: LineProps) {
+export function SVGLine({
+    x1,
+    x2 = x1,
+    y1,
+    y2 = y1,
+    color,
+    'aria-label': ariaLabel,
+}: SVGLineProps) {
     return (
         <line
             x1={x1}

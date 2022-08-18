@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface RectangleProps {
+interface SVGRectangleProps {
     x: number
     y: number
     rx?: number
@@ -11,7 +11,7 @@ interface RectangleProps {
     className: string
 }
 
-export function Rectangle({
+export function SVGRectangle({
     x,
     y,
     rx = 0,
@@ -20,7 +20,7 @@ export function Rectangle({
     h,
     'aria-label': ariaLabel,
     className,
-}: RectangleProps) {
+}: SVGRectangleProps) {
     return (
         <rect
             aria-label={ariaLabel}

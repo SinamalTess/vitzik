@@ -13,7 +13,7 @@
     "build": "tsc --emitDeclarationOnly && babel --extensions .ts,.tsx src -d lib",
     "test": "npx jest --watchAll=false --coverage",
     "test:watch": "npm run test --coverage",
-    "test:staged": "npm run test --findRelatedTests --watchAll=false",
+    "test:staged": "npx jest --findRelatedTests --watchAll=false --passWithNoTests",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },

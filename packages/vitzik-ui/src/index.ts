@@ -18,5 +18,9 @@ export { SideBar } from './components/SideBar'
 export { Switch } from './components/Switch'
 export { TextField } from './components/TextField'
 export { Tooltip } from './components/Tooltip'
+export { SVGLine } from './components/SVGLine'
+export { SVGRectangle } from './components/SVGRectangle'
+
 export * from './types'
+
 export { useClickOutside } from './hooks/useClickOutside'

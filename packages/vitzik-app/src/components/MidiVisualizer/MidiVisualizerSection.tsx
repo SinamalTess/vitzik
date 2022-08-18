@@ -2,7 +2,7 @@ import React from 'react'
 import './MidiVisualizerSection.scss'
 import clsx from 'clsx'
 import { MidiVisualizerNoteCoordinates } from '../../types'
-import { Rectangle } from './svgElements/Rectangle'
+import { SVGRectangle } from 'vitzik-ui'
 
 interface MidiVisualizerSectionProps {
     index: number
@@ -21,7 +21,7 @@ const Notes = React.memo(function Notes({ notesCoordinates }: RectanglesProps) {
     return (
         <>
             {notesCoordinates.map(({ channel, y, x, w, h, id, name }) => (
-                <Rectangle
+                <SVGRectangle
                     aria-label={`${name} note`}
                     key={id}
                     className={`channel--${channel}`}

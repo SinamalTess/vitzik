@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
 import { msToHumanReadableTime } from '../../utils'
-import { Line } from './svgElements/Line'
+import { SVGLine } from 'vitzik-ui'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { AppContext } from '../_contexts'
 
@@ -18,7 +18,7 @@ function LoopLine({ y, width, timestamp, color = 'red' }: LineProps) {
     const yText = y + 20
     return (
         <>
-            <Line x1={0} y1={y} x2={width} color={color} aria-label={'loop-line'} />
+            <SVGLine x1={0} y1={y} x2={width} color={color} aria-label={'loop-line'} />
             <text x="20" y={yText} className="small" fill={color} aria-label={'loop-line-text'}>
                 {msToHumanReadableTime(timestamp, true)}
             </text>
