@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import React from 'react'
-import { AppModeSelector } from './'
+import { AppModeSelector } from './index'
 import { clickImportMode, clickLearningMode } from '../../tests/utils'
 
 describe('AppModeSelector', () => {

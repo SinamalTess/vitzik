@@ -22,12 +22,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts ../vitzik-domain/build",
     "test": "react-scripts test --watchAll=false --coverage",
     "test:watch": "react-scripts test --coverage",
     "test:staged": "react-scripts test --findRelatedTests --watchAll=false",
     "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d ../vitzik-domain/build"
   },
   "lint-staged": {
     "**/*": [

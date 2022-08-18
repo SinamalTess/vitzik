@@ -1,1 +1,0 @@
-# vitzik-app
