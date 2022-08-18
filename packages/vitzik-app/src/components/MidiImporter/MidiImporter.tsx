@@ -3,7 +3,6 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import './MidIimporter.scss'
 import clsx from 'clsx'
 import { isDesktop } from 'react-device-detect'
-// @ts-ignore
 import { Button } from 'vitzik-ui'
 import { parseArrayBuffer } from 'midi-json-parser'
 

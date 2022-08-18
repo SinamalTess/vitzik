@@ -1,4 +1,3 @@
-// @ts-ignore
 import { SideBar, Switch } from 'vitzik-ui'
 import { MusicSystemSelector } from '../MusicSystemSelector'
 import { InstrumentSelector } from '../InstrumentSelector'

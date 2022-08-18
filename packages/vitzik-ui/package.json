@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "echo no start task in vitzik-ui",
-    "build": "babel --extensions .ts,.tsx src -d lib",
+    "build": "tsc --emitDeclarationOnly && babel --extensions .ts,.tsx src -d lib",
     "test": "npx jest --watchAll=false --coverage",
     "test:watch": "npm run test --coverage",
     "test:staged": "npm run test --findRelatedTests --watchAll=false",

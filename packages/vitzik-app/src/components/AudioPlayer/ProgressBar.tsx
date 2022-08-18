@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Tooltip, RangeSlider } from 'vitzik-ui'
 import React, { useEffect, useRef } from 'react'
 import { msToHumanReadableTime, normalizeMidiTitle } from '../../utils'

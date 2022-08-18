@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Select } from 'vitzik-ui'
 import React from 'react'
 import {

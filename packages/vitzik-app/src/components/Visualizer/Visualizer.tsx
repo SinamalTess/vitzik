@@ -2,7 +2,6 @@ import { MidiVisualizer } from '../MidiVisualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiMetas, ActiveNote, MidiMode, Instrument, LoopTimestamps } from '../../types'
-// @ts-ignore
 import { ErrorBoundary } from 'vitzik-ui'
 
 interface VisualizerProps {

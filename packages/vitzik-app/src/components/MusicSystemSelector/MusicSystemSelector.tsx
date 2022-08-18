@@ -1,6 +1,5 @@
 import React from 'react'
 import { MusicSystem } from '../../types'
-// @ts-ignore
 import { Button, ButtonGroup } from 'vitzik-ui'
 
 interface MusicSystemSelectorProps {

@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Tooltip, Button, ButtonGroup } from 'vitzik-ui'
 import React, { useEffect, useState } from 'react'
 import { MsPerBeat } from '../../types'

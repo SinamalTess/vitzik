@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Button } from 'vitzik-ui'
 import { PlayButton } from './PlayButton'
 import { VolumeButton } from '../VolumeButton'

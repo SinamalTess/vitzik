@@ -1,4 +1,3 @@
-// @ts-ignore
 import { ListItem, Tooltip, Loader, List } from 'vitzik-ui'
 import { msToHumanReadableTime } from '../../utils'
 import { InstrumentImage } from '../InstrumentImage'

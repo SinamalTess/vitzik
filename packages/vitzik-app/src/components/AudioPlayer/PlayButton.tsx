@@ -1,5 +1,4 @@
 import React from 'react'
-// @ts-ignore
 import { Button, CSSSpacingSize, Tooltip } from 'vitzik-ui'
 import './PlayButton.scss'
 import clsx from 'clsx'

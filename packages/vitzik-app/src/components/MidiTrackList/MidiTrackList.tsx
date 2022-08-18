@@ -1,5 +1,4 @@
 import React from 'react'
-// @ts-ignore
 import { Tooltip, Divider, ListItem, ListItemSecondaryAction, Button, List } from 'vitzik-ui'
 import { Instrument, InstrumentUserFriendlyName, TrackMetas } from '../../types'
 import './MidiTrackList.scss'

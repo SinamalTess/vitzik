@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-// @ts-ignore
 import { Icon, Select, Tooltip, Link } from 'vitzik-ui'
 import './MidiInputSelector.scss'
 

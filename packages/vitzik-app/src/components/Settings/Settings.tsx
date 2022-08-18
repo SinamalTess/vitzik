@@ -12,7 +12,6 @@ import {
 } from '../../types'
 import { AppModeSelector } from '../AppModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
-// @ts-ignore
 import { Switch, Button, Divider, Tooltip } from 'vitzik-ui'
 import { ExtraSettingsPanel } from './ExtraSettingsPanel'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'

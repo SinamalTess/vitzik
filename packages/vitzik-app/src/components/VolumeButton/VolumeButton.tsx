@@ -1,5 +1,4 @@
 import React from 'react'
-// @ts-ignore
 import { Button, Tooltip, CSSSpacingSize } from 'vitzik-ui'
 import './VolumeButton.scss'
 import clsx from 'clsx'
