@@ -1,6 +1,6 @@
-@import 'icons';
-@import 'vars';
-@import 'mixins/index';
+@import '../src/style/icons';
+@import '../src/style/vars';
+@import '../src/style/mixins/index';
 
 .pd {
     @include add-spacing-sizes(padding);
