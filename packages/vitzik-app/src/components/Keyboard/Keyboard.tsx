@@ -50,6 +50,14 @@ export function Keyboard({
     onAllMidiKeysPlayed,
     showNotes = true,
 }: KeyboardProps) {
+    function handleTouchStart(note: MidiInputActiveNote) {
+        onChangeActiveNotes([...activeNotes, note])
+    }
+
+    function handleTouchEnd(note: MidiInputActiveNote) {
+        setActiveNotes(note)
+    }
+
     function handleMouseDown(note: MidiInputActiveNote) {
         onChangeActiveNotes([...activeNotes, note])
         /*
@@ -66,6 +74,10 @@ export function Keyboard({
     }
 
     function handleMouseUp(note: MidiInputActiveNote) {
+        setActiveNotes(note)
+    }
+
+    function setActiveNotes(note: MidiInputActiveNote) {
         const { name, channel } = note
         const midiActiveNotes = activeNotes.filter(
             (activeNote) => activeNote.name === name && activeNote.channel !== channel
@@ -153,6 +165,8 @@ export function Keyboard({
                         data-testid={dataTestId}
                         className={classNames}
                         onMouseDown={() => handleMouseDown(key)}
+                        onTouchStart={() => handleTouchStart(key)}
+                        onTouchEnd={() => handleTouchEnd(key)}
                         onDragStart={handleDragStart}
                     >
                         {showNotes ? <span style={styleKeyName}>{keyName}</span> : null}
