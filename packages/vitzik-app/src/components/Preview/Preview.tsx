@@ -157,7 +157,7 @@ export function Preview({
                     midiMode={midiMode}
                     showNotes={showNotes}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
-                    onKeyPressed={setActiveNotes}
+                    onChangeActiveNotes={setActiveNotes}
                 />
                 {activeInstruments.map(({ channel, name, notes }) => {
                     return (

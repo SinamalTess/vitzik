@@ -1,4 +1,5 @@
-import { keyToNote, translateNoteTo, noteToKey, isSpecialNote, isBlackKey } from './index'
+import { keyToNote, translateNoteTo, noteToKey, isSpecialNote } from './index'
+import { KeyboardFactory } from '../components/Keyboard/KeyboardFactory'
 
 describe('keyToNote()', () => {
     it('should convert MIDI piano key number to an alphabetical note', () => {
@@ -36,9 +37,9 @@ describe('isSpecialNote()', () => {
 
 describe('isBlackKey()', () => {
     it('should return `true` if a note corresponds to a black key', () => {
-        expect(isBlackKey('A0')).toBe(false)
-        expect(isBlackKey('D4')).toBe(false)
-        expect(isBlackKey('Bb0')).toBe(true)
-        expect(isBlackKey('Gb2')).toBe(true)
+        expect(KeyboardFactory.isBlackKey('A0')).toBe(false)
+        expect(KeyboardFactory.isBlackKey('D4')).toBe(false)
+        expect(KeyboardFactory.isBlackKey('Bb0')).toBe(true)
+        expect(KeyboardFactory.isBlackKey('Gb2')).toBe(true)
     })
 })

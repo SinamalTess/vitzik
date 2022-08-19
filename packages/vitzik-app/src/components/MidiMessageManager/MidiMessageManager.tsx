@@ -7,7 +7,7 @@ import {
     isMidiVisualizerActiveNote,
     MidiAccessMode,
 } from '../../types'
-import { keyToNote, removeNotesFromActiveNotes } from '../../utils'
+import { keyToNote } from '../../utils'
 import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { usePrevious } from '../../hooks'
@@ -81,12 +81,8 @@ export function MidiMessageManager({
 
     useEffect(() => {
         function removeNote(note: MidiInputActiveNote) {
-            setNotesBeingHeld((notesBeingHeld) =>
-                removeNotesFromActiveNotes(notesBeingHeld, [note])
-            )
-            onChangeActiveNotes((prevActiveNotes) =>
-                removeNotesFromActiveNotes(prevActiveNotes, [note])
-            )
+            setNotesBeingHeld((notesBeingHeld) => removeActiveNotes(notesBeingHeld, [note]))
+            onChangeActiveNotes((prevActiveNotes) => removeActiveNotes(prevActiveNotes, [note]))
         }
 
         function checkAllMidiNotesPlayed(
@@ -123,6 +119,17 @@ export function MidiMessageManager({
                 )
                 onAllMidiKeysPlayed()
             }
+        }
+
+        function removeActiveNotes(activeNotes: ActiveNote[], notesToBeRemoved: ActiveNote[]) {
+            return activeNotes.filter(
+                (activeNote) =>
+                    !notesToBeRemoved.some(({ channel, name }) => {
+                        const isSameChannel = channel === activeNote.channel
+                        const isSameName = name === activeNote.name
+                        return isSameChannel && isSameName
+                    })
+            )
         }
 
         function handleMIDIMessage(message: MIDIMessageEvent) {

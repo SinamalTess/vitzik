@@ -8,7 +8,7 @@ import { clickKey } from '../../tests/utils'
 const props = {
     midiMode: 'autoplay' as MidiMode,
     activeNotes: [],
-    onKeyPressed: jest.fn(),
+    onChangeActiveNotes: jest.fn(),
 }
 
 describe('Keyboard', () => {
@@ -49,7 +49,7 @@ describe('Keyboard', () => {
 
         await clickKey('A1')
 
-        expect(props.onKeyPressed).toHaveBeenCalledWith([
+        expect(props.onChangeActiveNotes).toHaveBeenCalledWith([
             { channel: 17, key: 33, name: 'A1', velocity: 100 },
         ])
     })
