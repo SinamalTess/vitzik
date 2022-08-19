@@ -8,7 +8,7 @@ import {
     MidiVisualizerActiveNote,
     MusicSystem,
 } from '../../types'
-import { getWidthKeys, isSpecialNote as checkIsSpecialNote, translateNoteTo } from '../../utils'
+import { translateNoteTo } from '../../utils'
 import clsx from 'clsx'
 import findLast from 'lodash/findLast'
 import last from 'lodash/last'
@@ -31,9 +31,9 @@ const BASE_CLASS = 'keyboard'
 
 function getKeyStyles(keyName: AlphabeticalNote) {
     const isBlackKey = KeyboardFactory.isBlackKey(keyName)
-    const isSpecialNote = checkIsSpecialNote(keyName)
-    const { widthWhiteKey, widthBlackKey } = getWidthKeys(100)
-    const margin = isBlackKey || !isSpecialNote ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
+    const isSpecialKey = KeyboardFactory.isSpecialKey(keyName)
+    const { widthWhiteKey, widthBlackKey } = KeyboardFactory.getWidthKeys(100)
+    const margin = isBlackKey || !isSpecialKey ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
     const width = isBlackKey ? `${widthBlackKey}%` : `${widthWhiteKey}%`
 
     return {

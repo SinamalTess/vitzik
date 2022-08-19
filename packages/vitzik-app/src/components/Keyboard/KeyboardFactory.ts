@@ -26,12 +26,26 @@ export class KeyboardFactory {
 
     static isBlackKey(keyName: AlphabeticalNote) {
         const hasHastag = keyName.includes('#')
-        // @ts-ignore
         const isLowerCaseCharacter = (character: string) =>
+            // @ts-ignore
             isNaN(character) && character === character.toLowerCase()
         const hasLowerCaseCharacters = [...keyName].some((character) =>
             isLowerCaseCharacter(character)
         )
+
         return hasHastag || hasLowerCaseCharacters
+    }
+
+    static isSpecialKey = (keyName: AlphabeticalNote) =>
+        keyName.includes('C') || keyName.includes('F')
+
+    static getWidthKeys = (
+        widthContainer: number
+    ): { widthWhiteKey: number; widthBlackKey: number } => {
+        const widthWhiteKey = widthContainer / NB_WHITE_PIANO_KEYS
+        return {
+            widthWhiteKey,
+            widthBlackKey: widthWhiteKey / 2,
+        }
     }
 }

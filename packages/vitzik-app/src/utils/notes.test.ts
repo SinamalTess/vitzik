@@ -1,4 +1,4 @@
-import { keyToNote, translateNoteTo, noteToKey, isSpecialNote } from './index'
+import { keyToNote, translateNoteTo, noteToKey } from './index'
 import { KeyboardFactory } from '../components/Keyboard/KeyboardFactory'
 
 describe('keyToNote()', () => {
@@ -28,10 +28,10 @@ describe('translateNoteTo()', () => {
 
 describe('isSpecialNote()', () => {
     it('should return `true` if a key is either C or F', () => {
-        expect(isSpecialNote('A0')).toBe(false)
-        expect(isSpecialNote('D4')).toBe(false)
-        expect(isSpecialNote('F1')).toBe(true)
-        expect(isSpecialNote('C1')).toBe(true)
+        expect(KeyboardFactory.isSpecialKey('A0')).toBe(false)
+        expect(KeyboardFactory.isSpecialKey('D4')).toBe(false)
+        expect(KeyboardFactory.isSpecialKey('F1')).toBe(true)
+        expect(KeyboardFactory.isSpecialKey('C1')).toBe(true)
     })
 })
 

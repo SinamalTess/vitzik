@@ -7,7 +7,7 @@ import {
 } from '../../types'
 import { MIDI_PIANO_KEYS_OFFSET, NOTE_NAMES } from '../../utils/const'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { getWidthKeys, isEven, isNoteOffEvent, isNoteOnEvent, MidiFactory } from '../../utils'
+import { isEven, isNoteOffEvent, isNoteOnEvent, MidiFactory } from '../../utils'
 import findLast from 'lodash/findLast'
 import minBy from 'lodash/minBy'
 import { KeyboardFactory } from '../Keyboard/KeyboardFactory'
@@ -61,7 +61,7 @@ export class MidiVisualizerFactory {
         */
         if (name) {
             const isBlackKey = KeyboardFactory.isBlackKey(name)
-            const { widthWhiteKey, widthBlackKey } = getWidthKeys(this.width)
+            const { widthWhiteKey, widthBlackKey } = KeyboardFactory.getWidthKeys(this.width)
             const previousKeys = NOTE_NAMES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
             const nbPreviousWhiteKeys = previousKeys.filter(
                 (note) => !KeyboardFactory.isBlackKey(note)

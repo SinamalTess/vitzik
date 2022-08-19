@@ -11,7 +11,7 @@ interface PreviewLoopProps {
     loopTimestamps: LoopTimestamps
 }
 
-const LoopPreview = ({ duration, refProgressBar, loopTimestamps }: PreviewLoopProps) => {
+const LoopTimestampsPreview = ({ duration, refProgressBar, loopTimestamps }: PreviewLoopProps) => {
     const [startLoop, endLoop] = loopTimestamps
 
     if (!startLoop || !refProgressBar.current) return null
@@ -112,7 +112,7 @@ export function ProgressBar({
                         onMouseUp={onMouseUp}
                     />
                     {loopTimestamps ? (
-                        <LoopPreview
+                        <LoopTimestampsPreview
                             loopTimestamps={loopTimestamps}
                             duration={duration}
                             refProgressBar={refBar}

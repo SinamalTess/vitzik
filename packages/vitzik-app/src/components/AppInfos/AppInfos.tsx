@@ -4,6 +4,48 @@ import './AppInfos.scss'
 
 const BASE_CLASS = 'app-infos'
 
+interface ShortcutsListProps {
+    shortcuts: {
+        key: string
+        description: string
+    }[]
+}
+
+const SHORTCUTS = [
+    {
+        key: 'M',
+        description: 'mute / unmute',
+    },
+    {
+        key: 'L',
+        description: 'start / end edition of loop',
+    },
+    {
+        key: '↑',
+        description: 'forward midi song',
+    },
+    {
+        key: '↓',
+        description: 'rewind midi song',
+    },
+    {
+        key: 'space bar',
+        description: 'pause / play midi song',
+    },
+]
+
+function ShortCutsList({ shortcuts }: ShortcutsListProps) {
+    return (
+        <div className={`${BASE_CLASS}__keyboard-shortcuts`}>
+            {shortcuts.map(({ description, key }) => (
+                <p>
+                    <span>{key}</span> {description}
+                </p>
+            ))}
+        </div>
+    )
+}
+
 export function AppInfos() {
     const [isOpen, setIsOpen] = useState(false)
 
@@ -23,23 +65,7 @@ export function AppInfos() {
             <SideBar open={isOpen} onClose={handleClose}>
                 <div className={`${BASE_CLASS} pd-lg`}>
                     <h2>Keyboard shortcuts</h2>
-                    <div className={`${BASE_CLASS}__keyboard-shortcuts`}>
-                        <p>
-                            <span>M</span> mute / unmute{' '}
-                        </p>
-                        <p>
-                            <span>L</span> start / end edition of loop
-                        </p>
-                        <p>
-                            <span>↑</span> forward midi song
-                        </p>
-                        <p>
-                            <span>↓</span> rewind midi song
-                        </p>
-                        <p>
-                            <span>space bar</span> pause / play midi song
-                        </p>
-                    </div>
+                    <ShortCutsList shortcuts={SHORTCUTS}></ShortCutsList>
                     <h2>About this app</h2>
                     <p>
                         At this stage the application is still experimental, you can follow along

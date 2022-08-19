@@ -10,7 +10,6 @@ import {
 import { keyToNote } from '../../utils'
 import React, { useEffect, useState } from 'react'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
-import { usePrevious } from '../../hooks'
 import { MIDI_MESSAGE_CONTROL } from '../../utils/const/midi_message_controls'
 
 interface MidiMessageManagerProps {
@@ -40,8 +39,6 @@ function getMessage(message: MIDIMessageEvent) {
     }
 }
 
-const LIMIT = 2
-
 export function MidiMessageManager({
     midiInput,
     midiOutput,
@@ -53,31 +50,6 @@ export function MidiMessageManager({
 }: MidiMessageManagerProps) {
     const [notesBeingHeld, setNotesBeingHeld] = useState<MidiInputActiveNote[]>([])
     const [midiNotesAlreadyPlayed, setMidiNotesAlreadyPlayed] = useState<Set<string>>(new Set())
-    const prevActiveNotes = usePrevious<ActiveNote[]>(activeNotes)
-
-    useEffect(() => {
-        // /!\ EXPERIMENTAL /!\
-        if (midiAccessMode === 'output' && midiOutput && activeNotes.length) {
-            let newNotes = activeNotes
-
-            if (prevActiveNotes) {
-                const isNewNote = (note: ActiveNote) =>
-                    !prevActiveNotes.find(
-                        (prevActiveKey) =>
-                            'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
-                    )
-
-                newNotes = activeNotes.filter((note) => isNewNote(note))
-            }
-
-            if (newNotes.length) {
-                for (let i = 0; i < Math.min(LIMIT, newNotes.length); i++) {
-                    const noteOnMessage = [0x90, newNotes[i].key, 0x7f] // note on, key, full velocity
-                    midiOutput.send(noteOnMessage)
-                }
-            }
-        }
-    }, [midiAccessMode, activeNotes])
 
     useEffect(() => {
         function removeNote(note: MidiInputActiveNote) {
