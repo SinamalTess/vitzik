@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import { ActiveNote, Instrument, MidiMetas, MidiMode } from '../../types'
@@ -39,54 +39,42 @@ export function MidiEventsManager({
             setTimeToNextNote(time)
         }
         if (isMultiInstrumentsTrack) {
-            setInstruments(time)
+            const instruments = getInstruments(time)
+            const hasNewInstruments = !isEqual(instruments, midiTrackInstruments)
+            if (hasNewInstruments) {
+                onChangeInstruments(instruments)
+            }
         }
     }
 
-    const setInstruments = useCallback(
-        (time: number) => {
-            const allInstruments = [...instruments]
-                .filter(({ timestamp }) => timestamp <= time)
-                .sort((a, b) => b.delta - a.delta) // sort by largest delta first
+    function getInstruments(time: number) {
+        const allInstruments = [...instruments]
+            .filter(({ timestamp }) => timestamp <= time)
+            .sort((a, b) => b.delta - a.delta) // sort by largest delta first
 
-            const newInstruments = uniqBy(allInstruments, 'channel')
+        return uniqBy(allInstruments, 'channel')
+    }
 
-            if (!isEqual(newInstruments, midiTrackInstruments)) {
-                onChangeInstruments(newInstruments)
+    function setTimeToNextNote(time: number) {
+        const timeToNextNote = midiVisualizerFactory.getTimeToNextNote(
+            activeTracksCoordinates,
+            time
+        )
+        onChangeTimeToNextNote(timeToNextNote)
+    }
+
+    function setActiveNotes(time: number) {
+        const newActiveNotes = midiVisualizerFactory.getActiveNotes(activeTracksCoordinates, time)
+
+        onChangeActiveNotes((activeNotes: ActiveNote[]) => {
+            if (isEqual(newActiveNotes, activeNotes)) {
+                return activeNotes
+            } else {
+                const userNotes = activeNotes.filter(({ channel }) => isUserChannel(channel))
+                return [...newActiveNotes, ...userNotes]
             }
-        },
-        [activeInstruments, midiMetas.instruments, onChangeInstruments]
-    )
-
-    const setTimeToNextNote = useCallback(
-        (time: number) => {
-            const timeToNextNote = midiVisualizerFactory.getTimeToNextNote(
-                activeTracksCoordinates,
-                time
-            )
-            onChangeTimeToNextNote(timeToNextNote)
-        },
-        [midiMode, midiVisualizerFactory, activeTracksCoordinates, onChangeTimeToNextNote]
-    )
-
-    const setActiveNotes = useCallback(
-        (time: number) => {
-            const newActiveNotes = midiVisualizerFactory.getActiveNotes(
-                activeTracksCoordinates,
-                time
-            )
-
-            onChangeActiveNotes((activeNotes: ActiveNote[]) => {
-                if (isEqual(newActiveNotes, activeNotes)) {
-                    return activeNotes
-                } else {
-                    const userNotes = activeNotes.filter(({ channel }) => isUserChannel(channel))
-                    return [...newActiveNotes, ...userNotes]
-                }
-            })
-        },
-        [midiVisualizerFactory, activeTracksCoordinates, onChangeActiveNotes]
-    )
+        })
+    }
 
     return null
 }

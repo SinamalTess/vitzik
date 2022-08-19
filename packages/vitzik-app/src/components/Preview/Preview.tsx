@@ -104,7 +104,7 @@ export function Preview({
     }
 
     useEffect(() => {
-        if (isMute || audioPlayerState === 'paused' || audioPlayerState === 'stopped') {
+        if (isMute) {
             /*
                 Suspends the progression of time in the audio context,
                 temporarily halting audio hardware access and reducing CPU/battery usage in the process.
@@ -119,7 +119,7 @@ export function Preview({
             }
             resume().catch((e) => console.error(e))
         }
-    }, [isMute, audioPlayerState])
+    }, [isMute])
     return (
         <>
             <div className="item preview">
