@@ -9,7 +9,7 @@
     "react-popper": "^2.3.0"
   },
   "scripts": {
-    "start": "echo nothing here",
+    "start": "node bin/start.js",
     "build": "node bin/build.js",
     "test": "npx jest --watchAll=false --coverage",
     "test:watch": "npm run test --coverage",
