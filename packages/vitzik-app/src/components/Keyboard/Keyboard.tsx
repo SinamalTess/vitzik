@@ -155,7 +155,6 @@ export function Keyboard({
         }
     }
 
-    // Prevent
     function handleDragStart(e: React.DragEvent<HTMLLIElement>) {
         e.preventDefault()
     }

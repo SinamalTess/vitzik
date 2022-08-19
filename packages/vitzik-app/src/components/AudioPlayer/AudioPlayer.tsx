@@ -41,6 +41,14 @@ export function AudioPlayer({
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
     const { setShortcuts } = useContext(AppContext)
 
+    useIntervalWorker(onTimeChange)
+
+    function onTimeChange(time: number) {
+        checkIsEndOfSong(time)
+        checkIsEndOfLoop(time)
+        checkForWaitMode(time)
+    }
+
     function checkIsEndOfSong(time: number) {
         if (time > duration) {
             onChangeState('stopped')
@@ -69,14 +77,6 @@ export function AudioPlayer({
             onChangeState('paused')
         }
     }
-
-    function onTimeChange(time: number) {
-        checkIsEndOfSong(time)
-        checkIsEndOfLoop(time)
-        checkForWaitMode(time)
-    }
-
-    useIntervalWorker(onTimeChange)
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target

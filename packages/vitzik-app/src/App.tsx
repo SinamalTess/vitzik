@@ -113,7 +113,7 @@ function App() {
                     isEditingLoop={isEditingLoop}
                     midiMode={midiMode}
                     musicSystem={musicSystem}
-                    onMidiTitleChange={setMidiTitle}
+                    onChangeMidiTitle={setMidiTitle}
                     onChangeLoopTimestamps={setLoopTimestamps}
                     onChangeActiveInstruments={setActiveInstruments}
                     onChangeActiveTracks={setActiveTracks}

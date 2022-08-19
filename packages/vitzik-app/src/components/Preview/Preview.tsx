@@ -39,7 +39,7 @@ interface PreviewProps {
     activeInstruments: Instrument[]
     isEditingLoop: boolean
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
-    onMidiTitleChange: React.Dispatch<React.SetStateAction<string>>
+    onChangeMidiTitle: React.Dispatch<React.SetStateAction<string>>
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
@@ -67,7 +67,7 @@ export function Preview({
     audioPlayerState,
     isEditingLoop,
     onChangeActiveInstruments,
-    onMidiTitleChange,
+    onChangeMidiTitle,
     onChangeLoopTimestamps,
     onChangeActiveTracks,
     onChangeAudioPlayerState,
@@ -92,7 +92,7 @@ export function Preview({
         const { instruments } = metas
         const initialInstruments = MidiFactory.getInitialInstruments(instruments)
 
-        onMidiTitleChange(title)
+        onChangeMidiTitle(title)
         setMidiFile(midiJSON)
         onChangeMidiMetas(metas)
         onChangeActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
