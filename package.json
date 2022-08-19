@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npx lerna run start",
+    "start": "npx lerna run start --parallel",
     "build": "npx lerna run build",
     "test": "npx lerna run test",
     "test:watch": "npx lerna run test --coverage",

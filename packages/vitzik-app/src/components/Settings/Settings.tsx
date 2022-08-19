@@ -136,7 +136,7 @@ export function Settings({
     }
 
     return (
-        <div className={BASE_CLASS} role="toolbar" data-testid={'settings'}>
+        <div className={BASE_CLASS} data-testid={'settings'}>
             {midiMetas ? (
                 <>
                     <Tooltip showOnHover>
@@ -145,6 +145,7 @@ export function Settings({
                             onClick={handleClickOnLoop}
                             variant="text"
                             color={isEditingLoop ? 'primary' : 'secondary'}
+                            aria-label={'loop'}
                         ></Button>
                         {`${
                             isEditingLoop
@@ -172,7 +173,7 @@ export function Settings({
                     </Tooltip>
                 </>
             ) : null}
-            <Button icon={'settings'} onClick={handleClickOnExtraSettings}>
+            <Button icon={'settings'} onClick={handleClickOnExtraSettings} aria-label={'settings'}>
                 {nbTracks ? ` ${nbTracks} track${nbTracks > 1 ? 's' : ''}` : null}
             </Button>
             <AppModeSelector onChange={onChangeAppMode} appMode={appMode} />

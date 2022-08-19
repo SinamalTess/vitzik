@@ -51,7 +51,7 @@ describe('Tooltip', () => {
     })
 
     describe('When the "showOnHover" prop is "true"', () => {
-        it('should show the tooltip on mouseEnter', () => {
+        it('should show the tooltip on mouseEnter', async () => {
             render(
                 <Tooltip showOnHover onShow={onShow} onHide={onHide}>
                     <span>Hover me</span>
@@ -60,18 +60,18 @@ describe('Tooltip', () => {
             )
 
             const reference = screen.getByText('Hover me')
-            userEvent.hover(reference)
+            await userEvent.hover(reference)
 
             expect(onShow).toHaveBeenCalled()
             expect(screen.getByText('I am the tooltip')).toBeInTheDocument()
 
-            userEvent.unhover(reference)
+            await userEvent.unhover(reference)
 
             expect(onHide).toHaveBeenCalled()
             expect(screen.queryByText('I am the tooltip')).not.toBeInTheDocument()
         })
 
-        it('should hide the tooltip on mouseLeave', () => {
+        it('should hide the tooltip on mouseLeave', async () => {
             render(
                 <Tooltip showOnHover onShow={onShow} onHide={onHide}>
                     <span>Hover me</span>
@@ -80,8 +80,8 @@ describe('Tooltip', () => {
             )
 
             const reference = screen.getByText('Hover me')
-            userEvent.hover(reference)
-            userEvent.unhover(reference)
+            await userEvent.hover(reference)
+            await userEvent.unhover(reference)
 
             expect(onHide).toHaveBeenCalled()
             expect(screen.queryByText('I am the tooltip')).not.toBeInTheDocument()

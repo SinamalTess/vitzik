@@ -14,10 +14,4 @@ describe('TextField', () => {
 
         expect(button).toHaveValue('I am a text field')
     })
-    it('should display an icon when passed as a prop', () => {
-        render(<TextField {...props} icon={'loop'}></TextField>)
-        const icon = screen.getByLabelText(/icon/)
-
-        expect(icon).toHaveClass('icon-loop')
-    })
 })

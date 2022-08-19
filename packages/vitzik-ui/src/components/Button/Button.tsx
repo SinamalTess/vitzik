@@ -27,7 +27,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     {
         style,
         'aria-label': ariaLabel,
-        role,
         disabled = false,
         active = false,
         icon,
@@ -57,7 +56,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
 
     return (
         <button
-            role={role}
             ref={ref}
             disabled={disabled}
             className={classNames}

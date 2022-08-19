@@ -9,8 +9,8 @@
     "react-popper": "^2.3.0"
   },
   "scripts": {
-    "start": "echo no start task in vitzik-ui",
-    "build": "tsc --emitDeclarationOnly && babel --extensions .ts,.tsx src -d lib",
+    "start": "echo nothing here",
+    "build": "node bin/build.js",
     "test": "npx jest --watchAll=false --coverage",
     "test:watch": "npm run test --coverage",
     "test:staged": "npx jest --findRelatedTests --watchAll=false --passWithNoTests",

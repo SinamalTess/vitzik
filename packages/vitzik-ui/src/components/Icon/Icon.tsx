@@ -35,7 +35,6 @@ export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
         <span
             className={classNames}
             style={styles}
-            aria-label={`icon ${name}`}
             ref={ref}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}

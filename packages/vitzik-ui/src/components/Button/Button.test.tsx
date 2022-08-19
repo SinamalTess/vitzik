@@ -11,12 +11,4 @@ describe('Button', () => {
             expect(button).toHaveTextContent('Click me')
         })
     })
-    describe('When the "icon" prop is passed', () => {
-        it('should display the icon', () => {
-            render(<Button icon={'loop'}></Button>)
-            const icon = screen.getByLabelText(/icon/)
-
-            expect(icon).toHaveClass('icon-loop')
-        })
-    })
 })
