@@ -44,3 +44,7 @@ npm run build
 ```
 
 Note : tests and prettier are automatically run when committing. If a test fails the commit will be aborted.
+
+## Useful Links
+
+- [Project conventions](docs/project_conventions.md)
