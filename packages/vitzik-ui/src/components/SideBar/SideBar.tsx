@@ -9,7 +9,7 @@ import { PresentationalComponentBasicProps } from '../../types'
 interface SideBarProps extends PresentationalComponentBasicProps {
     open: boolean
     children: ReactNode
-    position: 'top' | 'left' | 'right' | 'bottom'
+    position?: 'top' | 'left' | 'right' | 'bottom'
     onClose: () => void
 }
 
