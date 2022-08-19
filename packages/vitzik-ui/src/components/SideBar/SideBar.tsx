@@ -9,13 +9,21 @@ import { PresentationalComponentBasicProps } from '../../types'
 interface SideBarProps extends PresentationalComponentBasicProps {
     open: boolean
     children: ReactNode
+    position: 'top' | 'left' | 'right' | 'bottom'
     onClose: () => void
 }
 
 const BASE_CLASS = 'sidebar'
 const ANIMATION_DURATION = 300
 
-export function SideBar({ style, className, children, open, onClose }: SideBarProps) {
+export function SideBar({
+    style,
+    className,
+    children,
+    open,
+    position = 'right',
+    onClose,
+}: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
     const ref = useRef<HTMLDivElement>(null)
     const rootNode = document.getElementById('root') ?? document.body
@@ -28,7 +36,7 @@ export function SideBar({ style, className, children, open, onClose }: SideBarPr
         onClose()
     }
 
-    const classNames = clsx(BASE_CLASS, className)
+    const classNames = clsx(BASE_CLASS, `${BASE_CLASS}--${position}`, className)
 
     return ReactDOM.createPortal(
         <CSSTransition
