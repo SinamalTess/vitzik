@@ -33,5 +33,5 @@ export class MidiTimeFactory {
     microSPerBeatToMsPerBeat = (microsecondsPerQuarter: number) =>
         Math.round(microsecondsPerQuarter / 1000)
 
-    msPerBeatToBPM = (msPerBeat: number) => (1000 * 60) / msPerBeat
+    msPerBeatToBpm = (msPerBeat: number) => (1000 * 60) / msPerBeat
 }

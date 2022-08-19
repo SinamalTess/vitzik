@@ -15,7 +15,7 @@ interface BpmSelectorProps {
 const BASE_CLASS = 'bpm-selector'
 const SPEED_FACTORS = [
     {
-        factor: 2, // The factor used to divide the BPM
+        factor: 2, // The factor used to divide the Bpm
         speed: 0.5, // The resulting speed. (Fewer beats per minute = higher speed)
     },
     {
@@ -36,10 +36,10 @@ const SPEED_FACTORS = [
     },
 ]
 
-function getBPMFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
+function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
     const msPerBeat = MidiVisualizerFactory.getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
-    const BPM = MidiFactory.Time().msPerBeatToBPM(msPerBeat)
-    return Math.round(BPM / midiSpeedFactor)
+    const bpm = MidiFactory.Time().msPerBeatToBpm(msPerBeat)
+    return Math.round(bpm / midiSpeedFactor)
 }
 
 export function BpmSelector({
@@ -55,12 +55,12 @@ export function BpmSelector({
     useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
-        const newBpm = getBPMFromTime(allMsPerBeat, time, midiSpeedFactor)
+        const newBpm = getBpmFromTime(allMsPerBeat, time, midiSpeedFactor)
         setBpm(newBpm)
     }
 
     useEffect(() => {
-        const newBpm = getBPMFromTime(allMsPerBeat, 0, midiSpeedFactor)
+        const newBpm = getBpmFromTime(allMsPerBeat, 0, midiSpeedFactor)
         setBpm(newBpm)
     }, [midiSpeedFactor])
 

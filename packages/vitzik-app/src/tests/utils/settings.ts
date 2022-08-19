@@ -7,7 +7,7 @@ export const clickExtraSettings = async () => {
     await userEvent.click(button)
 }
 
-export const clickBPMButton = async () => {
+export const clickBpmButton = async () => {
     const button = screen.getByLabelText(/beats per minute/)
     await userEvent.click(button)
 }

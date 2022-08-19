@@ -4,7 +4,7 @@ import App from './App'
 import { midiAccessMock, requestMIDIAccess, MidiInputMock } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'
 import {
-    clickBPMButton,
+    clickBpmButton,
     clickSpeedButton,
     clickExtraSettings,
     clickSetLoopButton,
@@ -243,7 +243,7 @@ describe('App', () => {
             })
 
             describe('The settings', () => {
-                it('should show the first BPM value', async () => {
+                it('should show the first Bpm value', async () => {
                     render(<App />)
 
                     await clickMidiExample()
@@ -252,20 +252,20 @@ describe('App', () => {
                     expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
                     expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent('135')
                 })
-                it('should let the BPM value be changed', async () => {
-                    const initialBPM = 135
+                it('should let the bpm value be changed', async () => {
+                    const initialBpm = 135
                     const speedValue = 2
-                    const expectedBPM = initialBPM * speedValue
+                    const expectedBpm = initialBpm * speedValue
                     render(<App />)
 
                     await clickMidiExample()
-                    await clickBPMButton()
+                    await clickBpmButton()
                     await clickSpeedButton(speedValue)
                     await waitSoundFontInstrumentPromise()
 
                     expect(screen.getByLabelText(/beats per minute/)).toBeVisible()
                     expect(screen.getByLabelText(/beats per minute/)).toHaveTextContent(
-                        expectedBPM.toString()
+                        expectedBpm.toString()
                     )
                 })
                 it('should allow the user to set times for the loop', async () => {
