@@ -50,17 +50,6 @@ export function Keyboard({
     onAllMidiKeysPlayed,
     showNotes = true,
 }: KeyboardProps) {
-    function findActiveKey(keyName: AlphabeticalNote) {
-        /*
-            Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
-            So we pick the last active key because this is the one on top in the Visualizer.
-        */
-        return findLast(
-            activeNotes,
-            (activeKey) => activeKey.name === keyName
-        ) as MidiVisualizerActiveNote
-    }
-
     function handleMouseDown(note: MidiInputActiveNote) {
         onChangeActiveNotes([...activeNotes, note])
         /*
@@ -73,17 +62,6 @@ export function Keyboard({
                 handleMouseUp(note)
             },
             { once: true } // fires only once and then removes automatically the listener.
-        )
-    }
-
-    function removeActiveNotes(notesToBeRemoved: ActiveNote[]) {
-        return activeNotes.filter(
-            (activeNote) =>
-                !notesToBeRemoved.some(({ channel, name }) => {
-                    const isSameChannel = channel === activeNote.channel
-                    const isSameName = name === activeNote.name
-                    return isSameChannel && isSameName
-                })
         )
     }
 
@@ -120,8 +98,30 @@ export function Keyboard({
         }
     }
 
+    function removeActiveNotes(notesToBeRemoved: ActiveNote[]) {
+        return activeNotes.filter(
+            (activeNote) =>
+                !notesToBeRemoved.some(({ channel, name }) => {
+                    const isSameChannel = channel === activeNote.channel
+                    const isSameName = name === activeNote.name
+                    return isSameChannel && isSameName
+                })
+        )
+    }
+
     function handleDragStart(e: React.DragEvent<HTMLLIElement>) {
         e.preventDefault()
+    }
+
+    function findActiveKey(keyName: AlphabeticalNote) {
+        /*
+            Sometimes multiple instruments will play the same note at the same time, but we can only paint one color.
+            So we pick the last active key because this is the one on top in the Visualizer.
+        */
+        return findLast(
+            activeNotes,
+            (activeKey) => activeKey.name === keyName
+        ) as MidiVisualizerActiveNote
     }
 
     return (

@@ -81,6 +81,12 @@ export function InstrumentPlayer({
     const prevActiveKeys = usePrevious<ActiveNote[]>(activeNotes)
 
     useEffect(() => {
+        return function cleanup() {
+            instrumentPlayer?.stop()
+        }
+    }, [])
+
+    useEffect(() => {
         switch (audioPlayerState) {
             case 'paused':
                 instrumentPlayer?.stop()
@@ -90,12 +96,6 @@ export function InstrumentPlayer({
                 break
         }
     }, [audioPlayerState])
-
-    useEffect(() => {
-        return function cleanup() {
-            instrumentPlayer?.stop()
-        }
-    }, [])
 
     useEffect(() => {
         if (midiInput && instrumentPlayer && channel === MIDI_INPUT_CHANNEL) {

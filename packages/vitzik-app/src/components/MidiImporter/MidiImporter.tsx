@@ -70,10 +70,6 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
         }
     }
 
-    function handleDragLeave() {
-        isMidiImported ? setState('pending') : setState('pristine')
-    }
-
     function handleDrop(event: DragEvent) {
         event.preventDefault()
 
@@ -86,6 +82,10 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
         }
 
         setState('pending')
+    }
+
+    function handleDragLeave() {
+        isMidiImported ? setState('pending') : setState('pristine')
     }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {

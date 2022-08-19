@@ -22,6 +22,24 @@ import { DEFAULT_INSTRUMENTS } from '../../utils/const'
 
 const AUDIO_CONTEXT = new AudioContext()
 
+/*
+    Suspends the progression of time in the audio context,
+    temporarily halting audio hardware access and reducing CPU/battery usage in the process.
+*/
+function suspendAudioContext() {
+    const suspend = async () => {
+        await AUDIO_CONTEXT.suspend()
+    }
+    suspend().catch((e) => console.error(e))
+}
+
+function resumeAudioContext() {
+    const resume = async () => {
+        await AUDIO_CONTEXT.resume()
+    }
+    resume().catch((e) => console.error(e))
+}
+
 interface PreviewProps {
     isMute: boolean
     showNotes: boolean
@@ -105,19 +123,9 @@ export function Preview({
 
     useEffect(() => {
         if (isMute) {
-            /*
-                Suspends the progression of time in the audio context,
-                temporarily halting audio hardware access and reducing CPU/battery usage in the process.
-            */
-            const suspend = async () => {
-                await AUDIO_CONTEXT.suspend()
-            }
-            suspend().catch((e) => console.error(e))
+            suspendAudioContext()
         } else {
-            const resume = async () => {
-                await AUDIO_CONTEXT.resume()
-            }
-            resume().catch((e) => console.error(e))
+            resumeAudioContext()
         }
     }, [isMute])
     return (

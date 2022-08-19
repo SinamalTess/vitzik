@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AudioPlayerState } from '../../types'
 import throttle from 'lodash/throttle'
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut'
@@ -28,27 +28,12 @@ export function Shortcuts({
         midiCurrentTime.current = time
     }
 
-    function seekFor(ms: number) {
-        onChangeInitialTime(midiCurrentTime.current)
-        onChangeState('seeking')
-        onChangeInitialTime((midiStartingTime) => {
-            return Math.max(0, midiStartingTime + ms) // can't seek below 0
-        })
-    }
+    useKeyboardShortcut('KeyM', () => onToggleSound((isMute) => !isMute))
+    useKeyboardShortcut('Space', onSpaceKey)
+    useKeyboardShortcut('ArrowDown', onArrowDownKey, restoreAudioPlayerPreviousState)
+    useKeyboardShortcut('ArrowUp', onArrowUpKey, restoreAudioPlayerPreviousState)
 
-    function onArrowUpKey() {
-        seekFor(100)
-    }
-
-    function onArrowDownKey() {
-        seekFor(-100)
-    }
-
-    function restoreAudioPlayerPreviousState() {
-        onChangeState(prevState === 'stopped' ? 'paused' : prevState)
-    }
-
-    const onSpaceKey = useCallback(() => {
+    function onSpaceKey() {
         onChangeState((audioPlayerState) => {
             switch (audioPlayerState) {
                 case 'stopped':
@@ -61,7 +46,23 @@ export function Shortcuts({
                     return audioPlayerState
             }
         })
-    }, [onChangeState])
+    }
+
+    function onArrowDownKey() {
+        seekFor(-100)
+    }
+
+    function onArrowUpKey() {
+        seekFor(100)
+    }
+
+    function seekFor(ms: number) {
+        onChangeInitialTime(midiCurrentTime.current)
+        onChangeState('seeking')
+        onChangeInitialTime((midiStartingTime) => {
+            return Math.max(0, midiStartingTime + ms) // can't seek below 0
+        })
+    }
 
     useEffect(() => {
         if (playerState !== 'seeking') {
@@ -69,10 +70,9 @@ export function Shortcuts({
         }
     }, [onArrowDownKey, onArrowUpKey])
 
-    useKeyboardShortcut('KeyM', () => onToggleSound((isMute) => !isMute))
-    useKeyboardShortcut('Space', onSpaceKey)
-    useKeyboardShortcut('ArrowDown', onArrowDownKey, restoreAudioPlayerPreviousState)
-    useKeyboardShortcut('ArrowUp', onArrowUpKey, restoreAudioPlayerPreviousState)
+    function restoreAudioPlayerPreviousState() {
+        onChangeState(prevState === 'stopped' ? 'paused' : prevState)
+    }
 
     useEffect(() => {
         const onScroll = throttle((e: WheelEvent) => {

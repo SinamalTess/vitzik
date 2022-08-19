@@ -83,19 +83,6 @@ export function AudioPlayer({
         setWorkerInitialTime(parseFloat(value))
     }
 
-    function handlePlay() {
-        onChangeState(isPlaying ? 'paused' : 'playing')
-    }
-
-    function handleStop() {
-        onChangeState('stopped')
-    }
-
-    function handleMouseDown() {
-        setPrevPlayerState(playerState)
-        onChangeState('seeking')
-    }
-
     function handleMouseUp(event: React.MouseEvent<HTMLInputElement>) {
         const { value } = event.target as HTMLInputElement
         if (parseInt(value) > 0 && prevPlayerState === 'stopped') {
@@ -103,6 +90,19 @@ export function AudioPlayer({
         } else {
             onChangeState(prevPlayerState)
         }
+    }
+
+    function handleMouseDown() {
+        setPrevPlayerState(playerState)
+        onChangeState('seeking')
+    }
+
+    function handlePlay() {
+        onChangeState(isPlaying ? 'paused' : 'playing')
+    }
+
+    function handleStop() {
+        onChangeState('stopped')
     }
 
     function handlePlayButtonBlur() {

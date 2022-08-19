@@ -28,5 +28,5 @@ export const useKeyboardShortcut = (
         return function cleanup() {
             unsubscribe()
         }
-    }, [shortcuts])
+    }, [callbackKeyDown, callbackKeyUp, code, shortcuts])
 }
