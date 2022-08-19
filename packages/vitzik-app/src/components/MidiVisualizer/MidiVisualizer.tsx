@@ -84,6 +84,10 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         }
     }, [height, width, ref.current])
 
+    useEffect(() => {
+        redrawVisualization()
+    }, [activeTracks])
+
     useIntervalWorker(onTimeChange)
 
     const getCoordinates = (time: number) => {

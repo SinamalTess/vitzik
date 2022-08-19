@@ -133,7 +133,10 @@ export function InstrumentPlayer({
 
     useEffect(() => {
         const notes = activeNotes.filter((note) => note.channel === channel)
-        if (isMute || !notes.length || !instrumentPlayer || channel === MIDI_INPUT_CHANNEL) return
+        const shouldPlay =
+            !isMute && notes.length && instrumentPlayer && channel !== MIDI_INPUT_CHANNEL
+
+        if (!shouldPlay) return
 
         let newNotes = notes
 
