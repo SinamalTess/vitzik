@@ -11,7 +11,6 @@ describe('ButtonGroup', () => {
                 <Button>There</Button>
             </ButtonGroup>
         )
-
         const buttons = screen.getAllByRole('button')
 
         buttons.forEach((button) => {

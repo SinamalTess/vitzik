@@ -46,6 +46,7 @@ describe('Tooltip', () => {
                     <span>I am the tooltip</span>
                 </Tooltip>
             )
+
             await screen.findByText('I am the tooltip')
         })
     })

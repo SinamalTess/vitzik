@@ -14,6 +14,7 @@ const props = {
 describe('Keyboard', () => {
     it('should render the proper number of keys', () => {
         render(<Keyboard {...props}></Keyboard>)
+
         const blackKeys = screen.getAllByText(/[a-g]\d/)
         const whiteKeys = screen.getAllByText(/[A-G]\d/)
 
@@ -35,8 +36,8 @@ describe('Keyboard', () => {
             key: 23,
             channel: 0,
         }
-
         render(<Keyboard {...props} activeNotes={[whiteKey, blackKey]}></Keyboard>)
+
         const correspondingWhiteKey = screen.getByTestId(/A0/)
         const correspondingBlackKey = screen.getByTestId(/Bb0/)
 

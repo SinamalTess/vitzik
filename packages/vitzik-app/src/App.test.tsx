@@ -1,5 +1,5 @@
 import { screen, render, act } from '@testing-library/react'
-import React, { ReactNode } from 'react'
+import React from 'react'
 import App from './App'
 import { midiAccessMock, requestMIDIAccess, MidiInputMock } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'

@@ -14,7 +14,6 @@ describe('Dropdown', () => {
     })
     it('should show an error when the children are not an array', () => {
         const consoleMock = jest.spyOn(console, 'error').mockImplementation(() => {})
-
         render(
             <Dropdown>
                 <DropdownToggle>Hello</DropdownToggle>
