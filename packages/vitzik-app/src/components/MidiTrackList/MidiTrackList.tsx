@@ -158,6 +158,7 @@ export function MidiTrackList({
                                   <span className={`${BASE_CLASS}__track-index`}>{index}</span>
                                   <Button
                                       icon={isActive ? 'eye-open' : 'eye-closed'}
+                                      color={isActive ? 'primary' : 'secondary'}
                                       onClick={() => handleClick(index)}
                                   />
                               </ListItemSecondaryAction>
