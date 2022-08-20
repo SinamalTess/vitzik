@@ -1,8 +1,8 @@
 import React, { useRef } from 'react'
 import { MidiVisualizerSection } from './MidiVisualizerSection'
 import { render, screen } from '@testing-library/react'
-import { MidiVisualizerNoteCoordinates } from '../../types'
 import canvasMock from 'jest-canvas-mock'
+import { MidiVisualizerNoteEvent } from './utils'
 
 jest.mock('react', () => {
     const originReact = jest.requireActual('react')
@@ -13,19 +13,20 @@ jest.mock('react', () => {
     }
 })
 
-const notesCoordinates: MidiVisualizerNoteCoordinates[] = [
+const notesCoordinates: MidiVisualizerNoteEvent[] = [
     {
         duration: 10,
         velocity: 100,
         name: 'A0',
         key: 21,
-        id: '1',
         w: 5,
         h: 10,
         x: 10,
         y: 5,
         channel: 0,
         startingTime: 0,
+        uniqueId: '1',
+        eventType: 'note',
     },
 ]
 

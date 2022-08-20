@@ -13,7 +13,7 @@ describe('InstrumentPlayer', () => {
     const activeNote: MidiVisualizerActiveNote = {
         name: 'A0',
         velocity: 100,
-        id: '1',
+        uniqueId: '1',
         duration: 25,
         key: 21,
         channel: 0,

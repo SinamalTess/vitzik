@@ -1,18 +1,11 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
-import {
-    Instrument,
-    ActiveNote,
-    MidiMetas,
-    MidiMode,
-    MidiVisualizerNoteCoordinates,
-    LoopTimestamps,
-} from '../../types'
+import { Instrument, ActiveNote, MidiMetas, MidiMode, LoopTimestamps } from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSection } from './MidiVisualizerSection'
 import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
-import { MidiVisualizerFactory } from './MidiVisualizerFactory'
+import { MidiVisualizerFactory, MidiVisualizerNoteEvent } from './utils'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 import { MidiEventsManager } from './MidiEventsManager'
@@ -56,15 +49,13 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     onChangeLoopTimes,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
-    const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteCoordinates[][]>(
-        []
-    )
+    const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteEvent[][]>([])
     const { intervalWorker } = useContext(AppContext)
 
     const svgs = ref.current?.getElementsByTagName('svg')
 
     const midiVisualizerFactory = useMemo(
-        () => new MidiVisualizerFactory(midiMetas, height, width, MS_PER_SECTION),
+        () => new MidiVisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas),
         [height, midiMetas, width]
     )
 

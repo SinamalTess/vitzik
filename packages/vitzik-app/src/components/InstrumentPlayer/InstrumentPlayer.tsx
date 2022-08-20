@@ -132,22 +132,24 @@ export function InstrumentPlayer({
     }, [instrumentName, isMute, soundfont])
 
     useEffect(() => {
-        const notes = activeNotes.filter((note) => note.channel === channel)
+        const sameChannelNotes = activeNotes.filter((note) => note.channel === channel)
         const shouldPlay =
-            !isMute && notes.length && instrumentPlayer && channel !== MIDI_INPUT_CHANNEL
+            !isMute && sameChannelNotes.length && instrumentPlayer && channel !== MIDI_INPUT_CHANNEL
 
         if (!shouldPlay) return
 
-        let newNotes = notes
+        let newNotes = sameChannelNotes
 
         if (prevActiveKeys) {
             const isNewNote = (note: ActiveNote) =>
                 !prevActiveKeys.find(
                     (prevActiveKey) =>
-                        'id' in prevActiveKey && 'id' in note && prevActiveKey.id === note.id
+                        'uniqueId' in prevActiveKey &&
+                        'uniqueId' in note &&
+                        prevActiveKey.uniqueId === note.uniqueId
                 )
 
-            newNotes = notes.filter((note) => isNewNote(note))
+            newNotes = sameChannelNotes.filter((note) => isNewNote(note))
         }
 
         newNotes.forEach((note) => {

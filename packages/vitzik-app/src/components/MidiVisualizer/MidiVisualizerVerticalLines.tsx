@@ -17,7 +17,7 @@ function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     ctx.canvas.width = w
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)'
 
-    const { widthWhiteKey } = KeyboardFactory.getWidthKeys(w)
+    const { widthWhiteKey } = new KeyboardFactory(w, 0).getWidthKeys()
     const margin = widthWhiteKey / 4
 
     for (let i = 0; i <= NB_WHITE_PIANO_KEYS; i++) {

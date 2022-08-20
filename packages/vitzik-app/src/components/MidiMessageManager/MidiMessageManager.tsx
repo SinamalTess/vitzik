@@ -52,7 +52,7 @@ export function MidiMessageManager({
     const [midiNotesAlreadyPlayed, setMidiNotesAlreadyPlayed] = useState<Set<string>>(new Set())
 
     useEffect(() => {
-        function removeNote(note: MidiInputActiveNote) {
+        function onNoteOff(note: MidiInputActiveNote) {
             setNotesBeingHeld((notesBeingHeld) => removeActiveNotes(notesBeingHeld, [note]))
             onChangeActiveNotes((prevActiveNotes) => removeActiveNotes(prevActiveNotes, [note]))
         }
@@ -66,25 +66,25 @@ export function MidiMessageManager({
                 const isNoteBeingHeld = notesBeingHeld.find(
                     (noteBeingHeld) => noteBeingHeld.name === midiActiveNote.name
                 )
-                const isNoteAlreadyPlayed = midiNotesAlreadyPlayed.has(midiActiveNote.id)
+                const isNoteAlreadyPlayed = midiNotesAlreadyPlayed.has(midiActiveNote.uniqueId)
 
                 return isCurrentNote || isNoteBeingHeld || isNoteAlreadyPlayed
             })
         }
 
-        function addNote(note: MidiInputActiveNote) {
+        function onNoteOn(note: MidiInputActiveNote) {
             setNotesBeingHeld((notesBeingHeld) => [...notesBeingHeld, note])
 
             const midiActiveNotes = activeNotes.filter((activeNote) =>
                 isMidiVisualizerActiveNote(activeNote)
             ) as MidiVisualizerActiveNote[]
 
-            const isAllMidiNotesPlayed = checkAllMidiNotesPlayed(midiActiveNotes, note)
-
             onChangeActiveNotes((prevActiveNotes) => [...prevActiveNotes, note])
 
+            const isAllMidiNotesPlayed = checkAllMidiNotesPlayed(midiActiveNotes, note)
+
             if (isAllMidiNotesPlayed) {
-                const midiActiveNotesIds = midiActiveNotes.map(({ id }) => id)
+                const midiActiveNotesIds = midiActiveNotes.map(({ uniqueId }) => uniqueId)
                 setMidiNotesAlreadyPlayed(
                     (midiNotesAlreadyPlayed) =>
                         new Set([...midiNotesAlreadyPlayed, ...midiActiveNotesIds])
@@ -108,10 +108,10 @@ export function MidiMessageManager({
             const { command, note } = getMessage(message)
             switch (command) {
                 case MIDI_MESSAGE_CONTROL.NOTE_ON:
-                    note.velocity > 0 ? addNote(note) : removeNote(note)
+                    note.velocity > 0 ? onNoteOn(note) : onNoteOff(note)
                     break
                 case MIDI_MESSAGE_CONTROL.NOTE_OFF:
-                    removeNote(note)
+                    onNoteOff(note)
                     break
             }
         }

@@ -3,7 +3,7 @@ import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import { ActiveNote, Instrument, MidiMetas, MidiMode } from '../../types'
 import { isUserChannel } from './MidiVisualizer'
-import { MidiVisualizerFactory, SectionNoteCoordinates } from './MidiVisualizerFactory'
+import { MidiVisualizerFactory, SectionNoteCoordinates } from './utils/MidiVisualizerFactory'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 
 interface MidiEventsManagerProps {

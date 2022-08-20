@@ -23,7 +23,7 @@ interface KeyboardProps {
     showNotes?: boolean
 }
 
-const keyboardFactory = new KeyboardFactory(100)
+const keyboardFactory = new KeyboardFactory(100, 100)
 
 const KEYBOARD_KEYS = keyboardFactory.getKeys()
 
@@ -32,9 +32,9 @@ const BASE_CLASS = 'keyboard'
 function getKeyStyles(keyName: AlphabeticalNote) {
     const isBlackKey = KeyboardFactory.isBlackKey(keyName)
     const isSpecialKey = KeyboardFactory.isSpecialKey(keyName)
-    const { widthWhiteKey, widthBlackKey } = KeyboardFactory.getWidthKeys(100)
+    const { widthWhiteKey } = keyboardFactory.getWidthKeys()
     const margin = isBlackKey || !isSpecialKey ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
-    const width = isBlackKey ? `${widthBlackKey}%` : `${widthWhiteKey}%`
+    const width = `${keyboardFactory.getWidthKey(keyName)}%`
 
     return {
         margin,
@@ -87,24 +87,27 @@ export function Keyboard({
            Sometimes the same note is hit at the same time but on different channels.
            We only remove the last note found and this is on purpose.
        */
-        const lastMidiNote = last(midiActiveNotes)
+        const lastMidiActiveNote = last(midiActiveNotes)
 
-        if (lastMidiNote) {
-            const newActiveNotes = removeActiveNotes([note, lastMidiNote])
+        if (lastMidiActiveNote) {
             if (midiMode === 'wait') {
-                const isAllNotesPlayed = newActiveNotes.length === 0
-                if (isAllNotesPlayed && onAllMidiKeysPlayed) {
+                const newActiveNotes = removeActiveNotes([note, lastMidiActiveNote])
+                const allNotesHaveBeenPlayed = newActiveNotes.length === 0
+
+                if (allNotesHaveBeenPlayed) {
                     onChangeActiveNotes(newActiveNotes)
-                    onAllMidiKeysPlayed()
+                    onAllMidiKeysPlayed?.()
                 }
             } else {
-                onChangeActiveNotes(removeActiveNotes([note]))
+                const newActiveNotes = removeActiveNotes([note])
+                onChangeActiveNotes(newActiveNotes)
             }
         } else {
             const newActiveNotes = removeActiveNotes([note])
-            const isAllNotesPlayed = newActiveNotes.length === 0
-            if (isAllNotesPlayed && onAllMidiKeysPlayed) {
-                onAllMidiKeysPlayed()
+            const allNotesHaveBeenPlayed = newActiveNotes.length === 0
+
+            if (allNotesHaveBeenPlayed) {
+                onAllMidiKeysPlayed?.()
             }
             onChangeActiveNotes(newActiveNotes)
         }

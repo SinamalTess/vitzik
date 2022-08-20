@@ -1,5 +1,5 @@
 import { AlphabeticalNote } from './Notes'
-import { MIDI_INPUT_CHANNEL } from '../utils/const'
+import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../utils/const'
 
 export interface MidiInputActiveNote {
     name?: AlphabeticalNote
@@ -11,7 +11,7 @@ export interface MidiInputActiveNote {
 export interface MidiVisualizerActiveNote {
     name?: AlphabeticalNote
     velocity: number
-    id: string
+    uniqueId: string
     duration: number
     key: number
     channel: number
@@ -23,4 +23,4 @@ export type ActiveNote = MidiInputActiveNote | MidiVisualizerActiveNote
 export const isMidiVisualizerActiveNote = (
     activeNote: ActiveNote
 ): activeNote is MidiVisualizerActiveNote =>
-    'id' in activeNote && activeNote.channel !== MIDI_INPUT_CHANNEL
+    activeNote.channel !== MIDI_INPUT_CHANNEL && activeNote.channel !== KEYBOARD_CHANNEL
