@@ -1,0 +1,19 @@
+@import '../../style/mixins/index';
+@import '../../style/vars';
+
+.midi-visualizer__slide {
+    position: absolute;
+    transform: translate3d(0, 0, 0);
+    transition: transform 50ms linear;
+    height: 100%;
+    @include add-channel-colors() using ($color) {
+        fill: $color;
+    }
+    canvas {
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        display: inline-block;
+        left: 0;
+    }
+}

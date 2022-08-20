@@ -1,12 +1,20 @@
 import { MidiVisualizer } from '../MidiVisualizer'
 import React from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { MidiMetas, ActiveNote, MidiMode, Instrument, LoopTimestamps } from '../../types'
+import {
+    MidiMetas,
+    ActiveNote,
+    MidiPlayMode,
+    Instrument,
+    LoopTimestamps,
+    AudioPlayerState,
+} from '../../types'
 import { ErrorBoundary } from 'vitzik-ui'
 
 interface VisualizerProps {
     activeInstruments: Instrument[]
-    midiMode: MidiMode
+    midiPlayMode: MidiPlayMode
+    timeToNextNote: number | null
     loopTimestamps: LoopTimestamps
     isEditingLoop: boolean
     midiFile: IMidiFile | null
@@ -16,12 +24,14 @@ interface VisualizerProps {
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
+    onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
 export const Visualizer = React.memo(function Preview({
     loopTimestamps,
     activeInstruments,
-    midiMode,
+    midiPlayMode,
+    timeToNextNote,
     isEditingLoop,
     midiFile,
     midiMetas,
@@ -30,6 +40,7 @@ export const Visualizer = React.memo(function Preview({
     onChangeTimeToNextNote,
     onChangeActiveInstruments,
     onChangeLoopTimestamps,
+    onChangeAudioPlayerState,
 }: VisualizerProps) {
     return (
         <ErrorBoundary>
@@ -38,14 +49,16 @@ export const Visualizer = React.memo(function Preview({
                     loopTimestamps={loopTimestamps}
                     activeInstruments={activeInstruments}
                     midiFile={midiFile}
-                    midiMode={midiMode}
+                    midiMode={midiPlayMode}
                     midiMetas={midiMetas}
+                    timeToNextNote={timeToNextNote}
                     isEditingLoop={isEditingLoop}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
                     onChangeTimeToNextNote={onChangeTimeToNextNote}
                     onChangeInstruments={onChangeActiveInstruments}
                     onChangeLoopTimes={onChangeLoopTimestamps}
+                    onChangeAudioPlayerState={onChangeAudioPlayerState}
                 />
             ) : null}
         </ErrorBoundary>

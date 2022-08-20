@@ -1,16 +1,15 @@
 import { MidiVisualizerActiveNote, MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { isEven } from '../../../utils'
-import findLast from 'lodash/findLast'
 import minBy from 'lodash/minBy'
 import { MidiVisualizerNoteEvent } from './MidiVisualizerEvents'
-import { MidiVisualizerFileParser } from './MidiVisualizerFileParser'
+import { MidiVisualizerFileParserFactory } from './MidiVisualizerFileParserFactory'
 
 export interface SectionNoteCoordinates {
     [sectionIndex: number]: MidiVisualizerNoteEvent[]
 }
 
-export class MidiVisualizerFactory extends MidiVisualizerFileParser {
+export class MidiVisualizerFactory extends MidiVisualizerFileParserFactory {
     width: number
     height: number
     msPerSection: number
@@ -37,13 +36,6 @@ export class MidiVisualizerFactory extends MidiVisualizerFileParser {
         this.ticksPerBeat = midiMetas.ticksPerBeat
     }
 
-    static getMsPerBeatFromTime = (allMsPerBeat: MsPerBeat[], time: number) => {
-        return (
-            findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
-            allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
-        )
-    }
-
     noteCoordinatesToActiveNotes = (
         noteCoordinates: MidiVisualizerNoteEvent[]
     ): MidiVisualizerActiveNote[] =>
@@ -61,41 +53,35 @@ export class MidiVisualizerFactory extends MidiVisualizerFileParser {
 
     getIndexSectionPlaying = (time: number) => Math.floor(time / this.msPerSection)
 
-    getPercentageTopSection = (time: number) => {
+    getSlidesPercentageTop = (time: number) => {
         const exactNbSectionPassed = time / this.msPerSection
-        const percentageTop = +((exactNbSectionPassed % 1) * 100).toFixed(2)
-        const percentage1 = `${100 - percentageTop}%`
-        const percentage2 = `-${percentageTop}%`
+        const percentageTop = +((exactNbSectionPassed % 1) * 100)
+        const percentageTop1 = `${100 - percentageTop}%`
+        const percentageTop2 = `-${percentageTop}%`
         const indexSectionPlaying = this.getIndexSectionPlaying(time)
-        const isIndexEven = isEven(indexSectionPlaying)
+        const isIndexSectionPlayingEven = isEven(indexSectionPlaying)
 
-        return {
-            0: isIndexEven ? percentage2 : percentage1,
-            1: isIndexEven ? percentage1 : percentage2,
-        }
+        return isIndexSectionPlayingEven
+            ? [percentageTop2, percentageTop1]
+            : [percentageTop1, percentageTop2]
     }
 
-    getIndexToDraw = (time: number) => {
+    getIndexesSectionToDraw = (time: number) => {
         const indexSectionPlaying = this.getIndexSectionPlaying(time)
-        const isIndexEven = isEven(indexSectionPlaying)
-        if (indexSectionPlaying === 0) {
+        const nextSectionIndex = indexSectionPlaying + 1
+        const isIndexSectionEven = isEven(indexSectionPlaying)
+
+        if (time === 0) {
+            const slideToRedraw = isIndexSectionEven ? 'slide1' : 'slide0'
             return {
-                0: 0,
-                1: 1,
+                slide0: indexSectionPlaying,
+                slide1: indexSectionPlaying,
+                [slideToRedraw]: nextSectionIndex
             }
         } else {
-            if (time === 0) {
-                const sectionToRedraw: number = isIndexEven ? 1 : 0
-                return {
-                    0: indexSectionPlaying,
-                    1: indexSectionPlaying,
-                    [sectionToRedraw]: indexSectionPlaying + 1,
-                }
-            } else {
-                return {
-                    0: isIndexEven ? indexSectionPlaying : indexSectionPlaying + 1,
-                    1: isIndexEven ? indexSectionPlaying + 1 : indexSectionPlaying,
-                }
+            return {
+                slide0: isIndexSectionEven ? indexSectionPlaying : nextSectionIndex,
+                slide1: isIndexSectionEven ? nextSectionIndex : indexSectionPlaying,
             }
         }
     }
@@ -193,5 +179,5 @@ export class MidiVisualizerFactory extends MidiVisualizerFileParser {
         return mergedCoordinates
     }
 
-    getNotesCoordinates = (midiFile: IMidiFile) => this.parse(midiFile)
+    getNotesCoordinates = (midiFile: IMidiFile) => this.parseMidiJson(midiFile)
 }

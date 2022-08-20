@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Settings } from './components/Settings'
 import {
     AudioPlayerState,
-    MidiMode,
+    MidiPlayMode,
     MusicSystem,
     AppMode,
     MidiMetas,
@@ -20,7 +20,6 @@ import { Preview } from './components/Preview'
 import { AppContextProvider } from './components/_contexts'
 
 function App() {
-    const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
     const [activeInstruments, setActiveInstruments] = useState<Instrument[]>(DEFAULT_INSTRUMENTS)
@@ -33,7 +32,7 @@ function App() {
     const [midiTitle, setMidiTitle] = useState<string>('')
     const [midiInput, setMidiInput] = useState<MIDIInput | null>(null)
     const [midiOutput, setMidiOutput] = useState<MIDIOutput | null>(null)
-    const [midiMode, setMidiMode] = useState<MidiMode>('autoplay')
+    const [midiPlayMode, setMidiPlayMode] = useState<MidiPlayMode>('autoplay')
     const [loopTimestamps, setLoopTimestamps] = useState<LoopTimestamps>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
     const [showNotes, setShowNotes] = useState(true)
@@ -42,13 +41,6 @@ function App() {
     >([])
 
     useTitle('Vitzik')
-
-    useEffect(() => {
-        if (midiMode === 'autoplay') {
-            // clears the next note in case one was set so the player can play without stopping
-            setTimeToNextNote(null)
-        }
-    }, [midiMode])
 
     return (
         <AppContextProvider>
@@ -60,7 +52,6 @@ function App() {
                             midiSpeedFactor={midiSpeedFactor}
                             playerState={audioPlayerState}
                             isMute={isMute}
-                            timeToNextNote={timeToNextNote}
                             title={midiTitle}
                             duration={midiMetas.midiDuration}
                             loopTimes={loopTimestamps}
@@ -78,7 +69,7 @@ function App() {
                         midiSpeedFactor={midiSpeedFactor}
                         midiMetas={midiMetas}
                         loadedInstrumentPlayers={loadedInstrumentPlayers}
-                        midiMode={midiMode}
+                        midiPlayMode={midiPlayMode}
                         midiAccessMode={midiAccessMode}
                         musicSystem={musicSystem}
                         activeTracks={activeTracks}
@@ -89,7 +80,7 @@ function App() {
                         onChangeMusicSystem={setMusicSystem}
                         onChangeInstrument={setActiveInstruments}
                         onChangeActiveTracks={setActiveTracks}
-                        onMidiModeChange={setMidiMode}
+                        onMidiModeChange={setMidiPlayMode}
                         onMidiAccessModeChange={setMidiAccessMode}
                         onChangeIsEditingLoop={setIsEditingLoop}
                         onMute={setIsMute}
@@ -98,7 +89,6 @@ function App() {
                     />
                 </div>
                 <Preview
-                    timeToNextNote={timeToNextNote}
                     isMute={isMute}
                     midiTitle={midiTitle}
                     midiMetas={midiMetas}
@@ -111,7 +101,7 @@ function App() {
                     midiAccessMode={midiAccessMode}
                     activeInstruments={activeInstruments}
                     isEditingLoop={isEditingLoop}
-                    midiMode={midiMode}
+                    midiPlayMode={midiPlayMode}
                     musicSystem={musicSystem}
                     onChangeMidiTitle={setMidiTitle}
                     onChangeLoopTimestamps={setLoopTimestamps}
@@ -119,7 +109,6 @@ function App() {
                     onChangeActiveTracks={setActiveTracks}
                     onChangeAudioPlayerState={setAudioPlayerState}
                     onChangeMidiMetas={setMidiMetas}
-                    onChangeTimeToNextNote={setTimeToNextNote}
                     onChangeLoadedInstrumentPlayers={setLoadedInstrumentPlayers}
                 />
             </div>

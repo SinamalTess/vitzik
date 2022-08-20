@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import './Settings.scss'
 import {
     MusicSystem,
-    MidiMode,
+    MidiPlayMode,
     AppMode,
     MidiMetas,
     InstrumentUserFriendlyName,
@@ -22,7 +22,7 @@ import { AppContext } from '../_contexts'
 interface SettingsProps {
     showNotes: boolean
     appMode: AppMode
-    midiMode: MidiMode
+    midiPlayMode: MidiPlayMode
     midiAccessMode: MidiAccessMode
     midiMetas: MidiMetas | null
     musicSystem: MusicSystem
@@ -37,7 +37,7 @@ interface SettingsProps {
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
     onMidiOutputChange: React.Dispatch<React.SetStateAction<MIDIOutput | null>>
-    onMidiModeChange: React.Dispatch<React.SetStateAction<MidiMode>>
+    onMidiModeChange: React.Dispatch<React.SetStateAction<MidiPlayMode>>
     onMidiAccessModeChange: React.Dispatch<React.SetStateAction<MidiAccessMode>>
     onChangeMidiSpeedFactor: React.Dispatch<React.SetStateAction<number>>
     onChangeIsEditingLoop: React.Dispatch<React.SetStateAction<boolean>>
@@ -51,7 +51,7 @@ const BASE_CLASS = 'settings'
 export function Settings({
     showNotes,
     appMode,
-    midiMode,
+    midiPlayMode,
     midiAccessMode,
     midiMetas,
     musicSystem,
@@ -95,8 +95,8 @@ export function Settings({
             switch (midiMode) {
                 case 'autoplay':
                     onMute(true)
-                    return 'wait'
-                case 'wait':
+                    return 'waitForValidInput'
+                case 'waitForValidInput':
                     onMute(false)
                     return 'autoplay'
             }
@@ -161,7 +161,7 @@ export function Settings({
                     />
                     <Divider variant="vertical" />
                     <Tooltip showOnHover>
-                        <Switch isOn={midiMode === 'autoplay'} onClick={handleMidiModeClick}>
+                        <Switch isOn={midiPlayMode === 'autoplay'} onClick={handleMidiModeClick}>
                             Autoplay
                         </Switch>
                         <span>

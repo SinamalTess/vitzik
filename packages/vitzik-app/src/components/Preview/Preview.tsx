@@ -12,7 +12,7 @@ import {
     InstrumentUserFriendlyName,
     MidiAccessMode,
     MidiMetas,
-    MidiMode,
+    MidiPlayMode,
     MusicSystem,
     LoopTimestamps,
 } from '../../types'
@@ -43,7 +43,6 @@ function resumeAudioContext() {
 interface PreviewProps {
     isMute: boolean
     showNotes: boolean
-    timeToNextNote: number | null
     midiTitle: string
     loopTimes: LoopTimestamps
     activeTracks: number[]
@@ -53,7 +52,7 @@ interface PreviewProps {
     musicSystem: MusicSystem
     midiAccessMode: MidiAccessMode
     midiMetas: MidiMetas | null
-    midiMode: MidiMode
+    midiPlayMode: MidiPlayMode
     activeInstruments: Instrument[]
     isEditingLoop: boolean
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
@@ -62,7 +61,6 @@ interface PreviewProps {
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onChangeMidiMetas: React.Dispatch<React.SetStateAction<MidiMetas | null>>
-    onChangeTimeToNextNote: React.Dispatch<React.SetStateAction<number | null>>
     onChangeLoadedInstrumentPlayers: React.Dispatch<
         React.SetStateAction<InstrumentUserFriendlyName[]>
     >
@@ -71,13 +69,12 @@ interface PreviewProps {
 export function Preview({
     isMute,
     showNotes,
-    timeToNextNote,
     activeTracks,
     loopTimes,
     midiInput,
     midiOutput,
     midiMetas,
-    midiMode,
+    midiPlayMode,
     musicSystem,
     midiAccessMode,
     midiTitle,
@@ -90,19 +87,26 @@ export function Preview({
     onChangeActiveTracks,
     onChangeAudioPlayerState,
     onChangeMidiMetas,
-    onChangeTimeToNextNote,
     onChangeLoadedInstrumentPlayers,
 }: PreviewProps) {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
+    const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
     const handleAllMidiKeysPlayed = useCallback(
         function handleAllMidiKeysPlayed() {
-            if (timeToNextNote && midiMode === 'wait') {
+            if (timeToNextNote && midiPlayMode === 'waitForValidInput') {
                 onChangeAudioPlayerState('playing')
             }
         },
-        [midiMode, timeToNextNote]
+        [midiPlayMode, timeToNextNote]
     )
+
+    useEffect(() => {
+        if (midiPlayMode === 'autoplay') {
+            // clears the next note in case one was set so the player can play without stopping
+            setTimeToNextNote(null)
+        }
+    }, [midiPlayMode])
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         const metas = getMidiMetas(midiJSON)
@@ -146,23 +150,25 @@ export function Preview({
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 <Visualizer
                     loopTimestamps={loopTimes}
+                    timeToNextNote={timeToNextNote}
                     activeInstruments={activeInstruments}
-                    midiMode={midiMode}
+                    midiPlayMode={midiPlayMode}
                     isEditingLoop={isEditingLoop}
                     midiFile={midiFile}
                     midiMetas={midiMetas}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={setActiveNotes}
-                    onChangeTimeToNextNote={onChangeTimeToNextNote}
+                    onChangeTimeToNextNote={setTimeToNextNote}
                     onChangeActiveInstruments={onChangeActiveInstruments}
                     onChangeLoopTimestamps={onChangeLoopTimestamps}
+                    onChangeAudioPlayerState={onChangeAudioPlayerState}
                 />
             </div>
             <div className="item">
                 <Keyboard
                     activeNotes={activeNotes}
                     musicSystem={musicSystem}
-                    midiMode={midiMode}
+                    midiPlayMode={midiPlayMode}
                     showNotes={showNotes}
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     onChangeActiveNotes={setActiveNotes}

@@ -2,11 +2,11 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { Keyboard } from './Keyboard'
 import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../utils/const'
-import { MidiInputActiveNote, MidiMode } from '../../types'
+import { MidiInputActiveNote, MidiPlayMode } from '../../types'
 import { clickKey } from '../../tests/utils'
 
 const props = {
-    midiMode: 'autoplay' as MidiMode,
+    midiPlayMode: 'autoplay' as MidiPlayMode,
     activeNotes: [],
     onChangeActiveNotes: jest.fn(),
 }

@@ -4,7 +4,7 @@ import {
     ActiveNote,
     AlphabeticalNote,
     MidiInputActiveNote,
-    MidiMode,
+    MidiPlayMode,
     MidiVisualizerActiveNote,
     MusicSystem,
 } from '../../types'
@@ -17,7 +17,7 @@ import { KeyboardFactory } from './KeyboardFactory'
 interface KeyboardProps {
     activeNotes: ActiveNote[]
     musicSystem?: MusicSystem
-    midiMode: MidiMode
+    midiPlayMode: MidiPlayMode
     onChangeActiveNotes: (note: MidiInputActiveNote[]) => void
     onAllMidiKeysPlayed?: () => void
     showNotes?: boolean
@@ -45,7 +45,7 @@ function getKeyStyles(keyName: AlphabeticalNote) {
 export function Keyboard({
     activeNotes,
     musicSystem = 'alphabetical',
-    midiMode,
+    midiPlayMode,
     onChangeActiveNotes,
     onAllMidiKeysPlayed,
     showNotes = true,
@@ -90,7 +90,7 @@ export function Keyboard({
         const lastMidiActiveNote = last(midiActiveNotes)
 
         if (lastMidiActiveNote) {
-            if (midiMode === 'wait') {
+            if (midiPlayMode === 'waitForValidInput') {
                 const newActiveNotes = removeActiveNotes([note, lastMidiActiveNote])
                 const allNotesHaveBeenPlayed = newActiveNotes.length === 0
 

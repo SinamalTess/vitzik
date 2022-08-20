@@ -2,9 +2,9 @@ import { Tooltip, Button, ButtonGroup } from 'vitzik-ui'
 import React, { useEffect, useState } from 'react'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
-import { MidiVisualizerFactory } from '../MidiVisualizer/utils/MidiVisualizerFactory'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { MidiFactory } from '../../utils'
+import findLast from "lodash/findLast";
 
 interface BpmSelectorProps {
     midiSpeedFactor: number
@@ -36,8 +36,15 @@ const SPEED_FACTORS = [
     },
 ]
 
+function getMsPerBeatFromTime (allMsPerBeat: MsPerBeat[], time: number) {
+    return (
+        findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
+        allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
+    )
+}
+
 function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
-    const msPerBeat = MidiVisualizerFactory.getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
+    const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
     const bpm = MidiFactory.Time().msPerBeatToBpm(msPerBeat)
     return Math.round(bpm / midiSpeedFactor)
 }

@@ -6,7 +6,6 @@ import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
 import { AppContext } from '../_contexts'
 import { Shortcuts } from './Shortcuts'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 
 interface AudioPlayerProps {
     midiMetas: MidiMetas
@@ -15,7 +14,6 @@ interface AudioPlayerProps {
     title?: string
     duration: number
     isMute?: boolean
-    timeToNextNote?: number | null
     loopTimes?: LoopTimestamps
     onChangeState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
     onToggleSound: React.Dispatch<React.SetStateAction<boolean>>
@@ -31,52 +29,13 @@ export function AudioPlayer({
     loopTimes = [null, null],
     title,
     duration,
-    timeToNextNote = null,
     onToggleSound,
     onChangeState,
 }: AudioPlayerProps) {
     const isPlaying = playerState === 'playing'
-    const [startLoop, endLoop] = loopTimes
     const [prevPlayerState, setPrevPlayerState] = useState<AudioPlayerState>(playerState)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
     const { setShortcuts } = useContext(AppContext)
-
-    useIntervalWorker(onTimeChange)
-
-    function onTimeChange(time: number) {
-        checkIsEndOfSong(time)
-        checkIsEndOfLoop(time)
-        checkForWaitMode(time)
-    }
-
-    function checkIsEndOfSong(time: number) {
-        if (time > duration) {
-            onChangeState('stopped')
-        }
-    }
-
-    function checkIsEndOfLoop(time: number) {
-        // if loops are defined we restart at the beginning of the loop if the end is reached
-        if (startLoop && endLoop && time > endLoop) {
-            // TODO: fix cause this can be 0
-            const previousState = playerState
-            onChangeState('seeking')
-            setWorkerInitialTime(startLoop - 100 ?? 0) // starts a bit before the loop start
-            /*
-                Yeah, this setTimeout() is ugly...but otherwise the state is not restored, and we can't use flushSync here
-            */
-            setTimeout(() => {
-                onChangeState(previousState)
-            }, 100)
-        }
-    }
-
-    function checkForWaitMode(time: number) {
-        // in `wait` mode we pause until the user hits the right keys
-        if (timeToNextNote && time >= timeToNextNote) {
-            onChangeState('paused')
-        }
-    }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target

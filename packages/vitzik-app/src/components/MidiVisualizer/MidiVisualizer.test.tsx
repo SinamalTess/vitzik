@@ -22,6 +22,7 @@ describe('MidiVisualizer', () => {
         render(
             <MidiVisualizer
                 midiMetas={midiMetas}
+                timeToNextNote={null}
                 activeInstruments={[DEFAULT_MIDI_INSTRUMENT]}
                 activeTracks={[1]}
                 midiFile={midiJson as IMidiFile}
@@ -29,6 +30,7 @@ describe('MidiVisualizer', () => {
                 onChangeInstruments={() => {}}
                 onChangeLoopTimes={() => {}}
                 onChangeTimeToNextNote={() => {}}
+                onChangeAudioPlayerState={() => {}}
             />
         )
 

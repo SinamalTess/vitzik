@@ -12,7 +12,7 @@ export interface SectionNoteCoordinates {
     [sectionIndex: number]: MidiVisualizerNoteEvent[]
 }
 
-export class MidiVisualizerFileParser extends MidiVisualizerEventsFactory {
+export class MidiVisualizerFileParserFactory extends MidiVisualizerEventsFactory {
     notesBeingProcessed: MidiVisualizerNoteEvent[]
     width: number
     height: number
@@ -35,7 +35,6 @@ export class MidiVisualizerFileParser extends MidiVisualizerEventsFactory {
     ) {
         super(containerDimensions, msPerSection, midiMetas)
 
-        this.notesBeingProcessed = []
         this.width = containerDimensions.width
         this.height = containerDimensions.height
         this.allMsPerBeat = midiMetas.allMsPerBeat
@@ -43,6 +42,7 @@ export class MidiVisualizerFileParser extends MidiVisualizerEventsFactory {
         this.ticksPerBeat = midiMetas.ticksPerBeat
         this.msPerSection = msPerSection
         this.msPerBeatValue = MidiFactory.Time().getInitialMsPerBeatValue(midiMetas.allMsPerBeat)
+        this.notesBeingProcessed = []
     }
 
     private processNoteOnEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
@@ -96,14 +96,14 @@ export class MidiVisualizerFileParser extends MidiVisualizerEventsFactory {
         }
     }
 
-    parse = (midiFile: IMidiFile) => {
-        const { tracks } = midiFile
-        let notesCoordinates: SectionNoteCoordinates[][] = []
+    parseMidiJson = (midiJson: IMidiFile) => {
+        const { tracks } = midiJson
+        let noteEvents: SectionNoteCoordinates[][] = []
 
         tracks.forEach((track) => {
             let deltaAcc = 0
             this.notesBeingProcessed = []
-            let notesCoordinatesInTrack: {
+            let noteEventsInTrack: {
                 [sectionIndex: number]: MidiVisualizerNoteEvent[]
             }[] = []
 
@@ -121,13 +121,13 @@ export class MidiVisualizerFileParser extends MidiVisualizerEventsFactory {
                 if (isNoteOnEvent) {
                     this.processNoteOnEvent(event, deltaAcc)
                 } else if (isNoteOffEvent) {
-                    this.processNoteOffEvent(event, deltaAcc, notesCoordinatesInTrack)
+                    this.processNoteOffEvent(event, deltaAcc, noteEventsInTrack)
                 }
             })
 
-            notesCoordinates.push(notesCoordinatesInTrack)
+            noteEvents.push(noteEventsInTrack)
         })
 
-        return notesCoordinates
+        return noteEvents
     }
 }

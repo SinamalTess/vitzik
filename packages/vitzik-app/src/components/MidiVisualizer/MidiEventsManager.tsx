@@ -1,41 +1,58 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
-import { ActiveNote, Instrument, MidiMetas, MidiMode } from '../../types'
+import {
+    ActiveNote,
+    AudioPlayerState,
+    Instrument,
+    LoopTimestamps,
+    MidiMetas,
+    MidiPlayMode,
+} from '../../types'
 import { isUserChannel } from './MidiVisualizer'
-import { MidiVisualizerFactory, SectionNoteCoordinates } from './utils/MidiVisualizerFactory'
+import { MidiVisualizerFactory, SectionNoteCoordinates } from './utils'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { AppContext } from '../_contexts'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
-    midiMode: MidiMode
+    midiMode: MidiPlayMode
+    loopTimestamps?: LoopTimestamps
+    timeToNextNote: number | null
     midiVisualizerFactory: MidiVisualizerFactory
     activeInstruments: Instrument[]
     activeTracksCoordinates: SectionNoteCoordinates[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
+    onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
 export function MidiEventsManager({
     midiMetas,
     activeInstruments,
+    loopTimestamps,
     midiVisualizerFactory,
     midiMode,
+    timeToNextNote,
     activeTracksCoordinates,
     onChangeActiveNotes,
     onChangeInstruments,
     onChangeTimeToNextNote,
+    onChangeAudioPlayerState,
 }: MidiEventsManagerProps) {
     const midiTrackInstruments = activeInstruments.filter(({ channel }) => !isUserChannel(channel))
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
+    const { intervalWorker } = useContext(AppContext)
 
     useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
+        checkIsEndOfSong(time)
         setActiveNotes(time)
-        if (midiMode === 'wait') {
+        checkForWaitMode(time)
+        if (midiMode === 'waitForValidInput') {
             setTimeToNextNote(time)
         }
         if (isMultiInstrumentsTrack) {
@@ -44,6 +61,32 @@ export function MidiEventsManager({
             if (hasNewInstruments) {
                 onChangeInstruments(instruments)
             }
+        }
+        if (loopTimestamps) {
+            checkIsEndOfLoop(time)
+        }
+    }
+
+    function checkIsEndOfSong(time: number) {
+        if (time > midiMetas.midiDuration) {
+            onChangeAudioPlayerState('stopped')
+        }
+    }
+
+    function checkIsEndOfLoop(time: number) {
+        const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
+        if (startLoop && endLoop && time > endLoop) {
+            intervalWorker?.postMessage({
+                code: 'updateTimer',
+                startAt: startLoop - 200 ?? 0,
+            })
+        }
+    }
+
+    function checkForWaitMode(time: number) {
+        // in `wait` mode we pause until the user hits the right keys
+        if (timeToNextNote && time >= timeToNextNote) {
+            onChangeAudioPlayerState('paused')
         }
     }
 

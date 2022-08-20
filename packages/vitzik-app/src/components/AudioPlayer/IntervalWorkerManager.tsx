@@ -22,13 +22,8 @@ export function IntervalWorkerManager({
 
     useEffect(() => {
         if (prevMidiSpeedFactor !== midiSpeedFactor) {
-            setIsStarted(false)
             intervalWorker?.postMessage({
-                code: 'paused',
-            })
-            setIsStarted(true)
-            intervalWorker?.postMessage({
-                code: 'start',
+                code: 'restart',
                 startAt,
                 midiSpeedFactor,
             })
@@ -48,19 +43,19 @@ export function IntervalWorkerManager({
             case 'stopped':
                 setIsStarted(false)
                 intervalWorker?.postMessage({
-                    code: 'stopped',
+                    code: 'stop',
                 })
                 break
             case 'paused':
                 setIsStarted(false)
                 intervalWorker?.postMessage({
-                    code: 'paused',
+                    code: 'pause',
                 })
                 break
             case 'seeking':
                 setIsStarted(false)
                 intervalWorker?.postMessage({
-                    code: 'seeking',
+                    code: 'updateTimer',
                     startAt,
                 })
                 break
