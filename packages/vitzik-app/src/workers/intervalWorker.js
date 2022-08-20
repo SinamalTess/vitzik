@@ -10,7 +10,7 @@
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
-    const fps = 40
+    const fps = 60
     const interval = 1000 / fps
     let timeElapsed = 0
     let clock = null

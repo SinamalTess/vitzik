@@ -103,8 +103,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             const top = midiVisualizerFactory.getPercentageTopSection(time)
 
             if (svgs) {
-                svgs[0].style.transform = `translateY(${top[0]})`
-                svgs[1].style.transform = `translateY(${top[1]})`
+                svgs[0].style.transform = `translate3d(0, ${top[0]}, 0)`
+                svgs[1].style.transform = `translate3d(0, ${top[1]}, 0)`
             }
         }
 

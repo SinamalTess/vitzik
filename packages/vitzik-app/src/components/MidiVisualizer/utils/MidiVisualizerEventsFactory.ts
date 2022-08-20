@@ -64,7 +64,7 @@ export class MidiVisualizerEventsFactory {
             startingTime,
             duration: 0,
             eventType: 'note' as MidiVisualizerEventType,
-            uniqueId: `${name}-${y}-${note.channel}-${note.velocity}`,
+            uniqueId: `${name}-${y}-${note.channel}-${Math.random()}`,
         }
 
         if (name) {
