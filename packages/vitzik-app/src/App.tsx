@@ -1,5 +1,5 @@
 import './App.scss'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Settings } from './components/Settings'
 import {
     AudioPlayerState,

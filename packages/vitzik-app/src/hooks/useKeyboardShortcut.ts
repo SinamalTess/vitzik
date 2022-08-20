@@ -12,21 +12,21 @@ export const useKeyboardShortcut = (
     callbackKeyDown: Function,
     callbackKeyUp?: Function
 ) => {
-    const { shortcuts, setShortcuts } = useContext(AppContext)
+    const { keyboardShortcuts, setKeyboardShortcuts } = useContext(AppContext)
 
     useEffect(() => {
-        setShortcuts((shortcuts) => [...shortcuts, code])
+        setKeyboardShortcuts((shortcuts) => [...shortcuts, code])
     }, [])
 
     useEffect(() => {
         let unsubscribe: Function = () => {}
 
-        if (shortcuts.includes(code)) {
+        if (keyboardShortcuts.includes(code)) {
             unsubscribe = registerKeyboardShortcut(code, callbackKeyDown, callbackKeyUp)
         }
 
         return function cleanup() {
             unsubscribe()
         }
-    }, [callbackKeyDown, callbackKeyUp, code, shortcuts])
+    }, [callbackKeyDown, callbackKeyUp, code, keyboardShortcuts])
 }

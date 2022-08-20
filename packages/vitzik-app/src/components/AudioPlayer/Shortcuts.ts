@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { AudioPlayerState } from '../../types'
-import throttle from 'lodash/throttle'
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut'
-import { AppContext } from '../_contexts'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 
 interface KeyboardShortcutsProps {
@@ -19,7 +17,6 @@ export function Shortcuts({
     onToggleSound,
 }: KeyboardShortcutsProps) {
     const [prevState, setPrevState] = useState<AudioPlayerState>(playerState)
-    const { shortcuts } = useContext(AppContext)
     const midiCurrentTime = useRef<number>(0)
 
     useIntervalWorker(onTimeChange)
@@ -74,23 +71,6 @@ export function Shortcuts({
         onChangeState(prevState === 'stopped' ? 'paused' : prevState)
     }
 
-    useEffect(() => {
-        const onScroll = throttle((e: WheelEvent) => {
-            const FACTOR = 20
-            const { deltaY } = e
-            seekFor(deltaY * FACTOR)
-        }, 100)
-
-        if (shortcuts.includes('wheel')) {
-            document.addEventListener('wheel', onScroll)
-        } else {
-            document.removeEventListener('wheel', onScroll)
-        }
-
-        return function cleanup() {
-            document.removeEventListener('wheel', onScroll)
-        }
-    }, [shortcuts])
 
     return null
 }

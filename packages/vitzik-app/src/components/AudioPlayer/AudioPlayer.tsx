@@ -35,7 +35,7 @@ export function AudioPlayer({
     const isPlaying = playerState === 'playing'
     const [prevPlayerState, setPrevPlayerState] = useState<AudioPlayerState>(playerState)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
-    const { setShortcuts } = useContext(AppContext)
+    const { setKeyboardShortcuts } = useContext(AppContext)
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target
@@ -65,11 +65,11 @@ export function AudioPlayer({
     }
 
     function handlePlayButtonBlur() {
-        setShortcuts((shortcuts) => [...shortcuts, 'Space'])
+        setKeyboardShortcuts((shortcuts) => [...shortcuts, 'Space'])
     }
 
     function handlePlayButtonFocus() {
-        setShortcuts((shortcuts) =>
+        setKeyboardShortcuts((shortcuts) =>
             shortcuts.filter((activeShortcut) => activeShortcut !== 'Space')
         )
     }

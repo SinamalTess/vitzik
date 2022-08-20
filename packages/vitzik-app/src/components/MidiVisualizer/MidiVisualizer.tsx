@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
 import {
     Instrument,
@@ -17,6 +17,8 @@ import { LoopEditor } from './LoopEditor'
 import { MidiEventsManager } from './MidiEventsManager'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { isEven } from '../../utils'
+import throttle from 'lodash/throttle'
+import { AppContext } from '../_contexts'
 
 interface MidiVisualizerProps {
     activeInstruments: Instrument[]
@@ -60,6 +62,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteEvent[][]>([])
+    const { intervalWorker } = useContext(AppContext)
     const prevIndexToDraw = useRef({ slide0: 0, slide1: 1 })
     const timeRef = useRef(0)
 
@@ -154,10 +157,24 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         getCoordinates(timeRef.current, forceUpdate)
     }
 
+    useEffect(() => {}, [])
+
+    // @ts-ignore
+    function onWheel(e: WheelEvent<HTMLDivElement>) {
+        const onWheelCallback = () => {
+            const { deltaY } = e
+            intervalWorker?.postMessage({
+                code: 'updateTimer',
+                startAt: timeRef.current + deltaY,
+            })
+        }
+        throttle(onWheelCallback, 100)()
+    }
+
     if (!height || !width) return null
 
     return (
-        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'}>
+        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={onWheel}>
             {[0, 1].map((index) => {
                 return (
                     <MidiVisualizerSlide

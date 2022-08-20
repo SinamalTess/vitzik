@@ -4,14 +4,14 @@ import { render, screen } from '../tests/utils/customRender'
 import { AppContext } from '../components/_contexts'
 
 function MyComponent() {
-    const { shortcuts, setShortcuts } = useContext(AppContext)
+    const { keyboardShortcuts, setKeyboardShortcuts } = useContext(AppContext)
     const code = 'ArrowUp'
     const onKeyDown = jest.fn()
     const onKeyUp = jest.fn()
 
     useKeyboardShortcut(code, onKeyDown, onKeyUp)
 
-    return <div>Registered shortcuts: {shortcuts}</div>
+    return <div>Registered shortcuts: {keyboardShortcuts}</div>
 }
 
 describe('useKeyboardShortcut()', () => {

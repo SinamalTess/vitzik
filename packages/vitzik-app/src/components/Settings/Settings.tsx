@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './Settings.scss'
 import {
     MusicSystem,
@@ -75,7 +75,7 @@ export function Settings({
     onChangeShowNotes,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const { setShortcuts } = useContext(AppContext)
+    const { setKeyboardShortcuts } = useContext(AppContext)
     const userInstrument = activeInstruments.find(
         (instrument) => instrument.channel === MIDI_INPUT_CHANNEL
     )
@@ -105,18 +105,11 @@ export function Settings({
 
     function handleClickOnExtraSettings() {
         setIsOpen((isOpen) => !isOpen)
-        setShortcuts((shortcuts) =>
-            shortcuts.filter((activeShortcut) => activeShortcut !== 'wheel')
-        )
     }
 
-    const handleCloseExtraSettings = useCallback(
-        function handleCloseExtraSettings() {
-            setIsOpen(false)
-            setShortcuts((shortcuts) => [...shortcuts, 'wheel'])
-        },
-        [setShortcuts]
-    )
+    function handleCloseExtraSettings() {
+        setIsOpen(false)
+    }
 
     function handleMidiAccessModeClick() {
         onMidiAccessModeChange((midiAccessMode) =>
