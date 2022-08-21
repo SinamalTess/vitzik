@@ -55,7 +55,10 @@ export function MidiEventsManager({
                 break
             case 'waitForValidInput':
                 setNextNoteStartingTime(timeRef.current)
-                const activeNotes = visualizerFactory.getActiveNotes(activeTracksNoteEvents, timeRef.current)
+                const activeNotes = visualizerFactory.getActiveNotes(
+                    activeTracksNoteEvents,
+                    timeRef.current
+                )
                 if (!activeNotes.length) {
                     moveToNextNote()
                 }
@@ -64,11 +67,13 @@ export function MidiEventsManager({
     }, [midiPlayMode])
 
     function moveToNextNote() {
-        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(activeTracksNoteEvents, timeRef.current)
-        intervalWorker?.postMessage({
-            code: 'updateTimer',
-            startAt: nextNoteStartingTime,
-        })
+        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(
+            activeTracksNoteEvents,
+            timeRef.current
+        )
+        if (nextNoteStartingTime) {
+            intervalWorker?.updateTimer(nextNoteStartingTime)
+        }
     }
 
     useIntervalWorker(onTimeChange)
@@ -103,10 +108,7 @@ export function MidiEventsManager({
         const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
         if (startLoop && endLoop && time > endLoop) {
             const startAt = startLoop - 200 ?? 0
-            intervalWorker?.postMessage({
-                code: 'updateTimer',
-                startAt,
-            })
+            intervalWorker?.updateTimer(startAt)
         }
     }
 
@@ -129,7 +131,10 @@ export function MidiEventsManager({
     }
 
     function setNextNoteStartingTime(time: number) {
-        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(activeTracksNoteEvents, time)
+        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(
+            activeTracksNoteEvents,
+            time
+        )
         onChangeNextNoteStartingTime(nextNoteStartingTime)
     }
 

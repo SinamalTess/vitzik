@@ -4,9 +4,65 @@ import { WebWorker } from '../../workers/WebWorker'
 import intervalWorker from '../../workers/intervalWorker.js'
 
 export interface IIntervalWorkerContext {
-    intervalWorker: Worker | null
+    intervalWorker: IntervalWorkerMessenger | null
+}
+
+class IntervalWorkerMessenger {
+    private worker: Worker = WebWorker(intervalWorker)
+
+    restart = (startAt: number, midiSpeedFactor: number) => {
+        this.worker.postMessage({
+            code: 'restart',
+            startAt,
+            midiSpeedFactor,
+        })
+    }
+
+    start = (startAt: number, midiSpeedFactor: number) => {
+        this.worker.postMessage({
+            code: 'start',
+            startAt,
+            midiSpeedFactor,
+        })
+    }
+
+    stop = () => {
+        this.worker.postMessage({
+            code: 'stop',
+        })
+    }
+
+    pause = () => {
+        this.worker.postMessage({
+            code: 'pause',
+        })
+    }
+
+    updateTimer = (startAt: number) => {
+        this.worker.postMessage({
+            code: 'updateTimer',
+            startAt,
+        })
+    }
+
+    getTime = () => {
+        this.worker.postMessage({
+            code: 'getTime',
+        })
+    }
+
+    subscribe = (callback: Function) => {
+        // @ts-ignore
+        this.worker.addEventListener('message', callback)
+    }
+
+    unsubscribe = (callback: Function) => {
+        // @ts-ignore
+        this.worker.removeEventListener('message', callback)
+    }
+
 }
 
 export const IntervalWorkerContext = React.createContext<IIntervalWorkerContext>({
-    intervalWorker: WebWorker(intervalWorker),
+    intervalWorker: new IntervalWorkerMessenger(),
 })

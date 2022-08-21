@@ -18,6 +18,7 @@ const AppContextProviderMock = ({ children }: AppContextProviderPropsMock) => {
     const worker = intervalWorker as Worker
     const appContextValue = { intervalWorker: worker, setKeyboardShortcuts, keyboardShortcuts }
 
+    // @ts-ignore
     return <AppContext.Provider value={appContextValue}>{children}</AppContext.Provider>
 }
 

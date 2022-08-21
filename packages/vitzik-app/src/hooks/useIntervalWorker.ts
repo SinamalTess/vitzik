@@ -12,10 +12,10 @@ export const useIntervalWorker = (callback: Function) => {
             callback(time as number, interval as number)
         }
 
-        intervalWorker?.addEventListener('message', onMessage)
+        intervalWorker?.subscribe(onMessage)
 
         return function cleanup() {
-            intervalWorker?.removeEventListener('message', onMessage)
+            intervalWorker?.unsubscribe(onMessage)
         }
     }, [callback, intervalWorker])
 }

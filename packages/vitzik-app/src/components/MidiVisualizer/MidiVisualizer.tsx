@@ -167,10 +167,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             const isValidTime = startAt >= 0 && startAt < midiDuration
 
             if (isValidTime) {
-                intervalWorker?.postMessage({
-                    code: 'updateTimer',
-                    startAt: timeRef.current + deltaY,
-                })
+                intervalWorker?.updateTimer(timeRef.current + deltaY)
             }
         }
 

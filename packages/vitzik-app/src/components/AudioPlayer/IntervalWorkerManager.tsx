@@ -22,42 +22,27 @@ export function IntervalWorkerManager({
 
     useEffect(() => {
         if (prevMidiSpeedFactor !== midiSpeedFactor) {
-            intervalWorker?.postMessage({
-                code: 'restart',
-                startAt,
-                midiSpeedFactor,
-            })
+            intervalWorker?.restart(startAt, midiSpeedFactor)
         }
 
         switch (playerState) {
             case 'playing':
                 setIsStarted(true)
                 if (!isStarted) {
-                    intervalWorker?.postMessage({
-                        code: 'start',
-                        startAt,
-                        midiSpeedFactor,
-                    })
+                    intervalWorker?.start(startAt, midiSpeedFactor)
                 }
                 break
             case 'stopped':
                 setIsStarted(false)
-                intervalWorker?.postMessage({
-                    code: 'stop',
-                })
+                intervalWorker?.stop()
                 break
             case 'paused':
                 setIsStarted(false)
-                intervalWorker?.postMessage({
-                    code: 'pause',
-                })
+                intervalWorker?.pause()
                 break
             case 'seeking':
                 setIsStarted(false)
-                intervalWorker?.postMessage({
-                    code: 'updateTimer',
-                    startAt,
-                })
+                intervalWorker?.updateTimer(startAt)
                 break
         }
     }, [midiMetas, playerState, isStarted, midiSpeedFactor, startAt, intervalWorker]) // midiMetas is used here to force the visualization to redraw on midiImport

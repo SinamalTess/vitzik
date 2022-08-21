@@ -56,9 +56,7 @@ export function LoopEditor({
     useIntervalWorker(setTime)
 
     useEffect(() => {
-        intervalWorker?.postMessage({
-            code: 'getTime',
-        })
+        intervalWorker?.getTime()
     }, [])
 
     useEffect(() => {
