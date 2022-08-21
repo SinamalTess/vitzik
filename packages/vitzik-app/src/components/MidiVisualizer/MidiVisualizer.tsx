@@ -163,11 +163,18 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     function onWheel(e: WheelEvent<HTMLDivElement>) {
         const onWheelCallback = () => {
             const { deltaY } = e
-            intervalWorker?.postMessage({
-                code: 'updateTimer',
-                startAt: timeRef.current + deltaY,
-            })
+            const { midiDuration } = midiMetas
+            const startAt = timeRef.current + deltaY
+            const isValidTime = startAt >= 0 && startAt < midiDuration
+
+            if (isValidTime) {
+                intervalWorker?.postMessage({
+                    code: 'updateTimer',
+                    startAt: timeRef.current + deltaY,
+                })
+            }
         }
+
         throttle(onWheelCallback, 100)()
     }
 
