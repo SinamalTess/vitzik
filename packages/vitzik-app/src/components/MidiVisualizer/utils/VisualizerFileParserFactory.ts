@@ -1,19 +1,17 @@
 import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent } from 'midi-json-parser-worker'
-import { MidiVisualizerNoteEvent } from './MidiVisualizerEvents'
+import { VisualizerNoteEvent } from '../types'
 import {
     isNoteOffEvent as checkIsNoteOffEvent,
     isNoteOnEvent as checkIsNoteOnEvent,
     MidiFactory,
 } from '../../../utils'
-import { MidiVisualizerEventsFactory } from './MidiVisualizerEventsFactory'
+import { VisualizerEventsFactory } from './VisualizerEventsFactory'
 import { MsPerBeat } from '../../../types'
+import { SectionNoteEvents } from '../types'
+import { Dimensions } from '../types/Dimensions'
 
-export interface SectionNoteCoordinates {
-    [sectionIndex: number]: MidiVisualizerNoteEvent[]
-}
-
-export class MidiVisualizerFileParserFactory extends MidiVisualizerEventsFactory {
-    notesBeingProcessed: MidiVisualizerNoteEvent[]
+export class VisualizerFileParserFactory extends VisualizerEventsFactory {
+    notesBeingProcessed: VisualizerNoteEvent[]
     width: number
     height: number
     ratioSection: number
@@ -23,10 +21,7 @@ export class MidiVisualizerFileParserFactory extends MidiVisualizerEventsFactory
     msPerBeatValue: number
 
     constructor(
-        containerDimensions: {
-            height: number
-            width: number
-        },
+        containerDimensions: Dimensions,
         msPerSection: number,
         midiMetas: {
             allMsPerBeat: MsPerBeat[]
@@ -46,10 +41,7 @@ export class MidiVisualizerFileParserFactory extends MidiVisualizerEventsFactory
     }
 
     private processNoteOnEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
-        const partialMidiVisualizerNoteEvent = this.getPartialMidiVisualizerNoteEvent(
-            event,
-            deltaAcc
-        )
+        const partialMidiVisualizerNoteEvent = this.getPartialVisualizerNoteEvent(event, deltaAcc)
 
         this.notesBeingProcessed.push(partialMidiVisualizerNoteEvent)
     }
@@ -57,7 +49,7 @@ export class MidiVisualizerFileParserFactory extends MidiVisualizerEventsFactory
     private processNoteOffEvent = (
         event: IMidiNoteOffEvent | IMidiNoteOnEvent,
         deltaAcc: number,
-        notesCoordinatesInTrack: SectionNoteCoordinates[]
+        sectionsNoteEvents: SectionNoteEvents[]
     ) => {
         const key = MidiFactory.Note(event).getKey()
         const partialMidiVisualizerNoteEventIndex = this.notesBeingProcessed.findIndex(
@@ -68,48 +60,48 @@ export class MidiVisualizerFileParserFactory extends MidiVisualizerEventsFactory
             const partialMidiVisualizerNoteEvent = {
                 ...this.notesBeingProcessed[partialMidiVisualizerNoteEventIndex],
             }
-            const finalMidiVisualizerNoteEvent = this.getFinalMidiVisualizerNoteEvent(
+            const finalMidiVisualizerNoteEvent = this.getFinalVisualizerNoteEvent(
                 partialMidiVisualizerNoteEvent,
                 deltaAcc
             )
-            this.addNoteToSection(finalMidiVisualizerNoteEvent, notesCoordinatesInTrack)
+            this.addVisualizerNoteEventToSection(finalMidiVisualizerNoteEvent, sectionsNoteEvents)
             this.notesBeingProcessed.splice(partialMidiVisualizerNoteEventIndex, 1)
         }
     }
 
-    private addNoteToSection = (
-        note: MidiVisualizerNoteEvent,
-        notesCoordinatesInTrack: SectionNoteCoordinates[]
+    private addVisualizerNoteEventToSection = (
+        visualizerNoteEvent: VisualizerNoteEvent,
+        sectionsNoteEvents: SectionNoteEvents[]
     ) => {
-        const startingSection = Math.floor(note.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
-        const endingSection = Math.floor((note.startingTime + note.duration) / this.msPerSection)
+        const startingSection = Math.floor(visualizerNoteEvent.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
+        const endingSection = Math.floor(
+            (visualizerNoteEvent.startingTime + visualizerNoteEvent.duration) / this.msPerSection
+        )
 
         for (let i = startingSection; i <= endingSection; i++) {
-            const indexSection = notesCoordinatesInTrack.findIndex((section) => section[i])
+            const indexSection = sectionsNoteEvents.findIndex((section) => section[i])
             if (indexSection >= 0) {
-                notesCoordinatesInTrack[indexSection] = {
-                    [i]: [...notesCoordinatesInTrack[indexSection][i], note],
+                sectionsNoteEvents[indexSection] = {
+                    [i]: [...sectionsNoteEvents[indexSection][i], visualizerNoteEvent],
                 }
             } else {
-                notesCoordinatesInTrack.push({ [i]: [note] })
+                sectionsNoteEvents.push({ [i]: [visualizerNoteEvent] })
             }
         }
     }
 
     parseMidiJson = (midiJson: IMidiFile) => {
         const { tracks } = midiJson
-        let noteEvents: SectionNoteCoordinates[][] = []
+        let noteEvents: SectionNoteEvents[][] = []
 
         tracks.forEach((track) => {
             let deltaAcc = 0
             this.notesBeingProcessed = []
-            let noteEventsInTrack: {
-                [sectionIndex: number]: MidiVisualizerNoteEvent[]
-            }[] = []
+            let noteEventsInTrack: SectionNoteEvents[] = []
 
             track.forEach((event) => {
                 deltaAcc = deltaAcc + event.delta
-                const lastMsPerBeat = this.getMsPerBeatFromDelta(deltaAcc)
+                const lastMsPerBeat = this.findMsPerBeatFromDelta(deltaAcc)
                 const isNoteOnEvent = checkIsNoteOnEvent(event)
                 const isNoteOffEvent =
                     checkIsNoteOffEvent(event) || (isNoteOnEvent && event.noteOn.velocity === 0)

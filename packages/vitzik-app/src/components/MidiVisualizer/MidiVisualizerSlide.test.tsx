@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { render, screen } from '@testing-library/react'
 import canvasMock from 'jest-canvas-mock'
-import { MidiVisualizerNoteEvent } from './utils'
+import { VisualizerNoteEvent } from './types'
 
 jest.mock('react', () => {
     const originReact = jest.requireActual('react')
@@ -13,7 +13,7 @@ jest.mock('react', () => {
     }
 })
 
-const notesCoordinates: MidiVisualizerNoteEvent[] = [
+const noteEvents: VisualizerNoteEvent[] = [
     {
         duration: 10,
         velocity: 100,
@@ -41,7 +41,7 @@ describe('MidiVisualizerSlide', () => {
     it('should render a section properly', () => {
         render(
             <MidiVisualizerSlide
-                notesCoordinates={notesCoordinates}
+                noteEvents={noteEvents}
                 width={100}
                 height={50}
                 index={0}

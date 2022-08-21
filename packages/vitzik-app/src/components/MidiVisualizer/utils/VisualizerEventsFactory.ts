@@ -1,11 +1,12 @@
 import { MsPerBeat } from '../../../types'
 import findLast from 'lodash/findLast'
 import { KeyboardFactory } from '../../Keyboard/KeyboardFactory'
-import { MidiVisualizerEventType, MidiVisualizerNoteEvent } from './MidiVisualizerEvents'
+import { VisualizerEventType, VisualizerNoteEvent } from '../types'
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
+import { Dimensions } from '../types/Dimensions'
 
-export class MidiVisualizerEventsFactory {
+export class VisualizerEventsFactory {
     width: number
     height: number
     ratioSection: number
@@ -13,10 +14,7 @@ export class MidiVisualizerEventsFactory {
     ticksPerBeat: number
 
     constructor(
-        containerDimensions: {
-            height: number
-            width: number
-        },
+        containerDimensions: Dimensions,
         msPerSection: number,
         midiMetas: {
             allMsPerBeat: MsPerBeat[]
@@ -30,11 +28,11 @@ export class MidiVisualizerEventsFactory {
         this.ticksPerBeat = midiMetas.ticksPerBeat
     }
 
-    getMsPerBeatFromDelta = (delta: number) =>
+    findMsPerBeatFromDelta = (delta: number) =>
         findLast(this.allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
 
     deltaToTime = (delta: number) => {
-        const lastMsPerBeat = this.getMsPerBeatFromDelta(delta)
+        const lastMsPerBeat = this.findMsPerBeatFromDelta(delta)
 
         if (lastMsPerBeat) {
             const { timestamp, delta: lastDelta, value } = lastMsPerBeat
@@ -44,7 +42,7 @@ export class MidiVisualizerEventsFactory {
         return 0
     }
 
-    getFinalMidiVisualizerNoteEvent = (note: MidiVisualizerNoteEvent, deltaAcc: number) => {
+    getFinalVisualizerNoteEvent = (note: VisualizerNoteEvent, deltaAcc: number) => {
         const duration = this.deltaToTime(deltaAcc) - note.startingTime
         const h = this.ratioSection * duration
 
@@ -55,7 +53,7 @@ export class MidiVisualizerEventsFactory {
         }
     }
 
-    getPartialMidiVisualizerNoteEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
+    getPartialVisualizerNoteEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
         const note = MidiFactory.Note(event).getMetas()
         const { name } = note
         const startingTime = this.deltaToTime(deltaAcc)
@@ -63,7 +61,7 @@ export class MidiVisualizerEventsFactory {
         const defaultMetas = {
             startingTime,
             duration: 0,
-            eventType: 'note' as MidiVisualizerEventType,
+            eventType: 'note' as VisualizerEventType,
             uniqueId: `${name}-${y}-${note.channel}-${Math.random()}`,
         }
 

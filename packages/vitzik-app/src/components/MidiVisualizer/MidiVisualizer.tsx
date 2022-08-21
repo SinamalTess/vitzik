@@ -11,7 +11,7 @@ import {
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
-import { MidiVisualizerFactory, MidiVisualizerNoteEvent } from './utils'
+import { VisualizerFactory } from './utils'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 import { MidiEventsManager } from './MidiEventsManager'
@@ -19,6 +19,7 @@ import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { isEven } from '../../utils'
 import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
+import { VisualizerNoteEvent } from './types'
 
 interface MidiVisualizerProps {
     activeInstruments: Instrument[]
@@ -61,29 +62,29 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     onChangeAudioPlayerState,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
-    const [sectionCoordinates, setSectionCoordinates] = useState<MidiVisualizerNoteEvent[][]>([])
+    const [sectionNoteEvents, setSectionNoteEvents] = useState<VisualizerNoteEvent[][]>([])
     const { intervalWorker } = useContext(AppContext)
     const prevIndexToDraw = useRef({ slide0: 0, slide1: 1 })
     const timeRef = useRef(0)
 
     const slides = ref.current?.getElementsByTagName('div')
 
-    const midiVisualizerFactory = useMemo(
-        () => new MidiVisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas),
+    const visualizerFactory = useMemo(
+        () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas),
         [height, midiMetas, width]
     )
 
-    const notesCoordinates = useMemo(
-        () => midiVisualizerFactory.getNotesCoordinates(midiFile),
-        [midiVisualizerFactory, midiFile]
+    const noteEvents = useMemo(
+        () => visualizerFactory.getVisualizerNoteEvents(midiFile),
+        [visualizerFactory, midiFile]
+    )
+
+    const activeTracksNoteEvents = useMemo(
+        () => VisualizerFactory.getActiveTracksNoteEvents(activeTracks, noteEvents),
+        [noteEvents, activeTracks]
     )
 
     useIntervalWorker(onTimeChange)
-
-    const activeTracksCoordinates = useMemo(
-        () => MidiVisualizerFactory.mergeNotesCoordinates(activeTracks, notesCoordinates),
-        [notesCoordinates, activeTracks]
-    )
 
     useEffect(() => {
         if (ref.current && height && width) {
@@ -96,22 +97,20 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }, [activeTracks])
 
     const getCoordinates = (time: number, forceUpdate: boolean = false) => {
-        const indexToDraw = midiVisualizerFactory.getIndexesSectionToDraw(time)
+        const indexToDraw = visualizerFactory.getIndexesSectionToDraw(time)
         const indexToDrawHasChanged =
             indexToDraw.slide0 !== prevIndexToDraw.current.slide0 ||
             indexToDraw.slide1 !== prevIndexToDraw.current.slide1
 
         if (indexToDrawHasChanged || forceUpdate) {
-            setSectionCoordinates([
-                MidiVisualizerFactory.getSectionCoordinates(
-                    activeTracksCoordinates,
-                    indexToDraw.slide0,
-                    height
+            setSectionNoteEvents([
+                visualizerFactory.getNoteEventsBySectionIndex(
+                    activeTracksNoteEvents,
+                    indexToDraw.slide0
                 ),
-                MidiVisualizerFactory.getSectionCoordinates(
-                    activeTracksCoordinates,
-                    indexToDraw.slide1,
-                    height
+                visualizerFactory.getNoteEventsBySectionIndex(
+                    activeTracksNoteEvents,
+                    indexToDraw.slide1
                 ),
             ])
         }
@@ -121,7 +120,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 
     const animate = (time: number) => {
         function animationStep() {
-            const top = midiVisualizerFactory.getSlidesPercentageTop(time)
+            const top = visualizerFactory.getSlidesPercentageTop(time)
 
             if (slides) {
                 slides[0].style.transform = `translate3d(0, ${top[0]}, 0)`
@@ -133,7 +132,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }
 
     function swapSlidesZIndexes(time: number) {
-        const indexSectionPlaying = midiVisualizerFactory.getIndexSectionPlaying(time)
+        const indexSectionPlaying = visualizerFactory.getIndexSectionPlaying(time)
         const isIndexSectionEven = isEven(indexSectionPlaying)
         const isMovingForward = timeRef.current < time
 
@@ -187,7 +186,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                     <MidiVisualizerSlide
                         index={index}
                         key={index}
-                        notesCoordinates={sectionCoordinates[index]}
+                        noteEvents={sectionNoteEvents[index]}
                         height={height}
                         width={width}
                     />
@@ -207,9 +206,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 midiMode={midiMode}
                 midiMetas={midiMetas}
                 loopTimestamps={loopTimestamps}
-                midiVisualizerFactory={midiVisualizerFactory}
+                visualizerFactory={visualizerFactory}
                 activeInstruments={activeInstruments}
-                activeTracksCoordinates={activeTracksCoordinates}
+                activeTracksNoteEvents={activeTracksNoteEvents}
                 onChangeActiveNotes={onChangeActiveNotes}
                 onChangeInstruments={onChangeInstruments}
                 onChangeTimeToNextNote={onChangeTimeToNextNote}

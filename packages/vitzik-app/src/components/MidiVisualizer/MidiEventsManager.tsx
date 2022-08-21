@@ -10,7 +10,8 @@ import {
     MidiPlayMode,
 } from '../../types'
 import { isUserChannel } from './MidiVisualizer'
-import { MidiVisualizerFactory, SectionNoteCoordinates } from './utils'
+import { VisualizerFactory } from './utils'
+import { SectionNoteEvents } from './types'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { AppContext } from '../_contexts'
 
@@ -19,9 +20,9 @@ interface MidiEventsManagerProps {
     midiMode: MidiPlayMode
     loopTimestamps?: LoopTimestamps
     timeToNextNote: number | null
-    midiVisualizerFactory: MidiVisualizerFactory
+    visualizerFactory: VisualizerFactory
     activeInstruments: Instrument[]
-    activeTracksCoordinates: SectionNoteCoordinates[]
+    activeTracksNoteEvents: SectionNoteEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeTimeToNextNote: (timeToNextNote: number | null) => void
@@ -32,10 +33,10 @@ export function MidiEventsManager({
     midiMetas,
     activeInstruments,
     loopTimestamps,
-    midiVisualizerFactory,
+    visualizerFactory,
     midiMode,
     timeToNextNote,
-    activeTracksCoordinates,
+    activeTracksNoteEvents,
     onChangeActiveNotes,
     onChangeInstruments,
     onChangeTimeToNextNote,
@@ -99,15 +100,12 @@ export function MidiEventsManager({
     }
 
     function setTimeToNextNote(time: number) {
-        const timeToNextNote = midiVisualizerFactory.getTimeToNextNote(
-            activeTracksCoordinates,
-            time
-        )
+        const timeToNextNote = visualizerFactory.getTimeToNextNote(activeTracksNoteEvents, time)
         onChangeTimeToNextNote(timeToNextNote)
     }
 
     function setActiveNotes(time: number) {
-        const newActiveNotes = midiVisualizerFactory.getActiveNotes(activeTracksCoordinates, time)
+        const newActiveNotes = visualizerFactory.getActiveNotes(activeTracksNoteEvents, time)
 
         onChangeActiveNotes((activeNotes: ActiveNote[]) => {
             if (isEqual(newActiveNotes, activeNotes)) {

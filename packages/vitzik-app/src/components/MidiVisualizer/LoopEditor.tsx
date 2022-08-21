@@ -15,7 +15,8 @@ interface LineProps {
 }
 
 function LoopLine({ y, width, timestamp, color = 'red' }: LineProps) {
-    const yText = y + 20
+    const TEXT_OFFSET = 20
+    const yText = y + TEXT_OFFSET
     return (
         <>
             <SVGLine x1={0} y1={y} x2={width} color={color} aria-label={'loop-line'} />

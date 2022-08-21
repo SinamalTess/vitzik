@@ -1,2 +1,1 @@
-export * from './MidiVisualizerEvents'
-export * from './MidiVisualizerFactory'
+export * from './VisualizerFactory'

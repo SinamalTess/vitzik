@@ -2,26 +2,26 @@ import React from 'react'
 import './MidiVisualizerSlide.scss'
 import clsx from 'clsx'
 import { SVGRectangle } from 'vitzik-ui'
-import { MidiVisualizerNoteEvent } from './utils'
+import { VisualizerNoteEvent } from './types'
 import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
 
 interface MidiVisualizerSlideProps {
     index: number
     height: number
     width: number
-    notesCoordinates: MidiVisualizerNoteEvent[] | null | undefined
+    noteEvents: VisualizerNoteEvent[] | null | undefined
 }
 
 interface RectanglesProps {
-    notesCoordinates: MidiVisualizerNoteEvent[]
+    noteEvents: VisualizerNoteEvent[]
 }
 
 const BASECLASS = `midi-visualizer__slide`
 
-const Notes = React.memo(function Notes({ notesCoordinates }: RectanglesProps) {
+const Notes = React.memo(function Notes({ noteEvents }: RectanglesProps) {
     return (
         <>
-            {notesCoordinates.map(({ channel, uniqueId, y, x, w, h, name }) => (
+            {noteEvents.map(({ channel, uniqueId, y, x, w, h, name }) => (
                 <SVGRectangle
                     aria-label={`${name} note`}
                     key={`${uniqueId}`}
@@ -42,14 +42,14 @@ export function MidiVisualizerSlide({
     index,
     height,
     width,
-    notesCoordinates,
+    noteEvents,
 }: MidiVisualizerSlideProps) {
     const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
 
     return (
         <div className={classNames}>
             <svg width={width} height={height} data-testid={`${BASECLASS}--${index}`}>
-                {notesCoordinates ? <Notes notesCoordinates={notesCoordinates} /> : null}
+                {noteEvents ? <Notes noteEvents={noteEvents} /> : null}
             </svg>
             <MidiVisualizerVerticalLines height={height} width={width} />
         </div>
