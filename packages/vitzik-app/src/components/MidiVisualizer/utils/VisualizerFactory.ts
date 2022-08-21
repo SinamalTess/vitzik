@@ -124,16 +124,17 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         return []
     }
 
-    getTimeToNextNote = (sectionsOfNoteEvents: SectionNoteEvents[], time: number) => {
+    getNextNoteStartingTime = (sectionsOfNoteEvents: SectionNoteEvents[], time: number) => {
         if (!sectionsOfNoteEvents.length) return null
 
         const MAX_NB_SECTIONS_TO_CHECK = 5 // for better performance we limit the search to only a few sections ahead
 
         const indexSectionPlaying = this.getIndexSectionPlaying(time)
         const nbSectionsLeft = sectionsOfNoteEvents.length - indexSectionPlaying
-        const nbSectionsToCheck = Math.max(nbSectionsLeft, MAX_NB_SECTIONS_TO_CHECK)
+        const nbSectionsToCheck = Math.min(nbSectionsLeft, MAX_NB_SECTIONS_TO_CHECK)
+        const lastSectionToCheck = indexSectionPlaying + nbSectionsToCheck
 
-        for (let i = indexSectionPlaying; i < nbSectionsToCheck; i++) {
+        for (let i = indexSectionPlaying; i < lastSectionToCheck; i++) {
             const key = i.toString()
             const section = sectionsOfNoteEvents.find((section) => key in section)
             if (section) {

@@ -91,22 +91,25 @@ export function Preview({
 }: PreviewProps) {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
-    const [timeToNextNote, setTimeToNextNote] = useState<number | null>(null)
+    const [nextNoteStartingTime, setnextNoteStartingTime] = useState<number | null>(null)
+
+    useEffect(() => {
+        if (isMute) {
+            suspendAudioContext()
+        } else {
+            resumeAudioContext()
+        }
+    }, [isMute])
+
     const handleAllMidiKeysPlayed = useCallback(
         function handleAllMidiKeysPlayed() {
-            if (timeToNextNote && midiPlayMode === 'waitForValidInput') {
+            const shouldPlayForward = nextNoteStartingTime && midiPlayMode === 'waitForValidInput'
+            if (shouldPlayForward) {
                 onChangeAudioPlayerState('playing')
             }
         },
-        [midiPlayMode, timeToNextNote]
+        [midiPlayMode, nextNoteStartingTime]
     )
-
-    useEffect(() => {
-        if (midiPlayMode === 'autoplay') {
-            // clears the next note in case one was set so the player can play without stopping
-            setTimeToNextNote(null)
-        }
-    }, [midiPlayMode])
 
     function handleMidiImport(title: string, midiJSON: IMidiFile) {
         const metas = getMidiMetas(midiJSON)
@@ -125,13 +128,6 @@ export function Preview({
         // console.log(metas)
     }
 
-    useEffect(() => {
-        if (isMute) {
-            suspendAudioContext()
-        } else {
-            resumeAudioContext()
-        }
-    }, [isMute])
     return (
         <>
             <div className="item preview">
@@ -150,7 +146,7 @@ export function Preview({
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 <Visualizer
                     loopTimestamps={loopTimes}
-                    timeToNextNote={timeToNextNote}
+                    nextNoteStartingTime={nextNoteStartingTime}
                     activeInstruments={activeInstruments}
                     midiPlayMode={midiPlayMode}
                     isEditingLoop={isEditingLoop}
@@ -158,7 +154,7 @@ export function Preview({
                     midiMetas={midiMetas}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={setActiveNotes}
-                    onChangeTimeToNextNote={setTimeToNextNote}
+                    onChangeNextNoteStartingTime={setnextNoteStartingTime}
                     onChangeActiveInstruments={onChangeActiveInstruments}
                     onChangeLoopTimestamps={onChangeLoopTimestamps}
                     onChangeAudioPlayerState={onChangeAudioPlayerState}

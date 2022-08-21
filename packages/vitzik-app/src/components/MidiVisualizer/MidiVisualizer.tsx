@@ -24,17 +24,17 @@ import { VisualizerNoteEvent } from './types'
 interface MidiVisualizerProps {
     activeInstruments: Instrument[]
     midiFile: IMidiFile
-    midiMode?: MidiPlayMode
+    midiPlayMode?: MidiPlayMode
     loopTimestamps?: LoopTimestamps
     isEditingLoop?: boolean
     midiMetas: MidiMetas
     activeTracks: number[]
     height?: number
-    timeToNextNote: number | null
+    nextNoteStartingTime: number | null
     width?: number
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
-    onChangeTimeToNextNote: (timeToNextNote: number | null) => void
+    onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
@@ -46,18 +46,18 @@ export const isUserChannel = (channel: number) =>
 
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     activeInstruments,
-    midiMode = 'autoplay',
+    midiPlayMode = 'autoplay',
     midiFile,
     loopTimestamps,
     isEditingLoop,
     midiMetas,
     activeTracks,
-    timeToNextNote,
+    nextNoteStartingTime,
     height = 0,
     width = 0,
     onChangeActiveNotes,
     onChangeInstruments,
-    onChangeTimeToNextNote,
+    onChangeNextNoteStartingTime,
     onChangeLoopTimes,
     onChangeAudioPlayerState,
 }: MidiVisualizerProps) {
@@ -202,8 +202,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 />
             ) : null}
             <MidiEventsManager
-                timeToNextNote={timeToNextNote}
-                midiMode={midiMode}
+                nextNoteStartingTime={nextNoteStartingTime}
+                midiPlayMode={midiPlayMode}
                 midiMetas={midiMetas}
                 loopTimestamps={loopTimestamps}
                 visualizerFactory={visualizerFactory}
@@ -211,7 +211,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 activeTracksNoteEvents={activeTracksNoteEvents}
                 onChangeActiveNotes={onChangeActiveNotes}
                 onChangeInstruments={onChangeInstruments}
-                onChangeTimeToNextNote={onChangeTimeToNextNote}
+                onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
                 onChangeAudioPlayerState={onChangeAudioPlayerState}
             />
         </div>

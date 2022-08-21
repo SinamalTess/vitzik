@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import {
@@ -17,15 +17,15 @@ import { AppContext } from '../_contexts'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
-    midiMode: MidiPlayMode
+    midiPlayMode: MidiPlayMode
     loopTimestamps?: LoopTimestamps
-    timeToNextNote: number | null
+    nextNoteStartingTime: number | null
     visualizerFactory: VisualizerFactory
     activeInstruments: Instrument[]
     activeTracksNoteEvents: SectionNoteEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
-    onChangeTimeToNextNote: (timeToNextNote: number | null) => void
+    onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
@@ -34,27 +34,52 @@ export function MidiEventsManager({
     activeInstruments,
     loopTimestamps,
     visualizerFactory,
-    midiMode,
-    timeToNextNote,
+    midiPlayMode,
+    nextNoteStartingTime,
     activeTracksNoteEvents,
     onChangeActiveNotes,
     onChangeInstruments,
-    onChangeTimeToNextNote,
+    onChangeNextNoteStartingTime,
     onChangeAudioPlayerState,
 }: MidiEventsManagerProps) {
     const midiTrackInstruments = activeInstruments.filter(({ channel }) => !isUserChannel(channel))
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
     const { intervalWorker } = useContext(AppContext)
+    const timeRef = useRef(0)
+
+    useEffect(() => {
+        switch (midiPlayMode) {
+            case 'autoplay':
+                onChangeNextNoteStartingTime(null)
+                break
+            case 'waitForValidInput':
+                setNextNoteStartingTime(timeRef.current)
+                const activeNotes = visualizerFactory.getActiveNotes(activeTracksNoteEvents, timeRef.current)
+                if (!activeNotes.length) {
+                    moveToNextNote()
+                }
+                break
+        }
+    }, [midiPlayMode])
+
+    function moveToNextNote() {
+        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(activeTracksNoteEvents, timeRef.current)
+        intervalWorker?.postMessage({
+            code: 'updateTimer',
+            startAt: nextNoteStartingTime,
+        })
+    }
 
     useIntervalWorker(onTimeChange)
 
-    function onTimeChange(time: number) {
+    function onTimeChange(time: number, interval: number) {
+        timeRef.current = time
         checkIsEndOfSong(time)
         setActiveNotes(time)
-        checkForWaitMode(time)
-        if (midiMode === 'waitForValidInput') {
-            setTimeToNextNote(time)
+        if (midiPlayMode === 'waitForValidInput') {
+            checkForWaitMode(time, interval)
+            setNextNoteStartingTime(time)
         }
         if (isMultiInstrumentsTrack) {
             const instruments = getInstruments(time)
@@ -77,16 +102,20 @@ export function MidiEventsManager({
     function checkIsEndOfLoop(time: number) {
         const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
         if (startLoop && endLoop && time > endLoop) {
+            const startAt = startLoop - 200 ?? 0
             intervalWorker?.postMessage({
                 code: 'updateTimer',
-                startAt: startLoop - 200 ?? 0,
+                startAt,
             })
         }
     }
 
-    function checkForWaitMode(time: number) {
-        // in `wait` mode we pause until the user hits the right keys
-        if (timeToNextNote && time >= timeToNextNote) {
+    function checkForWaitMode(time: number, interval: number) {
+        if (!nextNoteStartingTime) return
+
+        const nextTick = time + interval
+
+        if (time >= nextNoteStartingTime || nextTick >= nextNoteStartingTime) {
             onChangeAudioPlayerState('paused')
         }
     }
@@ -99,9 +128,9 @@ export function MidiEventsManager({
         return uniqBy(allInstruments, 'channel')
     }
 
-    function setTimeToNextNote(time: number) {
-        const timeToNextNote = visualizerFactory.getTimeToNextNote(activeTracksNoteEvents, time)
-        onChangeTimeToNextNote(timeToNextNote)
+    function setNextNoteStartingTime(time: number) {
+        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(activeTracksNoteEvents, time)
+        onChangeNextNoteStartingTime(nextNoteStartingTime)
     }
 
     function setActiveNotes(time: number) {

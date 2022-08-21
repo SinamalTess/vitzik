@@ -14,7 +14,7 @@ import { ErrorBoundary } from 'vitzik-ui'
 interface VisualizerProps {
     activeInstruments: Instrument[]
     midiPlayMode: MidiPlayMode
-    timeToNextNote: number | null
+    nextNoteStartingTime: number | null
     loopTimestamps: LoopTimestamps
     isEditingLoop: boolean
     midiFile: IMidiFile | null
@@ -22,7 +22,7 @@ interface VisualizerProps {
     activeTracks: number[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
-    onChangeTimeToNextNote: (timeToNextNote: number | null) => void
+    onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
@@ -31,13 +31,13 @@ export const Visualizer = React.memo(function Preview({
     loopTimestamps,
     activeInstruments,
     midiPlayMode,
-    timeToNextNote,
+    nextNoteStartingTime,
     isEditingLoop,
     midiFile,
     midiMetas,
     activeTracks,
     onChangeActiveNotes,
-    onChangeTimeToNextNote,
+    onChangeNextNoteStartingTime,
     onChangeActiveInstruments,
     onChangeLoopTimestamps,
     onChangeAudioPlayerState,
@@ -49,13 +49,13 @@ export const Visualizer = React.memo(function Preview({
                     loopTimestamps={loopTimestamps}
                     activeInstruments={activeInstruments}
                     midiFile={midiFile}
-                    midiMode={midiPlayMode}
+                    midiPlayMode={midiPlayMode}
                     midiMetas={midiMetas}
-                    timeToNextNote={timeToNextNote}
+                    nextNoteStartingTime={nextNoteStartingTime}
                     isEditingLoop={isEditingLoop}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
-                    onChangeTimeToNextNote={onChangeTimeToNextNote}
+                    onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
                     onChangeInstruments={onChangeActiveInstruments}
                     onChangeLoopTimes={onChangeLoopTimestamps}
                     onChangeAudioPlayerState={onChangeAudioPlayerState}

@@ -8,8 +8,8 @@ export const useIntervalWorker = (callback: Function) => {
     const { intervalWorker } = useContext(AppContext)
     useEffect(() => {
         function onMessage(message: MessageEvent) {
-            const { time } = message.data
-            callback(time as number)
+            const { time, interval } = message.data
+            callback(time as number, interval as number)
         }
 
         intervalWorker?.addEventListener('message', onMessage)
