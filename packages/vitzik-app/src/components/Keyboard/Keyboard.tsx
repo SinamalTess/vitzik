@@ -12,7 +12,7 @@ import { translateNoteTo } from '../../utils'
 import clsx from 'clsx'
 import findLast from 'lodash/findLast'
 import last from 'lodash/last'
-import { KeyboardFactory } from './KeyboardFactory'
+import { Keyboard as KeyboardClass } from './Keyboard'
 
 interface KeyboardProps {
     activeNotes: ActiveNote[]
@@ -23,15 +23,15 @@ interface KeyboardProps {
     showNotes?: boolean
 }
 
-const keyboardFactory = new KeyboardFactory(100, 100)
+const keyboardFactory = new KeyboardClass(100, 100)
 
 const KEYBOARD_KEYS = keyboardFactory.getKeys()
 
 const BASE_CLASS = 'keyboard'
 
 function getKeyStyles(keyName: AlphabeticalNote) {
-    const isBlackKey = KeyboardFactory.isBlackKey(keyName)
-    const isSpecialKey = KeyboardFactory.isSpecialKey(keyName)
+    const isBlackKey = KeyboardClass.isBlackKey(keyName)
+    const isSpecialKey = KeyboardClass.isSpecialKey(keyName)
     const { widthWhiteKey } = keyboardFactory.getWidthKeys()
     const margin = isBlackKey || !isSpecialKey ? `0 0 0 -${widthWhiteKey / 4}%` : '0'
     const width = `${keyboardFactory.getWidthKey(keyName)}%`
@@ -149,7 +149,7 @@ export function Keyboard({
                 const styleKeyName = isActive ? { display: 'block' } : {}
                 const shouldTranslateKey = musicSystem !== 'alphabetical' && showNotes
                 const keyName = shouldTranslateKey ? translateNoteTo(name, musicSystem) : name
-                const isBlackKey = KeyboardFactory.isBlackKey(name)
+                const isBlackKey = KeyboardClass.isBlackKey(name)
                 const keyClass = isBlackKey ? 'blackkey' : 'whitekey'
                 const classNames = clsx(
                     [`${BASE_CLASS}__${keyClass}`],

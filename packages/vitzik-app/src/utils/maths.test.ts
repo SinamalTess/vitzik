@@ -1,4 +1,4 @@
-import { isEven, isPositive } from './index'
+import { clamp, isEven, isPositive } from './index'
 
 describe('isEven()', () => {
     it('should return "true" of a number is even', () => {
@@ -19,5 +19,13 @@ describe('isPositive()', () => {
     it('should return "false" of a number is negative', () => {
         expect(isPositive(-0)).toBe(false)
         expect(isPositive(-3)).toBe(false)
+    })
+})
+
+describe('clamp()', () => {
+    it('should return the value between max and min', () => {
+        expect(clamp(0, 100, 300)).toBe(100)
+        expect(clamp(50, 0, 100)).toBe(50)
+        expect(clamp(120, 50, 100)).toBe(100)
     })
 })

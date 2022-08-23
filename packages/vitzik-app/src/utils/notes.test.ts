@@ -1,5 +1,5 @@
 import { keyToNote, translateNoteTo, noteToKey } from './index'
-import { KeyboardFactory } from '../components/Keyboard/KeyboardFactory'
+import { Keyboard } from '../components/Keyboard/Keyboard'
 
 describe('keyToNote()', () => {
     it('should convert MIDI piano key number to an alphabetical note', () => {
@@ -28,18 +28,18 @@ describe('translateNoteTo()', () => {
 
 describe('isSpecialNote()', () => {
     it('should return `true` if a key is either C or F', () => {
-        expect(KeyboardFactory.isSpecialKey('A0')).toBe(false)
-        expect(KeyboardFactory.isSpecialKey('D4')).toBe(false)
-        expect(KeyboardFactory.isSpecialKey('F1')).toBe(true)
-        expect(KeyboardFactory.isSpecialKey('C1')).toBe(true)
+        expect(Keyboard.isSpecialKey('A0')).toBe(false)
+        expect(Keyboard.isSpecialKey('D4')).toBe(false)
+        expect(Keyboard.isSpecialKey('F1')).toBe(true)
+        expect(Keyboard.isSpecialKey('C1')).toBe(true)
     })
 })
 
 describe('isBlackKey()', () => {
     it('should return `true` if a note corresponds to a black key', () => {
-        expect(KeyboardFactory.isBlackKey('A0')).toBe(false)
-        expect(KeyboardFactory.isBlackKey('D4')).toBe(false)
-        expect(KeyboardFactory.isBlackKey('Bb0')).toBe(true)
-        expect(KeyboardFactory.isBlackKey('Gb2')).toBe(true)
+        expect(Keyboard.isBlackKey('A0')).toBe(false)
+        expect(Keyboard.isBlackKey('D4')).toBe(false)
+        expect(Keyboard.isBlackKey('Bb0')).toBe(true)
+        expect(Keyboard.isBlackKey('Gb2')).toBe(true)
     })
 })

@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import './MidiVisualizerVerticalLines.scss'
 import clsx from 'clsx'
-import { KeyboardFactory } from '../Keyboard/KeyboardFactory'
+import { Keyboard } from '../Keyboard/Keyboard'
 
 interface MidiVisualizerTracksProps {
     height: number
@@ -17,7 +17,7 @@ function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     ctx.canvas.width = w
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)'
 
-    const { widthWhiteKey } = new KeyboardFactory(w, 0).getWidthKeys()
+    const { widthWhiteKey } = new Keyboard(w).getWidthKeys()
     const margin = widthWhiteKey / 4
 
     for (let i = 0; i <= NB_WHITE_PIANO_KEYS; i++) {

@@ -4,27 +4,35 @@ import {
     NB_WHITE_PIANO_KEYS,
     NOTE_NAMES,
 } from '../../utils/const'
-import { noteToKey } from '../../utils'
+import { clamp, noteToKey } from '../../utils'
 import { AlphabeticalNote } from '../../types'
 
-export class KeyboardFactory {
-    velocity: number
+export class Keyboard {
+    private width: number
+    private velocity: number
     widthWhiteKey: number
     widthBlackKey: number
-    widthContainer: number
 
-    constructor(widthContainer: number, velocity: number) {
+    constructor(width: number, velocity: number = 0) {
+        this.width = width
         this.velocity = velocity
-        this.widthWhiteKey = widthContainer / NB_WHITE_PIANO_KEYS
-        this.widthBlackKey = widthContainer / NB_WHITE_PIANO_KEYS / 2
-        this.widthContainer = widthContainer
+        this.widthWhiteKey = width / NB_WHITE_PIANO_KEYS
+        this.widthBlackKey = width / NB_WHITE_PIANO_KEYS / 2
+    }
+
+    set setVelocity(velocity: number) {
+        this.velocity = clamp(velocity, 0, 127)
+    }
+
+    get getVelocity() {
+        return this.velocity
     }
 
     getKeys() {
-        return NOTE_NAMES.alphabetical.map((noteName) => ({
-            name: noteName,
+        return NOTE_NAMES.alphabetical.map((name) => ({
+            name,
             velocity: this.velocity,
-            key: noteToKey(noteName),
+            key: noteToKey(name),
             channel: KEYBOARD_CHANNEL,
         }))
     }
@@ -52,13 +60,13 @@ export class KeyboardFactory {
     }
 
     getWidthKey = (keyName: AlphabeticalNote) => {
-        const isBlackKey = KeyboardFactory.isBlackKey(keyName)
+        const isBlackKey = Keyboard.isBlackKey(keyName)
 
         return isBlackKey ? this.widthBlackKey : this.widthWhiteKey
     }
 
     getMarginKey = (keyName: AlphabeticalNote) => {
-        const isBlackKey = KeyboardFactory.isBlackKey(keyName)
+        const isBlackKey = Keyboard.isBlackKey(keyName)
 
         return isBlackKey ? this.widthBlackKey : this.widthWhiteKey / 4
     }
@@ -66,7 +74,7 @@ export class KeyboardFactory {
     getXPositionKey = (keyName: AlphabeticalNote) => {
         const key = noteToKey(keyName)
         const previousKeys = NOTE_NAMES.alphabetical.slice(0, key - MIDI_PIANO_KEYS_OFFSET)
-        const previousWhiteKeys = previousKeys.filter((note) => !KeyboardFactory.isBlackKey(note))
+        const previousWhiteKeys = previousKeys.filter((note) => !Keyboard.isBlackKey(note))
         const nbPreviousWhiteKeys = previousWhiteKeys.length
         const margin = this.getMarginKey(keyName)
 
@@ -80,4 +88,5 @@ export class KeyboardFactory {
             width: this.getWidthKey(keyName),
         }
     }
+
 }

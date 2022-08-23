@@ -118,6 +118,7 @@ export function MidiEventsManager({
         const nextTick = time + interval
 
         if (time >= nextNoteStartingTime || nextTick >= nextNoteStartingTime) {
+            intervalWorker?.updateTimer(nextNoteStartingTime)
             onChangeAudioPlayerState('paused')
         }
     }

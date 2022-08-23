@@ -1,6 +1,6 @@
 import { MsPerBeat } from '../../../types'
 import findLast from 'lodash/findLast'
-import { KeyboardFactory } from '../../Keyboard/KeyboardFactory'
+import { Keyboard } from '../../Keyboard/Keyboard'
 import { VisualizerEventType, VisualizerNoteEvent } from '../types'
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
@@ -66,7 +66,7 @@ export class VisualizerEventsFactory {
         }
 
         if (name) {
-            const keyboardFactory = new KeyboardFactory(this.width, 0)
+            const keyboardFactory = new Keyboard(this.width)
             const { width, x } = keyboardFactory.getKeyStyles(name)
             const coordinates = { y, w: width, x, h: 0 }
 
