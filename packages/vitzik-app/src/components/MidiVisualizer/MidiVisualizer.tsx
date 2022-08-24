@@ -63,6 +63,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [sectionNoteEvents, setSectionNoteEvents] = useState<VisualizerNoteEvent[][]>([])
+    const [topSlide, setTopSlide] = useState([true, false])
     const { intervalWorker } = useContext(AppContext)
     const prevIndexToDraw = useRef({ slide0: 0, slide1: 1 })
     const timeRef = useRef(0)
@@ -131,22 +132,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         window.requestAnimationFrame(animationStep)
     }
 
-    function swapSlidesZIndexes(time: number) {
-        const indexSectionPlaying = visualizerFactory.getIndexSectionPlaying(time)
-        const isIndexSectionEven = isEven(indexSectionPlaying)
-        const isMovingForward = timeRef.current < time
-
-        if (slides && isMovingForward) {
-            slides[1].style.zIndex = isIndexSectionEven ? '-2' : '2'
-            slides[0].style.zIndex = isIndexSectionEven ? '2' : '-2'
-        } else if (slides) {
-            slides[1].style.zIndex = isIndexSectionEven ? '2' : '-2'
-            slides[0].style.zIndex = isIndexSectionEven ? '-2' : '2'
-        }
-    }
-
     function onTimeChange(time: number) {
-        swapSlidesZIndexes(time)
+        checkTopSlide(time)
         timeRef.current = time
         redrawVisualization()
     }
@@ -156,7 +143,12 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         getCoordinates(timeRef.current, forceUpdate)
     }
 
-    useEffect(() => {}, [])
+    function checkTopSlide(time: number) {
+        const indexSectionPlaying = visualizerFactory.getIndexSectionPlaying(time)
+        const isIndexSectionPlayingEven = isEven(indexSectionPlaying)
+
+        setTopSlide([isIndexSectionPlayingEven, !isIndexSectionPlayingEven])
+    }
 
     // @ts-ignore
     function onWheel(e: WheelEvent<HTMLDivElement>) {
@@ -186,6 +178,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                         noteEvents={sectionNoteEvents[index]}
                         height={height}
                         width={width}
+                        isTopSlide={topSlide[index]}
                     />
                 )
             })}

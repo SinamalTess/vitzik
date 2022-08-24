@@ -41,7 +41,6 @@ export function AudioPlayer({
     useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
-        console.log(time)
         checkIsEndOfSong(time)
     }
 

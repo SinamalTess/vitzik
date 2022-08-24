@@ -97,7 +97,7 @@ function App() {
                     audioPlayerState={audioPlayerState}
                     midiInput={midiInput}
                     midiOutput={midiOutput}
-                    loopTimes={loopTimestamps}
+                    loopTimestamps={loopTimestamps}
                     midiAccessMode={midiAccessMode}
                     activeInstruments={activeInstruments}
                     isEditingLoop={isEditingLoop}

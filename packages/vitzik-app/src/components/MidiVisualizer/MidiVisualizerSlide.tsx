@@ -10,6 +10,7 @@ interface MidiVisualizerSlideProps {
     height: number
     width: number
     noteEvents: VisualizerNoteEvent[] | null | undefined
+    isTopSlide: boolean
 }
 
 interface RectanglesProps {
@@ -43,8 +44,11 @@ export function MidiVisualizerSlide({
     height,
     width,
     noteEvents,
+    isTopSlide,
 }: MidiVisualizerSlideProps) {
-    const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
+    const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`], {
+        [`${BASECLASS}--top`]: isTopSlide,
+    })
 
     return (
         <div className={classNames}>

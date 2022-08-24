@@ -44,7 +44,7 @@ interface PreviewProps {
     isMute: boolean
     showNotes: boolean
     midiTitle: string
-    loopTimes: LoopTimestamps
+    loopTimestamps: LoopTimestamps
     activeTracks: number[]
     audioPlayerState: AudioPlayerState
     midiInput: MIDIInput | null
@@ -70,7 +70,7 @@ export function Preview({
     isMute,
     showNotes,
     activeTracks,
-    loopTimes,
+    loopTimestamps,
     midiInput,
     midiOutput,
     midiMetas,
@@ -145,7 +145,7 @@ export function Preview({
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 <Visualizer
-                    loopTimestamps={loopTimes}
+                    loopTimestamps={loopTimestamps}
                     nextNoteStartingTime={nextNoteStartingTime}
                     activeInstruments={activeInstruments}
                     midiPlayMode={midiPlayMode}

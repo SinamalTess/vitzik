@@ -50,7 +50,6 @@ export function Shortcuts({
     }
 
     function onArrowUpKey() {
-        console.log('hi')
         seekFor(100)
     }
 

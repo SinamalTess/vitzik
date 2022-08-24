@@ -6,6 +6,7 @@
     transform: translate3d(0, 0, 0);
     transition: transform 50ms linear;
     height: 100%;
+    z-index: -2;
     @include add-channel-colors() using ($color) {
         fill: $color;
     }
@@ -15,5 +16,8 @@
         top: 0;
         display: inline-block;
         left: 0;
+    }
+    &--top {
+        z-index: 2;
     }
 }
