@@ -3,9 +3,9 @@ import {
     MIDI_PIANO_KEYS_OFFSET,
     NB_WHITE_PIANO_KEYS,
     NOTE_NAMES,
-} from '../../utils/const'
-import { clamp, noteToKey } from '../../utils'
-import { AlphabeticalNote } from '../../types'
+} from './const'
+import { clamp, noteToKey } from './index'
+import { AlphabeticalNote } from '../types'
 
 export class Keyboard {
     private width: number

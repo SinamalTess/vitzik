@@ -4,7 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 import 'jest-canvas-mock'
-import { IntervalWorkerMock } from './tests/mocks/intervalWorker'
+import { IntervalWorkerMock } from './tests/mocks/IntervalWorkerMessengerMock'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import { AudioContextMock } from './tests/mocks/AudioContextMock'
 

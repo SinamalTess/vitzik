@@ -1,6 +1,6 @@
 import { MsPerBeat } from '../../../types'
 import findLast from 'lodash/findLast'
-import { Keyboard } from '../../Keyboard/Keyboard'
+import { Keyboard } from '../../../utils/Keyboard'
 import { VisualizerEventType, VisualizerNoteEvent } from '../types'
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'

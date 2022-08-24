@@ -1,12 +1,5 @@
-import { IntervalWorkerMock } from '../mocks/intervalWorker'
+import { mockIntervalWorker } from '../mocks/AppContextProviderMock'
 
-export const dispatchWorkerTimeEvent = (worker: IntervalWorkerMock, newTime: number) => {
-    const callbacks = worker.callbacks
-    callbacks.forEach((callback) =>
-        callback({
-            data: {
-                time: newTime,
-            },
-        })
-    )
+export const dispatchWorkerTimeEvent = (newTime: number) => {
+    mockIntervalWorker.callWith('', 0, 0, newTime)
 }

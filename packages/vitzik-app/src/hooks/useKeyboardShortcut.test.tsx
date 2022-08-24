@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useKeyboardShortcut } from './useKeyboardShortcut'
-import { render, screen } from '../tests/utils/customRender'
+import { render, screen } from '../tests/utils/renderWithContext'
 import { AppContext } from '../components/_contexts'
 
 function MyComponent() {

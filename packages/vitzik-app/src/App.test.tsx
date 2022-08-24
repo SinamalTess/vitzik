@@ -35,6 +35,15 @@ jest.mock('./components/_hocs/WithContainerDimensions', () => ({
     },
 }))
 
+jest.mock('./components/_contexts', () => {
+    const { AppContextProviderMock, AppContext } = require('./../src/tests/mocks/AppContextProviderMock')
+
+    return {
+        AppContextProvider: AppContextProviderMock,
+        AppContext,
+    }
+})
+
 const midiInput = new MidiInputMock('Piano', 'Yamaha')
 
 const waitSoundFontInstrumentPromise = async () => {

@@ -1,4 +1,4 @@
-import { render, waitFor, intervalWorker } from '../../tests/utils/customRender'
+import { render, waitFor } from '../../tests/utils/renderWithContext'
 import React from 'react'
 import { AudioPlayer } from './AudioPlayer'
 import { AudioPlayerState } from '../../types'
@@ -28,26 +28,11 @@ describe('AudioPlayer', () => {
         render(<AudioPlayer {...props}></AudioPlayer>)
 
         await act(async () => {
-            dispatchWorkerTimeEvent(intervalWorker, 1200)
+            dispatchWorkerTimeEvent(1200)
         })
 
         await waitFor(() => {
             expect(props.onChangeState).toHaveBeenCalledWith('stopped')
-        })
-    })
-
-    it('should stop playing if the end of a loop is reached and restore the previous player state', async () => {
-        render(
-            <AudioPlayer {...props} playerState={'playing'} loopTimes={[200, 500]}></AudioPlayer>
-        )
-
-        await act(async () => {
-            dispatchWorkerTimeEvent(intervalWorker, 600)
-        })
-
-        expect(props.onChangeState).toHaveBeenCalledWith('seeking')
-        await waitFor(() => {
-            expect(props.onChangeState).toHaveBeenCalledWith('playing')
         })
     })
 

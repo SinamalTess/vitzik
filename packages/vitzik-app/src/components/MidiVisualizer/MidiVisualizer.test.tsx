@@ -1,4 +1,4 @@
-import { render, screen, intervalWorker } from '../../tests/utils/customRender'
+import { render, screen } from '../../tests/utils/renderWithContext'
 import React from 'react'
 import { MidiVisualizer } from './MidiVisualizer'
 import { DEFAULT_MIDI_INSTRUMENT } from '../../utils/const'
@@ -35,7 +35,7 @@ describe('MidiVisualizer', () => {
         )
 
         await act(async () => {
-            dispatchWorkerTimeEvent(intervalWorker, 1200)
+            dispatchWorkerTimeEvent(1200)
         })
 
         const notes = screen.getAllByLabelText(/note/)

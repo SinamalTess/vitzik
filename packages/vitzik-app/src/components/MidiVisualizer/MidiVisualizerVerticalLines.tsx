@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
 import './MidiVisualizerVerticalLines.scss'
 import clsx from 'clsx'
-import { Keyboard } from '../Keyboard/Keyboard'
+import { Keyboard } from '../../utils/Keyboard'
 
 interface MidiVisualizerTracksProps {
     height: number

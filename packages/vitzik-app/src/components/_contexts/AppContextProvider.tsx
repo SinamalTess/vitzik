@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useState } from 'react'
 import { IIntervalWorkerContext, IntervalWorkerContext } from './IntervalWorkerContext'
 import { IKeyboardShortcutsContext, KeyboardShortcutsContext } from './KeyboardShortcutsContext'
 
-type IAppContext = IKeyboardShortcutsContext & IIntervalWorkerContext
+export type IAppContext = IKeyboardShortcutsContext & IIntervalWorkerContext
 
 interface AppContextProviderProps {
     children: ReactNode
@@ -16,7 +16,6 @@ export const AppContext = React.createContext<IAppContext>({
 
 export function AppContextProvider({ children }: AppContextProviderProps) {
     const { intervalWorker } = useContext(IntervalWorkerContext)
-
     const { keyboardShortcuts: keyboardShortcutsDefault } = useContext(KeyboardShortcutsContext)
     const [keyboardShortcuts, setKeyboardShortcuts] = useState<string[]>(keyboardShortcutsDefault)
 

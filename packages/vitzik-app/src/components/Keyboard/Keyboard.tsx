@@ -12,7 +12,7 @@ import { translateNoteTo } from '../../utils'
 import clsx from 'clsx'
 import findLast from 'lodash/findLast'
 import last from 'lodash/last'
-import { Keyboard as KeyboardClass } from './Keyboard'
+import { Keyboard as KeyboardClass } from '../../utils/Keyboard'
 
 interface KeyboardProps {
     activeNotes: ActiveNote[]

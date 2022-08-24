@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import './Settings.scss'
 import {
     MusicSystem,
@@ -75,7 +75,6 @@ export function Settings({
     onChangeShowNotes,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const { setKeyboardShortcuts } = useContext(AppContext)
     const userInstrument = activeInstruments.find(
         (instrument) => instrument.channel === MIDI_INPUT_CHANNEL
     )

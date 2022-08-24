@@ -1,5 +1,5 @@
 import { keyToNote, translateNoteTo, noteToKey } from './index'
-import { Keyboard } from '../components/Keyboard/Keyboard'
+import { Keyboard } from './Keyboard'
 
 describe('keyToNote()', () => {
     it('should convert MIDI piano key number to an alphabetical note', () => {
