@@ -17,7 +17,6 @@ import { ExtraSettingsPanel } from './ExtraSettingsPanel'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { BpmSelector } from '../BpmSelector'
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut'
-import { AppContext } from '../_contexts'
 
 interface SettingsProps {
     showNotes: boolean

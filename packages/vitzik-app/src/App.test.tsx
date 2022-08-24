@@ -27,7 +27,6 @@ jest.mock('soundfont-player', () => ({
     instrument: jest.fn(),
 }))
 
-jest.mock('midi-json-parser', () => () => {})
 
 jest.mock('./components/_hocs/WithContainerDimensions', () => ({
     WithContainerDimensions: (Component: any) => (props: any) => {

@@ -11,5 +11,6 @@ const config: Config.InitialOptions = {
   ],
   setupFilesAfterEnv: ["<rootDir>/setupTests.js"],
   testPathIgnorePatterns: ["/node_modules/", "lib"],
+  displayName: "vitzik-ui",
 };
 export default config;
