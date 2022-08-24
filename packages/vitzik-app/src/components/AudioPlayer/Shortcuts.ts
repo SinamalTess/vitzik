@@ -50,6 +50,7 @@ export function Shortcuts({
     }
 
     function onArrowUpKey() {
+        console.log('hi')
         seekFor(100)
     }
 
@@ -70,7 +71,6 @@ export function Shortcuts({
     function restoreAudioPlayerPreviousState() {
         onChangeState(prevState === 'stopped' ? 'paused' : prevState)
     }
-
 
     return null
 }

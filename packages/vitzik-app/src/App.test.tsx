@@ -27,6 +27,7 @@ jest.mock('soundfont-player', () => ({
     instrument: jest.fn(),
 }))
 
+jest.mock('midi-json-parser', () => () => {})
 
 jest.mock('./components/_hocs/WithContainerDimensions', () => ({
     WithContainerDimensions: (Component: any) => (props: any) => {
@@ -35,7 +36,10 @@ jest.mock('./components/_hocs/WithContainerDimensions', () => ({
 }))
 
 jest.mock('./components/_contexts', () => {
-    const { AppContextProviderMock, AppContext } = require('./../src/tests/mocks/AppContextProviderMock')
+    const {
+        AppContextProviderMock,
+        AppContext,
+    } = require('./../src/tests/mocks/AppContextProviderMock')
 
     return {
         AppContextProvider: AppContextProviderMock,

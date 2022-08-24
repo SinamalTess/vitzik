@@ -6,6 +6,7 @@ import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
 import { AppContext } from '../_contexts'
 import { Shortcuts } from './Shortcuts'
+import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 
 interface AudioPlayerProps {
     midiMetas: MidiMetas
@@ -36,6 +37,19 @@ export function AudioPlayer({
     const [prevPlayerState, setPrevPlayerState] = useState<AudioPlayerState>(playerState)
     const [workerInitialTime, setWorkerInitialTime] = useState<number>(0)
     const { setKeyboardShortcuts } = useContext(AppContext)
+
+    useIntervalWorker(onTimeChange)
+
+    function onTimeChange(time: number) {
+        console.log(time)
+        checkIsEndOfSong(time)
+    }
+
+    function checkIsEndOfSong(time: number) {
+        if (time > midiMetas.midiDuration) {
+            onChangeState('stopped')
+        }
+    }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { value } = event.target

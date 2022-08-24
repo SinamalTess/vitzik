@@ -1,5 +1,6 @@
 import { mockIntervalWorker } from '../mocks/AppContextProviderMock'
 
 export const dispatchWorkerTimeEvent = (newTime: number) => {
-    mockIntervalWorker.callWith('', {time: newTime})
+    console.log('hello')
+    mockIntervalWorker.callWith('', { time: newTime })
 }

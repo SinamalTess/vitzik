@@ -25,6 +25,8 @@ export const useKeyboardShortcut = (
             unsubscribe = registerKeyboardShortcut(code, callbackKeyDown, callbackKeyUp)
         }
 
+        console.log(keyboardShortcuts)
+
         return function cleanup() {
             unsubscribe()
         }

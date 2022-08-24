@@ -146,7 +146,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }
 
     function onTimeChange(time: number) {
-        console.log(time)
         swapSlidesZIndexes(time)
         timeRef.current = time
         redrawVisualization()

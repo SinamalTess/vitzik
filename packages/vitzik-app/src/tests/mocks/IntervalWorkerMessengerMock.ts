@@ -10,19 +10,19 @@ export class IntervalWorkerMessengerMock {
     }
 
     stop = () => {
-        this.callWith('stop', {time: 0})
+        this.callWith('stop', { time: 0 })
     }
 
     pause = () => {
-        this.callWith('pause', {})
+        this.callWith('pause', { time: 0 })
     }
 
     updateTimer = (startAt: number) => {
-        this.callWith('updateTimer', {startAt})
+        this.callWith('updateTimer', { startAt, time: startAt })
     }
 
     getTime = () => {
-        this.callWith('getTime', {startAt: 0})
+        this.callWith('getTime', { startAt: 0, time: 0 })
     }
 
     subscribe = (callback: Function) => {

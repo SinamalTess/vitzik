@@ -80,7 +80,6 @@ export function MidiEventsManager({
 
     function onTimeChange(time: number, interval: number) {
         timeRef.current = time
-        checkIsEndOfSong(time)
         setActiveNotes(time)
         if (midiPlayMode === 'waitForValidInput') {
             checkForWaitMode(time, interval)
@@ -95,12 +94,6 @@ export function MidiEventsManager({
         }
         if (loopTimestamps) {
             checkIsEndOfLoop(time)
-        }
-    }
-
-    function checkIsEndOfSong(time: number) {
-        if (time > midiMetas.midiDuration) {
-            onChangeAudioPlayerState('stopped')
         }
     }
 
