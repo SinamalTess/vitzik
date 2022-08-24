@@ -37,6 +37,7 @@
     ]
   },
   "jest": {
+    "displayName": "vitzip-app",
     "coveragePathIgnorePatterns": [
       "/src/types",
       "/src/tests",
@@ -44,8 +45,7 @@
       "/src/utils/const",
       "/index.js",
       "/index.ts"
-    ],
-    "displayName": "vitzip-app"
+    ]
   },
   "browserslist": {
     "production": [
