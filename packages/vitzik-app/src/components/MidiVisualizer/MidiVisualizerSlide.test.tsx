@@ -41,7 +41,7 @@ describe('MidiVisualizerSlide', () => {
     it('should render a section properly', () => {
         render(
             <MidiVisualizerSlide
-                noteEvents={noteEvents}
+                events={noteEvents}
                 width={100}
                 height={50}
                 index={0}

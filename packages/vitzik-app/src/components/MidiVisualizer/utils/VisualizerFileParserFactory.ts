@@ -7,7 +7,7 @@ import {
 } from '../../../utils'
 import { VisualizerEventsFactory } from './VisualizerEventsFactory'
 import { MsPerBeat } from '../../../types'
-import { SectionNoteEvents } from '../types'
+import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
 
 export class VisualizerFileParserFactory extends VisualizerEventsFactory {
@@ -49,7 +49,7 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
     private processNoteOffEvent = (
         event: IMidiNoteOffEvent | IMidiNoteOnEvent,
         deltaAcc: number,
-        sectionsNoteEvents: SectionNoteEvents[]
+        sectionsOfEvents: SectionOfEvents[]
     ) => {
         const key = MidiFactory.Note(event).getKey()
         const partialMidiVisualizerNoteEventIndex = this.notesBeingProcessed.findIndex(
@@ -64,14 +64,14 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
                 partialMidiVisualizerNoteEvent,
                 deltaAcc
             )
-            this.addVisualizerNoteEventToSection(finalMidiVisualizerNoteEvent, sectionsNoteEvents)
+            this.addVisualizerNoteEventToSection(finalMidiVisualizerNoteEvent, sectionsOfEvents)
             this.notesBeingProcessed.splice(partialMidiVisualizerNoteEventIndex, 1)
         }
     }
 
     private addVisualizerNoteEventToSection = (
         visualizerNoteEvent: VisualizerNoteEvent,
-        sectionsNoteEvents: SectionNoteEvents[]
+        sectionsOfEvents: SectionOfEvents[]
     ) => {
         const startingSection = Math.floor(visualizerNoteEvent.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
         const endingSection = Math.floor(
@@ -79,25 +79,25 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
         )
 
         for (let i = startingSection; i <= endingSection; i++) {
-            const indexSection = sectionsNoteEvents.findIndex((section) => section[i])
+            const indexSection = sectionsOfEvents.findIndex((section) => section[i])
             if (indexSection >= 0) {
-                sectionsNoteEvents[indexSection] = {
-                    [i]: [...sectionsNoteEvents[indexSection][i], visualizerNoteEvent],
+                sectionsOfEvents[indexSection] = {
+                    [i]: [...sectionsOfEvents[indexSection][i], visualizerNoteEvent],
                 }
             } else {
-                sectionsNoteEvents.push({ [i]: [visualizerNoteEvent] })
+                sectionsOfEvents.push({ [i]: [visualizerNoteEvent] })
             }
         }
     }
 
     parseMidiJson = (midiJson: IMidiFile) => {
         const { tracks } = midiJson
-        let noteEvents: SectionNoteEvents[][] = []
+        let events: SectionOfEvents[][] = []
 
         tracks.forEach((track) => {
             let deltaAcc = 0
             this.notesBeingProcessed = []
-            let noteEventsInTrack: SectionNoteEvents[] = []
+            let sectionsOfEvents: SectionOfEvents[] = []
 
             track.forEach((event) => {
                 deltaAcc = deltaAcc + event.delta
@@ -113,13 +113,13 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
                 if (isNoteOnEvent) {
                     this.processNoteOnEvent(event, deltaAcc)
                 } else if (isNoteOffEvent) {
-                    this.processNoteOffEvent(event, deltaAcc, noteEventsInTrack)
+                    this.processNoteOffEvent(event, deltaAcc, sectionsOfEvents)
                 }
             })
 
-            noteEvents.push(noteEventsInTrack)
+            events.push(sectionsOfEvents)
         })
 
-        return noteEvents
+        return events
     }
 }

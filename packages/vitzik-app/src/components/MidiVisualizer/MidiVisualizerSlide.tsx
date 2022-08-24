@@ -1,40 +1,38 @@
 import React from 'react'
 import './MidiVisualizerSlide.scss'
 import clsx from 'clsx'
-import { SVGRectangle } from 'vitzik-ui'
-import { VisualizerNoteEvent } from './types'
+import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent } from './types'
 import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
+import { Note } from './events/Note'
+import { LoopLine } from './events/LoopLine'
 
 interface MidiVisualizerSlideProps {
     index: number
     height: number
     width: number
-    noteEvents: VisualizerNoteEvent[] | null | undefined
+    events: VisualizerEvent[] | null | undefined
     isTopSlide: boolean
 }
 
-interface RectanglesProps {
-    noteEvents: VisualizerNoteEvent[]
+interface EventsProps {
+    events: VisualizerEvent[]
 }
 
 const BASECLASS = `midi-visualizer__slide`
 
-const Notes = React.memo(function Notes({ noteEvents }: RectanglesProps) {
+const Events = React.memo(function Notes({ events }: EventsProps) {
     return (
         <>
-            {noteEvents.map(({ channel, uniqueId, y, x, w, h, name }) => (
-                <SVGRectangle
-                    aria-label={`${name} note`}
-                    key={`${uniqueId}`}
-                    className={`channel--${channel}`}
-                    x={x}
-                    y={y}
-                    rx={5}
-                    ry={5}
-                    w={w}
-                    h={h}
-                />
-            ))}
+            {events.map((event) => {
+                if (isNoteEvent(event)) {
+                    return <Note event={event} />
+                } else if (isLoopTimestampEvent(event)) {
+                    const { startingTime: timestamp, w: width, y } = event
+                    return <LoopLine timestamp={timestamp} width={width} y={y} />
+                } else {
+                    return null
+                }
+            })}
         </>
     )
 })
@@ -43,7 +41,7 @@ export function MidiVisualizerSlide({
     index,
     height,
     width,
-    noteEvents,
+    events,
     isTopSlide,
 }: MidiVisualizerSlideProps) {
     const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`], {
@@ -53,7 +51,7 @@ export function MidiVisualizerSlide({
     return (
         <div className={classNames}>
             <svg width={width} height={height} data-testid={`${BASECLASS}--${index}`}>
-                {noteEvents ? <Notes noteEvents={noteEvents} /> : null}
+                {events ? <Events events={events} /> : null}
             </svg>
             <MidiVisualizerVerticalLines height={height} width={width} />
         </div>

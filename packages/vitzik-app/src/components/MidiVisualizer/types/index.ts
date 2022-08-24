@@ -1,2 +1,2 @@
 export * from './VisualizerEvents'
-export * from './SectionNoteEvents'
+export * from './SectionOfEvents'

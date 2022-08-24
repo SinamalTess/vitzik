@@ -1,7 +1,7 @@
 import { MsPerBeat } from '../../../types'
 import findLast from 'lodash/findLast'
 import { Keyboard } from '../../../utils/Keyboard'
-import { VisualizerEventType, VisualizerNoteEvent } from '../types'
+import { VisualizerEvent, VisualizerEventType, VisualizerNoteEvent } from '../types'
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { Dimensions } from '../types/Dimensions'
@@ -42,6 +42,20 @@ export class VisualizerEventsFactory {
         return 0
     }
 
+    getYFromStartingTime = (startingTime: number) => this.ratioSection * startingTime
+
+    getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
+        const y = this.getYFromStartingTime(startingTime)
+        return {
+            eventType: 'loopTimestamp',
+            startingTime,
+            h: 1,
+            w: this.width,
+            x: 0,
+            y,
+        }
+    }
+
     getFinalVisualizerNoteEvent = (note: VisualizerNoteEvent, deltaAcc: number) => {
         const duration = this.deltaToTime(deltaAcc) - note.startingTime
         const h = this.ratioSection * duration
@@ -57,7 +71,7 @@ export class VisualizerEventsFactory {
         const note = MidiFactory.Note(event).getMetas()
         const { name } = note
         const startingTime = this.deltaToTime(deltaAcc)
-        const y = this.ratioSection * startingTime
+        const y = this.getYFromStartingTime(startingTime)
         const defaultMetas = {
             startingTime,
             duration: 0,

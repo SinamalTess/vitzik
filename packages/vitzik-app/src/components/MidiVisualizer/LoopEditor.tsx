@@ -1,31 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
-import { msToHumanReadableTime } from '../../utils'
-import { SVGLine } from 'vitzik-ui'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { AppContext } from '../_contexts'
-
-interface LineProps {
-    y: number
-    width: number
-    timestamp: number
-    color?: string
-    'data-testid'?: string
-}
-
-function LoopLine({ y, width, timestamp, color = 'red' }: LineProps) {
-    const TEXT_OFFSET = 20
-    const yText = y + TEXT_OFFSET
-    return (
-        <>
-            <SVGLine x1={0} y1={y} x2={width} color={color} aria-label={'loop-line'} />
-            <text x="20" y={yText} className="small" fill={color} aria-label={'loop-line-text'}>
-                {msToHumanReadableTime(timestamp, true)}
-            </text>
-        </>
-    )
-}
+import { LoopLine } from './events/LoopLine'
 
 export const BASE_CLASS = 'loop-editor'
 
@@ -51,7 +29,6 @@ export function LoopEditor({
     const [loopStartTimestamp, loopEndTimestamp] = loopTimestamps
     const [time, setTime] = useState(0)
     const yToTimestamp = (y: number) => (height - y) / ratio + time
-    const timestampToY = (timestamp: number) => height - (timestamp - time) * ratio
 
     useIntervalWorker(setTime)
 
@@ -92,10 +69,6 @@ export function LoopEditor({
         })
     }
 
-    const lineTimestamps = loopTimestamps.filter(
-        (timestamp) => timestamp && timestamp > time && timestamp < time + msPerSection
-    ) as number[]
-
     const props = {
         onMouseMove: handleMouseMove,
         onClick: handleClick,
@@ -109,12 +82,6 @@ export function LoopEditor({
             data-testid={'loop-editor'}
             {...(allLinesDrawn ? null : props)}
         >
-            {lineTimestamps.length
-                ? lineTimestamps.map((timestamp) => {
-                      const y = timestampToY(timestamp)
-                      return <LoopLine y={y} timestamp={timestamp} width={width} key={timestamp} />
-                  })
-                : null}
             {previewLineY ? (
                 <LoopLine y={previewLineY} timestamp={yToTimestamp(previewLineY)} width={width} />
             ) : null}

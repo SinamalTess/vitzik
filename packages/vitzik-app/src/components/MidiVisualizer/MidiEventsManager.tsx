@@ -11,7 +11,7 @@ import {
 } from '../../types'
 import { isUserChannel } from './MidiVisualizer'
 import { VisualizerFactory } from './utils'
-import { SectionNoteEvents } from './types'
+import { SectionOfEvents } from './types'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { AppContext } from '../_contexts'
 
@@ -22,7 +22,7 @@ interface MidiEventsManagerProps {
     nextNoteStartingTime: number | null
     visualizerFactory: VisualizerFactory
     activeInstruments: Instrument[]
-    activeTracksNoteEvents: SectionNoteEvents[]
+    activeTracksNoteEvents: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void

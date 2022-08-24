@@ -1,6 +1,12 @@
 import { AlphabeticalNote } from '../../../types'
 
-export type VisualizerEventType = 'note'
+export type VisualizerEventType = 'note' | 'loopTimestamp'
+
+export const isNoteEvent = (event: VisualizerEvent): event is VisualizerNoteEvent =>
+    event.eventType === 'note'
+
+export const isLoopTimestampEvent = (event: VisualizerEvent): event is VisualizerNoteEvent =>
+    event.eventType === 'loopTimestamp'
 
 export interface Coordinates {
     w: number
@@ -9,12 +15,12 @@ export interface Coordinates {
     y: number
 }
 
-export interface VisualizerEvent extends Coordinates {
+export interface VisualizerEventBase extends Coordinates {
     eventType: VisualizerEventType
     startingTime: number
 }
 
-export interface VisualizerNoteEvent extends VisualizerEvent {
+export interface VisualizerNoteEvent extends VisualizerEventBase {
     // Some notes don't have associated names because they are just frequencies
     // See : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
     name?: AlphabeticalNote
@@ -25,3 +31,5 @@ export interface VisualizerNoteEvent extends VisualizerEvent {
     startingTime: number
     uniqueId: string
 }
+
+export type VisualizerEvent = VisualizerNoteEvent | VisualizerEventBase

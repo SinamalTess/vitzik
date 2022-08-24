@@ -19,7 +19,7 @@ import { useIntervalWorker } from '../../hooks/useIntervalWorker'
 import { isEven } from '../../utils'
 import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
-import { VisualizerNoteEvent } from './types'
+import { VisualizerEvent } from './types'
 
 interface MidiVisualizerProps {
     activeInstruments: Instrument[]
@@ -62,64 +62,52 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     onChangeAudioPlayerState,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
-    const [sectionNoteEvents, setSectionNoteEvents] = useState<VisualizerNoteEvent[][]>([])
+    const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
     const [topSlide, setTopSlide] = useState([true, false])
-    const { intervalWorker } = useContext(AppContext)
-    const prevIndexToDraw = useRef({ slide0: 0, slide1: 1 })
+    const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
     const timeRef = useRef(0)
+    const { intervalWorker } = useContext(AppContext)
 
     const slides = ref.current?.getElementsByTagName('div')
 
     const visualizerFactory = useMemo(
-        () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas),
+        () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas, midiFile),
         [height, midiMetas, width]
     )
 
-    const noteEvents = useMemo(
-        () => visualizerFactory.getVisualizerNoteEvents(midiFile),
-        [visualizerFactory, midiFile]
-    )
-
-    const activeTracksNoteEvents = useMemo(
-        () => VisualizerFactory.getActiveTracksNoteEvents(activeTracks, noteEvents),
-        [noteEvents, activeTracks]
-    )
+    const activeTracksEvents = useMemo(() => {
+        visualizerFactory.clearLoopTimeStampEvents()
+        if (loopTimestamps) {
+            const [startLoop, endLoop] = loopTimestamps
+            if (startLoop) {
+                visualizerFactory.addLoopTimeStampEvent(startLoop)
+            }
+            if (endLoop) {
+                visualizerFactory.addLoopTimeStampEvent(endLoop)
+            }
+        }
+        return visualizerFactory.getEventsForTracks(activeTracks)
+    }, [activeTracks, visualizerFactory, loopTimestamps])
 
     useIntervalWorker(onTimeChange)
 
-    useEffect(() => {
-        if (ref.current && height && width) {
-            redrawVisualization(true)
+    function onTimeChange(time: number) {
+        timeRef.current = time
+        checkTopSlide(time)
+        animate(time)
+        if (shouldRedraw(time)) {
+            reDraw(time)
         }
-    }, [height, width, ref.current])
-
-    useEffect(() => {
-        redrawVisualization(true)
-    }, [activeTracks])
-
-    const getCoordinates = (time: number, forceUpdate: boolean = false) => {
-        const indexToDraw = visualizerFactory.getIndexesSectionToDraw(time)
-        const indexToDrawHasChanged =
-            indexToDraw.slide0 !== prevIndexToDraw.current.slide0 ||
-            indexToDraw.slide1 !== prevIndexToDraw.current.slide1
-
-        if (indexToDrawHasChanged || forceUpdate) {
-            setSectionNoteEvents([
-                visualizerFactory.getNoteEventsBySectionIndex(
-                    activeTracksNoteEvents,
-                    indexToDraw.slide0
-                ),
-                visualizerFactory.getNoteEventsBySectionIndex(
-                    activeTracksNoteEvents,
-                    indexToDraw.slide1
-                ),
-            ])
-        }
-
-        prevIndexToDraw.current = indexToDraw
     }
 
-    const animate = (time: number) => {
+    function checkTopSlide(time: number) {
+        const indexSectionPlaying = visualizerFactory.getIndexSectionByTime(time)
+        const isIndexSectionPlayingEven = isEven(indexSectionPlaying)
+
+        setTopSlide([isIndexSectionPlayingEven, !isIndexSectionPlayingEven])
+    }
+
+    function animate(time: number) {
         function animationStep() {
             const top = visualizerFactory.getSlidesPercentageTop(time)
 
@@ -132,23 +120,28 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         window.requestAnimationFrame(animationStep)
     }
 
-    function onTimeChange(time: number) {
-        checkTopSlide(time)
-        timeRef.current = time
-        redrawVisualization()
+    function shouldRedraw(time: number) {
+        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+        return newIndexesToDraw[0] !== indexesToDraw[0] || newIndexesToDraw[1] !== indexesToDraw[1]
     }
 
-    function redrawVisualization(forceUpdate = false) {
-        animate(timeRef.current)
-        getCoordinates(timeRef.current, forceUpdate)
+    function reDraw(time: number) {
+        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+
+        setSlidesEvents([
+            visualizerFactory.getEventsBySectionIndex(activeTracksEvents, newIndexesToDraw[0]),
+            visualizerFactory.getEventsBySectionIndex(activeTracksEvents, newIndexesToDraw[1]),
+        ])
+
+        setIndexesToDraw(newIndexesToDraw)
     }
 
-    function checkTopSlide(time: number) {
-        const indexSectionPlaying = visualizerFactory.getIndexSectionPlaying(time)
-        const isIndexSectionPlayingEven = isEven(indexSectionPlaying)
+    useEffect(() => {
+        const time = timeRef.current
 
-        setTopSlide([isIndexSectionPlayingEven, !isIndexSectionPlayingEven])
-    }
+        animate(time)
+        reDraw(time)
+    }, [activeTracks, loopTimestamps, height, width, ref.current])
 
     // @ts-ignore
     function onWheel(e: WheelEvent<HTMLDivElement>) {
@@ -175,7 +168,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                     <MidiVisualizerSlide
                         index={index}
                         key={index}
-                        noteEvents={sectionNoteEvents[index]}
+                        events={slidesEvents[index]}
                         height={height}
                         width={width}
                         isTopSlide={topSlide[index]}
@@ -198,7 +191,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 loopTimestamps={loopTimestamps}
                 visualizerFactory={visualizerFactory}
                 activeInstruments={activeInstruments}
-                activeTracksNoteEvents={activeTracksNoteEvents}
+                activeTracksNoteEvents={activeTracksEvents}
                 onChangeActiveNotes={onChangeActiveNotes}
                 onChangeInstruments={onChangeInstruments}
                 onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}

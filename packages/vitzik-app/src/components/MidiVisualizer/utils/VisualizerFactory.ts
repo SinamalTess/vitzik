@@ -2,9 +2,9 @@ import { MidiVisualizerActiveNote, MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { isEven } from '../../../utils'
 import minBy from 'lodash/minBy'
-import { VisualizerNoteEvent } from '../types'
+import { isNoteEvent, VisualizerEvent, VisualizerNoteEvent } from '../types'
 import { VisualizerFileParserFactory } from './VisualizerFileParserFactory'
-import { SectionNoteEvents } from '../types'
+import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
 
 export class VisualizerFactory extends VisualizerFileParserFactory {
@@ -13,6 +13,7 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     msPerSection: number
     allMsPerBeat: MsPerBeat[]
     ticksPerBeat: number
+    events: SectionOfEvents[][]
 
     constructor(
         containerDimensions: Dimensions,
@@ -20,7 +21,8 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         midiMetas: {
             allMsPerBeat: MsPerBeat[]
             ticksPerBeat: number
-        }
+        },
+        midiFile: IMidiFile
     ) {
         super(containerDimensions, msPerSection, midiMetas)
 
@@ -29,6 +31,7 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         this.msPerSection = msPerSection
         this.allMsPerBeat = midiMetas.allMsPerBeat
         this.ticksPerBeat = midiMetas.ticksPerBeat
+        this.events = this.getInitialEvents(midiFile)
     }
 
     visualizerNoteEventToActiveNote = (
@@ -50,14 +53,25 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
             this.visualizerNoteEventToActiveNote(visualizerNoteEvent)
         )
 
-    getIndexSectionPlaying = (time: number) => Math.floor(time / this.msPerSection)
+    getIndexSectionByTime = (time: number) => Math.floor(time / this.msPerSection)
+
+    findSectionIndexByKey = (key: string, sections: SectionOfEvents[]) =>
+        sections.findIndex((section) => key in section)
+
+    findSectionByKey = (key: string, sections: SectionOfEvents[]) =>
+        sections.find((section) => key in section)
+
+    getEventsFromSection = (section: SectionOfEvents): VisualizerEvent[] =>
+        Object.values(section)[0]
+
+    getSectionKey = (section: SectionOfEvents) => Object.keys(section)[0]
 
     getSlidesPercentageTop = (time: number) => {
         const exactNbSectionPassed = time / this.msPerSection
         const percentageTop = +((exactNbSectionPassed % 1) * 100)
         const percentageTop1 = `${100 - percentageTop}%`
         const percentageTop2 = `-${percentageTop}%`
-        const indexSectionPlaying = this.getIndexSectionPlaying(time)
+        const indexSectionPlaying = this.getIndexSectionByTime(time)
         const isIndexSectionPlayingEven = isEven(indexSectionPlaying)
 
         return isIndexSectionPlayingEven
@@ -66,80 +80,70 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     }
 
     getIndexesSectionToDraw = (time: number) => {
-        const indexSectionPlaying = this.getIndexSectionPlaying(time)
+        const indexSectionPlaying = this.getIndexSectionByTime(time)
         const nextSectionIndex = indexSectionPlaying + 1
         const isIndexSectionEven = isEven(indexSectionPlaying)
 
-        if (time === 0) {
-            const slideToRedraw = isIndexSectionEven ? 'slide1' : 'slide0'
-            return {
-                slide0: indexSectionPlaying,
-                slide1: indexSectionPlaying,
-                [slideToRedraw]: nextSectionIndex,
-            }
-        } else {
-            return {
-                slide0: isIndexSectionEven ? indexSectionPlaying : nextSectionIndex,
-                slide1: isIndexSectionEven ? nextSectionIndex : indexSectionPlaying,
-            }
-        }
+        return [
+            isIndexSectionEven ? indexSectionPlaying : nextSectionIndex,
+            isIndexSectionEven ? nextSectionIndex : indexSectionPlaying,
+        ]
     }
 
-    getNoteEventsBySectionIndex = (
-        sectionsOfNoteEvents: SectionNoteEvents[] | undefined,
-        index: number
-    ): VisualizerNoteEvent[] => {
-        if (!sectionsOfNoteEvents) return []
-        const section = sectionsOfNoteEvents.find((section) => index.toString() in section)
-        const visualizerNoteEvents: VisualizerNoteEvent[] = section ? Object.values(section)[0] : []
+    getEventsBySectionIndex = (sectionsOfEvents: SectionOfEvents[] | undefined, index: number) => {
+        if (!sectionsOfEvents) return []
+        const section = this.findSectionByKey(index.toString(), sectionsOfEvents)
+        const visualizerEvents: VisualizerNoteEvent[] = section ? Object.values(section)[0] : []
 
-        return visualizerNoteEvents.map((visualizerNoteEvent) => {
-            const y = visualizerNoteEvent.y - index * this.height
+        return visualizerEvents.map((visualizerEvent) => {
+            const y = visualizerEvent.y - index * this.height
             return {
-                ...visualizerNoteEvent,
+                ...visualizerEvent,
                 y,
             }
         })
     }
 
     getActiveNotes = (
-        sectionsOfNoteEvents: SectionNoteEvents[],
+        sectionsOfEvents: SectionOfEvents[],
         time: number
     ): MidiVisualizerActiveNote[] => {
-        const indexSectionPlaying = this.getIndexSectionPlaying(time)
-        const sectionPlaying = sectionsOfNoteEvents.find(
-            (section) => indexSectionPlaying.toString() in section
-        )
+        const indexSectionPlaying = this.getIndexSectionByTime(time).toString()
+        const sectionPlaying = this.findSectionByKey(indexSectionPlaying, sectionsOfEvents)
 
         if (sectionPlaying) {
-            const sectionMidiVisualizerNoteEvents = Object.values(sectionPlaying)[0]
-            const activeMidiVisualizerNoteEvents = sectionMidiVisualizerNoteEvents.filter(
-                ({ startingTime, duration }: VisualizerNoteEvent) =>
-                    startingTime <= time && startingTime + duration > time
+            const sectionEvents = this.getEventsFromSection(sectionPlaying)
+            const activeNoteEvents = sectionEvents.filter(
+                (event) =>
+                    isNoteEvent(event) &&
+                    event.startingTime <= time &&
+                    event.startingTime + event.duration > time
             )
 
-            return this.visualizerNoteEventsToActiveNotes(activeMidiVisualizerNoteEvents)
+            return this.visualizerNoteEventsToActiveNotes(activeNoteEvents as VisualizerNoteEvent[])
         }
 
         return []
     }
 
-    getNextNoteStartingTime = (sectionsOfNoteEvents: SectionNoteEvents[], time: number) => {
-        if (!sectionsOfNoteEvents.length) return null
+    getNextNoteStartingTime = (sectionsOfEvents: SectionOfEvents[], time: number) => {
+        if (!sectionsOfEvents.length) return null
 
         const MAX_NB_SECTIONS_TO_CHECK = 5 // for better performance we limit the search to only a few sections ahead
 
-        const indexSectionPlaying = this.getIndexSectionPlaying(time)
-        const nbSectionsLeft = sectionsOfNoteEvents.length - indexSectionPlaying
+        const indexSectionPlaying = this.getIndexSectionByTime(time)
+        const nbSectionsLeft = sectionsOfEvents.length - indexSectionPlaying
         const nbSectionsToCheck = Math.min(nbSectionsLeft, MAX_NB_SECTIONS_TO_CHECK)
         const lastSectionToCheck = indexSectionPlaying + nbSectionsToCheck
 
         for (let i = indexSectionPlaying; i < lastSectionToCheck; i++) {
             const key = i.toString()
-            const section = sectionsOfNoteEvents.find((section) => key in section)
+            const section = this.findSectionByKey(key, sectionsOfEvents)
             if (section) {
-                const sectionNotes: VisualizerNoteEvent[] = Object.values(section)[0]
-                const nextNotes = sectionNotes.filter(({ startingTime }) => startingTime > time)
+                const sectionEvents: VisualizerEvent[] = this.getEventsFromSection(section)
+                const nextNotes = sectionEvents.filter(
+                    (event) => isNoteEvent(event) && event.startingTime > time
+                )
                 const firstNextNote = minBy(nextNotes, 'startingTime')
                 if (firstNextNote) {
                     return firstNextNote.startingTime
@@ -150,34 +154,28 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         return null
     }
 
-    static getActiveTracksNoteEvents = (
-        activeTracks: number[],
-        sectionsOfNoteEvents: SectionNoteEvents[][]
-    ): SectionNoteEvents[] => {
+    getEventsForTracks = (activeTracks: number[]): SectionOfEvents[] => {
         if (
             !activeTracks.length ||
-            !sectionsOfNoteEvents.length ||
-            activeTracks.length > sectionsOfNoteEvents.length
+            !this.events.length ||
+            activeTracks.length > this.events.length
         ) {
             return []
         }
 
-        let mergedSections: SectionNoteEvents[] = []
+        let mergedSections: SectionOfEvents[] = []
 
-        const activeTracksSections = activeTracks
-            .map((track) => sectionsOfNoteEvents[track])
-            .flat(1)
+        const activeTracksSections = activeTracks.map((track) => this.events[track]).flat(1)
 
         activeTracksSections.forEach((section) => {
             const sectionKey = Object.keys(section)[0]
-            const existingSectionIndex = mergedSections.findIndex(
-                (section) => sectionKey.toString() in section
-            )
+            const existingSectionIndex = this.findSectionIndexByKey(sectionKey, mergedSections)
             if (existingSectionIndex >= 0) {
-                const previousValues = Object.values(mergedSections[existingSectionIndex])[0]
-                const currentValues = Object.values(section)[0]
+                const existingSection = mergedSections[existingSectionIndex]
+                const previousEvents = this.getEventsFromSection(existingSection)
+                const currentEvents = this.getEventsFromSection(section)
                 mergedSections[existingSectionIndex] = {
-                    [sectionKey]: [...previousValues, ...currentValues],
+                    [sectionKey]: [...previousEvents, ...currentEvents],
                 }
             } else {
                 mergedSections.push(section)
@@ -187,5 +185,35 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         return mergedSections
     }
 
-    getVisualizerNoteEvents = (midiFile: IMidiFile) => this.parseMidiJson(midiFile)
+    getInitialEvents = (midiFile: IMidiFile) => this.parseMidiJson(midiFile)
+
+    addEventToTrack = (event: VisualizerEvent, track: number) => {
+        const newEvents = [...this.events]
+        const newEventsTrack = [...newEvents[track]]
+        const indexSection = this.getIndexSectionByTime(event.startingTime).toString()
+        const sectionIndex = this.findSectionIndexByKey(indexSection, newEventsTrack)
+        if (sectionIndex >= 0) {
+            const section = newEventsTrack[sectionIndex]
+            const events = this.getEventsFromSection(section)
+            newEventsTrack[sectionIndex] = <SectionOfEvents>{
+                [sectionIndex]: [...events, event],
+            }
+        }
+        this.events[track] = newEventsTrack
+    }
+
+    clearLoopTimeStampEvents = () => {
+        this.events[0] = this.events[0].map((section) => {
+            const key = this.getSectionKey(section)
+            const events = this.getEventsFromSection(section).filter((event) => isNoteEvent(event))
+            return {
+                [key]: [...events],
+            }
+        })
+    }
+
+    addLoopTimeStampEvent = (time: number) => {
+        const event = this.getLoopTimestampEvent(time)
+        this.addEventToTrack(event, 0)
+    }
 }
