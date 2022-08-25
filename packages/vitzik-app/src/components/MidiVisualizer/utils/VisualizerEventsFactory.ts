@@ -7,11 +7,11 @@ import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { Dimensions } from '../types/Dimensions'
 
 export class VisualizerEventsFactory {
-    width: number
-    height: number
-    ratioSection: number
-    allMsPerBeat: MsPerBeat[]
-    ticksPerBeat: number
+    #width: number
+    #height: number
+    #ratioSection: number
+    #allMsPerBeat: MsPerBeat[]
+    #ticksPerBeat: number
 
     constructor(
         containerDimensions: Dimensions,
@@ -21,36 +21,36 @@ export class VisualizerEventsFactory {
             ticksPerBeat: number
         }
     ) {
-        this.width = containerDimensions.width
-        this.height = containerDimensions.height
-        this.allMsPerBeat = midiMetas.allMsPerBeat
-        this.ratioSection = this.height / msPerSection
-        this.ticksPerBeat = midiMetas.ticksPerBeat
+        this.#width = containerDimensions.width
+        this.#height = containerDimensions.height
+        this.#allMsPerBeat = midiMetas.allMsPerBeat
+        this.#ratioSection = this.#height / msPerSection
+        this.#ticksPerBeat = midiMetas.ticksPerBeat
     }
 
     findMsPerBeatFromDelta = (delta: number) =>
-        findLast(this.allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
+        findLast(this.#allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
 
     deltaToTime = (delta: number) => {
         const lastMsPerBeat = this.findMsPerBeatFromDelta(delta)
 
         if (lastMsPerBeat) {
             const { timestamp, delta: lastDelta, value } = lastMsPerBeat
-            return timestamp + ((delta - lastDelta) / this.ticksPerBeat) * value
+            return timestamp + ((delta - lastDelta) / this.#ticksPerBeat) * value
         }
 
         return 0
     }
 
-    getYFromStartingTime = (startingTime: number) => this.ratioSection * startingTime
+    #getYFromStartingTime = (startingTime: number) => this.#ratioSection * startingTime
 
     getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
-        const y = this.getYFromStartingTime(startingTime)
+        const y = this.#getYFromStartingTime(startingTime)
         return {
             eventType: 'loopTimestamp',
             startingTime,
             h: 1,
-            w: this.width,
+            w: this.#width,
             x: 0,
             y,
         }
@@ -58,7 +58,7 @@ export class VisualizerEventsFactory {
 
     getFinalVisualizerNoteEvent = (note: VisualizerNoteEvent, deltaAcc: number) => {
         const duration = this.deltaToTime(deltaAcc) - note.startingTime
-        const h = this.ratioSection * duration
+        const h = this.#ratioSection * duration
 
         return {
             ...note,
@@ -71,7 +71,7 @@ export class VisualizerEventsFactory {
         const note = MidiFactory.Note(event).getMetas()
         const { name } = note
         const startingTime = this.deltaToTime(deltaAcc)
-        const y = this.getYFromStartingTime(startingTime)
+        const y = this.#getYFromStartingTime(startingTime)
         const defaultMetas = {
             startingTime,
             duration: 0,
@@ -80,7 +80,7 @@ export class VisualizerEventsFactory {
         }
 
         if (name) {
-            const keyboardFactory = new Keyboard(this.width)
+            const keyboardFactory = new Keyboard(this.#width)
             const { width, x } = keyboardFactory.getKeyStyles(name)
             const coordinates = { y, w: width, x, h: 0 }
 

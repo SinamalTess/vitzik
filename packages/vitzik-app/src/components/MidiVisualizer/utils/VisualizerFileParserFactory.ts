@@ -11,14 +11,9 @@ import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
 
 export class VisualizerFileParserFactory extends VisualizerEventsFactory {
-    notesBeingProcessed: VisualizerNoteEvent[]
-    width: number
-    height: number
-    ratioSection: number
-    allMsPerBeat: MsPerBeat[]
-    ticksPerBeat: number
-    msPerSection: number
-    msPerBeatValue: number
+    #notesBeingProcessed: VisualizerNoteEvent[]
+    #msPerSection: number
+    #msPerBeatValue: number
 
     constructor(
         containerDimensions: Dimensions,
@@ -30,52 +25,47 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
     ) {
         super(containerDimensions, msPerSection, midiMetas)
 
-        this.width = containerDimensions.width
-        this.height = containerDimensions.height
-        this.allMsPerBeat = midiMetas.allMsPerBeat
-        this.ratioSection = this.height / msPerSection
-        this.ticksPerBeat = midiMetas.ticksPerBeat
-        this.msPerSection = msPerSection
-        this.msPerBeatValue = MidiFactory.Time().getInitialMsPerBeatValue(midiMetas.allMsPerBeat)
-        this.notesBeingProcessed = []
+        this.#msPerSection = msPerSection
+        this.#msPerBeatValue = MidiFactory.Time().getInitialMsPerBeatValue(midiMetas.allMsPerBeat)
+        this.#notesBeingProcessed = []
     }
 
-    private processNoteOnEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
+    #processNoteOnEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
         const partialMidiVisualizerNoteEvent = this.getPartialVisualizerNoteEvent(event, deltaAcc)
 
-        this.notesBeingProcessed.push(partialMidiVisualizerNoteEvent)
+        this.#notesBeingProcessed.push(partialMidiVisualizerNoteEvent)
     }
 
-    private processNoteOffEvent = (
+    #processNoteOffEvent = (
         event: IMidiNoteOffEvent | IMidiNoteOnEvent,
         deltaAcc: number,
         sectionsOfEvents: SectionOfEvents[]
     ) => {
         const key = MidiFactory.Note(event).getKey()
-        const partialMidiVisualizerNoteEventIndex = this.notesBeingProcessed.findIndex(
+        const partialMidiVisualizerNoteEventIndex = this.#notesBeingProcessed.findIndex(
             (note) => note.key === key
         )
 
         if (partialMidiVisualizerNoteEventIndex !== -1) {
             const partialMidiVisualizerNoteEvent = {
-                ...this.notesBeingProcessed[partialMidiVisualizerNoteEventIndex],
+                ...this.#notesBeingProcessed[partialMidiVisualizerNoteEventIndex],
             }
             const finalMidiVisualizerNoteEvent = this.getFinalVisualizerNoteEvent(
                 partialMidiVisualizerNoteEvent,
                 deltaAcc
             )
-            this.addVisualizerNoteEventToSection(finalMidiVisualizerNoteEvent, sectionsOfEvents)
-            this.notesBeingProcessed.splice(partialMidiVisualizerNoteEventIndex, 1)
+            this.#addVisualizerNoteEventToSection(finalMidiVisualizerNoteEvent, sectionsOfEvents)
+            this.#notesBeingProcessed.splice(partialMidiVisualizerNoteEventIndex, 1)
         }
     }
 
-    private addVisualizerNoteEventToSection = (
+    #addVisualizerNoteEventToSection = (
         visualizerNoteEvent: VisualizerNoteEvent,
         sectionsOfEvents: SectionOfEvents[]
     ) => {
-        const startingSection = Math.floor(visualizerNoteEvent.startingTime / this.msPerSection) // arrays start at 0, so we use floor to get number below
+        const startingSection = Math.floor(visualizerNoteEvent.startingTime / this.#msPerSection) // arrays start at 0, so we use floor to get number below
         const endingSection = Math.floor(
-            (visualizerNoteEvent.startingTime + visualizerNoteEvent.duration) / this.msPerSection
+            (visualizerNoteEvent.startingTime + visualizerNoteEvent.duration) / this.#msPerSection
         )
 
         for (let i = startingSection; i <= endingSection; i++) {
@@ -96,7 +86,7 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
 
         tracks.forEach((track) => {
             let deltaAcc = 0
-            this.notesBeingProcessed = []
+            this.#notesBeingProcessed = []
             let sectionsOfEvents: SectionOfEvents[] = []
 
             track.forEach((event) => {
@@ -106,14 +96,14 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
                 const isNoteOffEvent =
                     checkIsNoteOffEvent(event) || (isNoteOnEvent && event.noteOn.velocity === 0)
 
-                if (lastMsPerBeat && lastMsPerBeat.value !== this.msPerBeatValue) {
-                    this.msPerBeatValue = lastMsPerBeat.value
+                if (lastMsPerBeat && lastMsPerBeat.value !== this.#msPerBeatValue) {
+                    this.#msPerBeatValue = lastMsPerBeat.value
                 }
 
                 if (isNoteOnEvent) {
-                    this.processNoteOnEvent(event, deltaAcc)
+                    this.#processNoteOnEvent(event, deltaAcc)
                 } else if (isNoteOffEvent) {
-                    this.processNoteOffEvent(event, deltaAcc, sectionsOfEvents)
+                    this.#processNoteOffEvent(event, deltaAcc, sectionsOfEvents)
                 }
             })
 

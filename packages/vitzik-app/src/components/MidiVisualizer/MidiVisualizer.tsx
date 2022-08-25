@@ -75,6 +75,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         [height, midiMetas, width]
     )
 
+    console.log(visualizerFactory)
+
     const activeTracksEvents = useMemo(() => {
         visualizerFactory.clearLoopTimeStampEvents()
         if (loopTimestamps) {
