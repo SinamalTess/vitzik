@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
-import { AppContext } from '../_contexts'
 import { LoopLine } from './events/LoopLine'
 
 export const BASE_CLASS = 'loop-editor'
@@ -25,16 +24,11 @@ export function LoopEditor({
     const ratio = height / msPerSection
     const allLinesDrawn = !loopTimestamps.includes(null)
     const [previewLineY, setPreviewLineY] = useState(0)
-    const { intervalWorker } = useContext(AppContext)
     const [loopStartTimestamp, loopEndTimestamp] = loopTimestamps
     const [time, setTime] = useState(0)
     const yToTimestamp = (y: number) => (height - y) / ratio + time
 
     useIntervalWorker(setTime)
-
-    useEffect(() => {
-        intervalWorker?.getTime()
-    }, [])
 
     useEffect(() => {
         if (allLinesDrawn) {

@@ -98,7 +98,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             reDraw(time)
         }
         if (['pause', 'stop', 'updateTimer'].includes(code)) {
-            animationOnce(time)
+            animateOnce(time)
         } else if (animRef.current === null && code === 'start') {
             animate(time)
         }
@@ -114,8 +114,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             if (!timeElapsed) {
                 timeElapsed = timestamp - startTime
             }
-
-            console.log(midiSpeedFactor)
 
             const interval = timestamp - startTime
             const top = visualizerFactory.getSlidesPercentageTop(
@@ -162,14 +160,14 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         setIndexesToDraw(newIndexesToDraw)
     }
 
-    function animationOnce(time: number) {
+    function animateOnce(time: number) {
         stopAnimation()
         animate(time, true)
     }
 
     useEffect(() => {
         const time = timeRef.current
-        animationOnce(time)
+        animateOnce(time)
         reDraw(time)
     }, [activeTracks, loopTimestamps, height, width, ref.current, midiSpeedFactor])
 
@@ -178,7 +176,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         const onWheelCallback = () => {
             const { deltaY } = e
             const { midiDuration } = midiMetas
-            const startAt = timeRef.current + deltaY
+            const startAt = timeRef.current - deltaY
             const isValidTime = startAt >= 0 && startAt < midiDuration
 
             if (isValidTime) {
