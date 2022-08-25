@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Link, Button, SideBar } from 'vitzik-ui'
 import './AppInfos.scss'
 
-const BASE_CLASS = 'app-infos'
-
 interface ShortcutsListProps {
     shortcuts: {
         key: string
         description: string
     }[]
 }
+
+const BASE_CLASS = 'app-infos'
 
 const SHORTCUTS = [
     {

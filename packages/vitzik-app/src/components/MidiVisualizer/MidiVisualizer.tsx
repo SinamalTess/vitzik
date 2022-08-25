@@ -12,10 +12,9 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { VisualizerFactory } from './utils'
-import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 import { MidiEventsManager } from './MidiEventsManager'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { useIntervalWorker } from '../../hooks'
 import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
 import { VisualizerEvent } from './types'
@@ -41,8 +40,6 @@ interface MidiVisualizerProps {
 
 const MS_PER_SECTION = 2000
 export const BASE_CLASS = 'midi-visualizer'
-export const isUserChannel = (channel: number) =>
-    [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
 
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     activeInstruments,

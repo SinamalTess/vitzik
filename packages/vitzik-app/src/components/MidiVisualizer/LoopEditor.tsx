@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { useIntervalWorker } from '../../hooks'
 import { LoopLine } from './events/LoopLine'
 
 export const BASE_CLASS = 'loop-editor'

@@ -6,7 +6,7 @@ import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
 import { AppContext } from '../_contexts'
 import { Shortcuts } from './Shortcuts'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { useIntervalWorker } from '../../hooks'
 
 interface AudioPlayerProps {
     midiMetas: MidiMetas

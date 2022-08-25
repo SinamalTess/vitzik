@@ -2,7 +2,7 @@ import { Tooltip, Button, ButtonGroup } from 'vitzik-ui'
 import React, { useEffect, useState } from 'react'
 import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { useIntervalWorker } from '../../hooks'
 import { MidiFactory } from '../../utils'
 import findLast from "lodash/findLast";
 

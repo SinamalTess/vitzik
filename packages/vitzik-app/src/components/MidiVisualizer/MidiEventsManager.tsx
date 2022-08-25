@@ -9,11 +9,11 @@ import {
     MidiMetas,
     MidiPlayMode,
 } from '../../types'
-import { isUserChannel } from './MidiVisualizer'
 import { VisualizerFactory } from './utils'
 import { SectionOfEvents } from './types'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { useIntervalWorker } from '../../hooks'
 import { AppContext } from '../_contexts'
+import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
@@ -28,6 +28,8 @@ interface MidiEventsManagerProps {
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
+
+const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
 
 export function MidiEventsManager({
     midiMetas,

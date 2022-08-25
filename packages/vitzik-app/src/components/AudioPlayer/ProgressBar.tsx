@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react'
 import { msToHumanReadableTime, normalizeMidiTitle } from '../../utils'
 import { LoopTimestamps } from '../../types'
 import './ProgressBar.scss'
-import { useIntervalWorker } from '../../hooks/useIntervalWorker'
+import { useIntervalWorker } from '../../hooks'
 
 interface PreviewLoopProps {
     duration: number

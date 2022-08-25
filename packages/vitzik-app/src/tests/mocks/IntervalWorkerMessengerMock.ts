@@ -21,10 +21,6 @@ export class IntervalWorkerMessengerMock {
         this.callWith('updateTimer', { startAt, time: startAt })
     }
 
-    getTime = () => {
-        this.callWith('getTime', { startAt: 0, time: 0 })
-    }
-
     subscribe = (callback: Function) => {
         this.callbacks.push(callback)
     }

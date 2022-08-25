@@ -1,9 +1,6 @@
-import { WebWorker } from '../../workers/WebWorker'
-// @ts-ignore
-import intervalWorker from '../../workers/intervalWorker.js'
-
 export class IntervalWorkerMessenger {
-    private worker: Worker = WebWorker(intervalWorker)
+    // @ts-ignore
+    private worker: Worker = new Worker(new URL('../../workers/intervalWorker.ts', import.meta.url))
 
     restart = (startAt: number, midiSpeedFactor: number) => {
         this.worker.postMessage({
@@ -37,12 +34,6 @@ export class IntervalWorkerMessenger {
         this.worker.postMessage({
             code: 'updateTimer',
             startAt,
-        })
-    }
-
-    getTime = () => {
-        this.worker.postMessage({
-            code: 'getTime',
         })
     }
 
