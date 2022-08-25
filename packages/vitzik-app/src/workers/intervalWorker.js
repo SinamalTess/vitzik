@@ -25,7 +25,6 @@ export default () => {
             postMessage({
                 time: timeElapsed ?? startAt,
                 code: 'start',
-                interval,
             })
 
             timeElapsed = timeElapsed + interval / midiSpeedFactor
@@ -42,7 +41,6 @@ export default () => {
             clearInterval(timer)
             postMessage({
                 code,
-                interval,
                 time: startAt,
             })
             timeElapsed = startAt
@@ -50,20 +48,17 @@ export default () => {
             stopTimer()
             postMessage({
                 code,
-                interval,
                 time: 0,
             })
         } else if (code === 'pause') {
             clearInterval(timer)
             postMessage({
                 code,
-                interval,
                 time: timeElapsed,
             })
         } else if (code === 'getTime') {
             postMessage({
                 code,
-                interval,
                 time: timeElapsed,
             })
         } else if (code === 'restart') {

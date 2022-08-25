@@ -17,6 +17,7 @@ interface VisualizerProps {
     nextNoteStartingTime: number | null
     loopTimestamps: LoopTimestamps
     isEditingLoop: boolean
+    midiSpeedFactor: number
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
     activeTracks: number[]
@@ -31,6 +32,7 @@ export const Visualizer = React.memo(function Preview({
     loopTimestamps,
     activeInstruments,
     midiPlayMode,
+    midiSpeedFactor,
     nextNoteStartingTime,
     isEditingLoop,
     midiFile,
@@ -46,6 +48,7 @@ export const Visualizer = React.memo(function Preview({
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <MidiVisualizer
+                    midiSpeedFactor={midiSpeedFactor}
                     loopTimestamps={loopTimestamps}
                     activeInstruments={activeInstruments}
                     midiFile={midiFile}

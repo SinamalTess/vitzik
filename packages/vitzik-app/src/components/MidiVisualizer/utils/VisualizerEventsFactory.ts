@@ -31,7 +31,7 @@ export class VisualizerEventsFactory {
     findMsPerBeatFromDelta = (delta: number) =>
         findLast(this.#allMsPerBeat, (msPerBeat) => msPerBeat.delta <= delta)
 
-    deltaToTime = (delta: number) => {
+    #deltaToTime = (delta: number) => {
         const lastMsPerBeat = this.findMsPerBeatFromDelta(delta)
 
         if (lastMsPerBeat) {
@@ -43,6 +43,8 @@ export class VisualizerEventsFactory {
     }
 
     #getYFromStartingTime = (startingTime: number) => this.#ratioSection * startingTime
+
+    #getHFromDuration = (duration: number) => this.#ratioSection * duration
 
     getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
         const y = this.#getYFromStartingTime(startingTime)
@@ -57,8 +59,8 @@ export class VisualizerEventsFactory {
     }
 
     getFinalVisualizerNoteEvent = (note: VisualizerNoteEvent, deltaAcc: number) => {
-        const duration = this.deltaToTime(deltaAcc) - note.startingTime
-        const h = this.#ratioSection * duration
+        const duration = this.#deltaToTime(deltaAcc) - note.startingTime
+        const h = this.#getHFromDuration(duration)
 
         return {
             ...note,
@@ -70,7 +72,7 @@ export class VisualizerEventsFactory {
     getPartialVisualizerNoteEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
         const note = MidiFactory.Note(event).getMetas()
         const { name } = note
-        const startingTime = this.deltaToTime(deltaAcc)
+        const startingTime = this.#deltaToTime(deltaAcc)
         const y = this.#getYFromStartingTime(startingTime)
         const defaultMetas = {
             startingTime,

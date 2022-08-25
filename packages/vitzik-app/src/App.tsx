@@ -94,6 +94,7 @@ function App() {
                     midiMetas={midiMetas}
                     activeTracks={activeTracks}
                     showNotes={showNotes}
+                    midiSpeedFactor={midiSpeedFactor}
                     audioPlayerState={audioPlayerState}
                     midiInput={midiInput}
                     midiOutput={midiOutput}

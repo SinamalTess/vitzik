@@ -102,6 +102,7 @@ export function MidiEventsManager({
         if (startLoop && endLoop && time > endLoop) {
             const startAt = startLoop - 200 ?? 0
             intervalWorker?.updateTimer(startAt)
+            onChangeAudioPlayerState('paused')
         }
     }
 

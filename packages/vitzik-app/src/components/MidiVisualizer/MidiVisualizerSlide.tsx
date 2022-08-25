@@ -11,7 +11,6 @@ interface MidiVisualizerSlideProps {
     height: number
     width: number
     events: VisualizerEvent[] | null | undefined
-    isTopSlide: boolean
 }
 
 interface EventsProps {
@@ -37,16 +36,8 @@ const Events = React.memo(function Notes({ events }: EventsProps) {
     )
 })
 
-export function MidiVisualizerSlide({
-    index,
-    height,
-    width,
-    events,
-    isTopSlide,
-}: MidiVisualizerSlideProps) {
-    const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`], {
-        [`${BASECLASS}--top`]: isTopSlide,
-    })
+export function MidiVisualizerSlide({ index, height, width, events }: MidiVisualizerSlideProps) {
+    const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
 
     return (
         <div className={classNames}>

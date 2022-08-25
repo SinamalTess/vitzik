@@ -45,7 +45,6 @@ describe('MidiVisualizerSlide', () => {
                 width={100}
                 height={50}
                 index={0}
-                isTopSlide={true}
             ></MidiVisualizerSlide>
         )
 

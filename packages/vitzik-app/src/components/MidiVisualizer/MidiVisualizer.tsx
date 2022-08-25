@@ -16,7 +16,6 @@ import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { LoopEditor } from './LoopEditor'
 import { MidiEventsManager } from './MidiEventsManager'
 import { useIntervalWorker } from '../../hooks/useIntervalWorker'
-import { isEven } from '../../utils'
 import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
 import { VisualizerEvent } from './types'
@@ -30,6 +29,7 @@ interface MidiVisualizerProps {
     midiMetas: MidiMetas
     activeTracks: number[]
     height?: number
+    midiSpeedFactor?: number
     nextNoteStartingTime: number | null
     width?: number
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
@@ -50,6 +50,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     midiFile,
     loopTimestamps,
     isEditingLoop,
+    midiSpeedFactor = 1,
     midiMetas,
     activeTracks,
     nextNoteStartingTime,
@@ -63,9 +64,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
-    const [topSlide, setTopSlide] = useState([true, false])
     const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
     const timeRef = useRef(0)
+    const animRef = useRef<null | number>(null)
     const { intervalWorker } = useContext(AppContext)
 
     const slides = ref.current?.getElementsByTagName('div')
@@ -74,8 +75,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas, midiFile),
         [height, midiMetas, width]
     )
-
-    console.log(visualizerFactory)
 
     const activeTracksEvents = useMemo(() => {
         visualizerFactory.clearLoopTimeStampEvents()
@@ -93,33 +92,58 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 
     useIntervalWorker(onTimeChange)
 
-    function onTimeChange(time: number) {
+    function onTimeChange(time: number, code: string) {
         timeRef.current = time
-        checkTopSlide(time)
-        animate(time)
         if (shouldRedraw(time)) {
             reDraw(time)
         }
+        if (['pause', 'stop', 'updateTimer'].includes(code)) {
+            animationOnce(time)
+        } else if (animRef.current === null && code === 'start') {
+            animate(time)
+        }
     }
 
-    function checkTopSlide(time: number) {
-        const indexSectionPlaying = visualizerFactory.getIndexSectionByTime(time)
-        const isIndexSectionPlayingEven = isEven(indexSectionPlaying)
+    function animate(time: number, limit = false) {
+        let startTime = 0
+        let timeElapsed = 0
+        function animationStep(timestamp: number) {
+            if (!startTime) {
+                startTime = timestamp
+            }
+            if (!timeElapsed) {
+                timeElapsed = timestamp - startTime
+            }
 
-        setTopSlide([isIndexSectionPlayingEven, !isIndexSectionPlayingEven])
-    }
+            console.log(midiSpeedFactor)
 
-    function animate(time: number) {
-        function animationStep() {
-            const top = visualizerFactory.getSlidesPercentageTop(time)
+            const interval = timestamp - startTime
+            const top = visualizerFactory.getSlidesPercentageTop(
+                time + timeElapsed / midiSpeedFactor
+            )
 
             if (slides) {
                 slides[0].style.transform = `translate3d(0, ${top[0]}, 0)`
                 slides[1].style.transform = `translate3d(0, ${top[1]}, 0)`
             }
+
+            if (limit) {
+                stopAnimation()
+            } else {
+                startTime = timestamp
+                timeElapsed = timeElapsed + interval
+                animRef.current = window.requestAnimationFrame(animationStep)
+            }
         }
 
-        window.requestAnimationFrame(animationStep)
+        animRef.current = window.requestAnimationFrame(animationStep)
+    }
+
+    function stopAnimation() {
+        if (animRef.current) {
+            window.cancelAnimationFrame(animRef.current)
+            animRef.current = null
+        }
     }
 
     function shouldRedraw(time: number) {
@@ -138,12 +162,16 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         setIndexesToDraw(newIndexesToDraw)
     }
 
+    function animationOnce(time: number) {
+        stopAnimation()
+        animate(time, true)
+    }
+
     useEffect(() => {
         const time = timeRef.current
-
-        animate(time)
+        animationOnce(time)
         reDraw(time)
-    }, [activeTracks, loopTimestamps, height, width, ref.current])
+    }, [activeTracks, loopTimestamps, height, width, ref.current, midiSpeedFactor])
 
     // @ts-ignore
     function onWheel(e: WheelEvent<HTMLDivElement>) {
@@ -173,7 +201,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                         events={slidesEvents[index]}
                         height={height}
                         width={width}
-                        isTopSlide={topSlide[index]}
                     />
                 )
             })}
