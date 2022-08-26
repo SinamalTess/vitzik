@@ -9,6 +9,7 @@ import {
     isMidiVisualizerActiveNote,
 } from '../../types'
 import {
+    DRUM_KIT_CHANNEL,
     MIDI_INPUT_CHANNEL,
     MIDI_INSTRUMENTS,
     MIDI_INSTRUMENTS_FATBOY,
@@ -115,7 +116,11 @@ export function InstrumentPlayer({
             return
         }
         function startInstrument() {
-            const soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
+            let soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
+            if (channel === DRUM_KIT_CHANNEL) {
+                // @ts-ignore
+                soundfontInstrument = 'soundfonts/pns_drum_kit.js'
+            }
             Soundfont.instrument(audioContext, soundfontInstrument, {
                 soundfont,
                 notes: notesToLoad, // We pass only the notes required to play the midi song for better performances.

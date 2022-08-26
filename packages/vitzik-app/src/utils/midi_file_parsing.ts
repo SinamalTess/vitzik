@@ -7,7 +7,7 @@ import {
     AlphabeticalNote,
     Instrument,
 } from '../types'
-import { MIDI_INSTRUMENTS } from './const'
+import {DRUM_KIT_CHANNEL, MIDI_INSTRUMENTS} from './const'
 import { keyToNote } from './notes'
 import {
     isKeySignatureEvent,
@@ -21,9 +21,36 @@ import assign from 'lodash/assign'
 import last from 'lodash/last'
 import sortBy from 'lodash/sortBy'
 import { MidiFactory } from './MidiFactory'
+import { IMidiProgramChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 
-const programNumberToInstrumentName = (programNumber: number): InstrumentUserFriendlyName =>
-    MIDI_INSTRUMENTS[programNumber]
+const programNumberToInstrumentName = (
+    channel: number,
+    programNumber: number
+): InstrumentUserFriendlyName => {
+    if (channel === DRUM_KIT_CHANNEL) {
+        return 'Drum Kit'
+    } else {
+        return MIDI_INSTRUMENTS[programNumber]
+    }
+}
+
+const getInstrument = (event: IMidiProgramChangeEvent, deltaAcc: number) => {
+    const { channel } = event
+    const actualChannel = channel + 1
+    const { programNumber } = event.programChange
+    const name = programNumberToInstrumentName(actualChannel, programNumber)
+    console.log({ programNumber })
+    console.log({ name })
+
+    return {
+        channel: actualChannel,
+        delta: deltaAcc,
+        timestamp: 0, // to be replaced once we know allMsPerBeat values
+        name,
+        index: programNumber,
+        notes: new Set(),
+    } as Instrument
+}
 
 export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
     let tracksMetas: TrackMetas[] = []
@@ -59,29 +86,22 @@ export function getMidiMetas(midiJson: IMidiFile): MidiMetas {
             })
 
             if (isProgramChangeEvent(event)) {
-                const { channel } = event
-                const { programNumber } = event.programChange
-                const instrument = {
-                    channel,
-                    delta: deltaAcc,
-                    timestamp: 0, // to be replaced once we know allMsPerBeat values
-                    name: programNumberToInstrumentName(programNumber),
-                    index: programNumber,
-                    notes: new Set(),
-                } as Instrument
-
+                const instrument = getInstrument(event, deltaAcc)
                 instruments.push(instrument)
             }
 
             if (isNoteOnEvent(event)) {
+                const { channel } = event
+                const actualChannel = channel + 1
+
                 assign(trackMetas, {
-                    channels: trackMetas.channels.add(event.channel),
+                    channels: trackMetas.channels.add(actualChannel),
                 })
 
                 // Finds instrument playing the note
                 const instrument = instruments
                     .sort((a, b) => b.delta - a.delta) // sort by largest delta first
-                    .find(({ delta, channel }) => delta <= deltaAcc && channel === event.channel)
+                    .find(({ delta, channel }) => delta <= deltaAcc && channel === actualChannel)
 
                 if (instrument) {
                     instrument.notes.add(keyToNote(event.noteOn.noteNumber) as AlphabeticalNote)

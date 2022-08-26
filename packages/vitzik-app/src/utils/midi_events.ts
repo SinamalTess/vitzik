@@ -5,6 +5,7 @@ import {
     TMidiEvent,
 } from 'midi-json-parser-worker'
 import {
+    IMidiControlChangeEvent,
     IMidiKeySignatureEvent,
     IMidiProgramChangeEvent,
     IMidiTimeSignatureEvent,
@@ -29,3 +30,6 @@ export const isKeySignatureEvent = (event: TMidiEvent): event is IMidiKeySignatu
 
 export const isTrackNameEvent = (event: TMidiEvent): event is IMidiTrackNameEvent =>
     'trackName' in event
+
+export const isControlChangeEvent = (event: TMidiEvent): event is IMidiControlChangeEvent =>
+    'controlChange' in event

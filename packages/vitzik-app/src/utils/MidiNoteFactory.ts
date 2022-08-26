@@ -10,6 +10,7 @@ export class MidiNoteFactory {
 
     getMetas = (): MidiInputActiveNote => {
         const { channel } = this.note
+        const actualChannel = channel + 1
         const key = this.getKey()
         const name = keyToNote(key)
         const velocity = this.getVelocity()
@@ -18,7 +19,7 @@ export class MidiNoteFactory {
             key,
             name,
             velocity,
-            channel,
+            channel: actualChannel,
         }
     }
 

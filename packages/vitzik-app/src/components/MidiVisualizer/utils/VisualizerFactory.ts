@@ -62,6 +62,8 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
 
     #getSectionKey = (section: SectionOfEvents) => Object.keys(section)[0]
 
+    #getNbTracks = () => this.#events.length
+
     getSlidesPercentageTop = (time: number) => {
         const exactNbSectionPassed = time / this.#msPerSection
         const percentageTop = +((exactNbSectionPassed % 1) * 100)

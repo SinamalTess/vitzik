@@ -1,7 +1,7 @@
 import { MIDI_INSTRUMENTS } from '../utils/const'
 import { AlphabeticalNote } from './Notes'
 
-export type InstrumentUserFriendlyName = typeof MIDI_INSTRUMENTS[number]
+export type InstrumentUserFriendlyName = typeof MIDI_INSTRUMENTS[number] | 'Drum Kit'
 
 export interface Instrument {
     name: InstrumentUserFriendlyName

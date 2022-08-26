@@ -1,6 +1,6 @@
 import { NOTE_NAMES } from './note_names'
 import { Instrument } from '../../types'
-import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from './midi_user_channel'
+import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from './midi_channels'
 
 export const DEFAULT_KEYBOARD_INSTRUMENT: Instrument = {
     name: 'Acoustic Grand Keyboard',

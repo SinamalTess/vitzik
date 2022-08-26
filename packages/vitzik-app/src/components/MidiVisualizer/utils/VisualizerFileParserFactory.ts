@@ -1,6 +1,7 @@
 import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { VisualizerNoteEvent } from '../types'
 import {
+    isControlChangeEvent,
     isNoteOffEvent as checkIsNoteOffEvent,
     isNoteOnEvent as checkIsNoteOnEvent,
     MidiFactory,
@@ -9,6 +10,7 @@ import { VisualizerEventsFactory } from './VisualizerEventsFactory'
 import { MsPerBeat } from '../../../types'
 import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
+import { MIDI_CONTROL_CHANGES } from '../../../utils/const'
 
 export class VisualizerFileParserFactory extends VisualizerEventsFactory {
     #notesBeingProcessed: VisualizerNoteEvent[]
@@ -84,7 +86,7 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
         const { tracks } = midiJson
         let events: SectionOfEvents[][] = []
 
-        tracks.forEach((track) => {
+        tracks.forEach((track, index) => {
             let deltaAcc = 0
             this.#notesBeingProcessed = []
             let sectionsOfEvents: SectionOfEvents[] = []
@@ -104,6 +106,10 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
                     this.#processNoteOnEvent(event, deltaAcc)
                 } else if (isNoteOffEvent) {
                     this.#processNoteOffEvent(event, deltaAcc, sectionsOfEvents)
+                } else if (isControlChangeEvent(event)) {
+                    const { controlChange } = event
+                    const { value, type } = controlChange
+                    const name = MIDI_CONTROL_CHANGES[type]
                 }
             })
 
