@@ -4,8 +4,6 @@ import { MidiImporter } from './MidiImporter'
 import * as reactDeviceDetect from 'react-device-detect'
 import { dragInvalidFile, dragValidFile } from '../../tests/utils'
 
-jest.mock('midi-json-parser', () => () => {})
-
 const onMidiImport = jest.fn()
 
 describe('MidiImporter', () => {

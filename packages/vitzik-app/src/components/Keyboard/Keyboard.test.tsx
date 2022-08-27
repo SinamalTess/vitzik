@@ -27,14 +27,14 @@ describe('Keyboard', () => {
             name: 'A0',
             velocity: 100,
             key: 21,
-            channel: 0,
+            channel: 1,
         }
 
         const blackKey: MidiInputActiveNote = {
             name: 'Bb0',
             velocity: 100,
             key: 23,
-            channel: 0,
+            channel: 1,
         }
         render(<Keyboard {...props} activeNotes={[whiteKey, blackKey]}></Keyboard>)
 
@@ -51,7 +51,7 @@ describe('Keyboard', () => {
         await clickKey('A1')
 
         expect(props.onChangeActiveNotes).toHaveBeenCalledWith([
-            { channel: 17, key: 33, name: 'A1', velocity: 100 },
+            { channel: 18, key: 33, name: 'A1', velocity: 100 },
         ])
     })
 })

@@ -19,15 +19,16 @@ interface EventsProps {
 
 const BASECLASS = `midi-visualizer__slide`
 
-const Events = React.memo(function Notes({ events }: EventsProps) {
+const Events = React.memo(function Events({ events }: EventsProps) {
     return (
         <>
             {events.map((event) => {
                 if (isNoteEvent(event)) {
-                    return <Note event={event} />
+                    const { uniqueId } = event
+                    return <Note event={event} key={`${uniqueId}`} />
                 } else if (isLoopTimestampEvent(event)) {
                     const { startingTime: timestamp, w: width, y } = event
-                    return <LoopLine timestamp={timestamp} width={width} y={y} />
+                    return <LoopLine timestamp={timestamp} width={width} y={y} key={timestamp} />
                 } else {
                     return null
                 }

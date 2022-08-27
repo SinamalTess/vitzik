@@ -5,10 +5,6 @@ import { AudioPlayerState, InstrumentUserFriendlyName, MidiVisualizerActiveNote 
 import Soundfont from 'soundfont-player'
 import Mock = jest.Mock
 
-jest.mock('soundfont-player', () => ({
-    instrument: jest.fn(),
-}))
-
 describe('InstrumentPlayer', () => {
     const activeNote: MidiVisualizerActiveNote = {
         name: 'A0',

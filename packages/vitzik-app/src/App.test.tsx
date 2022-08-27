@@ -1,51 +1,27 @@
-import { screen, render, act } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import React from 'react'
 import App from './App'
-import { midiAccessMock, requestMIDIAccess, MidiInputMock } from './tests/mocks/requestMIDIAccess'
+import { midiAccessMock, MidiInputMock, requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'
 import {
-    clickBpmButton,
-    clickSpeedButton,
-    clickExtraSettings,
-    clickSetLoopButton,
-    clickPlay,
-    clickLoopEditorAt,
-    clickVolume,
-    pressKey,
     changeUserInstrument,
-    clickMidiExample,
-    dispatchMidiInputMessageEvent,
-    clickStop,
-    clickPause,
-    hoverLoopEditorAt,
     clickAutoplaySwitch,
+    clickBpmButton,
+    clickExtraSettings,
+    clickLoopEditorAt,
+    clickMidiExample,
+    clickPause,
+    clickPlay,
+    clickSetLoopButton,
     clickShowNotesSwitch,
+    clickSpeedButton,
+    clickStop,
+    clickVolume,
+    dispatchMidiInputMessageEvent,
+    hoverLoopEditorAt,
+    pressKey,
 } from './tests/utils'
 import { instrumentPlayerMock } from './tests/mocks/SoundFont'
-
-jest.mock('soundfont-player', () => ({
-    instrument: jest.fn(),
-}))
-
-jest.mock('midi-json-parser', () => () => {})
-
-jest.mock('./components/_hocs/WithContainerDimensions', () => ({
-    WithContainerDimensions: (Component: any) => (props: any) => {
-        return <Component {...props} height={100} width={200} />
-    },
-}))
-
-jest.mock('./components/_contexts', () => {
-    const {
-        AppContextProviderMock,
-        AppContext,
-    } = require('./../src/tests/mocks/AppContextProviderMock')
-
-    return {
-        AppContextProvider: AppContextProviderMock,
-        AppContext,
-    }
-})
 
 const midiInput = new MidiInputMock('Piano', 'Yamaha')
 

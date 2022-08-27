@@ -9,12 +9,6 @@ import { render, screen } from '@testing-library/react'
 const midiJson = midi
 const midiMetas = getMidiMetas(midiJson as IMidiFile)
 
-jest.mock('../_hocs/WithContainerDimensions', () => ({
-    WithContainerDimensions: (Component: any) => (props: any) => {
-        return <Component {...props} height={100} width={200} />
-    },
-}))
-
 describe('MidiVisualizer', () => {
     it('render the proper notes', async () => {
         render(

@@ -7,7 +7,7 @@ import {
     AlphabeticalNote,
     Instrument,
 } from '../types'
-import {DRUM_KIT_CHANNEL, MIDI_INSTRUMENTS} from './const'
+import { DRUM_KIT_CHANNEL, MIDI_INSTRUMENTS } from './const'
 import { keyToNote } from './notes'
 import {
     isKeySignatureEvent,
@@ -39,8 +39,6 @@ const getInstrument = (event: IMidiProgramChangeEvent, deltaAcc: number) => {
     const actualChannel = channel + 1
     const { programNumber } = event.programChange
     const name = programNumberToInstrumentName(actualChannel, programNumber)
-    console.log({ programNumber })
-    console.log({ name })
 
     return {
         channel: actualChannel,

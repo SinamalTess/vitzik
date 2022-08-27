@@ -9,11 +9,10 @@ interface NoteProps {
 }
 
 export function Note({ event }: NoteProps) {
-    const { name, uniqueId, channel, x, y, w, h } = event
+    const { name, channel, x, y, w, h } = event
     return (
         <SVGRectangle
             aria-label={`${name} note`}
-            key={`${uniqueId}`}
             className={`channel--${channel}`}
             x={x}
             y={y}

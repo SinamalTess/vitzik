@@ -25,7 +25,7 @@ describe('getMidiMetas()', () => {
                 {
                     index: 1,
                     name: 'Bright Acoustic Keyboard',
-                    channel: 0,
+                    channel: 1,
                     notes: new Set([
                         'D5',
                         'G5',
@@ -102,7 +102,7 @@ describe('getMidiMetas()', () => {
                     msPerBeat: [],
                     nbTicks: 208895,
                     isPlayable: true,
-                    channels: new Set([0]),
+                    channels: new Set([1]),
                 },
             ],
         }
@@ -119,7 +119,7 @@ describe('MidiFactory.Track().isPlayable()', () => {
                     noteNumber: 55,
                     velocity: 62,
                 },
-                channel: 0,
+                channel: 1,
                 delta: 221,
             },
             {
@@ -127,7 +127,7 @@ describe('MidiFactory.Track().isPlayable()', () => {
                     noteNumber: 59,
                     velocity: 0,
                 },
-                channel: 0,
+                channel: 1,
                 delta: 29,
             },
         ]
@@ -161,7 +161,7 @@ describe('MidiFactory.Track.getNbTicks()', () => {
                     noteNumber: 55,
                     velocity: 62,
                 },
-                channel: 0,
+                channel: 1,
                 delta: 0,
             },
             {
@@ -169,7 +169,7 @@ describe('MidiFactory.Track.getNbTicks()', () => {
                     noteNumber: 59,
                     velocity: 0,
                 },
-                channel: 0,
+                channel: 1,
                 delta: 50,
             },
         ]
