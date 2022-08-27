@@ -48,3 +48,4 @@ Note : tests and prettier are automatically run when committing. If a test fails
 ## Useful Links
 
 - [Project conventions](docs/project_conventions.md)
+- [SoundFont Technical Specification](https://freepats.zenvoid.org/sf2/sfspec24.pdf)

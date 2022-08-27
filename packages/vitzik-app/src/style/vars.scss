@@ -1,48 +1,4 @@
-@use 'functions/create-colour-map' as *;
-
-$colors: (
-    'primary': #00e2dc,
-    'secondary': #282c34,
-    'disabled': #868686,
-    'success': #00e087,
-    'info': #3449bf,
-    'warning': #f27405,
-    'error': #8c0303,
-    'text': #cecece,
-);
-
-$theme-colors: ();
-
-@each $key, $value in $colors {
-    $theme-colors: map-merge($theme-colors, create-colour-map($key, $value, 5, 1));
-}
-
-$theme-font-sizes: (
-    'sm': 0.6rem,
-    'md': 0.75rem,
-    'lg': 1rem,
-);
-
-$theme-font-capitalized: (
-    'sm': 0.5rem,
-    'md': 0.6rem,
-    'lg': 0.7rem,
-);
-
-$theme-font-weights: (
-    'regular': 400,
-    'bold': 700,
-);
-
-$theme-spacing-sizes: (
-    'none': 0,
-    'sm': 0.25rem,
-    'md': 0.4rem,
-    'lg': 1.75rem,
-);
-
 $channel-colors: (
-    '0': #00e2dc,
     '1': #fdf693,
     '2': #90f271,
     '3': #2b4e11,
@@ -60,4 +16,5 @@ $channel-colors: (
     '15': #541077,
     '16': #00e2dc,
     '17': #00e2dc,
+    '18': #00e2dc,
 );

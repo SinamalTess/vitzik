@@ -1,6 +1,6 @@
-@import '../src/style/icons';
+@import '../../packages/vitzik-ui/src/style/icons';
 @import '../src/style/vars';
-@import '../src/style/mixins/index';
+@import '../../packages/vitzik-ui/src/style/mixins/index';
 
 .pd {
     @include add-spacing-sizes(padding);
