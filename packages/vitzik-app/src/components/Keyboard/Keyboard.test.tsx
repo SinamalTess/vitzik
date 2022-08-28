@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { Keyboard } from './Keyboard'
 import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../utils/const'
@@ -9,6 +9,20 @@ const props = {
     midiPlayMode: 'autoplay' as MidiPlayMode,
     activeNotes: [],
     onChangeActiveNotes: jest.fn(),
+}
+
+const whiteKey: MidiInputActiveNote = {
+    name: 'A0',
+    velocity: 100,
+    key: 21,
+    channel: 1,
+}
+
+const blackKey: MidiInputActiveNote = {
+    name: 'Bb0',
+    velocity: 100,
+    key: 23,
+    channel: 1,
 }
 
 describe('Keyboard', () => {
@@ -23,19 +37,6 @@ describe('Keyboard', () => {
     })
 
     it('should highlight the active keys', () => {
-        const whiteKey: MidiInputActiveNote = {
-            name: 'A0',
-            velocity: 100,
-            key: 21,
-            channel: 1,
-        }
-
-        const blackKey: MidiInputActiveNote = {
-            name: 'Bb0',
-            velocity: 100,
-            key: 23,
-            channel: 1,
-        }
         render(<Keyboard {...props} activeNotes={[whiteKey, blackKey]}></Keyboard>)
 
         const correspondingWhiteKey = screen.getByTestId(/A0/)
@@ -43,6 +44,20 @@ describe('Keyboard', () => {
 
         expect(correspondingWhiteKey).toHaveClass('keyboard__whitekey--active')
         expect(correspondingBlackKey).toHaveClass('keyboard__blackkey--active')
+    })
+
+    it('should remove the active key when played', async () => {
+        render(
+            <Keyboard
+                {...props}
+                activeNotes={[whiteKey]}
+                midiPlayMode={'waitForValidInput'}
+            ></Keyboard>
+        )
+
+        await clickKey('A0')
+
+        expect(props.onChangeActiveNotes).toHaveBeenCalledWith([])
     })
 
     it('should allow the keyboard to be played', async () => {

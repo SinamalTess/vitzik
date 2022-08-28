@@ -3,7 +3,7 @@ import { AlphabeticalNote } from '../../types'
 import userEvent from '@testing-library/user-event'
 
 export const clickKey = async (name: AlphabeticalNote) => {
-    const key = screen.getByTestId(name)
+    const key = screen.getByTestId(new RegExp(name))
     await userEvent.click(key)
 }
 
