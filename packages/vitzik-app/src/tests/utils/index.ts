@@ -1,5 +1,7 @@
 export * from './audioPlayer'
+export * from './app_infos'
 export * from './settings'
+export * from './extra_settings'
 export * from './midiImporter'
 export * from './keyboard'
 export * from './midiInputMessageEvent'

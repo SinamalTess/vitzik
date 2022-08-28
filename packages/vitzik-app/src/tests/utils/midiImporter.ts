@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 
 const validFile = {
     dataTransfer: {
@@ -34,10 +34,5 @@ export const clickMidiExample = async () => {
         In the real environment the button disappears from the layout so this doesn't happen.
     */
     fireEvent.click(button)
-    await screen.findByText('135')
-}
-
-export const dropValidFile = () => {
-    const dropzone = screen.getByText(/dropzone/)
-    fireEvent.drop(dropzone, { ...validFile })
+    await screen.findAllByLabelText(/note/)
 }

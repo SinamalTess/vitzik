@@ -1,10 +1,11 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import App from './App'
 import { midiAccessMock, MidiInputMock, requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import Soundfont from 'soundfont-player'
 import {
     changeUserInstrument,
+    clickAppInfos,
     clickAutoplaySwitch,
     clickBpmButton,
     clickExtraSettings,
@@ -20,6 +21,7 @@ import {
     dispatchMidiInputMessageEvent,
     hoverLoopEditorAt,
     pressKey,
+    touchKey,
 } from './tests/utils'
 import { instrumentPlayerMock } from './tests/mocks/SoundFont'
 
@@ -43,14 +45,32 @@ describe('App', () => {
             jest.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
         })
 
-        it('should not show any midi input selector', async () => {
+        it('should render the initial state', async () => {
             render(<App />)
 
             await waitSoundFontInstrumentPromise()
 
             expect(screen.getByText(/Import Midi/i)).toBeVisible()
             expect(screen.getByText(/Music theory/i)).toBeDisabled()
-            expect(screen.getByText(/no input/i)).toBeVisible()
+        })
+
+        it('should let the app infos menu be opened', async () => {
+            render(<App />)
+
+            await clickAppInfos()
+
+            expect(screen.getByText(/About this app/i)).toBeVisible()
+        })
+
+        it('should let the app infos menu be closed', async () => {
+            render(<App />)
+
+            await clickAppInfos()
+            await clickAppInfos()
+
+            await waitFor(() => {
+                expect(screen.queryByText(/About this app/)).not.toBeInTheDocument()
+            })
         })
     })
 
@@ -61,6 +81,16 @@ describe('App', () => {
         })
 
         describe('When no midi file is imported yet', () => {
+            it('should render the initial state', async () => {
+                render(<App />)
+
+                await waitSoundFontInstrumentPromise()
+
+                expect(screen.getByText(/Import Midi/i)).toBeVisible()
+                expect(screen.getByText(/Music theory/i)).toBeVisible()
+                expect(screen.getByText(/Piano - Yamaha/i)).toBeVisible()
+                expect(screen.getByLabelText(/settings/)).toBeVisible()
+            })
             it('should play when receiving a note ON midi input message', async () => {
                 render(<App />)
 
@@ -80,16 +110,6 @@ describe('App', () => {
 
                 expect(screen.queryByTestId('A0-active')).not.toBeInTheDocument()
             })
-            it('should render the initial state', async () => {
-                render(<App />)
-
-                await waitSoundFontInstrumentPromise()
-
-                expect(screen.getByText(/Import Midi/i)).toBeVisible()
-                expect(screen.getByText(/Music theory/i)).toBeVisible()
-                expect(screen.getByText(/Piano - Yamaha/i)).toBeVisible()
-                expect(screen.getByLabelText(/settings/)).toBeVisible()
-            })
             describe('When clicking on the settings button', () => {
                 it('should open the extra settings sidebar', async () => {
                     render(<App />)
@@ -104,6 +124,17 @@ describe('App', () => {
         })
 
         describe('When a midi file is imported', () => {
+            describe('The keyboard', () => {
+                it('should set to active a key when touched', async () => {
+                    render(<App />)
+
+                    await waitRequestMIDIAccessPromise()
+                    await touchKey('A0')
+
+                    const correspondingKey = screen.getByTestId(/A0/)
+                    expect(correspondingKey).toHaveClass('keyboard__whitekey--active')
+                })
+            })
             describe('The audio player', () => {
                 it('should render', async () => {
                     render(<App />)
@@ -231,7 +262,7 @@ describe('App', () => {
             })
 
             describe('The settings', () => {
-                it('should show the first Bpm value', async () => {
+                it('should show the first bpm value', async () => {
                     render(<App />)
 
                     await clickMidiExample()
@@ -321,6 +352,17 @@ describe('App', () => {
                     await clickShowNotesSwitch()
 
                     expect(screen.getByText('A0')).toBeInTheDocument()
+                })
+            })
+
+            describe('The visualizer', () => {
+                it('should render', async () => {
+                    render(<App />)
+
+                    await clickMidiExample()
+
+                    const notes = screen.getAllByLabelText(/note/)
+                    expect(notes.length).toBe(57)
                 })
             })
         })

@@ -38,7 +38,7 @@ function ShortCutsList({ shortcuts }: ShortcutsListProps) {
     return (
         <div className={`${BASE_CLASS}__keyboard-shortcuts`}>
             {shortcuts.map(({ description, key }) => (
-                <p>
+                <p key={key}>
                     <span>{key}</span> {description}
                 </p>
             ))}
@@ -59,7 +59,7 @@ export function AppInfos() {
 
     return (
         <>
-            <Button onClick={handleClick} className={'mg-md'}>
+            <Button onClick={handleClick} className={'mg-md'} aria-label={'infos'}>
                 ?
             </Button>
             <SideBar open={isOpen} onClose={handleClose}>

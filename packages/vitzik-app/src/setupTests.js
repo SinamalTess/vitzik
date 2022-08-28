@@ -4,13 +4,12 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 import 'jest-canvas-mock'
-import { IntervalWorkerMessengerMock } from './tests/mocks/IntervalWorkerMessengerMock'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import { AudioContextMock } from './tests/mocks/AudioContextMock'
 import React from 'react'
 
 global.URL.createObjectURL = () => {}
-global.Worker = IntervalWorkerMessengerMock
+global.Worker = jest.fn()
 global.navigator.requestMIDIAccess = requestMIDIAccess
 global.AudioContext = AudioContextMock
 
