@@ -7,8 +7,10 @@ interface SVGRectangleProps {
     ry?: number
     w: number
     h: number
-    'aria-label': string
-    className: string
+    'aria-label'?: string
+    className?: string
+    opacity?: number
+    color?: string
 }
 
 export function SVGRectangle({
@@ -18,6 +20,8 @@ export function SVGRectangle({
     ry = 0,
     w,
     h,
+    opacity,
+    color,
     'aria-label': ariaLabel,
     className,
 }: SVGRectangleProps) {
@@ -31,6 +35,8 @@ export function SVGRectangle({
             ry={ry}
             width={w}
             height={h}
+            opacity={opacity}
+            fill={color}
         />
     )
 }

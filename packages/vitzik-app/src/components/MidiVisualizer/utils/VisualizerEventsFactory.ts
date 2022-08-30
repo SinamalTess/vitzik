@@ -5,6 +5,7 @@ import { VisualizerEvent, VisualizerEventType, VisualizerNoteEvent } from '../ty
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { Dimensions } from '../types/Dimensions'
+import { IMidiControlChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 
 export class VisualizerEventsFactory {
     #width: number
@@ -55,15 +56,32 @@ export class VisualizerEventsFactory {
             w: this.#width,
             x: 0,
             y,
+            duration: 0,
         }
     }
 
-    getFinalVisualizerNoteEvent = (note: VisualizerNoteEvent, deltaAcc: number) => {
-        const duration = this.#deltaToTime(deltaAcc) - note.startingTime
+    getPartialDampPedalEvent = (
+        event: IMidiControlChangeEvent,
+        deltaAcc: number
+    ): VisualizerEvent => {
+        const startingTime = this.#deltaToTime(deltaAcc)
+        return {
+            w: this.#width,
+            h: 0,
+            x: 0,
+            y: this.#getYFromStartingTime(startingTime),
+            startingTime,
+            eventType: 'dampPedal',
+            duration: 0,
+        }
+    }
+
+    getFinalEvent = (event: VisualizerEvent, deltaAcc: number) => {
+        const duration = this.#deltaToTime(deltaAcc) - event.startingTime
         const h = this.#getHFromDuration(duration)
 
         return {
-            ...note,
+            ...event,
             h,
             duration,
         }

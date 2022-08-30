@@ -5,6 +5,7 @@ import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent } from './types'
 import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
 import { Note } from './events/Note'
 import { LoopLine } from './events/LoopLine'
+import { DampPedal } from './events/DampPedal'
 
 interface MidiVisualizerSlideProps {
     index: number
@@ -30,7 +31,7 @@ const Events = React.memo(function Events({ events }: EventsProps) {
                     const { startingTime: timestamp, w: width, y } = event
                     return <LoopLine timestamp={timestamp} width={width} y={y} key={timestamp} />
                 } else {
-                    return null
+                    return <DampPedal event={event} />
                 }
             })}
         </>

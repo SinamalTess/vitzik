@@ -1,8 +1,10 @@
-import { IMidiFile, IMidiNoteOffEvent, IMidiNoteOnEvent } from 'midi-json-parser-worker'
-import { VisualizerNoteEvent } from '../types'
+import { IMidiFile, TMidiEvent } from 'midi-json-parser-worker'
+import { VisualizerEvent } from '../types'
 import {
     isControlChangeEvent,
+    isNoteOffEvent,
     isNoteOffEvent as checkIsNoteOffEvent,
+    isNoteOnEvent,
     isNoteOnEvent as checkIsNoteOnEvent,
     MidiFactory,
 } from '../../../utils'
@@ -10,10 +12,9 @@ import { VisualizerEventsFactory } from './VisualizerEventsFactory'
 import { MsPerBeat } from '../../../types'
 import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
-import { MIDI_CONTROL_CHANGES } from '../../../utils/const'
 
 export class VisualizerFileParserFactory extends VisualizerEventsFactory {
-    #notesBeingProcessed: VisualizerNoteEvent[]
+    #eventsBeingProcessed: VisualizerEvent[]
     #msPerSection: number
     #msPerBeatValue: number
 
@@ -29,55 +30,65 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
 
         this.#msPerSection = msPerSection
         this.#msPerBeatValue = MidiFactory.Time().getInitialMsPerBeatValue(midiMetas.allMsPerBeat)
-        this.#notesBeingProcessed = []
+        this.#eventsBeingProcessed = []
     }
 
-    #processNoteOnEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
-        const partialMidiVisualizerNoteEvent = this.getPartialVisualizerNoteEvent(event, deltaAcc)
-
-        this.#notesBeingProcessed.push(partialMidiVisualizerNoteEvent)
-    }
-
-    #processNoteOffEvent = (
-        event: IMidiNoteOffEvent | IMidiNoteOnEvent,
-        deltaAcc: number,
-        sectionsOfEvents: SectionOfEvents[]
-    ) => {
-        const key = MidiFactory.Note(event).getKey()
-        const partialMidiVisualizerNoteEventIndex = this.#notesBeingProcessed.findIndex(
-            (note) => note.key === key
-        )
-
-        if (partialMidiVisualizerNoteEventIndex !== -1) {
-            const partialMidiVisualizerNoteEvent = {
-                ...this.#notesBeingProcessed[partialMidiVisualizerNoteEventIndex],
-            }
-            const finalMidiVisualizerNoteEvent = this.getFinalVisualizerNoteEvent(
-                partialMidiVisualizerNoteEvent,
-                deltaAcc
-            )
-            this.#addVisualizerNoteEventToSection(finalMidiVisualizerNoteEvent, sectionsOfEvents)
-            this.#notesBeingProcessed.splice(partialMidiVisualizerNoteEventIndex, 1)
+    #processOnEvent = (event: TMidiEvent, deltaAcc: number) => {
+        if (isNoteOnEvent(event)) {
+            const partialEvent = this.getPartialVisualizerNoteEvent(event, deltaAcc)
+            this.#eventsBeingProcessed.push(partialEvent)
+        } else if (isControlChangeEvent(event)) {
+            const partialEvent = this.getPartialDampPedalEvent(event, deltaAcc)
+            this.#eventsBeingProcessed.push(partialEvent)
         }
     }
 
-    #addVisualizerNoteEventToSection = (
-        visualizerNoteEvent: VisualizerNoteEvent,
+    #findIndexEventBeingProcessed = (event: TMidiEvent) => {
+        if (isNoteOnEvent(event) || isNoteOffEvent(event)) {
+            const key = MidiFactory.Note(event).getKey()
+            return this.#eventsBeingProcessed.findIndex(
+                (event) => 'key' in event && event.key === key
+            )
+        } else {
+            return this.#eventsBeingProcessed.findIndex((event) => event.eventType === 'dampPedal')
+        }
+    }
+
+    #processOffEvent = (
+        event: TMidiEvent,
+        deltaAcc: number,
         sectionsOfEvents: SectionOfEvents[]
     ) => {
-        const startingSection = Math.floor(visualizerNoteEvent.startingTime / this.#msPerSection) // arrays start at 0, so we use floor to get number below
+        const indexEventBeingProcessed = this.#findIndexEventBeingProcessed(event)
+
+        if (indexEventBeingProcessed !== -1) {
+            const eventBeingProcessed = {
+                ...this.#eventsBeingProcessed[indexEventBeingProcessed],
+            }
+
+            const finalEvent = this.getFinalEvent(eventBeingProcessed, deltaAcc)
+            this.#addEventToSection(finalEvent, sectionsOfEvents)
+            this.#eventsBeingProcessed.splice(indexEventBeingProcessed, 1)
+        }
+    }
+
+    #addEventToSection = (
+        visualizerEvent: VisualizerEvent,
+        sectionsOfEvents: SectionOfEvents[]
+    ) => {
+        const startingSection = Math.floor(visualizerEvent.startingTime / this.#msPerSection) // arrays start at 0, so we use floor to get number below
         const endingSection = Math.floor(
-            (visualizerNoteEvent.startingTime + visualizerNoteEvent.duration) / this.#msPerSection
+            (visualizerEvent.startingTime + visualizerEvent.duration) / this.#msPerSection
         )
 
         for (let i = startingSection; i <= endingSection; i++) {
             const indexSection = sectionsOfEvents.findIndex((section) => section[i])
             if (indexSection >= 0) {
                 sectionsOfEvents[indexSection] = {
-                    [i]: [...sectionsOfEvents[indexSection][i], visualizerNoteEvent],
+                    [i]: [...sectionsOfEvents[indexSection][i], visualizerEvent],
                 }
             } else {
-                sectionsOfEvents.push({ [i]: [visualizerNoteEvent] })
+                sectionsOfEvents.push({ [i]: [visualizerEvent] })
             }
         }
     }
@@ -86,9 +97,9 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
         const { tracks } = midiJson
         let events: SectionOfEvents[][] = []
 
-        tracks.forEach((track, index) => {
+        tracks.forEach((track) => {
             let deltaAcc = 0
-            this.#notesBeingProcessed = []
+            this.#eventsBeingProcessed = []
             let sectionsOfEvents: SectionOfEvents[] = []
 
             track.forEach((event) => {
@@ -103,13 +114,22 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
                 }
 
                 if (isNoteOnEvent) {
-                    this.#processNoteOnEvent(event, deltaAcc)
+                    this.#processOnEvent(event, deltaAcc)
                 } else if (isNoteOffEvent) {
-                    this.#processNoteOffEvent(event, deltaAcc, sectionsOfEvents)
+                    this.#processOffEvent(event, deltaAcc, sectionsOfEvents)
                 } else if (isControlChangeEvent(event)) {
                     const { controlChange } = event
                     const { value, type } = controlChange
-                    const name = MIDI_CONTROL_CHANGES[type]
+                    if (type === 64) {
+                        // damper pedal
+                        if (value >= 64) {
+                            // ON
+                            this.#processOnEvent(event, deltaAcc)
+                        } else {
+                            // OFF
+                            this.#processOffEvent(event, deltaAcc, sectionsOfEvents)
+                        }
+                    }
                 }
             })
 

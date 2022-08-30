@@ -1,5 +1,5 @@
-@import '../../../../vitzik-app/src/style/mixins/index';
-@import '../../../../vitzik-app/src/style/vars';
+@import '../../../src/style/mixins/index';
+@import '../../../src/style/vars';
 
 .icon {
     @include add-font-sizes(font-size);
