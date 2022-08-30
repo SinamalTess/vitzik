@@ -11,7 +11,8 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     #height: number
     #msPerSection: number
     #initialEvents: SectionOfEvents[][]
-    #activeTracksEvents: SectionOfEvents[]
+    #allEvents: SectionOfEvents[]
+    #thirdEvents: SectionOfEvents[]
 
     constructor(
         containerDimensions: Dimensions,
@@ -27,15 +28,11 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         this.#height = containerDimensions.height
         this.#msPerSection = msPerSection
         this.#initialEvents = this.#getInitialEvents(midiFile)
-        this.#activeTracksEvents = this.getEventsForTracks(
-            this.#getArrayOfNumbers(midiFile.tracks.length)
-        )
+        this.#allEvents = this.getEventsForTracks(this.#getArrayOfNumbers(midiFile.tracks.length))
+        this.#thirdEvents = []
     }
 
-    #getArrayOfNumbers = (length: number) =>
-        Array.apply(null, Array(length)).map(function (x, i) {
-            return i
-        })
+    #getArrayOfNumbers = (length: number) => Array.apply(null, Array(length)).map((x, i) => i)
 
     #getInitialEvents = (midiFile: IMidiFile) => this.parseMidiJson(midiFile)
 
@@ -180,44 +177,62 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         activeTracksSections.forEach((section) => {
             const sectionKey = Object.keys(section)[0]
             const existingSectionIndex = this.#findSectionIndexByKey(sectionKey, mergedSections)
+            const currentEvents = this.#getEventsFromSection(section)
+            let thirdEvents: VisualizerEvent[] = []
+            if (this.#thirdEvents) {
+                const thirdEventsSection = this.#findSectionByKey(sectionKey, this.#thirdEvents)
+                if (thirdEventsSection) {
+                    thirdEvents = this.#getEventsFromSection(thirdEventsSection)
+                }
+            }
+            console.log({ thirdEvents })
             if (existingSectionIndex >= 0) {
                 const existingSection = mergedSections[existingSectionIndex]
                 const previousEvents = this.#getEventsFromSection(existingSection)
-                const currentEvents = this.#getEventsFromSection(section)
                 mergedSections[existingSectionIndex] = {
-                    [sectionKey]: [...previousEvents, ...currentEvents],
+                    [sectionKey]: [...previousEvents, ...currentEvents, ...thirdEvents],
                 }
             } else {
-                mergedSections.push(section)
+                mergedSections.push({
+                    [sectionKey]: [...currentEvents, ...thirdEvents],
+                })
             }
         })
+        console.log({ mergedSections })
 
         return mergedSections
     }
 
     setEventsForTracks = (activeTracks: number[]) => {
-        this.#activeTracksEvents = this.getEventsForTracks(activeTracks)
+        this.#allEvents = this.getEventsForTracks(activeTracks)
     }
 
-    #addEventToTrack = (event: VisualizerEvent, track: number) => {
-        const newEvents = [...this.#initialEvents]
-        const newEventsTrack = [...newEvents[track]]
-        const indexSection = this.getIndexSectionByTime(event.startingTime).toString()
-        const sectionIndex = this.#findSectionIndexByKey(indexSection, newEventsTrack)
+    #addThirdEvent = (event: VisualizerEvent) => {
+        const { startingTime } = event
+        const indexSection = this.getIndexSectionByTime(startingTime).toString()
+        const indexExistingSection = this.#findSectionIndexByKey(indexSection, this.#thirdEvents)
+        const sectionAlreadyExists = indexExistingSection >= 0
 
-        if (sectionIndex >= 0) {
-            const section = newEventsTrack[sectionIndex]
-            const events = this.#getEventsFromSection(section)
-            newEventsTrack[sectionIndex] = {
-                [sectionIndex]: [...events, event],
+        if (sectionAlreadyExists) {
+            const events = this.#getEventsFromSection(this.#thirdEvents[indexExistingSection])
+            this.#thirdEvents[indexExistingSection] = {
+                [indexSection]: [...events, event],
             }
-        }
+        } else {
+            const section = {
+                [indexSection]: [event],
+            }
 
-        this.#initialEvents[track] = newEventsTrack
+            this.#thirdEvents.push(section)
+        }
+    }
+
+    clearThirdEvents = () => {
+        this.#thirdEvents = []
     }
 
     getNoteEvents = (): SectionOfEvents[] =>
-        this.#activeTracksEvents.map((section) => {
+        this.#allEvents.map((section) => {
             const key = this.#getSectionKey(section)
             const events = this.#getEventsFromSection(section).filter((event) => isNoteEvent(event))
 
@@ -226,10 +241,10 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
             }
         })
 
-    getAllEvents = (): SectionOfEvents[] => this.#activeTracksEvents
+    getAllEvents = (): SectionOfEvents[] => this.#allEvents
 
     addLoopTimeStampEvent = (time: number) => {
         const event = this.getLoopTimestampEvent(time)
-        this.#addEventToTrack(event, 0)
+        this.#addThirdEvent(event)
     }
 }

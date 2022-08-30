@@ -80,12 +80,23 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }, [activeTracks, visualizerFactory])
 
     const visibleEvents = useMemo(() => {
+        visualizerFactory.clearThirdEvents()
+        if (loopTimestamps) {
+            const [startLoop, endLoop] = loopTimestamps
+            if (startLoop) {
+                visualizerFactory.addLoopTimeStampEvent(startLoop)
+            }
+            if (endLoop) {
+                visualizerFactory.addLoopTimeStampEvent(endLoop)
+            }
+        }
+        visualizerFactory.setEventsForTracks(activeTracks)
         if (!showDampPedal) {
             return visualizerFactory.getNoteEvents()
         } else {
             return visualizerFactory.getAllEvents()
         }
-    }, [visualizerFactory, showDampPedal, activeTracks])
+    }, [visualizerFactory, showDampPedal, activeTracks, loopTimestamps])
 
     useIntervalWorker(onTimeChange)
 
@@ -108,11 +119,10 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     function checkDampPedal(time: number, events: VisualizerEvent[]) {
         const isDampPedalOn = (instrumentChannel: number) =>
             events.some(
-                ({ eventType, startingTime, duration, channel }) =>
-                    eventType === 'dampPedal' &&
-                    startingTime <= time &&
-                    duration + startingTime > time &&
-                    instrumentChannel === channel
+                (event) =>
+                    event.eventType === 'dampPedal' &&
+                    visualizerFactory.isEventActive(event, time) &&
+                    instrumentChannel === event.channel
             )
         onChangeActiveInstruments((activeInstruments) => {
             return activeInstruments.map((instrument) => {
