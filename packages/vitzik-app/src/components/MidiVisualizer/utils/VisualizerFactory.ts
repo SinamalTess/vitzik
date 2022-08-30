@@ -42,14 +42,16 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     #visualizerNoteEventToActiveNote = (
         visualizerNoteEvent: VisualizerNoteEvent
     ): MidiVisualizerActiveNote => {
+        const { startingTime, duration, key, channel, name, velocity, uniqueId } =
+            visualizerNoteEvent
         return {
-            startingTime: visualizerNoteEvent.startingTime,
-            duration: visualizerNoteEvent.duration,
-            key: visualizerNoteEvent.key,
-            channel: visualizerNoteEvent.channel,
-            name: visualizerNoteEvent.name,
-            velocity: visualizerNoteEvent.velocity,
-            uniqueId: visualizerNoteEvent.uniqueId,
+            startingTime,
+            duration,
+            key,
+            channel,
+            name,
+            velocity,
+            uniqueId,
         }
     }
 
@@ -95,17 +97,17 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         ]
     }
 
-    getEventsBySectionIndex = (sectionsOfEvents: SectionOfEvents[] | undefined, index: number) => {
-        if (!sectionsOfEvents) return []
+    getEventsBySectionIndex = (sectionsOfEvents: SectionOfEvents[], index: number) => {
         const section = this.#findSectionByKey(index.toString(), sectionsOfEvents)
+
         if (section) {
             const events = this.#getEventsFromSection(section)
 
             return events.map((visualizerEvent) => {
-                const y = visualizerEvent.y - index * this.#height
+                const computedY = visualizerEvent.y - index * this.#height
                 return {
                     ...visualizerEvent,
-                    y,
+                    y: computedY,
                 }
             })
         } else {
@@ -119,19 +121,16 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     ): MidiVisualizerActiveNote[] => {
         const indexSectionPlaying = this.getIndexSectionByTime(time).toString()
         const sectionPlaying = this.#findSectionByKey(indexSectionPlaying, sectionsOfEvents)
+        const isActiveNote = (event: VisualizerEvent) =>
+            isNoteEvent(event) && this.isEventActive(event, time)
 
         if (sectionPlaying) {
             const sectionEvents = this.#getEventsFromSection(sectionPlaying)
-            const activeNoteEvents = sectionEvents.filter(
-                (event) =>
-                    isNoteEvent(event) &&
-                    event.startingTime <= time &&
-                    event.startingTime + event.duration > time
-            )
+            const activeNoteEvents = sectionEvents.filter((event) =>
+                isActiveNote(event)
+            ) as VisualizerNoteEvent[]
 
-            return this.#visualizerNoteEventsToActiveNotes(
-                activeNoteEvents as VisualizerNoteEvent[]
-            )
+            return this.#visualizerNoteEventsToActiveNotes(activeNoteEvents)
         }
 
         return []
@@ -209,7 +208,7 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         if (sectionIndex >= 0) {
             const section = newEventsTrack[sectionIndex]
             const events = this.#getEventsFromSection(section)
-            newEventsTrack[sectionIndex] = <SectionOfEvents>{
+            newEventsTrack[sectionIndex] = {
                 [sectionIndex]: [...events, event],
             }
         }
@@ -217,19 +216,17 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
         this.#initialEvents[track] = newEventsTrack
     }
 
-    getNoteEvents = (): SectionOfEvents[] => {
-        return this.#activeTracksEvents.map((section) => {
+    getNoteEvents = (): SectionOfEvents[] =>
+        this.#activeTracksEvents.map((section) => {
             const key = this.#getSectionKey(section)
             const events = this.#getEventsFromSection(section).filter((event) => isNoteEvent(event))
+
             return {
                 [key]: [...events],
             }
         })
-    }
 
-    getAllEvents = (): SectionOfEvents[] => {
-        return this.#activeTracksEvents
-    }
+    getAllEvents = (): SectionOfEvents[] => this.#activeTracksEvents
 
     addLoopTimeStampEvent = (time: number) => {
         const event = this.getLoopTimestampEvent(time)
