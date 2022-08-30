@@ -1,65 +1,42 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
-import {
-    ActiveNote,
-    MidiMetas,
-    MidiPlayMode,
-    LoopTimestamps,
-    AudioPlayerState,
-    ActiveInstrument,
-} from '../../types'
-import { IMidiFile } from 'midi-json-parser-worker'
+import { MidiMetas, LoopTimestamps } from '../../types'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { VisualizerFactory } from './utils'
 import { LoopEditor } from './LoopEditor'
-import { MidiEventsManager } from './MidiEventsManager'
 import { useIntervalWorker } from '../../hooks'
 import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
-import { VisualizerEvent } from './types'
+import { SectionOfEvents, VisualizerEvent } from './types'
 
-interface MidiVisualizerProps {
-    activeInstruments: ActiveInstrument[]
-    midiFile: IMidiFile
-    midiPlayMode?: MidiPlayMode
-    loopTimestamps?: LoopTimestamps
-    isEditingLoop?: boolean
+interface MidiVisualizerConfig {
     showDampPedal: boolean
-    midiMetas: MidiMetas
-    activeTracks: number[]
-    height?: number
     midiSpeedFactor?: number
-    nextNoteStartingTime: number | null
-    width?: number
-    onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
-    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
-    onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
-    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimestamps>>
-    onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
+    isEditingLoop?: boolean
+    MS_PER_SECTION: number
+    height: number
+    width: number
 }
 
-const MS_PER_SECTION = 2000
+interface MidiVisualizerProps {
+    loopTimestamps?: LoopTimestamps
+    data: SectionOfEvents[]
+    visualizerFactory: VisualizerFactory
+    midiMetas: MidiMetas
+    config: MidiVisualizerConfig
+    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimestamps>>
+}
+
 export const BASE_CLASS = 'midi-visualizer'
 
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
-    activeInstruments,
-    midiPlayMode = 'autoplay',
-    midiFile,
     loopTimestamps,
-    isEditingLoop,
-    midiSpeedFactor = 1,
     midiMetas,
-    activeTracks,
-    nextNoteStartingTime,
-    height = 0,
-    width = 0,
-    showDampPedal,
-    onChangeActiveNotes,
-    onChangeActiveInstruments,
-    onChangeNextNoteStartingTime,
+    config,
+    data,
+    visualizerFactory,
     onChangeLoopTimes,
-    onChangeAudioPlayerState,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
@@ -67,36 +44,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const timeRef = useRef(0)
     const animRef = useRef<null | number>(null)
     const { intervalWorker } = useContext(AppContext)
+    const { height, width, midiSpeedFactor = 1, isEditingLoop = false, MS_PER_SECTION } = config
 
     const slides = ref.current?.getElementsByTagName('div')
-
-    const visualizerFactory = useMemo(
-        () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas, midiFile),
-        [height, midiMetas, width]
-    )
-
-    useEffect(() => {
-        visualizerFactory.setEventsForTracks(activeTracks)
-    }, [activeTracks, visualizerFactory])
-
-    const visibleEvents = useMemo(() => {
-        visualizerFactory.clearThirdEvents()
-        if (loopTimestamps) {
-            const [startLoop, endLoop] = loopTimestamps
-            if (startLoop) {
-                visualizerFactory.addLoopTimeStampEvent(startLoop)
-            }
-            if (endLoop) {
-                visualizerFactory.addLoopTimeStampEvent(endLoop)
-            }
-        }
-        visualizerFactory.setEventsForTracks(activeTracks)
-        if (!showDampPedal) {
-            return visualizerFactory.getNoteEvents()
-        } else {
-            return visualizerFactory.getAllEvents()
-        }
-    }, [visualizerFactory, showDampPedal, activeTracks, loopTimestamps])
 
     useIntervalWorker(onTimeChange)
 
@@ -110,28 +60,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         } else if (animRef.current === null && code === 'start') {
             animate(time)
         }
-        if ((slidesEvents[0] || slidesEvents[1]) && showDampPedal) {
-            const events = slidesEvents[0].concat(slidesEvents[1])
-            checkDampPedal(time, events)
-        }
-    }
-
-    function checkDampPedal(time: number, events: VisualizerEvent[]) {
-        const isDampPedalOn = (instrumentChannel: number) =>
-            events.some(
-                (event) =>
-                    event.eventType === 'dampPedal' &&
-                    visualizerFactory.isEventActive(event, time) &&
-                    instrumentChannel === event.channel
-            )
-        onChangeActiveInstruments((activeInstruments) => {
-            return activeInstruments.map((instrument) => {
-                return {
-                    ...instrument,
-                    isDampPedalOn: isDampPedalOn(instrument.channel),
-                }
-            })
-        })
     }
 
     function animate(time: number, limit = false) {
@@ -183,8 +111,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
 
         setSlidesEvents([
-            visualizerFactory.getEventsBySectionIndex(visibleEvents, newIndexesToDraw[0]),
-            visualizerFactory.getEventsBySectionIndex(visibleEvents, newIndexesToDraw[1]),
+            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
+            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
         ])
 
         setIndexesToDraw(newIndexesToDraw)
@@ -199,7 +127,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         const time = timeRef.current
         animateOnce(time)
         reDraw(time)
-    }, [visibleEvents])
+    }, [data])
 
     // @ts-ignore
     function onWheel(e: WheelEvent<HTMLDivElement>) {
@@ -216,8 +144,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
 
         throttle(onWheelCallback, 100)()
     }
-
-    if (!height || !width) return null
 
     return (
         <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={onWheel}>
@@ -241,19 +167,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                     onChangeLoopTimestamps={onChangeLoopTimes}
                 />
             ) : null}
-            <MidiEventsManager
-                nextNoteStartingTime={nextNoteStartingTime}
-                midiPlayMode={midiPlayMode}
-                midiMetas={midiMetas}
-                loopTimestamps={loopTimestamps}
-                visualizerFactory={visualizerFactory}
-                activeInstruments={activeInstruments}
-                activeTracksNoteEvents={visibleEvents}
-                onChangeActiveNotes={onChangeActiveNotes}
-                onChangeActiveInstruments={onChangeActiveInstruments}
-                onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
-                onChangeAudioPlayerState={onChangeAudioPlayerState}
-            />
         </div>
     )
 })

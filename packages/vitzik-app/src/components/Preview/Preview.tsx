@@ -149,23 +149,25 @@ export function Preview({
                 ) : null}
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
-                <Visualizer
-                    midiSpeedFactor={midiSpeedFactor}
-                    loopTimestamps={loopTimestamps}
-                    nextNoteStartingTime={nextNoteStartingTime}
-                    activeInstruments={activeInstruments}
-                    midiPlayMode={midiPlayMode}
-                    isEditingLoop={isEditingLoop}
-                    midiFile={midiFile}
-                    showDampPedal={showDampPedal}
-                    midiMetas={midiMetas}
-                    activeTracks={activeTracks}
-                    onChangeActiveNotes={setActiveNotes}
-                    onChangeNextNoteStartingTime={setnextNoteStartingTime}
-                    onChangeActiveInstruments={onChangeActiveInstruments}
-                    onChangeLoopTimestamps={onChangeLoopTimestamps}
-                    onChangeAudioPlayerState={onChangeAudioPlayerState}
-                />
+                {midiMetas && midiFile ? (
+                    <Visualizer
+                        midiSpeedFactor={midiSpeedFactor}
+                        loopTimestamps={loopTimestamps}
+                        nextNoteStartingTime={nextNoteStartingTime}
+                        activeInstruments={activeInstruments}
+                        midiPlayMode={midiPlayMode}
+                        isEditingLoop={isEditingLoop}
+                        midiFile={midiFile}
+                        showDampPedal={showDampPedal}
+                        midiMetas={midiMetas}
+                        activeTracks={activeTracks}
+                        onChangeActiveNotes={setActiveNotes}
+                        onChangeNextNoteStartingTime={setnextNoteStartingTime}
+                        onChangeActiveInstruments={onChangeActiveInstruments}
+                        onChangeLoopTimestamps={onChangeLoopTimestamps}
+                        onChangeAudioPlayerState={onChangeAudioPlayerState}
+                    />
+                ) : null}
             </div>
             <div className="item">
                 <Keyboard

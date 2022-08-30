@@ -1,5 +1,5 @@
 import { MidiVisualizer } from '../MidiVisualizer'
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
     MidiMetas,
@@ -10,6 +10,9 @@ import {
     ActiveInstrument,
 } from '../../types'
 import { ErrorBoundary } from 'vitzik-ui'
+import { MidiEventsManager } from '../MidiVisualizer/MidiEventsManager'
+import { VisualizerFactory } from '../MidiVisualizer/utils'
+import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 
 interface VisualizerProps {
     activeInstruments: ActiveInstrument[]
@@ -19,9 +22,11 @@ interface VisualizerProps {
     isEditingLoop: boolean
     showDampPedal: boolean
     midiSpeedFactor: number
-    midiFile: IMidiFile | null
-    midiMetas: MidiMetas | null
+    midiFile: IMidiFile
+    midiMetas: MidiMetas
     activeTracks: number[]
+    height?: number
+    width?: number
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
@@ -29,7 +34,9 @@ interface VisualizerProps {
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
-export const Visualizer = React.memo(function Preview({
+const MS_PER_SECTION = 2000
+
+export const Visualizer = WithContainerDimensions(function Visualizer({
     loopTimestamps,
     activeInstruments,
     midiPlayMode,
@@ -39,6 +46,8 @@ export const Visualizer = React.memo(function Preview({
     showDampPedal,
     midiFile,
     midiMetas,
+    height = 0,
+    width = 0,
     activeTracks,
     onChangeActiveNotes,
     onChangeNextNoteStartingTime,
@@ -46,26 +55,63 @@ export const Visualizer = React.memo(function Preview({
     onChangeLoopTimestamps,
     onChangeAudioPlayerState,
 }: VisualizerProps) {
+    const config = { midiSpeedFactor, showDampPedal, isEditingLoop, MS_PER_SECTION, height, width }
+
+    const visualizerFactory = useMemo(
+        () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas, midiFile),
+        [height, midiMetas, width]
+    )
+
+    useEffect(() => {
+        visualizerFactory.setEventsForTracks(activeTracks)
+    }, [activeTracks, visualizerFactory])
+
+    const data = useMemo(() => {
+        visualizerFactory.clearThirdEvents()
+        if (loopTimestamps) {
+            const [startLoop, endLoop] = loopTimestamps
+            if (startLoop) {
+                visualizerFactory.addLoopTimeStampEvent(startLoop)
+            }
+            if (endLoop) {
+                visualizerFactory.addLoopTimeStampEvent(endLoop)
+            }
+        }
+        visualizerFactory.setEventsForTracks(activeTracks)
+        if (!showDampPedal) {
+            return visualizerFactory.getNoteEvents()
+        } else {
+            return visualizerFactory.getAllEvents()
+        }
+    }, [visualizerFactory, showDampPedal, activeTracks, loopTimestamps])
+
     return (
         <ErrorBoundary>
             {midiMetas && midiFile ? (
-                <MidiVisualizer
-                    midiSpeedFactor={midiSpeedFactor}
-                    loopTimestamps={loopTimestamps}
-                    activeInstruments={activeInstruments}
-                    midiFile={midiFile}
-                    midiPlayMode={midiPlayMode}
-                    midiMetas={midiMetas}
-                    showDampPedal={showDampPedal}
-                    nextNoteStartingTime={nextNoteStartingTime}
-                    isEditingLoop={isEditingLoop}
-                    activeTracks={activeTracks}
-                    onChangeActiveNotes={onChangeActiveNotes}
-                    onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
-                    onChangeActiveInstruments={onChangeActiveInstruments}
-                    onChangeLoopTimes={onChangeLoopTimestamps}
-                    onChangeAudioPlayerState={onChangeAudioPlayerState}
-                />
+                <>
+                    <MidiVisualizer
+                        data={data}
+                        config={config}
+                        loopTimestamps={loopTimestamps}
+                        midiMetas={midiMetas}
+                        visualizerFactory={visualizerFactory}
+                        onChangeLoopTimes={onChangeLoopTimestamps}
+                    />
+                    <MidiEventsManager
+                        showDampPedal={showDampPedal}
+                        nextNoteStartingTime={nextNoteStartingTime}
+                        midiPlayMode={midiPlayMode}
+                        midiMetas={midiMetas}
+                        loopTimestamps={loopTimestamps}
+                        visualizerFactory={visualizerFactory}
+                        activeInstruments={activeInstruments}
+                        data={data}
+                        onChangeActiveNotes={onChangeActiveNotes}
+                        onChangeActiveInstruments={onChangeActiveInstruments}
+                        onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
+                        onChangeAudioPlayerState={onChangeAudioPlayerState}
+                    />
+                </>
             ) : null}
         </ErrorBoundary>
     )

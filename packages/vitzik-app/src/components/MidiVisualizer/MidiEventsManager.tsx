@@ -10,24 +10,25 @@ import {
     MidiPlayMode,
 } from '../../types'
 import { VisualizerFactory } from './utils'
-import { SectionOfEvents } from './types'
+import { SectionOfEvents, VisualizerEvent } from './types'
 import { useIntervalWorker } from '../../hooks'
 import { AppContext } from '../_contexts'
 import {
     activeInstrumentsToInstruments,
     instrumentsToActiveInstruments,
     KEYBOARD_CHANNEL,
-    MIDI_INPUT_CHANNEL
+    MIDI_INPUT_CHANNEL,
 } from '../../utils/const'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
     midiPlayMode: MidiPlayMode
     loopTimestamps?: LoopTimestamps
+    showDampPedal?: boolean
     nextNoteStartingTime: number | null
     visualizerFactory: VisualizerFactory
     activeInstruments: ActiveInstrument[]
-    activeTracksNoteEvents: SectionOfEvents[]
+    data: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
@@ -36,7 +37,6 @@ interface MidiEventsManagerProps {
 
 const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
 
-
 export function MidiEventsManager({
     midiMetas,
     activeInstruments,
@@ -44,14 +44,16 @@ export function MidiEventsManager({
     visualizerFactory,
     midiPlayMode,
     nextNoteStartingTime,
-    activeTracksNoteEvents,
+    data,
+    showDampPedal,
     onChangeActiveNotes,
     onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
     onChangeAudioPlayerState,
 }: MidiEventsManagerProps) {
-    const midiTrackActiveInstruments = activeInstruments
-        .filter(({ channel }) => !isUserChannel(channel))
+    const midiTrackActiveInstruments = activeInstruments.filter(
+        ({ channel }) => !isUserChannel(channel)
+    )
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
 
     const { instruments } = midiMetas
@@ -66,10 +68,7 @@ export function MidiEventsManager({
                 break
             case 'waitForValidInput':
                 setNextNoteStartingTime(timeRef.current)
-                const activeNotes = visualizerFactory.getActiveNotes(
-                    activeTracksNoteEvents,
-                    timeRef.current
-                )
+                const activeNotes = visualizerFactory.getActiveNotes(data, timeRef.current)
                 if (!activeNotes.length) {
                     moveToNextNote()
                 }
@@ -79,7 +78,7 @@ export function MidiEventsManager({
 
     function moveToNextNote() {
         const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(
-            activeTracksNoteEvents,
+            data,
             timeRef.current
         )
         if (nextNoteStartingTime) {
@@ -107,6 +106,35 @@ export function MidiEventsManager({
         if (loopTimestamps) {
             checkIsEndOfLoop(time)
         }
+        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+
+        const slidesEvents = [
+            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
+            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
+        ]
+
+        if ((slidesEvents[0] || slidesEvents[1]) && showDampPedal) {
+            const events = slidesEvents[0].concat(slidesEvents[1])
+            checkDampPedal(time, events)
+        }
+    }
+
+    function checkDampPedal(time: number, events: VisualizerEvent[]) {
+        const isDampPedalOn = (instrumentChannel: number) =>
+            events.some(
+                (event) =>
+                    event.eventType === 'dampPedal' &&
+                    visualizerFactory.isEventActive(event, time) &&
+                    instrumentChannel === event.channel
+            )
+        onChangeActiveInstruments((activeInstruments) => {
+            return activeInstruments.map((instrument) => {
+                return {
+                    ...instrument,
+                    isDampPedalOn: isDampPedalOn(instrument.channel),
+                }
+            })
+        })
     }
 
     function checkIsEndOfLoop(time: number) {
@@ -138,15 +166,12 @@ export function MidiEventsManager({
     }
 
     function setNextNoteStartingTime(time: number) {
-        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(
-            activeTracksNoteEvents,
-            time
-        )
+        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(data, time)
         onChangeNextNoteStartingTime(nextNoteStartingTime)
     }
 
     function setActiveNotes(time: number) {
-        const newActiveNotes = visualizerFactory.getActiveNotes(activeTracksNoteEvents, time)
+        const newActiveNotes = visualizerFactory.getActiveNotes(data, time)
 
         onChangeActiveNotes((activeNotes: ActiveNote[]) => {
             if (isEqual(newActiveNotes, activeNotes)) {
