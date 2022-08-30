@@ -7,10 +7,9 @@ import {
     MusicSystem,
     AppMode,
     MidiMetas,
-    Instrument,
     InstrumentUserFriendlyName,
     MidiAccessMode,
-    LoopTimestamps,
+    LoopTimestamps, ActiveInstrument,
 } from './types'
 import { AudioPlayer } from './components/AudioPlayer'
 import { DEFAULT_INSTRUMENTS } from './utils/const'
@@ -22,7 +21,7 @@ import { AppContextProvider } from './components/_contexts'
 function App() {
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [activeInstruments, setActiveInstruments] = useState<Instrument[]>(DEFAULT_INSTRUMENTS)
+    const [activeInstruments, setActiveInstruments] = useState<ActiveInstrument[]>(DEFAULT_INSTRUMENTS)
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [isMute, setIsMute] = useState(false)
     const [activeTracks, setActiveTracks] = useState<number[]>([])
@@ -36,6 +35,7 @@ function App() {
     const [loopTimestamps, setLoopTimestamps] = useState<LoopTimestamps>([null, null])
     const [isEditingLoop, setIsEditingLoop] = useState(false)
     const [showNotes, setShowNotes] = useState(true)
+    const [showDampPedal, setShowDampPedal] = useState(true)
     const [loadedInstrumentPlayers, setLoadedInstrumentPlayers] = useState<
         InstrumentUserFriendlyName[]
     >([])
@@ -63,6 +63,7 @@ function App() {
                     )}
                     <Settings
                         showNotes={showNotes}
+                        showDampPedal={showDampPedal}
                         isEditingLoop={isEditingLoop}
                         activeInstruments={activeInstruments}
                         appMode={appMode}
@@ -86,6 +87,7 @@ function App() {
                         onMute={setIsMute}
                         onChangeLoopTimestamps={setLoopTimestamps}
                         onChangeShowNotes={setShowNotes}
+                        onChangeShowDampPedal={setShowDampPedal}
                     />
                 </div>
                 <Preview
@@ -94,6 +96,7 @@ function App() {
                     midiMetas={midiMetas}
                     activeTracks={activeTracks}
                     showNotes={showNotes}
+                    showDampPedal={showDampPedal}
                     midiSpeedFactor={midiSpeedFactor}
                     audioPlayerState={audioPlayerState}
                     midiInput={midiInput}

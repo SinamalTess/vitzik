@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
 import {
-    Instrument,
     ActiveNote,
     MidiMetas,
     MidiPlayMode,
     LoopTimestamps,
     AudioPlayerState,
+    ActiveInstrument,
 } from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
@@ -20,11 +20,12 @@ import { AppContext } from '../_contexts'
 import { VisualizerEvent } from './types'
 
 interface MidiVisualizerProps {
-    activeInstruments: Instrument[]
+    activeInstruments: ActiveInstrument[]
     midiFile: IMidiFile
     midiPlayMode?: MidiPlayMode
     loopTimestamps?: LoopTimestamps
     isEditingLoop?: boolean
+    showDampPedal: boolean
     midiMetas: MidiMetas
     activeTracks: number[]
     height?: number
@@ -32,7 +33,7 @@ interface MidiVisualizerProps {
     nextNoteStartingTime: number | null
     width?: number
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
-    onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
@@ -53,8 +54,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     nextNoteStartingTime,
     height = 0,
     width = 0,
+    showDampPedal,
     onChangeActiveNotes,
-    onChangeInstruments,
+    onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
     onChangeLoopTimes,
     onChangeAudioPlayerState,
@@ -73,19 +75,17 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         [height, midiMetas, width]
     )
 
-    const activeTracksEvents = useMemo(() => {
-        visualizerFactory.clearLoopTimeStampEvents()
-        if (loopTimestamps) {
-            const [startLoop, endLoop] = loopTimestamps
-            if (startLoop) {
-                visualizerFactory.addLoopTimeStampEvent(startLoop)
-            }
-            if (endLoop) {
-                visualizerFactory.addLoopTimeStampEvent(endLoop)
-            }
+    useEffect(() => {
+        visualizerFactory.setEventsForTracks(activeTracks)
+    }, [activeTracks, visualizerFactory])
+
+    const visibleEvents = useMemo(() => {
+        if (!showDampPedal) {
+            return visualizerFactory.getNoteEvents()
+        } else {
+            return visualizerFactory.getAllEvents()
         }
-        return visualizerFactory.getEventsForTracks(activeTracks)
-    }, [activeTracks, visualizerFactory, loopTimestamps])
+    }, [visualizerFactory, showDampPedal, activeTracks])
 
     useIntervalWorker(onTimeChange)
 
@@ -99,6 +99,29 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         } else if (animRef.current === null && code === 'start') {
             animate(time)
         }
+        if ((slidesEvents[0] || slidesEvents[1]) && showDampPedal) {
+            const events = slidesEvents[0].concat(slidesEvents[1])
+            checkDampPedal(time, events)
+        }
+    }
+
+    function checkDampPedal(time: number, events: VisualizerEvent[]) {
+        const isDampPedalOn = (instrumentChannel: number) =>
+            events.some(
+                ({ eventType, startingTime, duration, channel }) =>
+                    eventType === 'dampPedal' &&
+                    startingTime <= time &&
+                    duration + startingTime > time &&
+                    instrumentChannel === channel
+            )
+        onChangeActiveInstruments((activeInstruments) => {
+            return activeInstruments.map((instrument) => {
+                return {
+                    ...instrument,
+                    isDampPedalOn: isDampPedalOn(instrument.channel),
+                }
+            })
+        })
     }
 
     function animate(time: number, limit = false) {
@@ -150,8 +173,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
 
         setSlidesEvents([
-            visualizerFactory.getEventsBySectionIndex(activeTracksEvents, newIndexesToDraw[0]),
-            visualizerFactory.getEventsBySectionIndex(activeTracksEvents, newIndexesToDraw[1]),
+            visualizerFactory.getEventsBySectionIndex(visibleEvents, newIndexesToDraw[0]),
+            visualizerFactory.getEventsBySectionIndex(visibleEvents, newIndexesToDraw[1]),
         ])
 
         setIndexesToDraw(newIndexesToDraw)
@@ -166,7 +189,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         const time = timeRef.current
         animateOnce(time)
         reDraw(time)
-    }, [activeTracks, loopTimestamps, height, width, ref.current, midiSpeedFactor])
+    }, [visibleEvents])
 
     // @ts-ignore
     function onWheel(e: WheelEvent<HTMLDivElement>) {
@@ -215,9 +238,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                 loopTimestamps={loopTimestamps}
                 visualizerFactory={visualizerFactory}
                 activeInstruments={activeInstruments}
-                activeTracksNoteEvents={activeTracksEvents}
+                activeTracksNoteEvents={visibleEvents}
                 onChangeActiveNotes={onChangeActiveNotes}
-                onChangeInstruments={onChangeInstruments}
+                onChangeActiveInstruments={onChangeActiveInstruments}
                 onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
                 onChangeAudioPlayerState={onChangeAudioPlayerState}
             />

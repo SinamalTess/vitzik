@@ -6,9 +6,9 @@ import {
     AppMode,
     MidiMetas,
     InstrumentUserFriendlyName,
-    Instrument,
     MidiAccessMode,
     LoopTimestamps,
+    ActiveInstrument,
 } from '../../types'
 import { AppModeSelector } from '../AppModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
@@ -16,10 +16,11 @@ import { Switch, Button, Divider, Tooltip } from 'vitzik-ui'
 import { ExtraSettingsPanel } from './ExtraSettingsPanel'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { BpmSelector } from '../BpmSelector'
-import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut'
+import { useKeyboardShortcut } from '../../hooks'
 
 interface SettingsProps {
     showNotes: boolean
+    showDampPedal: boolean
     appMode: AppMode
     midiPlayMode: MidiPlayMode
     midiAccessMode: MidiAccessMode
@@ -29,10 +30,10 @@ interface SettingsProps {
     midiSpeedFactor: number
     isEditingLoop: boolean
     loadedInstrumentPlayers: InstrumentUserFriendlyName[]
-    activeInstruments: Instrument[]
+    activeInstruments: ActiveInstrument[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeAppMode: (mode: AppMode) => void
-    onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeInstrument: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
     onMidiInputChange: React.Dispatch<React.SetStateAction<MIDIInput | null>>
     onMidiOutputChange: React.Dispatch<React.SetStateAction<MIDIOutput | null>>
@@ -43,12 +44,14 @@ interface SettingsProps {
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onMute: React.Dispatch<React.SetStateAction<boolean>>
     onChangeShowNotes: React.Dispatch<React.SetStateAction<boolean>>
+    onChangeShowDampPedal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BASE_CLASS = 'settings'
 
 export function Settings({
     showNotes,
+    showDampPedal,
     appMode,
     midiPlayMode,
     midiAccessMode,
@@ -72,6 +75,7 @@ export function Settings({
     onMidiModeChange,
     onMute,
     onChangeShowNotes,
+    onChangeShowDampPedal,
 }: SettingsProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const userInstrument = activeInstruments.find(
@@ -175,6 +179,7 @@ export function Settings({
             <ExtraSettingsPanel
                 loadedInstrumentPlayers={loadedInstrumentPlayers}
                 showNotes={showNotes}
+                showDampPedal={showDampPedal}
                 midiMetas={midiMetas}
                 musicSystem={musicSystem}
                 activeTracks={activeTracks}
@@ -186,6 +191,7 @@ export function Settings({
                 onChangeActiveTracks={onChangeActiveTracks}
                 onChangeInstrument={onChangeInstrument}
                 onChangeShowNotes={onChangeShowNotes}
+                onChangeShowDampPedal={onChangeShowDampPedal}
             />
         </div>
     )

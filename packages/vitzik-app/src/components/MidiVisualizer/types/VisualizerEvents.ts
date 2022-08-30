@@ -5,10 +5,10 @@ export type VisualizerEventType = 'note' | 'loopTimestamp' | 'dampPedal'
 export const isNoteEvent = (event: VisualizerEvent): event is VisualizerNoteEvent =>
     event.eventType === 'note'
 
-export const isLoopTimestampEvent = (event: VisualizerEvent): event is VisualizerNoteEvent =>
+export const isLoopTimestampEvent = (event: VisualizerEvent): event is VisualizerEvent =>
     event.eventType === 'loopTimestamp'
 
-export const isDampPedalEvent = (event: VisualizerEvent): event is VisualizerNoteEvent =>
+export const isDampPedalEvent = (event: VisualizerEvent): event is VisualizerEvent =>
     event.eventType === 'dampPedal'
 
 export interface Coordinates {
@@ -22,6 +22,7 @@ export interface VisualizerEventBase extends Coordinates {
     eventType: VisualizerEventType
     startingTime: number
     duration: number
+    channel: number
 }
 
 export interface VisualizerNoteEvent extends VisualizerEventBase {
@@ -30,7 +31,6 @@ export interface VisualizerNoteEvent extends VisualizerEventBase {
     name?: AlphabeticalNote
     key: number
     velocity: number
-    channel: number
     startingTime: number
     uniqueId: string
 }

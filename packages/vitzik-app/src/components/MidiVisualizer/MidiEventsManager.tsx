@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useRef } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import {
+    ActiveInstrument,
     ActiveNote,
     AudioPlayerState,
-    Instrument,
     LoopTimestamps,
     MidiMetas,
     MidiPlayMode,
@@ -13,7 +13,12 @@ import { VisualizerFactory } from './utils'
 import { SectionOfEvents } from './types'
 import { useIntervalWorker } from '../../hooks'
 import { AppContext } from '../_contexts'
-import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../../utils/const'
+import {
+    activeInstrumentsToInstruments,
+    instrumentsToActiveInstruments,
+    KEYBOARD_CHANNEL,
+    MIDI_INPUT_CHANNEL
+} from '../../utils/const'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
@@ -21,15 +26,16 @@ interface MidiEventsManagerProps {
     loopTimestamps?: LoopTimestamps
     nextNoteStartingTime: number | null
     visualizerFactory: VisualizerFactory
-    activeInstruments: Instrument[]
+    activeInstruments: ActiveInstrument[]
     activeTracksNoteEvents: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
-    onChangeInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
 const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
+
 
 export function MidiEventsManager({
     midiMetas,
@@ -40,11 +46,14 @@ export function MidiEventsManager({
     nextNoteStartingTime,
     activeTracksNoteEvents,
     onChangeActiveNotes,
-    onChangeInstruments,
+    onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
     onChangeAudioPlayerState,
 }: MidiEventsManagerProps) {
-    const midiTrackInstruments = activeInstruments.filter(({ channel }) => !isUserChannel(channel))
+    const midiTrackActiveInstruments = activeInstruments
+        .filter(({ channel }) => !isUserChannel(channel))
+    const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
+
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
     const { intervalWorker } = useContext(AppContext)
@@ -90,8 +99,9 @@ export function MidiEventsManager({
         if (isMultiInstrumentsTrack) {
             const instruments = getInstruments(time)
             const hasNewInstruments = !isEqual(instruments, midiTrackInstruments)
+            const activeInstruments = instrumentsToActiveInstruments(instruments)
             if (hasNewInstruments) {
-                onChangeInstruments(instruments)
+                onChangeActiveInstruments(activeInstruments)
             }
         }
         if (loopTimestamps) {

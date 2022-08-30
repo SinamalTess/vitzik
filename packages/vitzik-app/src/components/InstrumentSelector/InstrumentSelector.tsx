@@ -5,14 +5,17 @@ import {
     DEFAULT_MIDI_INSTRUMENT,
     DEFAULT_KEYBOARD_INSTRUMENT,
 } from '../../utils/const'
-import { Instrument, InstrumentUserFriendlyName } from '../../types'
+import { ActiveInstrument, InstrumentUserFriendlyName } from '../../types'
 
 interface InstrumentSelectorProps {
     value: string
-    onChange: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChange: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
 }
 
-function replaceInstruments(newUserInstruments: Instrument[], instruments: Instrument[]) {
+function replaceInstruments(
+    newUserInstruments: ActiveInstrument[],
+    instruments: ActiveInstrument[]
+) {
     const copyInstruments = [...instruments]
     newUserInstruments.forEach((instrument) => {
         const indexInstrument = copyInstruments.findIndex(

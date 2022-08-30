@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Soundfont, { InstrumentName, Player } from 'soundfont-player'
+import Soundfont, { InstrumentName } from 'soundfont-player'
 import { msToSec } from '../../utils'
 import {
     ActiveNote,
@@ -9,7 +9,6 @@ import {
     isMidiVisualizerActiveNote,
 } from '../../types'
 import {
-    DRUM_KIT_CHANNEL,
     MIDI_INPUT_CHANNEL,
     MIDI_INSTRUMENTS,
     MIDI_INSTRUMENTS_FATBOY,
@@ -28,6 +27,7 @@ interface InstrumentPlayerProps {
     notesToLoad: AlphabeticalNote[]
     soundfont?: SoundFont
     channel: number
+    isDampPedalOn?: boolean
     onChangeLoadedInstrumentPlayers: React.Dispatch<
         React.SetStateAction<InstrumentUserFriendlyName[]>
     >
@@ -56,15 +56,7 @@ const normalizeInstrumentName = (
 const normalizeVelocity = (val: number, max: number, min: number): number =>
     (val - min) / (max - min)
 
-function playNote(note: ActiveNote, instrumentPlayer: Player) {
-    const { velocity, key } = note
-    const gain = normalizeVelocity(velocity, 127, 0)
-    const duration = isMidiVisualizerActiveNote(note) ? note.duration : 0
-    instrumentPlayer.play(key.toString(), 0, {
-        gain,
-        duration: msToSec(duration),
-    })
-}
+const SOUNDFONT_DRUM_KIT_URL = 'soundfonts/pns_drum_kit.js'
 
 export function InstrumentPlayer({
     isMute,
@@ -76,6 +68,7 @@ export function InstrumentPlayer({
     channel,
     audioPlayerState,
     soundfont = 'MusyngKite',
+    isDampPedalOn = false,
     onChangeLoadedInstrumentPlayers,
 }: InstrumentPlayerProps) {
     const [instrumentPlayer, setInstrumentPlayer] = useState<Soundfont.Player | null>(null)
@@ -117,9 +110,9 @@ export function InstrumentPlayer({
         }
         function startInstrument() {
             let soundfontInstrument = normalizeInstrumentName(instrumentName, soundfont)
-            if (channel === DRUM_KIT_CHANNEL) {
+            if (instrumentName === 'Drum Kit') {
                 // @ts-ignore
-                soundfontInstrument = 'soundfonts/pns_drum_kit.js'
+                soundfontInstrument = SOUNDFONT_DRUM_KIT_URL
             }
             Soundfont.instrument(audioContext, soundfontInstrument, {
                 soundfont,
@@ -158,7 +151,7 @@ export function InstrumentPlayer({
         }
 
         newNotes.forEach((note) => {
-            playNote(note, instrumentPlayer)
+            playNote(note)
         })
     }, [activeNotes, instrumentPlayer, isMute])
 
@@ -172,6 +165,20 @@ export function InstrumentPlayer({
             } else {
                 return [...loadedInstrumentPlayers, instrumentName]
             }
+        })
+    }
+
+    function playNote(note: ActiveNote) {
+        if (!instrumentPlayer) return
+
+        const { velocity, key } = note
+        const gain = normalizeVelocity(velocity, 127, 0)
+        const duration = isMidiVisualizerActiveNote(note) ? note.duration : 0
+
+        instrumentPlayer.play(key.toString(), 0, {
+            gain,
+            duration: msToSec(duration),
+            release: isDampPedalOn ? duration / 2 : 0,
         })
     }
 

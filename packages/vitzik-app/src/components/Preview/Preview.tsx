@@ -6,7 +6,6 @@ import { InstrumentPlayer } from '../InstrumentPlayer'
 import React, { useCallback, useEffect, useState } from 'react'
 import { MidiMessageManager } from '../MidiMessageManager'
 import {
-    Instrument,
     ActiveNote,
     AudioPlayerState,
     InstrumentUserFriendlyName,
@@ -15,10 +14,11 @@ import {
     MidiPlayMode,
     MusicSystem,
     LoopTimestamps,
+    ActiveInstrument,
 } from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getMidiMetas, MidiFactory } from '../../utils'
-import { DEFAULT_INSTRUMENTS } from '../../utils/const'
+import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../utils/const'
 
 const AUDIO_CONTEXT = new AudioContext()
 
@@ -43,6 +43,7 @@ function resumeAudioContext() {
 interface PreviewProps {
     isMute: boolean
     showNotes: boolean
+    showDampPedal: boolean
     midiTitle: string
     loopTimestamps: LoopTimestamps
     activeTracks: number[]
@@ -53,10 +54,10 @@ interface PreviewProps {
     midiAccessMode: MidiAccessMode
     midiMetas: MidiMetas | null
     midiPlayMode: MidiPlayMode
-    activeInstruments: Instrument[]
+    activeInstruments: ActiveInstrument[]
     isEditingLoop: boolean
     midiSpeedFactor: number
-    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeMidiTitle: React.Dispatch<React.SetStateAction<string>>
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
@@ -70,6 +71,7 @@ interface PreviewProps {
 export function Preview({
     isMute,
     showNotes,
+    showDampPedal,
     activeTracks,
     loopTimestamps,
     midiInput,
@@ -118,11 +120,12 @@ export function Preview({
         const playableTracks = metas.tracksMetas.filter((track) => track.isPlayable)
         const { instruments } = metas
         const initialInstruments = MidiFactory.getInitialInstruments(instruments)
+        const initialActiveInstruments = instrumentsToActiveInstruments(initialInstruments)
 
         onChangeMidiTitle(title)
         setMidiFile(midiJSON)
         onChangeMidiMetas(metas)
-        onChangeActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialInstruments])
+        onChangeActiveInstruments([...DEFAULT_INSTRUMENTS, ...initialActiveInstruments])
         onChangeActiveTracks(playableTracks.map(({ index }) => index))
         onChangeAudioPlayerState('stopped')
         onChangeLoopTimestamps([null, null])
@@ -154,6 +157,7 @@ export function Preview({
                     midiPlayMode={midiPlayMode}
                     isEditingLoop={isEditingLoop}
                     midiFile={midiFile}
+                    showDampPedal={showDampPedal}
                     midiMetas={midiMetas}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={setActiveNotes}
@@ -172,7 +176,7 @@ export function Preview({
                     onAllMidiKeysPlayed={handleAllMidiKeysPlayed}
                     onChangeActiveNotes={setActiveNotes}
                 />
-                {activeInstruments.map(({ channel, name, notes }) => {
+                {activeInstruments.map(({ channel, name, notes, isDampPedalOn }) => {
                     return (
                         <InstrumentPlayer
                             audioPlayerState={audioPlayerState}
@@ -184,6 +188,7 @@ export function Preview({
                             instrumentName={name}
                             notesToLoad={[...notes]}
                             channel={channel}
+                            isDampPedalOn={isDampPedalOn}
                             onChangeLoadedInstrumentPlayers={onChangeLoadedInstrumentPlayers}
                         />
                     )

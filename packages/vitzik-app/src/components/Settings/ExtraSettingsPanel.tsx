@@ -2,7 +2,7 @@ import { SideBar, Switch } from 'vitzik-ui'
 import { MusicSystemSelector } from '../MusicSystemSelector'
 import { InstrumentSelector } from '../InstrumentSelector'
 import React from 'react'
-import { Instrument, InstrumentUserFriendlyName, MidiMetas, MusicSystem } from '../../types'
+import { ActiveInstrument, InstrumentUserFriendlyName, MidiMetas, MusicSystem } from '../../types'
 import './ExtraSettingsPanel.scss'
 import { MidiTrackList } from '../MidiTrackList'
 import { InstrumentImage } from '../InstrumentImage'
@@ -10,17 +10,19 @@ import { InstrumentImage } from '../InstrumentImage'
 interface ExtraSettingsPanelProps {
     isOpen: boolean
     showNotes: boolean
+    showDampPedal: boolean
     userInstrument: InstrumentUserFriendlyName
     musicSystem: MusicSystem
     midiMetas: MidiMetas | null
     activeTracks: number[]
-    activeInstruments: Instrument[]
+    activeInstruments: ActiveInstrument[]
     onClose: () => void
     loadedInstrumentPlayers: InstrumentUserFriendlyName[]
     onChangeMusicSystem: (musicSystem: MusicSystem) => void
     onChangeActiveTracks: React.Dispatch<React.SetStateAction<number[]>>
-    onChangeInstrument: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeInstrument: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeShowNotes: React.Dispatch<React.SetStateAction<boolean>>
+    onChangeShowDampPedal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BASE_CLASS = 'extra-settings'
@@ -28,6 +30,7 @@ const BASE_CLASS = 'extra-settings'
 export function ExtraSettingsPanel({
     isOpen,
     showNotes,
+    showDampPedal,
     userInstrument,
     musicSystem,
     midiMetas,
@@ -39,9 +42,14 @@ export function ExtraSettingsPanel({
     onChangeActiveTracks,
     onChangeInstrument,
     onChangeShowNotes,
+    onChangeShowDampPedal,
 }: ExtraSettingsPanelProps) {
-    function handleClick() {
+    function handleClickShowNotes() {
         onChangeShowNotes((showNotes) => !showNotes)
+    }
+
+    function handleClickShowDampPedal() {
+        onChangeShowDampPedal((showDampPedal) => !showDampPedal)
     }
 
     return (
@@ -53,8 +61,11 @@ export function ExtraSettingsPanel({
                     <InstrumentImage instrumentName={userInstrument} size={48} />
                     <InstrumentSelector onChange={onChangeInstrument} value={userInstrument} />
                 </div>
-                <Switch isOn={showNotes} onClick={handleClick} className={'pd-md'}>
+                <Switch isOn={showNotes} onClick={handleClickShowNotes} className={'pd-md'}>
                     Show notes
+                </Switch>
+                <Switch isOn={showDampPedal} onClick={handleClickShowDampPedal} className={'pd-md'}>
+                    Show damp pedal sections
                 </Switch>
                 {midiMetas ? (
                     <>

@@ -1,11 +1,12 @@
 import { MsPerBeat } from '../../../types'
 import findLast from 'lodash/findLast'
 import { Keyboard } from '../../../utils/Keyboard'
-import { VisualizerEvent, VisualizerEventType, VisualizerNoteEvent } from '../types'
+import { VisualizerEvent, VisualizerEventType } from '../types'
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { Dimensions } from '../types/Dimensions'
 import { IMidiControlChangeEvent } from 'midi-json-parser-worker/src/interfaces'
+import {KEYBOARD_CHANNEL} from "../../../utils/const";
 
 export class VisualizerEventsFactory {
     #width: number
@@ -57,6 +58,7 @@ export class VisualizerEventsFactory {
             x: 0,
             y,
             duration: 0,
+            channel: KEYBOARD_CHANNEL,
         }
     }
 
@@ -65,6 +67,7 @@ export class VisualizerEventsFactory {
         deltaAcc: number
     ): VisualizerEvent => {
         const startingTime = this.#deltaToTime(deltaAcc)
+        const { channel } = event
         return {
             w: this.#width,
             h: 0,
@@ -73,6 +76,7 @@ export class VisualizerEventsFactory {
             startingTime,
             eventType: 'dampPedal',
             duration: 0,
+            channel,
         }
     }
 

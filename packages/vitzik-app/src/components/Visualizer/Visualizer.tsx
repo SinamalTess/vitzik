@@ -5,24 +5,25 @@ import {
     MidiMetas,
     ActiveNote,
     MidiPlayMode,
-    Instrument,
     LoopTimestamps,
     AudioPlayerState,
+    ActiveInstrument,
 } from '../../types'
 import { ErrorBoundary } from 'vitzik-ui'
 
 interface VisualizerProps {
-    activeInstruments: Instrument[]
+    activeInstruments: ActiveInstrument[]
     midiPlayMode: MidiPlayMode
     nextNoteStartingTime: number | null
     loopTimestamps: LoopTimestamps
     isEditingLoop: boolean
+    showDampPedal: boolean
     midiSpeedFactor: number
     midiFile: IMidiFile | null
     midiMetas: MidiMetas | null
     activeTracks: number[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
-    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<Instrument[]>>
+    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
@@ -35,6 +36,7 @@ export const Visualizer = React.memo(function Preview({
     midiSpeedFactor,
     nextNoteStartingTime,
     isEditingLoop,
+    showDampPedal,
     midiFile,
     midiMetas,
     activeTracks,
@@ -54,12 +56,13 @@ export const Visualizer = React.memo(function Preview({
                     midiFile={midiFile}
                     midiPlayMode={midiPlayMode}
                     midiMetas={midiMetas}
+                    showDampPedal={showDampPedal}
                     nextNoteStartingTime={nextNoteStartingTime}
                     isEditingLoop={isEditingLoop}
                     activeTracks={activeTracks}
                     onChangeActiveNotes={onChangeActiveNotes}
                     onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
-                    onChangeInstruments={onChangeActiveInstruments}
+                    onChangeActiveInstruments={onChangeActiveInstruments}
                     onChangeLoopTimes={onChangeLoopTimestamps}
                     onChangeAudioPlayerState={onChangeAudioPlayerState}
                 />

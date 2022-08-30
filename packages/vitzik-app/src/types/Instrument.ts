@@ -11,3 +11,7 @@ export interface Instrument {
     timestamp: number
     delta: number
 }
+
+export interface ActiveInstrument extends Instrument{
+    isDampPedalOn: boolean
+}
