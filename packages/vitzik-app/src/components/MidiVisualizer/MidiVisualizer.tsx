@@ -1,42 +1,40 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
-import { MidiMetas, LoopTimestamps } from '../../types'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
-import { VisualizerFactory } from './utils'
-import { LoopEditor } from './LoopEditor'
 import { useIntervalWorker } from '../../hooks'
 import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
 import { SectionOfEvents, VisualizerEvent } from './types'
+import { MidiVisualizerFactory } from './utils/MidiVisualizerFactory'
 
 interface MidiVisualizerConfig {
-    showDampPedal: boolean
     midiSpeedFactor?: number
-    isEditingLoop?: boolean
-    MS_PER_SECTION: number
     height: number
     width: number
+    msPerSection: number
 }
 
 interface MidiVisualizerProps {
-    loopTimestamps?: LoopTimestamps
     data: SectionOfEvents[]
-    visualizerFactory: VisualizerFactory
-    midiMetas: MidiMetas
     config: MidiVisualizerConfig
-    onChangeLoopTimes: React.Dispatch<React.SetStateAction<LoopTimestamps>>
 }
 
 export const BASE_CLASS = 'midi-visualizer'
 
+const getMidiDuration = (data: SectionOfEvents[]) => {
+    if (!data.length) return 0
+    const lastSectionIndex = data.reduce(
+        (acc, section) => Math.max(parseInt(Object.keys(section)[0]), acc),
+        0
+    )
+    const lastEvents: VisualizerEvent[] = Object.values(data[lastSectionIndex])[0]
+    return lastEvents.reduce((acc, event) => Math.max(event.startingTime + event.duration, acc), 0)
+}
+
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
-    loopTimestamps,
-    midiMetas,
     config,
     data,
-    visualizerFactory,
-    onChangeLoopTimes,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
@@ -44,7 +42,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const timeRef = useRef(0)
     const animRef = useRef<null | number>(null)
     const { intervalWorker } = useContext(AppContext)
-    const { height, width, midiSpeedFactor = 1, isEditingLoop = false, MS_PER_SECTION } = config
+    const { height, width, midiSpeedFactor = 1, msPerSection } = config
+    const midiDuration = getMidiDuration(data)
+    const midiVisualizerFactory = new MidiVisualizerFactory(height, msPerSection)
 
     const slides = ref.current?.getElementsByTagName('div')
 
@@ -74,7 +74,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             }
 
             const interval = timestamp - startTime
-            const top = visualizerFactory.getSlidesPercentageTop(
+            const top = midiVisualizerFactory.getSlidesPercentageTop(
                 time + timeElapsed / midiSpeedFactor
             )
 
@@ -103,16 +103,16 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }
 
     function shouldRedraw(time: number) {
-        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+        const newIndexesToDraw = midiVisualizerFactory.getIndexesSectionToDraw(time)
         return newIndexesToDraw[0] !== indexesToDraw[0] || newIndexesToDraw[1] !== indexesToDraw[1]
     }
 
     function reDraw(time: number) {
-        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+        const newIndexesToDraw = midiVisualizerFactory.getIndexesSectionToDraw(time)
 
         setSlidesEvents([
-            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
-            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
+            midiVisualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
+            midiVisualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
         ])
 
         setIndexesToDraw(newIndexesToDraw)
@@ -133,7 +133,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     function onWheel(e: WheelEvent<HTMLDivElement>) {
         const onWheelCallback = () => {
             const { deltaY } = e
-            const { midiDuration } = midiMetas
             const startAt = timeRef.current - deltaY
             const isValidTime = startAt >= 0 && startAt < midiDuration
 
@@ -158,15 +157,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                     />
                 )
             })}
-            {isEditingLoop && loopTimestamps ? (
-                <LoopEditor
-                    loopTimestamps={loopTimestamps}
-                    width={width}
-                    height={height}
-                    msPerSection={MS_PER_SECTION}
-                    onChangeLoopTimestamps={onChangeLoopTimes}
-                />
-            ) : null}
         </div>
     )
 })

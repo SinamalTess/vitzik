@@ -48,9 +48,6 @@ export class VisualizerEventsFactory {
 
     #getHFromDuration = (duration: number) => this.#ratioSection * duration
 
-    isEventActive = (event: VisualizerEvent, time: number) =>
-        event.startingTime <= time && event.startingTime + event.duration > time
-
     getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
         const y = this.#getYFromStartingTime(startingTime)
         return {

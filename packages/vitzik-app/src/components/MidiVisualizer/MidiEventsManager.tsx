@@ -9,7 +9,6 @@ import {
     MidiMetas,
     MidiPlayMode,
 } from '../../types'
-import { VisualizerFactory } from './utils'
 import { SectionOfEvents, VisualizerEvent } from './types'
 import { useIntervalWorker } from '../../hooks'
 import { AppContext } from '../_contexts'
@@ -19,6 +18,7 @@ import {
     KEYBOARD_CHANNEL,
     MIDI_INPUT_CHANNEL,
 } from '../../utils/const'
+import { VisualizerEventManager } from './utils/VisualizerEventManager'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
@@ -26,7 +26,8 @@ interface MidiEventsManagerProps {
     loopTimestamps?: LoopTimestamps
     showDampPedal?: boolean
     nextNoteStartingTime: number | null
-    visualizerFactory: VisualizerFactory
+    msPerSection: number
+    height: number
     activeInstruments: ActiveInstrument[]
     data: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
@@ -41,10 +42,11 @@ export function MidiEventsManager({
     midiMetas,
     activeInstruments,
     loopTimestamps,
-    visualizerFactory,
     midiPlayMode,
     nextNoteStartingTime,
     data,
+    height,
+    msPerSection,
     showDampPedal,
     onChangeActiveNotes,
     onChangeActiveInstruments,
@@ -60,6 +62,7 @@ export function MidiEventsManager({
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
     const { intervalWorker } = useContext(AppContext)
     const timeRef = useRef(0)
+    const visualizerFactory = new VisualizerEventManager(msPerSection, height)
 
     useEffect(() => {
         switch (midiPlayMode) {
@@ -120,11 +123,13 @@ export function MidiEventsManager({
     }
 
     function checkDampPedal(time: number, events: VisualizerEvent[]) {
+        const isEventActive = (event: VisualizerEvent) =>
+            event.startingTime <= time && event.startingTime + event.duration > time
         const isDampPedalOn = (instrumentChannel: number) =>
             events.some(
                 (event) =>
                     event.eventType === 'dampPedal' &&
-                    visualizerFactory.isEventActive(event, time) &&
+                    isEventActive(event) &&
                     instrumentChannel === event.channel
             )
         onChangeActiveInstruments((activeInstruments) => {

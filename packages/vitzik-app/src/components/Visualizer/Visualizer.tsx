@@ -13,6 +13,7 @@ import { ErrorBoundary } from 'vitzik-ui'
 import { MidiEventsManager } from '../MidiVisualizer/MidiEventsManager'
 import { VisualizerFactory } from '../MidiVisualizer/utils'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
+import { LoopEditor } from '../MidiVisualizer/LoopEditor'
 
 interface VisualizerProps {
     activeInstruments: ActiveInstrument[]
@@ -55,7 +56,12 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
     onChangeLoopTimestamps,
     onChangeAudioPlayerState,
 }: VisualizerProps) {
-    const config = { midiSpeedFactor, showDampPedal, isEditingLoop, MS_PER_SECTION, height, width }
+    const config = {
+        midiSpeedFactor,
+        msPerSection: MS_PER_SECTION,
+        height,
+        width,
+    }
 
     const visualizerFactory = useMemo(
         () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas, midiFile),
@@ -89,23 +95,26 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <>
-                    <MidiVisualizer
-                        data={data}
-                        config={config}
-                        loopTimestamps={loopTimestamps}
-                        midiMetas={midiMetas}
-                        visualizerFactory={visualizerFactory}
-                        onChangeLoopTimes={onChangeLoopTimestamps}
-                    />
+                    <MidiVisualizer data={data} config={config} />
+                    {isEditingLoop && loopTimestamps ? (
+                        <LoopEditor
+                            loopTimestamps={loopTimestamps}
+                            width={width}
+                            height={height}
+                            msPerSection={MS_PER_SECTION}
+                            onChangeLoopTimestamps={onChangeLoopTimestamps}
+                        />
+                    ) : null}
                     <MidiEventsManager
+                        data={data}
                         showDampPedal={showDampPedal}
                         nextNoteStartingTime={nextNoteStartingTime}
                         midiPlayMode={midiPlayMode}
                         midiMetas={midiMetas}
+                        height={height}
                         loopTimestamps={loopTimestamps}
-                        visualizerFactory={visualizerFactory}
+                        msPerSection={MS_PER_SECTION}
                         activeInstruments={activeInstruments}
-                        data={data}
                         onChangeActiveNotes={onChangeActiveNotes}
                         onChangeActiveInstruments={onChangeActiveInstruments}
                         onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
