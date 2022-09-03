@@ -6,9 +6,7 @@ import '@testing-library/jest-dom'
 import 'jest-canvas-mock'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import { AudioContextMock } from './tests/mocks/AudioContextMock'
-import React from 'react'
 
-global.URL.createObjectURL = () => {}
 global.Worker = jest.fn()
 global.navigator.requestMIDIAccess = requestMIDIAccess
 global.AudioContext = AudioContextMock

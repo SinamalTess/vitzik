@@ -9,6 +9,12 @@ interface ButtonGroupProps extends PresentationalComponentBasicProps {
     size?: CSSSpacingSize
 }
 
+interface IButtonGroupContext {
+    size?: CSSSpacingSize
+}
+
+export const ButtonGroupContext = React.createContext<IButtonGroupContext>({})
+
 const BASE_CLASS = 'btn-group'
 
 export function ButtonGroup({ style, className, children, size = 'md' }: ButtonGroupProps) {
@@ -16,11 +22,11 @@ export function ButtonGroup({ style, className, children, size = 'md' }: ButtonG
 
     const classNames = clsx(BASE_CLASS, 'mg-sm', className)
 
-    const props = { size }
-
     return (
-        <div className={classNames} role="group" style={style}>
-            {children.map((child, index) => React.cloneElement(child, { ...props, key: index }))}
-        </div>
+        <ButtonGroupContext.Provider value={{ size }}>
+            <div className={classNames} role="group" style={style}>
+                {children}
+            </div>
+        </ButtonGroupContext.Provider>
     )
 }

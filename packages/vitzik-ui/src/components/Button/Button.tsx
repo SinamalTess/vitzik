@@ -1,8 +1,9 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import './Button.scss'
 import { Icon } from '../Icon'
 import { CSSSpacingSize, CSSColor, IconName, PresentationalComponentBasicProps } from '../../types'
 import clsx from 'clsx'
+import { ButtonGroupContext } from '../ButtonGroup/ButtonGroup'
 
 type ButtonVariant = 'outlined' | 'filled' | 'text'
 
@@ -31,7 +32,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
         active = false,
         icon,
         children,
-        size = 'md',
+        size: sizeOwn = 'md',
         color = 'primary',
         variant = 'filled',
         className,
@@ -43,6 +44,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     },
     ref
 ) {
+    const { size: sizeContext } = useContext(ButtonGroupContext)
+    const size = sizeContext ?? sizeOwn
+
     const classNames = clsx(
         BASE_CLASS,
         { [`${BASE_CLASS}-${size}`]: size },
