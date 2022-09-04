@@ -4,7 +4,7 @@ import { MsPerBeat } from '../../types'
 import './BpmSelector.scss'
 import { useIntervalWorker } from '../../hooks'
 import { MidiFactory } from '../../utils'
-import findLast from "lodash/findLast";
+import findLast from 'lodash/findLast'
 
 interface BpmSelectorProps {
     midiSpeedFactor: number
@@ -36,7 +36,7 @@ const SPEED_FACTORS = [
     },
 ]
 
-function getMsPerBeatFromTime (allMsPerBeat: MsPerBeat[], time: number) {
+function getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], time: number) {
     return (
         findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
         allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
@@ -100,7 +100,7 @@ export function BpmSelector({
                         {SPEED_FACTORS.map(({ factor, speed }) => (
                             <Button
                                 key={factor}
-                                active={factor === midiSpeedFactor}
+                                color={factor === midiSpeedFactor ? 'primary' : 'secondary'}
                                 onClick={() => handleChange(factor)}
                             >
                                 x{speed}

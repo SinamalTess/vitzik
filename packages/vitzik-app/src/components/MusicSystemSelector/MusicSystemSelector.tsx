@@ -10,16 +10,22 @@ interface MusicSystemSelectorProps {
 export function MusicSystemSelector({ musicSystem, onChange }: MusicSystemSelectorProps) {
     return (
         <ButtonGroup size={'sm'}>
-            <Button onClick={() => onChange('syllabic')} active={musicSystem === 'syllabic'}>
+            <Button
+                onClick={() => onChange('syllabic')}
+                color={musicSystem === 'syllabic' ? 'primary' : 'secondary'}
+            >
                 Syllabic
             </Button>
             <Button
                 onClick={() => onChange('alphabetical')}
-                active={musicSystem === 'alphabetical'}
+                color={musicSystem === 'alphabetical' ? 'primary' : 'secondary'}
             >
                 Alphabetical
             </Button>
-            <Button onClick={() => onChange('german')} active={musicSystem === 'german'}>
+            <Button
+                onClick={() => onChange('german')}
+                color={musicSystem === 'german' ? 'primary' : 'secondary'}
+            >
                 German
             </Button>
         </ButtonGroup>
