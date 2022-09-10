@@ -25,7 +25,6 @@ interface MidiEventsManagerProps {
     midiMetas: MidiMetas
     config: MidiVisualizerConfig
     midiPlayMode: MidiPlayMode
-    loopTimestamps?: LoopTimestamps
     nextNoteStartingTime: number | null
     activeInstruments: ActiveInstrument[]
     data: SectionOfEvents[]
@@ -40,7 +39,6 @@ const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL
 export function MidiEventsManager({
     midiMetas,
     activeInstruments,
-    loopTimestamps,
     midiPlayMode,
     nextNoteStartingTime,
     data,
@@ -54,7 +52,7 @@ export function MidiEventsManager({
         ({ channel }) => !isUserChannel(channel)
     )
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
-    const { msPerSection, height, showDampPedal } = config
+    const { msPerSection, height, showDampPedal, loopTimestamps } = config
 
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
