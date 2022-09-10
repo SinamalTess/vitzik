@@ -36,7 +36,8 @@ export class SectionFactory {
             const events = this.getEventsFromSection(section)
 
             return events.map((visualizerEvent) => {
-                const computedY = visualizerEvent.y - index * this.#height
+                const computedY =
+                    this.#height + index * this.#height - (visualizerEvent.y + visualizerEvent.h)
                 return {
                     ...visualizerEvent,
                     y: computedY,

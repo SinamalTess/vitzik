@@ -23,7 +23,7 @@ describe('isPositive()', () => {
 })
 
 describe('clamp()', () => {
-    it('should return the value between max and min', () => {
+    it('should return a number whose value is limited to the given range', () => {
         expect(clamp(0, 100, 300)).toBe(100)
         expect(clamp(50, 0, 100)).toBe(50)
         expect(clamp(120, 50, 100)).toBe(100)
