@@ -7,13 +7,7 @@ import throttle from 'lodash/throttle'
 import { AppContext } from '../_contexts'
 import { SectionOfEvents, VisualizerEvent } from './types'
 import { MidiVisualizerFactory } from './utils/MidiVisualizerFactory'
-
-interface MidiVisualizerConfig {
-    midiSpeedFactor?: number
-    height: number
-    width: number
-    msPerSection: number
-}
+import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 
 interface MidiVisualizerProps {
     data: SectionOfEvents[]

@@ -3,24 +3,17 @@ import './LoopEditor.scss'
 import { LoopTimestamps } from '../../types'
 import { useIntervalWorker } from '../../hooks'
 import { LoopLine } from './events/LoopLine'
+import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 
 export const BASE_CLASS = 'loop-editor'
 
 interface LoopEditorProps {
-    loopTimestamps: LoopTimestamps
-    height: number
-    width: number
-    msPerSection: number
+    config: MidiVisualizerConfig
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
 }
 
-export function LoopEditor({
-    loopTimestamps,
-    height,
-    width,
-    msPerSection,
-    onChangeLoopTimestamps,
-}: LoopEditorProps) {
+export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) {
+    const { height, msPerSection, width, loopTimestamps } = config
     const ratio = height / msPerSection
     const allLinesDrawn = !loopTimestamps.includes(null)
     const [previewLineY, setPreviewLineY] = useState(0)

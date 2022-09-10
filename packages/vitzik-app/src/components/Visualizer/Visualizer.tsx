@@ -14,18 +14,15 @@ import { MidiEventsManager } from '../MidiVisualizer/MidiEventsManager'
 import { VisualizerFactory } from '../MidiVisualizer/utils'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { LoopEditor } from '../MidiVisualizer/LoopEditor'
+import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
 
 interface VisualizerProps {
     activeInstruments: ActiveInstrument[]
     midiPlayMode: MidiPlayMode
     nextNoteStartingTime: number | null
-    loopTimestamps: LoopTimestamps
-    isEditingLoop: boolean
-    showDampPedal: boolean
-    midiSpeedFactor: number
+    config: MidiVisualizerUserConfig
     midiFile: IMidiFile
     midiMetas: MidiMetas
-    activeTracks: number[]
     height?: number
     width?: number
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
@@ -35,21 +32,15 @@ interface VisualizerProps {
     onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
-const MS_PER_SECTION = 2000
-
 export const Visualizer = WithContainerDimensions(function Visualizer({
-    loopTimestamps,
     activeInstruments,
     midiPlayMode,
-    midiSpeedFactor,
     nextNoteStartingTime,
-    isEditingLoop,
-    showDampPedal,
+    config: userConfig,
     midiFile,
     midiMetas,
     height = 0,
     width = 0,
-    activeTracks,
     onChangeActiveNotes,
     onChangeNextNoteStartingTime,
     onChangeActiveInstruments,
@@ -57,14 +48,15 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
     onChangeAudioPlayerState,
 }: VisualizerProps) {
     const config = {
-        midiSpeedFactor,
-        msPerSection: MS_PER_SECTION,
+        ...userConfig,
         height,
         width,
     }
 
+    const { msPerSection, showDampPedal, activeTracks, showLoopEditor, loopTimestamps } = config
+
     const visualizerFactory = useMemo(
-        () => new VisualizerFactory({ height, width }, MS_PER_SECTION, midiMetas, midiFile),
+        () => new VisualizerFactory({ height, width }, msPerSection, midiMetas, midiFile),
         [height, midiMetas, width]
     )
 
@@ -96,24 +88,18 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
             {midiMetas && midiFile ? (
                 <>
                     <MidiVisualizer data={data} config={config} />
-                    {isEditingLoop && loopTimestamps ? (
+                    {showLoopEditor && loopTimestamps ? (
                         <LoopEditor
-                            loopTimestamps={loopTimestamps}
-                            width={width}
-                            height={height}
-                            msPerSection={MS_PER_SECTION}
+                            config={config}
                             onChangeLoopTimestamps={onChangeLoopTimestamps}
                         />
                     ) : null}
                     <MidiEventsManager
                         data={data}
-                        showDampPedal={showDampPedal}
+                        config={config}
                         nextNoteStartingTime={nextNoteStartingTime}
                         midiPlayMode={midiPlayMode}
                         midiMetas={midiMetas}
-                        height={height}
-                        loopTimestamps={loopTimestamps}
-                        msPerSection={MS_PER_SECTION}
                         activeInstruments={activeInstruments}
                         onChangeActiveNotes={onChangeActiveNotes}
                         onChangeActiveInstruments={onChangeActiveInstruments}

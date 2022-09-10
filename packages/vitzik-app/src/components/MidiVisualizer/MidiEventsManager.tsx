@@ -19,15 +19,14 @@ import {
     MIDI_INPUT_CHANNEL,
 } from '../../utils/const'
 import { VisualizerEventManager } from './utils/VisualizerEventManager'
+import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
+    config: MidiVisualizerConfig
     midiPlayMode: MidiPlayMode
     loopTimestamps?: LoopTimestamps
-    showDampPedal?: boolean
     nextNoteStartingTime: number | null
-    msPerSection: number
-    height: number
     activeInstruments: ActiveInstrument[]
     data: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
@@ -45,9 +44,7 @@ export function MidiEventsManager({
     midiPlayMode,
     nextNoteStartingTime,
     data,
-    height,
-    msPerSection,
-    showDampPedal,
+    config,
     onChangeActiveNotes,
     onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
@@ -57,6 +54,7 @@ export function MidiEventsManager({
         ({ channel }) => !isUserChannel(channel)
     )
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
+    const { msPerSection, height, showDampPedal } = config
 
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)

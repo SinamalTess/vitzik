@@ -19,6 +19,7 @@ import {
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getMidiMetas, MidiFactory } from '../../utils'
 import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../utils/const'
+import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
 
 const AUDIO_CONTEXT = new AudioContext()
 
@@ -95,7 +96,15 @@ export function Preview({
 }: PreviewProps) {
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
-    const [nextNoteStartingTime, setnextNoteStartingTime] = useState<number | null>(null)
+    const [nextNoteStartingTime, setNextNoteStartingTime] = useState<number | null>(null)
+    const visualizerConfig: MidiVisualizerUserConfig = {
+        midiSpeedFactor,
+        msPerSection: 2000,
+        showDampPedal,
+        activeTracks,
+        showLoopEditor: isEditingLoop,
+        loopTimestamps,
+    }
 
     useEffect(() => {
         if (isMute) {
@@ -151,18 +160,14 @@ export function Preview({
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 {midiMetas && midiFile ? (
                     <Visualizer
-                        midiSpeedFactor={midiSpeedFactor}
-                        loopTimestamps={loopTimestamps}
                         nextNoteStartingTime={nextNoteStartingTime}
                         activeInstruments={activeInstruments}
                         midiPlayMode={midiPlayMode}
-                        isEditingLoop={isEditingLoop}
                         midiFile={midiFile}
-                        showDampPedal={showDampPedal}
+                        config={visualizerConfig}
                         midiMetas={midiMetas}
-                        activeTracks={activeTracks}
                         onChangeActiveNotes={setActiveNotes}
-                        onChangeNextNoteStartingTime={setnextNoteStartingTime}
+                        onChangeNextNoteStartingTime={setNextNoteStartingTime}
                         onChangeActiveInstruments={onChangeActiveInstruments}
                         onChangeLoopTimestamps={onChangeLoopTimestamps}
                         onChangeAudioPlayerState={onChangeAudioPlayerState}
