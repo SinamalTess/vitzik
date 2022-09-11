@@ -1,17 +1,9 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
-import {
-    ActiveInstrument,
-    ActiveNote,
-    AudioPlayerState,
-    LoopTimestamps,
-    MidiMetas,
-    MidiPlayMode,
-} from '../../types'
+import { ActiveInstrument, ActiveNote, MidiMetas } from '../../types'
 import { SectionOfEvents, VisualizerEvent } from './types'
 import { useIntervalWorker } from '../../hooks'
-import { AppContext } from '../_contexts'
 import {
     activeInstrumentsToInstruments,
     instrumentsToActiveInstruments,
@@ -24,13 +16,11 @@ import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas
     config: MidiVisualizerConfig
-    midiPlayMode: MidiPlayMode
     activeInstruments: ActiveInstrument[]
     data: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
-    onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
 const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
@@ -38,59 +28,30 @@ const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL
 export function MidiEventsManager({
     midiMetas,
     activeInstruments,
-    midiPlayMode,
     data,
     config,
     onChangeActiveNotes,
     onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
-    onChangeAudioPlayerState,
 }: MidiEventsManagerProps) {
     const midiTrackActiveInstruments = activeInstruments.filter(
         ({ channel }) => !isUserChannel(channel)
     )
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
-    const { msPerSection, height, showDampPedal, loopTimestamps } = config
+    const { msPerSection, height, showDampPedal } = config
 
     const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
-    const { intervalWorker } = useContext(AppContext)
     const timeRef = useRef(0)
     const visualizerFactory = new VisualizerEventManager(msPerSection, height)
-
-    useEffect(() => {
-        switch (midiPlayMode) {
-            case 'autoplay':
-                onChangeNextNoteStartingTime(null)
-                break
-            case 'waitForValidInput':
-                setNextNoteStartingTime(timeRef.current)
-                const activeNotes = visualizerFactory.getActiveNotes(data, timeRef.current)
-                if (!activeNotes.length) {
-                    moveToNextNote()
-                }
-                break
-        }
-    }, [midiPlayMode])
-
-    function moveToNextNote() {
-        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(
-            data,
-            timeRef.current
-        )
-        if (nextNoteStartingTime) {
-            intervalWorker?.updateTimer(nextNoteStartingTime)
-        }
-    }
 
     useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
         timeRef.current = time
         setActiveNotes(time)
-        if (midiPlayMode === 'waitForValidInput') {
-            setNextNoteStartingTime(time)
-        }
+        setNextNoteStartingTime(time)
+
         if (isMultiInstrumentsTrack) {
             const instruments = getInstruments(time)
             const hasNewInstruments = !isEqual(instruments, midiTrackInstruments)
@@ -99,9 +60,7 @@ export function MidiEventsManager({
                 onChangeActiveInstruments(activeInstruments)
             }
         }
-        if (loopTimestamps) {
-            checkIsEndOfLoop(time)
-        }
+
         const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
 
         const slidesEvents = [
@@ -133,15 +92,6 @@ export function MidiEventsManager({
                 }
             })
         })
-    }
-
-    function checkIsEndOfLoop(time: number) {
-        const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
-        if (startLoop && endLoop && time > endLoop) {
-            const startAt = startLoop - 200 ?? 0
-            intervalWorker?.updateTimer(startAt)
-            onChangeAudioPlayerState('paused')
-        }
     }
 
     function getInstruments(time: number) {

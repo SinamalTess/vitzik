@@ -3,7 +3,7 @@ import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import { Keyboard } from '../Keyboard'
 import { InstrumentPlayer } from '../InstrumentPlayer'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { MidiMessageManager } from '../MidiMessageManager'
 import {
     ActiveNote,
@@ -97,6 +97,7 @@ export function Preview({
     onChangeLoadedInstrumentPlayers,
 }: PreviewProps) {
     const { intervalWorker } = useContext(AppContext)
+    const timeRef = useRef(0)
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [nextNoteStartingTime, setNextNoteStartingTime] = useState<number | null>(null)
@@ -151,6 +152,9 @@ export function Preview({
         if (midiPlayMode === 'waitForValidInput') {
             checkForWaitMode(time, interval)
         }
+        if (loopTimestamps) {
+            checkIsEndOfLoop(time)
+        }
     }
 
     function checkForWaitMode(time: number, interval: number) {
@@ -163,6 +167,35 @@ export function Preview({
             onChangeAudioPlayerState('paused')
         }
     }
+
+    function checkIsEndOfLoop(time: number) {
+        const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
+        if (startLoop && endLoop && time > endLoop) {
+            const startAt = startLoop - 200 ?? 0
+            intervalWorker?.updateTimer(startAt)
+            onChangeAudioPlayerState('paused')
+        }
+    }
+
+    function moveToNextNote() {
+        if (nextNoteStartingTime) {
+            intervalWorker?.updateTimer(nextNoteStartingTime)
+        }
+    }
+
+    useEffect(() => {
+        switch (midiPlayMode) {
+            case 'autoplay':
+                setNextNoteStartingTime(null)
+                break
+            case 'waitForValidInput':
+                setNextNoteStartingTime(timeRef.current)
+                if (!activeNotes.length) {
+                    moveToNextNote()
+                }
+                break
+        }
+    }, [midiPlayMode])
 
     return (
         <>
@@ -183,7 +216,6 @@ export function Preview({
                 {midiMetas && midiFile ? (
                     <Visualizer
                         activeInstruments={activeInstruments}
-                        midiPlayMode={midiPlayMode}
                         midiFile={midiFile}
                         config={visualizerConfig}
                         midiMetas={midiMetas}
@@ -191,7 +223,6 @@ export function Preview({
                         onChangeNextNoteStartingTime={setNextNoteStartingTime}
                         onChangeActiveInstruments={onChangeActiveInstruments}
                         onChangeLoopTimestamps={onChangeLoopTimestamps}
-                        onChangeAudioPlayerState={onChangeAudioPlayerState}
                     />
                 ) : null}
             </div>

@@ -1,13 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import {
-    MidiMetas,
-    ActiveNote,
-    MidiPlayMode,
-    LoopTimestamps,
-    AudioPlayerState,
-    ActiveInstrument,
-} from '../../types'
+import { MidiMetas, ActiveNote, LoopTimestamps, ActiveInstrument } from '../../types'
 import { ErrorBoundary } from 'vitzik-ui'
 import { MidiEventsManager } from '../MidiVisualizer/MidiEventsManager'
 import { VisualizerFactory } from '../MidiVisualizer/utils'
@@ -18,7 +11,6 @@ import { MidiVisualizer } from '../MidiVisualizer'
 
 interface VisualizerProps {
     activeInstruments: ActiveInstrument[]
-    midiPlayMode: MidiPlayMode
     config: MidiVisualizerUserConfig
     midiFile: IMidiFile
     midiMetas: MidiMetas
@@ -28,12 +20,10 @@ interface VisualizerProps {
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
-    onChangeAudioPlayerState: React.Dispatch<React.SetStateAction<AudioPlayerState>>
 }
 
 export const Visualizer = WithContainerDimensions(function Visualizer({
     activeInstruments,
-    midiPlayMode,
     config: userConfig,
     midiFile,
     midiMetas,
@@ -43,7 +33,6 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
     onChangeNextNoteStartingTime,
     onChangeActiveInstruments,
     onChangeLoopTimestamps,
-    onChangeAudioPlayerState,
 }: VisualizerProps) {
     const config = {
         ...userConfig,
@@ -95,13 +84,11 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
                     <MidiEventsManager
                         data={data}
                         config={config}
-                        midiPlayMode={midiPlayMode}
                         midiMetas={midiMetas}
                         activeInstruments={activeInstruments}
                         onChangeActiveNotes={onChangeActiveNotes}
                         onChangeActiveInstruments={onChangeActiveInstruments}
                         onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
-                        onChangeAudioPlayerState={onChangeAudioPlayerState}
                     />
                 </>
             ) : null}
