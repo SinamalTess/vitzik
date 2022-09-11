@@ -124,8 +124,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     }, [data])
 
     // @ts-ignore
-    function onWheel(e: WheelEvent<HTMLDivElement>) {
-        const onWheelCallback = () => {
+    function handleWheel(e: WheelEvent<HTMLDivElement>) {
+        const onWheel = () => {
             const { deltaY } = e
             const startAt = timeRef.current - deltaY
             const isValidTime = startAt >= 0 && startAt < midiDuration
@@ -135,11 +135,11 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             }
         }
 
-        throttle(onWheelCallback, 100)()
+        throttle(onWheel, 100)()
     }
 
     return (
-        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={onWheel}>
+        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={handleWheel}>
             {[0, 1].map((index) => {
                 return (
                     <MidiVisualizerSlide

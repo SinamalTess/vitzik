@@ -3,7 +3,7 @@ import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import { Keyboard } from '../Keyboard'
 import { InstrumentPlayer } from '../InstrumentPlayer'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { MidiMessageManager } from '../MidiMessageManager'
 import {
     ActiveNote,
@@ -20,6 +20,8 @@ import { IMidiFile } from 'midi-json-parser-worker'
 import { getMidiMetas, MidiFactory } from '../../utils'
 import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../utils/const'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
+import { useIntervalWorker } from '../../hooks'
+import { AppContext } from '../_contexts'
 
 const AUDIO_CONTEXT = new AudioContext()
 
@@ -94,6 +96,7 @@ export function Preview({
     onChangeMidiMetas,
     onChangeLoadedInstrumentPlayers,
 }: PreviewProps) {
+    const { intervalWorker } = useContext(AppContext)
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [nextNoteStartingTime, setNextNoteStartingTime] = useState<number | null>(null)
@@ -142,6 +145,25 @@ export function Preview({
         // console.log(metas)
     }
 
+    useIntervalWorker(onTimeChange)
+
+    function onTimeChange(time: number, interval: number) {
+        if (midiPlayMode === 'waitForValidInput') {
+            checkForWaitMode(time, interval)
+        }
+    }
+
+    function checkForWaitMode(time: number, interval: number) {
+        if (!nextNoteStartingTime) return
+
+        const nextTick = time + interval
+
+        if (time >= nextNoteStartingTime || nextTick >= nextNoteStartingTime) {
+            intervalWorker?.updateTimer(nextNoteStartingTime)
+            onChangeAudioPlayerState('paused')
+        }
+    }
+
     return (
         <>
             <div className="item preview">
@@ -160,7 +182,6 @@ export function Preview({
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 {midiMetas && midiFile ? (
                     <Visualizer
-                        nextNoteStartingTime={nextNoteStartingTime}
                         activeInstruments={activeInstruments}
                         midiPlayMode={midiPlayMode}
                         midiFile={midiFile}

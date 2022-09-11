@@ -25,7 +25,6 @@ interface MidiEventsManagerProps {
     midiMetas: MidiMetas
     config: MidiVisualizerConfig
     midiPlayMode: MidiPlayMode
-    nextNoteStartingTime: number | null
     activeInstruments: ActiveInstrument[]
     data: SectionOfEvents[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
@@ -40,7 +39,6 @@ export function MidiEventsManager({
     midiMetas,
     activeInstruments,
     midiPlayMode,
-    nextNoteStartingTime,
     data,
     config,
     onChangeActiveNotes,
@@ -87,11 +85,10 @@ export function MidiEventsManager({
 
     useIntervalWorker(onTimeChange)
 
-    function onTimeChange(time: number, interval: number) {
+    function onTimeChange(time: number) {
         timeRef.current = time
         setActiveNotes(time)
         if (midiPlayMode === 'waitForValidInput') {
-            checkForWaitMode(time, interval)
             setNextNoteStartingTime(time)
         }
         if (isMultiInstrumentsTrack) {
@@ -143,17 +140,6 @@ export function MidiEventsManager({
         if (startLoop && endLoop && time > endLoop) {
             const startAt = startLoop - 200 ?? 0
             intervalWorker?.updateTimer(startAt)
-            onChangeAudioPlayerState('paused')
-        }
-    }
-
-    function checkForWaitMode(time: number, interval: number) {
-        if (!nextNoteStartingTime) return
-
-        const nextTick = time + interval
-
-        if (time >= nextNoteStartingTime || nextTick >= nextNoteStartingTime) {
-            intervalWorker?.updateTimer(nextNoteStartingTime)
             onChangeAudioPlayerState('paused')
         }
     }

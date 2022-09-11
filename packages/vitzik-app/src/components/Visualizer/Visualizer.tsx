@@ -1,4 +1,3 @@
-import { MidiVisualizer } from '../MidiVisualizer'
 import React, { useEffect, useMemo } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import {
@@ -15,11 +14,11 @@ import { VisualizerFactory } from '../MidiVisualizer/utils'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { LoopEditor } from '../MidiVisualizer/LoopEditor'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
+import { MidiVisualizer } from '../MidiVisualizer'
 
 interface VisualizerProps {
     activeInstruments: ActiveInstrument[]
     midiPlayMode: MidiPlayMode
-    nextNoteStartingTime: number | null
     config: MidiVisualizerUserConfig
     midiFile: IMidiFile
     midiMetas: MidiMetas
@@ -35,7 +34,6 @@ interface VisualizerProps {
 export const Visualizer = WithContainerDimensions(function Visualizer({
     activeInstruments,
     midiPlayMode,
-    nextNoteStartingTime,
     config: userConfig,
     midiFile,
     midiMetas,
@@ -97,7 +95,6 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
                     <MidiEventsManager
                         data={data}
                         config={config}
-                        nextNoteStartingTime={nextNoteStartingTime}
                         midiPlayMode={midiPlayMode}
                         midiMetas={midiMetas}
                         activeInstruments={activeInstruments}
