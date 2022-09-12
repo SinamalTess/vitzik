@@ -13,15 +13,13 @@ interface LoopEditorProps {
 }
 
 export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) {
-    const { height, msPerSection, width, loopTimestamps } = config
+    const [previewLineY, setPreviewLineY] = useState(0)
+    const timeRef = useIntervalWorker()
+    const { height, width, msPerSection, loopTimestamps } = config
+    const [loopStartTimestamp, loopEndTimestamp] = loopTimestamps
     const ratio = height / msPerSection
     const allLinesDrawn = !loopTimestamps.includes(null)
-    const [previewLineY, setPreviewLineY] = useState(0)
-    const [loopStartTimestamp, loopEndTimestamp] = loopTimestamps
-    const [time, setTime] = useState(0)
-    const yToTimestamp = (y: number) => (height - y) / ratio + time
-
-    useIntervalWorker(setTime)
+    const yToTimestamp = (y: number) => (height - y) / ratio + timeRef.current
 
     useEffect(() => {
         if (allLinesDrawn) {

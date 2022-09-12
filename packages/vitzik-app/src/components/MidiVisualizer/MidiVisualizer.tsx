@@ -33,19 +33,15 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const ref = useRef<HTMLDivElement>(null)
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
     const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
-    const timeRef = useRef(0)
     const animRef = useRef<null | number>(null)
     const { intervalWorker } = useContext(AppContext)
     const { height, width, midiSpeedFactor = 1, msPerSection } = config
     const midiDuration = getMidiDuration(data)
     const midiVisualizerFactory = new MidiVisualizerFactory(height, msPerSection)
-
     const slides = ref.current?.getElementsByTagName('div')
-
-    useIntervalWorker(onTimeChange)
+    const timeRef = useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number, code: string) {
-        timeRef.current = time
         if (shouldRedraw(time)) {
             reDraw(time)
         }

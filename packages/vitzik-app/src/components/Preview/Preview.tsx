@@ -3,7 +3,7 @@ import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import { Keyboard } from '../Keyboard'
 import { InstrumentPlayer } from '../InstrumentPlayer'
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { MidiMessageManager } from '../MidiMessageManager'
 import {
     ActiveNote,
@@ -97,7 +97,6 @@ export function Preview({
     onChangeLoadedInstrumentPlayers,
 }: PreviewProps) {
     const { intervalWorker } = useContext(AppContext)
-    const timeRef = useRef(0)
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [nextNoteStartingTime, setNextNoteStartingTime] = useState<number | null>(null)
@@ -146,7 +145,7 @@ export function Preview({
         // console.log(metas)
     }
 
-    useIntervalWorker(onTimeChange)
+    const timeRef = useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number, interval: number) {
         if (midiPlayMode === 'waitForValidInput') {

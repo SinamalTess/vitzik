@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import { ActiveInstrument, ActiveNote, MidiMetas } from '../../types'
@@ -36,7 +36,6 @@ export function MidiEventsManager({
 }: MidiEventsManagerProps) {
     const { msPerSection, height, showDampPedal } = config
     const { instruments } = midiMetas
-    const timeRef = useRef(0)
     const visualizerFactory = new VisualizerEventManager(msPerSection, height)
     const midiTrackActiveInstruments = activeInstruments.filter(
         ({ channel }) => !isUserChannel(channel)
@@ -44,7 +43,7 @@ export function MidiEventsManager({
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
 
-    useIntervalWorker(onTimeChange)
+    const timeRef = useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
         timeRef.current = time
