@@ -123,11 +123,11 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     function handleWheel(e: WheelEvent<HTMLDivElement>) {
         const onWheel = () => {
             const { deltaY } = e
-            const startAt = timeRef.current - deltaY
-            const isValidTime = startAt >= 0 && startAt < midiDuration
+            const newTime = timeRef.current - deltaY
+            const isValidTime = newTime >= 0 && newTime < midiDuration
 
             if (isValidTime) {
-                intervalWorker?.updateTimer(timeRef.current + deltaY)
+                intervalWorker?.updateTimer(newTime)
             }
         }
 
