@@ -1,8 +1,7 @@
 import { MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent } from '../types'
+import { isLoopTimestampEvent, isNoteEvent, SectionOfEvents, VisualizerEvent } from '../types'
 import { VisualizerFileParserFactory } from './VisualizerFileParserFactory'
-import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
 
 export class VisualizerFactory extends VisualizerFileParserFactory {
@@ -77,6 +76,66 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
 
     #getSectionKey = (section: SectionOfEvents) => Object.keys(section)[0]
 
+    #isTimestampWithinEvent = (timestamp: number, event: VisualizerEvent) =>
+        timestamp > event.startingTime && timestamp < event.startingTime + event.duration
+
+    #cutEventAtTime = (event: VisualizerEvent, splitTime: number): VisualizerEvent[] => {
+        const ySplit = this.getYFromStartingTime(splitTime)
+        const firstHalf = {
+            ...event,
+            h: ySplit - event.y,
+            duration: splitTime - event.duration,
+        }
+        const secondHalf = {
+            ...event,
+            startingTime: splitTime,
+            y: ySplit,
+            uniqueId: `${Math.random()}`,
+            h: event.h - (ySplit - event.y),
+            duration: splitTime - event.duration,
+        }
+        return [firstHalf, secondHalf]
+    }
+
+    #getEventsAfterCutByLoopTimestamps = (section: SectionOfEvents) => {
+        let currentEventsCopy: VisualizerEvent[] = []
+        let thirdEvents: VisualizerEvent[] = []
+        const sectionKey = this.#getSectionKey(section)
+        const currentEvents = this.#getEventsFromSection(section)
+        const thirdEventsSection = this.#findSectionByKey(sectionKey, this.#thirdEvents)
+
+        if (thirdEventsSection) {
+            thirdEvents = this.#getEventsFromSection(thirdEventsSection)
+
+            const loopTimestamps = thirdEvents.filter((event) => isLoopTimestampEvent(event))
+
+            currentEvents.forEach((event) => {
+                const isCutByLoopTimestamp = loopTimestamps.some(({ startingTime }) =>
+                    this.#isTimestampWithinEvent(startingTime, event)
+                )
+                if (isCutByLoopTimestamp) {
+                    loopTimestamps.forEach(({ startingTime }) => {
+                        const isTimestampWithinEvent = this.#isTimestampWithinEvent(
+                            startingTime,
+                            event
+                        )
+
+                        if (isTimestampWithinEvent) {
+                            const cutEvents = this.#cutEventAtTime(event, startingTime)
+                            currentEventsCopy.push(...cutEvents)
+                        }
+                    })
+                } else {
+                    currentEventsCopy.push(event)
+                }
+            })
+        } else {
+            currentEventsCopy = [...currentEvents]
+        }
+
+        return [currentEventsCopy, thirdEvents]
+    }
+
     getEventsForTracks = (activeTracks: number[]) => {
         if (
             !activeTracks.length ||
@@ -94,62 +153,13 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
 
         activeTracksSections.forEach((section) => {
             const sectionKey = this.#getSectionKey(section)
-            const currentEvents = this.#getEventsFromSection(section)
-            let thirdEvents: VisualizerEvent[] = []
-            let currentEventsCopy: VisualizerEvent[] = []
+            let newEvents: VisualizerEvent[] = []
 
             if (this.#thirdEvents) {
-                const thirdEventsSection = this.#findSectionByKey(sectionKey, this.#thirdEvents)
-                if (thirdEventsSection) {
-                    thirdEvents = this.#getEventsFromSection(thirdEventsSection)
-
-                    const loopTimestamps = thirdEvents
-                        .filter((event) => isLoopTimestampEvent(event))
-                        .sort((a, b) => a.startingTime - b.startingTime)
-
-                    currentEvents.forEach((event) => {
-                        const isCutByLoopTimestamp = loopTimestamps.find(
-                            ({ startingTime }) =>
-                                startingTime > event.startingTime &&
-                                startingTime < event.startingTime + event.duration
-                        )
-                        if (isCutByLoopTimestamp) {
-                            const newEvents: VisualizerEvent[] = []
-                            loopTimestamps.forEach(({ startingTime }) => {
-                                const isCuttingEvent =
-                                    startingTime > event.startingTime &&
-                                    startingTime < event.startingTime + event.duration
-
-                                if (isCuttingEvent) {
-                                    const firstHalf = {
-                                        ...event,
-                                        h: this.getYFromStartingTime(startingTime) - event.y,
-                                        duration: startingTime - event.duration,
-                                    }
-                                    const secondHalf = {
-                                        ...event,
-                                        startingTime,
-                                        y: this.getYFromStartingTime(startingTime),
-                                        uniqueId: `${Math.random()}`,
-                                        h:
-                                            event.h -
-                                            (this.getYFromStartingTime(startingTime) - event.y),
-                                        duration: startingTime - event.duration,
-                                    }
-                                    newEvents.push({ ...firstHalf }, { ...secondHalf })
-                                }
-                            })
-                            currentEventsCopy.push(...newEvents)
-                        } else {
-                            currentEventsCopy.push(event)
-                        }
-                    })
-                } else {
-                    currentEventsCopy = [...currentEvents]
-                }
+                const [currentEventsCopy, thirdEvents] =
+                    this.#getEventsAfterCutByLoopTimestamps(section)
+                newEvents = [...currentEventsCopy, ...thirdEvents]
             }
-
-            const newEvents = [...currentEventsCopy, ...thirdEvents]
 
             this.updateOrCreateSection(mergedSections, newEvents, sectionKey)
         })
@@ -186,6 +196,7 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     #addThirdEvent = (event: VisualizerEvent) => {
         const { startingTime } = event
         const indexSection = this.getIndexSectionByTime(startingTime).toString()
+
         this.updateOrCreateSection(this.#thirdEvents, [event], indexSection)
     }
 
