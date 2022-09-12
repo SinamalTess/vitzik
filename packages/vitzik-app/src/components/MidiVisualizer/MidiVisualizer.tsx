@@ -3,7 +3,6 @@ import './MidiVisualizer.scss'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { useIntervalWorker } from '../../hooks'
-import throttle from 'lodash/throttle'
 import { SectionOfEvents, VisualizerEvent } from './types'
 import { MidiVisualizerFactory } from './utils/MidiVisualizerFactory'
 import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
@@ -11,23 +10,15 @@ import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 interface MidiVisualizerProps {
     data: SectionOfEvents[]
     config: MidiVisualizerConfig
+    onWheel: (e: WheelEvent) => void
 }
 
 export const BASE_CLASS = 'midi-visualizer'
 
-const getMidiDuration = (data: SectionOfEvents[]) => {
-    if (!data.length) return 0
-    const lastSectionIndex = data.reduce(
-        (acc, section) => Math.max(parseInt(Object.keys(section)[0]), acc),
-        0
-    )
-    const lastEvents: VisualizerEvent[] = Object.values(data[lastSectionIndex])[0]
-    return lastEvents.reduce((acc, event) => Math.max(event.startingTime + event.duration, acc), 0)
-}
-
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     config,
     data,
+    onWheel,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
     const { timeRef, intervalWorker } = useIntervalWorker(onTimeChange)
@@ -35,7 +26,6 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
     const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
     const { height, midiSpeedFactor = 1, msPerSection } = config
-    const midiDuration = getMidiDuration(data)
     const midiVisualizerFactory = new MidiVisualizerFactory(height, msPerSection)
     const slides = ref.current?.getElementsByTagName('div')
 
@@ -119,23 +109,9 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         reDraw(time)
     }, [data])
 
-    // @ts-ignore
-    function handleWheel(e: WheelEvent<HTMLDivElement>) {
-        const onWheel = () => {
-            const { deltaY } = e
-            const newTime = timeRef.current - deltaY
-            const isValidTime = newTime >= 0 && newTime < midiDuration
-
-            if (isValidTime) {
-                intervalWorker?.updateTimer(newTime)
-            }
-        }
-
-        throttle(onWheel, 100)()
-    }
-
     return (
-        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={handleWheel}>
+        // @ts-ignore
+        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={onWheel}>
             {[0, 1].map((index) => {
                 return (
                     <MidiVisualizerSlide

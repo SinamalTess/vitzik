@@ -9,10 +9,11 @@ export const BASE_CLASS = 'loop-editor'
 
 interface LoopEditorProps {
     config: MidiVisualizerConfig
+    onWheel: (e: WheelEvent) => void
     onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
 }
 
-export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) {
+export function LoopEditor({ config, onWheel, onChangeLoopTimestamps }: LoopEditorProps) {
     const [previewLineY, setPreviewLineY] = useState(0)
     const { timeRef } = useIntervalWorker(onTimeChange)
     const { height, width, msPerSection, loopTimestamps } = config
@@ -67,6 +68,8 @@ export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) 
 
     return (
         <svg
+            // @ts-ignore
+            onWheel={onWheel}
             height={height}
             className={BASE_CLASS}
             data-testid={'loop-editor'}

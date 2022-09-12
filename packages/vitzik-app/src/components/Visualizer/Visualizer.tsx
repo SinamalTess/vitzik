@@ -8,6 +8,8 @@ import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { LoopEditor } from '../MidiVisualizer/LoopEditor'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
 import { MidiVisualizer } from '../MidiVisualizer'
+import throttle from 'lodash/throttle'
+import { useIntervalWorker } from '../../hooks'
 
 interface VisualizerProps {
     activeInstruments: ActiveInstrument[]
@@ -39,9 +41,9 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
         height,
         width,
     }
-
+    const { timeRef, intervalWorker } = useIntervalWorker()
     const { msPerSection, showDampPedal, activeTracks, showLoopEditor, loopTimestamps } = config
-
+    const { midiDuration } = midiMetas
     const visualizerFactory = useMemo(
         () => new VisualizerFactory({ height, width }, msPerSection, midiMetas, midiFile),
         [height, midiMetas, width]
@@ -70,14 +72,30 @@ export const Visualizer = WithContainerDimensions(function Visualizer({
         }
     }, [visualizerFactory, showDampPedal, activeTracks, loopTimestamps])
 
+    // @ts-ignore
+    function handleWheel(e: WheelEvent<HTMLDivElement>) {
+        const onWheel = () => {
+            const { deltaY } = e
+            const newTime = timeRef.current - deltaY
+            const isValidTime = newTime >= 0 && newTime < midiDuration
+
+            if (isValidTime) {
+                intervalWorker?.updateTimer(newTime)
+            }
+        }
+
+        throttle(onWheel, 100)()
+    }
+
     return (
         <ErrorBoundary>
             {midiMetas && midiFile ? (
                 <>
-                    <MidiVisualizer data={data} config={config} />
+                    <MidiVisualizer data={data} config={config} onWheel={handleWheel} />
                     {showLoopEditor && loopTimestamps ? (
                         <LoopEditor
                             config={config}
+                            onWheel={handleWheel}
                             onChangeLoopTimestamps={onChangeLoopTimestamps}
                         />
                     ) : null}
