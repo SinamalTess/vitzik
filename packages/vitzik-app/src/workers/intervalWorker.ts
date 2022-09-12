@@ -33,6 +33,11 @@ self.onmessage = (message) => {
     } else if (code === 'restart') {
         clearInterval(timer)
         startTimer(startAt, midiSpeedFactor)
+    } else if (code === 'getTime') {
+        postMessage({
+            code,
+            time: timeElapsed,
+        })
     }
 }
 

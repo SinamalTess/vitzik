@@ -37,6 +37,12 @@ export class IntervalWorkerMessenger {
         })
     }
 
+    getTime = () => {
+        this.worker.postMessage({
+            code: 'getTime',
+        })
+    }
+
     subscribe = (callback: Function) => {
         // @ts-ignore
         this.worker.addEventListener('message', callback)

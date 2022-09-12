@@ -13,6 +13,10 @@ export class IntervalWorkerMessengerMock {
         this.callWith('stop', { time: 0 })
     }
 
+    getTime = () => {
+        this.callWith('getTime', { time: 0 })
+    }
+
     pause = () => {
         this.callWith('pause', { time: 0 })
     }

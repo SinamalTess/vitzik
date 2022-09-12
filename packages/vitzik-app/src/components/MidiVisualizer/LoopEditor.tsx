@@ -14,7 +14,7 @@ interface LoopEditorProps {
 
 export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) {
     const [previewLineY, setPreviewLineY] = useState(0)
-    const timeRef = useIntervalWorker()
+    const { timeRef } = useIntervalWorker(onTimeChange)
     const { height, width, msPerSection, loopTimestamps } = config
     const [loopStartTimestamp, loopEndTimestamp] = loopTimestamps
     const ratio = height / msPerSection
@@ -27,9 +27,14 @@ export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) 
         }
     }, [allLinesDrawn])
 
+    function onTimeChange(time: number) {
+        timeRef.current = time
+    }
+
     function handleMouseMove(event: React.MouseEvent<SVGElement>) {
         const y = event.clientY - 40
         const timestamp = yToTimestamp(y)
+
         if (loopStartTimestamp) {
             if (timestamp > loopStartTimestamp) {
                 setPreviewLineY(y)
@@ -42,6 +47,7 @@ export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) 
     function handleClick(event: React.MouseEvent<SVGElement>) {
         const y = event.clientY - 40
         const timestamp = yToTimestamp(y)
+
         onChangeLoopTimestamps((loopTimestamps) => {
             const [startLoop, endLoop] = loopTimestamps
             if (startLoop === null) {
@@ -62,7 +68,6 @@ export function LoopEditor({ config, onChangeLoopTimestamps }: LoopEditorProps) 
     return (
         <svg
             height={height}
-            width="100%"
             className={BASE_CLASS}
             data-testid={'loop-editor'}
             {...(allLinesDrawn ? null : props)}

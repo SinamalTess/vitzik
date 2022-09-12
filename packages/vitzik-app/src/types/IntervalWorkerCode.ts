@@ -1,4 +1,4 @@
-export type IntervalWorkerCode = 'start' | 'updateTimer' | 'stop' | 'pause' | 'restart'
+export type IntervalWorkerCode = 'start' | 'updateTimer' | 'stop' | 'pause' | 'restart' | 'getTime'
 
 export interface IntervalWorkerMessage {
     code: IntervalWorkerCode

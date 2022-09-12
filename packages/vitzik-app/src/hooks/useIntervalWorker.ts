@@ -11,16 +11,21 @@ export const useIntervalWorker = (callback?: Function) => {
     useEffect(() => {
         function onMessage(message: MessageEvent) {
             const { time, code } = message.data
+
             timeRef.current = time
-            callback?.(time as number, code as string)
+
+            if (code !== 'getTime') {
+                callback?.(time as number, code as string)
+            }
         }
 
         intervalWorker?.subscribe(onMessage)
+        intervalWorker?.getTime()
 
         return function cleanup() {
             intervalWorker?.unsubscribe(onMessage)
         }
     }, [callback, intervalWorker])
 
-    return timeRef
+    return { intervalWorker, timeRef }
 }

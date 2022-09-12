@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AudioPlayerState, MidiMetas } from '../../types'
-import { usePrevious } from '../../hooks'
-import { AppContext } from '../_contexts'
+import { useIntervalWorker, usePrevious } from '../../hooks'
 
 interface IntervalWorkerManagerProps {
     midiMetas: MidiMetas
@@ -18,7 +17,7 @@ export function IntervalWorkerManager({
 }: IntervalWorkerManagerProps) {
     const [isStarted, setIsStarted] = useState(false)
     const prevMidiSpeedFactor = usePrevious(midiSpeedFactor)
-    const { intervalWorker } = useContext(AppContext)
+    const { intervalWorker } = useIntervalWorker()
 
     useEffect(() => {
         if (prevMidiSpeedFactor !== midiSpeedFactor) {

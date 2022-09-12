@@ -3,7 +3,7 @@ import { MidiImporter } from '../MidiImporter'
 import { Visualizer } from '../Visualizer'
 import { Keyboard } from '../Keyboard'
 import { InstrumentPlayer } from '../InstrumentPlayer'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { MidiMessageManager } from '../MidiMessageManager'
 import {
     ActiveNote,
@@ -21,7 +21,6 @@ import { getMidiMetas, MidiFactory } from '../../utils'
 import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../utils/const'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
 import { useIntervalWorker } from '../../hooks'
-import { AppContext } from '../_contexts'
 
 const AUDIO_CONTEXT = new AudioContext()
 
@@ -96,10 +95,11 @@ export function Preview({
     onChangeMidiMetas,
     onChangeLoadedInstrumentPlayers,
 }: PreviewProps) {
-    const { intervalWorker } = useContext(AppContext)
     const [activeNotes, setActiveNotes] = useState<ActiveNote[]>([])
     const [midiFile, setMidiFile] = useState<IMidiFile | null>(null)
     const [nextNoteStartingTime, setNextNoteStartingTime] = useState<number | null>(null)
+    const { timeRef, intervalWorker } = useIntervalWorker(onTimeChange)
+
     const visualizerConfig: MidiVisualizerUserConfig = {
         midiSpeedFactor,
         msPerSection: 2000,
@@ -145,9 +145,10 @@ export function Preview({
         // console.log(metas)
     }
 
-    const timeRef = useIntervalWorker(onTimeChange)
+    useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number, interval: number) {
+        timeRef.current = time
         if (midiPlayMode === 'waitForValidInput') {
             checkForWaitMode(time, interval)
         }
@@ -169,6 +170,7 @@ export function Preview({
 
     function checkIsEndOfLoop(time: number) {
         const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
+
         if (startLoop && endLoop && time > endLoop) {
             const startAt = startLoop - 200 ?? 0
             intervalWorker?.updateTimer(startAt)

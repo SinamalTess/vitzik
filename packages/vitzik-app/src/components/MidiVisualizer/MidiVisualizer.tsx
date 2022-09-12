@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
 import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { useIntervalWorker } from '../../hooks'
 import throttle from 'lodash/throttle'
-import { AppContext } from '../_contexts'
 import { SectionOfEvents, VisualizerEvent } from './types'
 import { MidiVisualizerFactory } from './utils/MidiVisualizerFactory'
 import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
@@ -31,15 +30,16 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     data,
 }: MidiVisualizerProps) {
     const ref = useRef<HTMLDivElement>(null)
+    const { timeRef, intervalWorker } = useIntervalWorker(onTimeChange)
+    const animRef = useRef<null | number>(null)
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
     const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
-    const animRef = useRef<null | number>(null)
-    const { intervalWorker } = useContext(AppContext)
-    const { height, width, midiSpeedFactor = 1, msPerSection } = config
+    const { height, midiSpeedFactor = 1, msPerSection } = config
     const midiDuration = getMidiDuration(data)
     const midiVisualizerFactory = new MidiVisualizerFactory(height, msPerSection)
     const slides = ref.current?.getElementsByTagName('div')
-    const timeRef = useIntervalWorker(onTimeChange)
+
+    useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number, code: string) {
         if (shouldRedraw(time)) {
