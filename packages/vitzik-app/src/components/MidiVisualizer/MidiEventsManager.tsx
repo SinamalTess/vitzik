@@ -34,7 +34,7 @@ export function MidiEventsManager({
     onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
 }: MidiEventsManagerProps) {
-    const { msPerSection, height, showDampPedal } = config
+    const { msPerSection, height, showDampPedal, loopTimestamps } = config
     const { instruments } = midiMetas
     const visualizerFactory = new VisualizerEventManager(msPerSection, height)
     const midiTrackActiveInstruments = activeInstruments.filter(
@@ -43,10 +43,9 @@ export function MidiEventsManager({
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
 
-    const timeRef = useIntervalWorker(onTimeChange)
+    useIntervalWorker(onTimeChange)
 
     function onTimeChange(time: number) {
-        timeRef.current = time
         setActiveNotes(time)
         setNextNoteStartingTime(time)
 
@@ -113,7 +112,9 @@ export function MidiEventsManager({
     }
 
     function setNextNoteStartingTime(time: number) {
-        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(data, time)
+        const [startLoop] = loopTimestamps
+        const startTime = startLoop ?? time
+        const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(data, startTime)
 
         onChangeNextNoteStartingTime(nextNoteStartingTime)
     }

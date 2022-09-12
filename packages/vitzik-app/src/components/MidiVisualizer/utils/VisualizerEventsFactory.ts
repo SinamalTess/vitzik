@@ -44,12 +44,12 @@ export class VisualizerEventsFactory {
         return 0
     }
 
-    #getYFromStartingTime = (startingTime: number) => this.#ratioSection * startingTime
+    getYFromStartingTime = (startingTime: number) => this.#ratioSection * startingTime
 
     #getHFromDuration = (duration: number) => this.#ratioSection * duration
 
     getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
-        const y = this.#getYFromStartingTime(startingTime)
+        const y = this.getYFromStartingTime(startingTime)
         return {
             eventType: 'loopTimestamp',
             startingTime,
@@ -72,7 +72,7 @@ export class VisualizerEventsFactory {
             w: this.#width,
             h: 0,
             x: 0,
-            y: this.#getYFromStartingTime(startingTime),
+            y: this.getYFromStartingTime(startingTime),
             startingTime,
             eventType: 'dampPedal',
             duration: 0,
@@ -95,7 +95,7 @@ export class VisualizerEventsFactory {
         const note = MidiFactory.Note(event).getMetas()
         const { name } = note
         const startingTime = this.#deltaToTime(deltaAcc)
-        const y = this.#getYFromStartingTime(startingTime)
+        const y = this.getYFromStartingTime(startingTime)
         const defaultMetas = {
             startingTime,
             duration: 0,
