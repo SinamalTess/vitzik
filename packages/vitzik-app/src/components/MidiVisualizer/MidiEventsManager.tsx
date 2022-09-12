@@ -34,16 +34,15 @@ export function MidiEventsManager({
     onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
 }: MidiEventsManagerProps) {
+    const { msPerSection, height, showDampPedal } = config
+    const { instruments } = midiMetas
+    const timeRef = useRef(0)
+    const visualizerFactory = new VisualizerEventManager(msPerSection, height)
     const midiTrackActiveInstruments = activeInstruments.filter(
         ({ channel }) => !isUserChannel(channel)
     )
     const midiTrackInstruments = activeInstrumentsToInstruments(midiTrackActiveInstruments)
-    const { msPerSection, height, showDampPedal } = config
-
-    const { instruments } = midiMetas
     const isMultiInstrumentsTrack = instruments.some(({ timestamp }) => timestamp > 0)
-    const timeRef = useRef(0)
-    const visualizerFactory = new VisualizerEventManager(msPerSection, height)
 
     useIntervalWorker(onTimeChange)
 
@@ -53,30 +52,32 @@ export function MidiEventsManager({
         setNextNoteStartingTime(time)
 
         if (isMultiInstrumentsTrack) {
-            const instruments = getInstruments(time)
-            const hasNewInstruments = !isEqual(instruments, midiTrackInstruments)
-            const activeInstruments = instrumentsToActiveInstruments(instruments)
-            if (hasNewInstruments) {
-                onChangeActiveInstruments(activeInstruments)
-            }
+            setActiveInstruments(time)
         }
 
-        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+        if (showDampPedal) {
+            const events = getEvents(time)
+            const hasDampPedalEvents = events.some((event) => event.eventType === 'dampPedal')
 
-        const slidesEvents = [
-            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
-            visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
-        ]
-
-        if ((slidesEvents[0] || slidesEvents[1]) && showDampPedal) {
-            const events = slidesEvents[0].concat(slidesEvents[1])
-            checkDampPedal(time, events)
+            if (events.length && hasDampPedalEvents) {
+                setDampPedal(time, events)
+            }
         }
     }
 
-    function checkDampPedal(time: number, events: VisualizerEvent[]) {
+    function getEvents(time: number) {
+        const newIndexesToDraw = visualizerFactory.getIndexesSectionToDraw(time)
+
+        return [
+            ...visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
+            ...visualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
+        ]
+    }
+
+    function setDampPedal(time: number, events: VisualizerEvent[]) {
         const isEventActive = (event: VisualizerEvent) =>
             event.startingTime <= time && event.startingTime + event.duration > time
+
         const isDampPedalOn = (instrumentChannel: number) =>
             events.some(
                 (event) =>
@@ -94,7 +95,17 @@ export function MidiEventsManager({
         })
     }
 
-    function getInstruments(time: number) {
+    function setActiveInstruments(time: number) {
+        const newInstruments = getNewInstruments(time)
+        const hasNewInstruments = !isEqual(newInstruments, midiTrackInstruments)
+        const activeInstruments = instrumentsToActiveInstruments(newInstruments)
+
+        if (hasNewInstruments) {
+            onChangeActiveInstruments(activeInstruments)
+        }
+    }
+
+    function getNewInstruments(time: number) {
         const allInstruments = [...instruments]
             .filter(({ timestamp }) => timestamp <= time)
             .sort((a, b) => b.delta - a.delta) // sort by largest delta first
@@ -104,6 +115,7 @@ export function MidiEventsManager({
 
     function setNextNoteStartingTime(time: number) {
         const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(data, time)
+
         onChangeNextNoteStartingTime(nextNoteStartingTime)
     }
 
