@@ -6,27 +6,41 @@ import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
 import { Note } from './events/Note'
 import { LoopLine } from './events/LoopLine'
 import { DampPedal } from './events/DampPedal'
+import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 
 interface MidiVisualizerSlideProps {
     index: number
-    height: number
-    width: number
+    config: MidiVisualizerConfig
     events: VisualizerEvent[] | null | undefined
 }
 
 interface EventsProps {
+    config: MidiVisualizerConfig
     events: VisualizerEvent[]
 }
 
 const BASECLASS = `midi-visualizer__slide`
 
-const Events = React.memo(function Events({ events }: EventsProps) {
+const Events = React.memo(function Events({ config, events }: EventsProps) {
+    const { loopTimestamps } = config
     return (
         <>
             {events.map((event) => {
                 if (isNoteEvent(event)) {
-                    const { uniqueId } = event
-                    return <Note event={event} key={`${uniqueId}`} />
+                    const { uniqueId, startingTime, duration } = event
+                    let [startLoop, endLoop] = loopTimestamps
+                    let opacity = 1
+                    if (startLoop) {
+                        startLoop = startLoop ?? 0
+                        endLoop = endLoop ?? 0
+                        const isBelowStartLoop = startingTime < startLoop
+                        opacity = isBelowStartLoop ? 0.1 : 1
+                        if (endLoop) {
+                            const isAboveEndLoop = startingTime >= endLoop
+                            opacity = isBelowStartLoop || isAboveEndLoop ? 0.1 : 1
+                        }
+                    }
+                    return <Note event={event} key={`${uniqueId}`} opacity={opacity} />
                 } else if (isLoopTimestampEvent(event)) {
                     const { startingTime: timestamp, w: width, y } = event
                     return <LoopLine timestamp={timestamp} width={width} y={y} key={timestamp} />
@@ -38,13 +52,14 @@ const Events = React.memo(function Events({ events }: EventsProps) {
     )
 })
 
-export function MidiVisualizerSlide({ index, height, width, events }: MidiVisualizerSlideProps) {
+export function MidiVisualizerSlide({ index, config, events }: MidiVisualizerSlideProps) {
+    const { height, width } = config
     const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
 
     return (
         <div className={classNames}>
             <svg width={width} height={height} data-testid={`${BASECLASS}--${index}`}>
-                {events ? <Events events={events} /> : null}
+                {events ? <Events events={events} config={config} /> : null}
             </svg>
             <MidiVisualizerVerticalLines height={height} width={width} />
         </div>

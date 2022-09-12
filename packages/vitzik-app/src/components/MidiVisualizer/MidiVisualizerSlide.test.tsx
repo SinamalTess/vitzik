@@ -3,6 +3,7 @@ import { MidiVisualizerSlide } from './MidiVisualizerSlide'
 import { render, screen } from '@testing-library/react'
 import canvasMock from 'jest-canvas-mock'
 import { VisualizerNoteEvent } from './types'
+import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 
 jest.mock('react', () => {
     const originReact = jest.requireActual('react')
@@ -39,11 +40,19 @@ describe('MidiVisualizerSlide', () => {
     })
 
     it('should render a section properly', () => {
+        const config: MidiVisualizerConfig = {
+            width: 100,
+            height: 50,
+            msPerSection: 2000,
+            showDampPedal: false,
+            showLoopEditor: false,
+            activeTracks: [],
+            loopTimestamps: [null, null],
+        }
         render(
             <MidiVisualizerSlide
                 events={noteEvents}
-                width={100}
-                height={50}
+                config={config}
                 index={0}
             ></MidiVisualizerSlide>
         )

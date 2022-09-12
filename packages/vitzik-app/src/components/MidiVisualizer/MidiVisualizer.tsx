@@ -139,11 +139,10 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
             {[0, 1].map((index) => {
                 return (
                     <MidiVisualizerSlide
+                        config={config}
                         index={index}
                         key={index}
                         events={slidesEvents[index]}
-                        height={height}
-                        width={width}
                     />
                 )
             })}
