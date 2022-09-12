@@ -113,7 +113,7 @@ export function MidiEventsManager({
 
     function setNextNoteStartingTime(time: number) {
         const [startLoop] = loopTimestamps
-        const startTime = startLoop ?? time
+        const startTime = startLoop ? startLoop - 1 : time
         const nextNoteStartingTime = visualizerFactory.getNextNoteStartingTime(data, startTime)
 
         onChangeNextNoteStartingTime(nextNoteStartingTime)
