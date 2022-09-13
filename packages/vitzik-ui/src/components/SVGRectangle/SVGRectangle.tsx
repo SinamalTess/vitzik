@@ -13,30 +13,38 @@ interface SVGRectangleProps {
     color?: string
 }
 
-export function SVGRectangle({
-    x,
-    y,
-    rx = 0,
-    ry = 0,
-    w,
-    h,
-    opacity,
-    color,
-    'aria-label': ariaLabel,
-    className,
-}: SVGRectangleProps) {
-    return (
-        <rect
-            aria-label={ariaLabel}
-            className={className}
-            x={x}
-            y={y}
-            rx={rx}
-            ry={ry}
-            width={w}
-            height={h}
-            opacity={opacity}
-            fill={color}
-        />
-    )
-}
+export const SVGRectangle = React.forwardRef<SVGRectElement, SVGRectangleProps>(
+    function SVGRectangle(
+        {
+            x,
+            y,
+            rx = 0,
+            ry = 0,
+            w,
+            h,
+            opacity,
+            color,
+            'aria-label': ariaLabel,
+            className,
+            ...rest
+        }: SVGRectangleProps,
+        ref
+    ) {
+        return (
+            <rect
+                ref={ref}
+                aria-label={ariaLabel}
+                className={className}
+                x={x}
+                y={y}
+                rx={rx}
+                ry={ry}
+                width={w}
+                height={h}
+                opacity={opacity}
+                fill={color}
+                {...rest}
+            />
+        )
+    }
+)

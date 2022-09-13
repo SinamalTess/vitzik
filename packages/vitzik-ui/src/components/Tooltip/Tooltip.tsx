@@ -2,6 +2,7 @@ import React, { ReactNode, useState } from 'react'
 import { usePopper } from 'react-popper'
 import './Tooltip.scss'
 import clsx from 'clsx'
+import ReactDOM from 'react-dom'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { PresentationalComponentBasicProps } from '../../types'
 import { isArrayOfChildren } from '../../utils/isArrayOfChildren'
@@ -16,6 +17,7 @@ interface TooltipProps extends PresentationalComponentBasicProps {
     onShow?: () => void
     onHide?: () => void
     placement?: Placement
+    strategy?: 'fixed' | 'absolute'
     offset?: [number, number]
 }
 
@@ -33,6 +35,7 @@ export function Tooltip({
     onHide = () => {},
     placement = 'bottom',
     offset = [0, 8],
+    strategy = 'absolute',
 }: TooltipProps) {
     /*
         We have to use useMemo to define a custom modifier 
@@ -102,34 +105,42 @@ export function Tooltip({
         ...{ style },
     }
 
+    const TooltipContent = () => (
+        <span
+            className={classNames}
+            role="tooltip"
+            ref={setPopperElement}
+            style={styleTooltip}
+            {...attributes.popper}
+            {...props}
+        >
+            <div
+                className={`${BASE_CLASS}__content`}
+                style={{ margin: `${offset[1]}px ${offset[0]}px` }}
+            >
+                {arrow ? (
+                    <div
+                        ref={setArrowElement}
+                        style={styles.arrow}
+                        className={`${BASE_CLASS}__arrow`}
+                    />
+                ) : null}
+                {tooltipChild}
+            </div>
+        </span>
+    )
+
+    const root = document.querySelector('#root')
+
     return (
         <>
             {React.cloneElement(referenceChild, { ref: setReferenceElement, ...props })}
 
-            {isVisible ? (
-                <span
-                    className={classNames}
-                    role="tooltip"
-                    ref={setPopperElement}
-                    style={styleTooltip}
-                    {...attributes.popper}
-                    {...props}
-                >
-                    <div
-                        className={`${BASE_CLASS}__content`}
-                        style={{ margin: `${offset[1]}px ${offset[0]}px` }}
-                    >
-                        {arrow ? (
-                            <div
-                                ref={setArrowElement}
-                                style={styles.arrow}
-                                className={`${BASE_CLASS}__arrow`}
-                            />
-                        ) : null}
-                        {tooltipChild}
-                    </div>
-                </span>
-            ) : null}
+            {isVisible && strategy === 'absolute' ? TooltipContent() : null}
+
+            {isVisible && strategy === 'fixed' && root
+                ? ReactDOM.createPortal(TooltipContent(), root)
+                : null}
         </>
     )
 }

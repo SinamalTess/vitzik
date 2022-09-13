@@ -147,28 +147,26 @@ export function Preview({
 
     useIntervalWorker(onTimeChange)
 
-    function onTimeChange(time: number, interval: number) {
+    function onTimeChange(time: number) {
         timeRef.current = time
         if (midiPlayMode === 'waitForValidInput') {
-            checkForWaitMode(time, interval)
+            pauseIfNextNoteIsReached(time)
         }
         if (loopTimestamps) {
-            checkIsEndOfLoop(time)
+            pauseIfEndOfLoop(time)
         }
     }
 
-    function checkForWaitMode(time: number, interval: number) {
+    function pauseIfNextNoteIsReached(time: number) {
         if (!nextNoteStartingTime) return
 
-        const nextTick = time + interval
-
-        if (time >= nextNoteStartingTime || nextTick >= nextNoteStartingTime) {
-            intervalWorker?.updateTimer(nextNoteStartingTime)
+        if (time >= nextNoteStartingTime) {
             onChangeAudioPlayerState('paused')
+            intervalWorker?.updateTimer(nextNoteStartingTime)
         }
     }
 
-    function checkIsEndOfLoop(time: number) {
+    function pauseIfEndOfLoop(time: number) {
         const [startLoop, endLoop] = loopTimestamps as LoopTimestamps
 
         if (startLoop && endLoop && time > endLoop) {
@@ -185,15 +183,17 @@ export function Preview({
     }
 
     useEffect(() => {
+        const [startLoop, endLoop] = loopTimestamps
         switch (midiPlayMode) {
             case 'autoplay':
                 setNextNoteStartingTime(null)
                 break
             case 'waitForValidInput':
-                setNextNoteStartingTime(timeRef.current)
-                if (!activeNotes.length) {
-                    moveToNextNote()
+                if (startLoop) {
+                    intervalWorker?.updateTimer(startLoop - 100)
                 }
+                setNextNoteStartingTime(timeRef.current)
+                moveToNextNote()
                 break
         }
     }, [midiPlayMode])
