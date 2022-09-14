@@ -36,3 +36,13 @@ export const clickAutoplaySwitch = async () => {
     const button = screen.getByLabelText(/autoplay/i)
     await userEvent.click(button)
 }
+
+export const clickLearningMode = async () => {
+    const button = screen.getByText(/theory/i)
+    await userEvent.click(button)
+}
+
+export const clickImportMode = async () => {
+    const button = screen.getByText(/import/i)
+    await userEvent.click(button)
+}

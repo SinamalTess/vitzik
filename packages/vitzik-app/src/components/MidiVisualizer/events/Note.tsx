@@ -14,7 +14,7 @@ export function Note({ showDebugInfos = false, event, opacity = 1 }: NoteProps) 
     const { name, channel, x, y, w, h } = event
 
     const props = {
-        ariaLabel: `${name} note`,
+        'aria-label': `${name} note`,
         className: `channel--${channel}`,
         opacity,
         x,

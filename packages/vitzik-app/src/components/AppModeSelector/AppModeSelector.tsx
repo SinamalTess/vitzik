@@ -13,13 +13,15 @@ export function AppModeSelector({ onChange, appMode }: AppModeSelectorProps) {
     return (
         <ButtonGroup>
             <Tooltip showOnHover>
-                <Button
-                    disabled
-                    onClick={() => onChange('theory')}
-                    color={isLearningMode ? 'primary' : 'secondary'}
-                >
-                    Music theory
-                </Button>
+                <span>
+                    <Button
+                        disabled
+                        onClick={() => onChange('theory')}
+                        color={isLearningMode ? 'primary' : 'secondary'}
+                    >
+                        Music theory
+                    </Button>
+                </span>
                 Coming soon...
             </Tooltip>
             <Button

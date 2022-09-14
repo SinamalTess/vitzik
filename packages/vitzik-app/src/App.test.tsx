@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import App from './App'
 import { midiAccessMock, MidiInputMock, requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
@@ -6,37 +6,22 @@ import Soundfont from 'soundfont-player'
 import {
     changeUserInstrument,
     clickAppInfos,
-    clickAutoplaySwitch,
     clickBpmButton,
     clickExtraSettings,
     clickLoopEditorAt,
     clickMidiExample,
-    clickPause,
     clickPlay,
     clickSetLoopButton,
     clickShowNotesSwitch,
     clickSpeedButton,
-    clickStop,
-    clickVolume,
     dispatchMidiInputMessageEvent,
     hoverLoopEditorAt,
-    pressKey,
     touchKey,
 } from './tests/utils'
 import { instrumentPlayerMock } from './tests/mocks/SoundFont'
+import {waitRequestMIDIAccessPromise, waitSoundFontInstrumentPromise} from "./tests/utils/acts";
 
 const midiInput = new MidiInputMock('Piano', 'Yamaha')
-
-const waitSoundFontInstrumentPromise = async () => {
-    await act(async () => {
-        await Soundfont.instrument
-    })
-}
-const waitRequestMIDIAccessPromise = async () => {
-    await act(async () => {
-        await requestMIDIAccess
-    })
-}
 
 describe('App', () => {
     describe('When there is no midi input', () => {
@@ -135,131 +120,7 @@ describe('App', () => {
                     expect(correspondingKey).toHaveClass('keyboard__whitekey--active')
                 })
             })
-            describe('The audio player', () => {
-                it('should render', async () => {
-                    render(<App />)
 
-                    await clickMidiExample()
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getAllByText('Turkish March - Mozart')[0]).toBeInTheDocument()
-                    expect(screen.getByText('03:18')).toBeInTheDocument()
-                    expect(screen.getByLabelText('volume')).toBeInTheDocument()
-                    expect(screen.getByLabelText('stop')).toBeInTheDocument()
-                    expect(screen.getByLabelText('paused')).toBeInTheDocument()
-                })
-                it('should play when the play button is clicked', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await clickPlay()
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('play')).toBeInTheDocument()
-                })
-                it('should mute and unmute when the autoplay switch is clicked', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await clickAutoplaySwitch()
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('muted')).toBeInTheDocument()
-
-                    await clickAutoplaySwitch()
-
-                    expect(screen.queryByLabelText('muted')).not.toBeInTheDocument()
-                })
-                it('should mute and unmute when the (m) shortcut is used', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await pressKey('{m}')
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('muted')).toBeInTheDocument()
-
-                    await pressKey('{m}')
-
-                    expect(screen.queryByLabelText('muted')).not.toBeInTheDocument()
-                })
-                it('should enter and exit loop mode when the (l) shortcut is used', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await pressKey('{l}')
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByTestId('loop-editor')).toBeInTheDocument()
-
-                    await pressKey('{l}')
-
-                    expect(screen.queryByTestId('loop-editor')).not.toBeInTheDocument()
-                })
-                it('should stop when the stop button is clicked', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await clickPlay()
-                    await clickStop()
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('paused')).toBeInTheDocument()
-                })
-                it('should pause when the paused button is clicked', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await clickPlay()
-                    await clickPause()
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('paused')).toBeInTheDocument()
-                })
-                it('should mute and unmute when the volume button is clicked', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await clickVolume()
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('muted')).toBeInTheDocument()
-
-                    await clickVolume()
-
-                    expect(screen.getByLabelText('volume')).toBeInTheDocument()
-                })
-                it('should play when the space bar is pressed', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await pressKey('[space]')
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('play')).toBeInTheDocument()
-                })
-                it('should pause when the space bar is pressed while the player was playing', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await pressKey('[space]')
-                    await pressKey('[space]')
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('paused')).toBeInTheDocument()
-                })
-                it('should resume playing when the space bar is pressed while the player was paused', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-                    await pressKey('[space]')
-                    await pressKey('[space]')
-                    await pressKey('[space]')
-                    await waitSoundFontInstrumentPromise()
-
-                    expect(screen.getByLabelText('play')).toBeInTheDocument()
-                })
-            })
 
             describe('The settings', () => {
                 it('should show the first bpm value', async () => {
@@ -352,17 +213,6 @@ describe('App', () => {
                     await clickShowNotesSwitch()
 
                     expect(screen.getByText('A0')).toBeInTheDocument()
-                })
-            })
-
-            describe('The visualizer', () => {
-                it('should render', async () => {
-                    render(<App />)
-
-                    await clickMidiExample()
-
-                    const notes = screen.getAllByLabelText(/note/)
-                    expect(notes.length).toBe(57)
                 })
             })
         })

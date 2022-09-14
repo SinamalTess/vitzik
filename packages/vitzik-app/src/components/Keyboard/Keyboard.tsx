@@ -89,7 +89,6 @@ export function Keyboard({
        */
         const lastMidiActiveNote = last(midiActiveNotes)
         if (lastMidiActiveNote) {
-
             if (midiPlayMode === 'waitForValidInput') {
                 const newActiveNotes = removeActiveNotes([note, lastMidiActiveNote])
                 const allNotesHaveBeenPlayed = newActiveNotes.length === 0
@@ -101,7 +100,6 @@ export function Keyboard({
                     const newActiveNotes = removeActiveNotes([note])
                     onChangeActiveNotes(newActiveNotes)
                 }
-
             } else {
                 const newActiveNotes = removeActiveNotes([note])
                 onChangeActiveNotes(newActiveNotes)

@@ -16,7 +16,7 @@ interface IButtonGroupContext {
 export const ButtonGroupContext = React.createContext<IButtonGroupContext>({})
 
 const BASE_CLASS = 'btn-group'
-
+ 
 export function ButtonGroup({ style, className, children, size = 'md' }: ButtonGroupProps) {
     if (!isArrayOfChildren(children, ButtonGroup.name)) return null
 

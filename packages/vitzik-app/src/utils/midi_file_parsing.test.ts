@@ -1,5 +1,5 @@
 import { getMidiMetas } from './midi_file_parsing'
-import * as midi from '../tests/midi1.json'
+import * as midi from '../tests/const/midi1.json'
 import { IMidiFile, TMidiEvent } from 'midi-json-parser-worker'
 import { MidiMetas, MsPerBeat } from '../types'
 import { MidiFactory } from './MidiFactory'

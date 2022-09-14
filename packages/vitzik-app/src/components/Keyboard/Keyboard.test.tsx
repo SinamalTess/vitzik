@@ -60,13 +60,4 @@ describe('Keyboard', () => {
         expect(props.onChangeActiveNotes).toHaveBeenCalledWith([])
     })
 
-    it('should allow the keyboard to be played', async () => {
-        render(<Keyboard {...props}></Keyboard>)
-
-        await clickKey('A1')
-
-        expect(props.onChangeActiveNotes).toHaveBeenCalledWith([
-            { channel: 18, key: 33, name: 'A1', velocity: 100 },
-        ])
-    })
 })

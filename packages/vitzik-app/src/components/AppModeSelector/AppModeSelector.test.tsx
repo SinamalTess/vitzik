@@ -1,18 +1,17 @@
-import { render } from '@testing-library/react'
+import {render, screen} from '@testing-library/react'
 import React from 'react'
 import { AppModeSelector } from './index'
-import { clickImportMode, clickLearningMode } from '../../tests/utils'
+import { clickImportMode } from '../../tests/utils'
 
 describe('AppModeSelector', () => {
     const onChange = jest.fn()
 
-    // for now the button is disabled
-    xit('should call onChange() callback with "learning" mode', async () => {
+    it('should show a disabled "learning" button', async () => {
         render(<AppModeSelector appMode={'import'} onChange={onChange}></AppModeSelector>)
 
-        await clickLearningMode()
+        const button = screen.getByText(/theory/i)
 
-        expect(onChange).toHaveBeenCalledWith('learning')
+        expect(button).toBeDisabled()
     })
 
     it('should call onChange() callback with "import" mode', async () => {
