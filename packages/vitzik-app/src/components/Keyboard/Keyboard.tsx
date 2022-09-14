@@ -18,7 +18,7 @@ interface KeyboardProps {
     activeNotes: ActiveNote[]
     musicSystem?: MusicSystem
     midiPlayMode: MidiPlayMode
-    onChangeActiveNotes: (note: MidiInputActiveNote[]) => void
+    onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onAllMidiKeysPlayed?: () => void
     showNotes?: boolean
 }
@@ -59,7 +59,7 @@ export function Keyboard({
     }
 
     function handleMouseDown(note: MidiInputActiveNote) {
-        onChangeActiveNotes([...activeNotes, note])
+        onChangeActiveNotes((activeNotes) => [...activeNotes, note])
         /*
            When using onMouseDown prop, handleMouseUp() would not fire when the click was released
            outside the element, leaving the key active after it was clicked.
@@ -88,16 +88,20 @@ export function Keyboard({
            We only remove the last note found and this is on purpose.
        */
         const lastMidiActiveNote = last(midiActiveNotes)
-
         if (lastMidiActiveNote) {
+
             if (midiPlayMode === 'waitForValidInput') {
                 const newActiveNotes = removeActiveNotes([note, lastMidiActiveNote])
                 const allNotesHaveBeenPlayed = newActiveNotes.length === 0
 
                 if (allNotesHaveBeenPlayed) {
-                    onChangeActiveNotes(newActiveNotes)
                     onAllMidiKeysPlayed?.()
+                    onChangeActiveNotes(newActiveNotes)
+                } else {
+                    const newActiveNotes = removeActiveNotes([note])
+                    onChangeActiveNotes(newActiveNotes)
                 }
+
             } else {
                 const newActiveNotes = removeActiveNotes([note])
                 onChangeActiveNotes(newActiveNotes)
