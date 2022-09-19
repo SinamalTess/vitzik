@@ -16,10 +16,9 @@ import {
     clickSpeedButton,
     dispatchMidiInputMessageEvent,
     hoverLoopEditorAt,
-    touchKey,
 } from './tests/utils'
 import { instrumentPlayerMock } from './tests/mocks/SoundFont'
-import {waitRequestMIDIAccessPromise, waitSoundFontInstrumentPromise} from "./tests/utils/acts";
+import { waitRequestMIDIAccessPromise, waitSoundFontInstrumentPromise } from './tests/utils/acts'
 
 const midiInput = new MidiInputMock('Piano', 'Yamaha')
 
@@ -109,19 +108,6 @@ describe('App', () => {
         })
 
         describe('When a midi file is imported', () => {
-            describe('The keyboard', () => {
-                it('should set to active a key when touched', async () => {
-                    render(<App />)
-
-                    await waitRequestMIDIAccessPromise()
-                    await touchKey('A0')
-
-                    const correspondingKey = screen.getByTestId(/A0/)
-                    expect(correspondingKey).toHaveClass('keyboard__whitekey--active')
-                })
-            })
-
-
             describe('The settings', () => {
                 it('should show the first bpm value', async () => {
                     render(<App />)
