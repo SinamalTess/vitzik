@@ -13,7 +13,7 @@
     "build": "node bin/build.js",
     "test": "npx jest --watchAll=false --coverage",
     "test:watch": "npm run test --coverage",
-    "test:staged": "npx jest --findRelatedTests --watchAll=false --passWithNoTests",
+    "test:staged": "npx jest --watchAll=false --passWithNoTests",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },

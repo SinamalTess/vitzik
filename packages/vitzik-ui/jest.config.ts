@@ -12,5 +12,8 @@ const config: Config.InitialOptions = {
   setupFilesAfterEnv: ["<rootDir>/setupTests.js"],
   testPathIgnorePatterns: ["/node_modules/", "lib"],
   displayName: "vitzik-ui",
+  moduleNameMapper: {
+    "^.+\\.(css|less|scss|sass)$": "babel-jest",
+  },
 };
 export default config;
