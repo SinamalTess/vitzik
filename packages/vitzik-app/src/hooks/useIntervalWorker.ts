@@ -20,7 +20,7 @@ export const useIntervalWorker = (callback?: Function) => {
         }
 
         intervalWorker?.subscribe(onMessage)
-        intervalWorker?.getTime()
+        intervalWorker?.getTime() // sets the first value for timeRef.current
 
         return function cleanup() {
             intervalWorker?.unsubscribe(onMessage)

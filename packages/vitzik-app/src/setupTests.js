@@ -6,15 +6,20 @@ import '@testing-library/jest-dom'
 import 'jest-canvas-mock'
 import { requestMIDIAccess } from './tests/mocks/requestMIDIAccess'
 import { AudioContextMock } from './tests/mocks/AudioContextMock'
+import { IntervalWorkerMessengerMock } from './tests/mocks/IntervalWorkerMessengerMock'
 
 global.Worker = jest.fn()
 global.navigator.requestMIDIAccess = requestMIDIAccess
 global.AudioContext = AudioContextMock
 
-jest.mock('./components/_contexts/IntervalWorkerMessenger', () => {
-    const { IntervalWorkerMessengerMock } = require('./tests/mocks/IntervalWorkerMessengerMock')
+export const mockIntervalWorker = new IntervalWorkerMessengerMock()
+
+jest.mock('./components/_contexts/IntervalWorkerContext', () => {
+    const React = require('react')
     return {
-        IntervalWorkerMessenger: IntervalWorkerMessengerMock,
+        IntervalWorkerContext: React.createContext({
+            intervalWorker: mockIntervalWorker,
+        }),
     }
 })
 

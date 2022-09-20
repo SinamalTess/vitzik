@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import App from '../App'
 import {
     clickAutoplaySwitch,
@@ -14,6 +14,7 @@ import { midiAccessMock, MidiInputMock, requestMIDIAccess } from './mocks/reques
 import Soundfont from 'soundfont-player'
 import { instrumentPlayerMock } from './mocks/SoundFont'
 import { waitSoundFontInstrumentPromise } from './utils/acts'
+import { dispatchIntervalWorkerEvent } from './utils/intervalWorker'
 
 const midiInput = new MidiInputMock('Piano', 'Yamaha')
 
@@ -145,5 +146,18 @@ describe('The audio player', () => {
         await waitSoundFontInstrumentPromise()
 
         expect(screen.getByLabelText('play')).toBeInTheDocument()
+    })
+
+    it('should stop when the end of the song is reached', async () => {
+        render(<App />)
+
+        await clickMidiExample()
+        await clickPlay()
+        await waitSoundFontInstrumentPromise()
+        dispatchIntervalWorkerEvent(200000)
+
+        await waitFor(() => {
+            expect(screen.getByLabelText('paused')).toBeInTheDocument()
+        })
     })
 })

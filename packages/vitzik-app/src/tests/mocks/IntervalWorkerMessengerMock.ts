@@ -1,3 +1,5 @@
+import { IntervalWorkerCode } from '../../types/IntervalWorkerCode'
+
 export class IntervalWorkerMessengerMock {
     callbacks: Function[] = []
 
@@ -29,8 +31,10 @@ export class IntervalWorkerMessengerMock {
         this.callbacks.push(callback)
     }
 
-    unsubscribe = (callback: Function) => {
-        const indexCallback = this.callbacks.indexOf(callback)
+    unsubscribe = (listener: Function) => {
+        const indexCallback = this.callbacks.findIndex(
+            (callback) => listener.toString() === callback.toString()
+        )
         const copyCallbacks = [...this.callbacks]
         if (indexCallback) {
             this.callbacks = copyCallbacks.splice(indexCallback, 1)
@@ -38,7 +42,7 @@ export class IntervalWorkerMessengerMock {
     }
 
     callWith = (
-        code: string,
+        code: IntervalWorkerCode,
         options: { startAt?: number; midiSpeedFactor?: number; time?: number }
     ) => {
         const { startAt, midiSpeedFactor, time } = options
