@@ -37,15 +37,16 @@ const SPEED_FACTORS = [
 ]
 
 function getMsPerBeatFromTime(allMsPerBeat: MsPerBeat[], time: number) {
-    return (
-        findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time) ??
-        allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
-    )
+    const closestBPMFromTime = findLast(allMsPerBeat, (msPerBeat) => msPerBeat.timestamp <= time)
+    const firstBPM = allMsPerBeat.find((msPerBeat) => msPerBeat.timestamp >= time)
+
+    return closestBPMFromTime ?? firstBPM
 }
 
 function getBpmFromTime(allMsPerBeat: MsPerBeat[], time: number, midiSpeedFactor: number) {
     const msPerBeat = getMsPerBeatFromTime(allMsPerBeat, time)?.value ?? 0
     const bpm = MidiFactory.Time().msPerBeatToBpm(msPerBeat)
+
     return Math.round(bpm / midiSpeedFactor)
 }
 
