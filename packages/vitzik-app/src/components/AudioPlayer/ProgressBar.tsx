@@ -79,7 +79,7 @@ export function ProgressBar({
 
     function setTimerValue(value: number) {
         if (refTime.current) {
-            refTime.current.innerText = msToHumanReadableTime(value)
+            refTime.current.textContent = msToHumanReadableTime(value)
         }
     }
 

@@ -30,10 +30,14 @@ export const clickVolume = async () => {
 
 export const clickProgressBarAt = (value: number) => {
     const progressbar = screen.getByRole('slider')
-    fireEvent.mouseDown(progressbar)
-    fireEvent.mouseUp(progressbar, {
+    const options = {
         target: {
             value,
         },
-    })
+    }
+
+    // the order of the events is important
+    fireEvent.change(progressbar, options)
+    fireEvent.mouseDown(progressbar)
+    fireEvent.mouseUp(progressbar, options)
 }

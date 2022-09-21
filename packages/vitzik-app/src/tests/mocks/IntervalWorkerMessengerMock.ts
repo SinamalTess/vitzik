@@ -2,29 +2,34 @@ import { IntervalWorkerCode } from '../../types/IntervalWorkerCode'
 
 export class IntervalWorkerMessengerMock {
     callbacks: Function[] = []
+    timeElapsed: number = 0
 
     restart = (startAt: number, midiSpeedFactor: number) => {
-        this.callWith('restart', { startAt, midiSpeedFactor, time: startAt })
+        this.timeElapsed = startAt
+        this.callWith('restart', { startAt, midiSpeedFactor, time: this.timeElapsed })
     }
 
     start = (startAt: number, midiSpeedFactor: number) => {
-        this.callWith('start', { startAt, midiSpeedFactor, time: startAt })
+        this.timeElapsed = startAt
+        this.callWith('start', { startAt, midiSpeedFactor, time: this.timeElapsed })
     }
 
     stop = () => {
-        this.callWith('stop', { time: 0 })
+        this.timeElapsed = 0
+        this.callWith('stop', { time: this.timeElapsed })
     }
 
     getTime = () => {
-        this.callWith('getTime', { time: 0 })
+        this.callWith('getTime', { time: this.timeElapsed })
     }
 
     pause = () => {
-        this.callWith('pause', { time: 0 })
+        this.callWith('pause', { time: this.timeElapsed })
     }
 
     updateTimer = (startAt: number) => {
-        this.callWith('updateTimer', { startAt, time: startAt })
+        this.timeElapsed = startAt
+        this.callWith('updateTimer', { startAt, time: this.timeElapsed })
     }
 
     subscribe = (callback: Function) => {

@@ -5,6 +5,7 @@ import {
     clickMidiExample,
     clickPause,
     clickPlay,
+    clickProgressBarAt,
     clickStop,
     clickVolume,
     pressKey,
@@ -159,5 +160,27 @@ describe('The audio player', () => {
         await waitFor(() => {
             expect(screen.getByLabelText('paused')).toBeInTheDocument()
         })
+    })
+
+    it('should change the time when the progress bar is clicked', async () => {
+        render(<App />)
+
+        await clickMidiExample()
+        await clickProgressBarAt(39000)
+
+        const timers = screen.getAllByRole('timer')
+        await waitFor(() => {
+            expect(timers[0]).toHaveTextContent('00:39')
+        })
+    })
+
+    it('should revert to the previous player state when the progress bar is clicked', async () => {
+        render(<App />)
+
+        await clickMidiExample()
+        await clickPlay()
+        await clickProgressBarAt(39000)
+
+        expect(screen.getByLabelText('play')).toBeInTheDocument()
     })
 })
