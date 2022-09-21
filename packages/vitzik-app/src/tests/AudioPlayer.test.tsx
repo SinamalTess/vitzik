@@ -33,6 +33,7 @@ describe('The audio player', () => {
 
         expect(screen.getAllByText('Turkish March - Mozart')[0]).toBeInTheDocument()
         expect(screen.getByText('03:18')).toBeInTheDocument()
+        expect(screen.getByText('00:00')).toBeInTheDocument()
         expect(screen.getByLabelText('volume')).toBeInTheDocument()
         expect(screen.getByLabelText('stop')).toBeInTheDocument()
         expect(screen.getByLabelText('paused')).toBeInTheDocument()
@@ -85,6 +86,34 @@ describe('The audio player', () => {
 
         expect(screen.queryByTestId('loop-editor')).not.toBeInTheDocument()
     })
+    it('should seek forward when the (ArrowUp) keyboard shortcut is used', async () => {
+        render(<App />)
+
+        await clickMidiExample()
+        await pressKey('{ArrowUp}', 10)
+        await waitSoundFontInstrumentPromise()
+
+        expect(screen.getByText('00:01')).toBeInTheDocument()
+    })
+    it("should'nt seek backward when the (ArrowDown) keyboard shortcut is used at the beginning of the song", async () => {
+        render(<App />)
+
+        await clickMidiExample()
+        await pressKey('{ArrowDown}', 10)
+        await waitSoundFontInstrumentPromise()
+
+        expect(screen.getByText('00:00')).toBeInTheDocument()
+    })
+    it('should seek backward when the (ArrowDown) keyboard shortcut is used during the song', async () => {
+        render(<App />)
+
+        await clickMidiExample()
+        await pressKey('{ArrowUp}', 10)
+        await pressKey('{ArrowDown}', 10)
+        await waitSoundFontInstrumentPromise()
+
+        expect(screen.getByText('00:00')).toBeInTheDocument()
+    })
     it('should stop when the stop button is clicked', async () => {
         render(<App />)
 
@@ -131,8 +160,7 @@ describe('The audio player', () => {
         render(<App />)
 
         await clickMidiExample()
-        await pressKey('[space]')
-        await pressKey('[space]')
+        await pressKey('[space]', 2)
         await waitSoundFontInstrumentPromise()
 
         expect(screen.getByLabelText('paused')).toBeInTheDocument()
@@ -141,9 +169,7 @@ describe('The audio player', () => {
         render(<App />)
 
         await clickMidiExample()
-        await pressKey('[space]')
-        await pressKey('[space]')
-        await pressKey('[space]')
+        await pressKey('[space]', 3)
         await waitSoundFontInstrumentPromise()
 
         expect(screen.getByLabelText('play')).toBeInTheDocument()
