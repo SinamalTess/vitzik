@@ -81,13 +81,8 @@ export function InstrumentPlayer({
     }, [])
 
     useEffect(() => {
-        switch (audioPlayerState) {
-            case 'paused':
-                instrumentPlayer?.stop()
-                break
-            case 'stopped':
-                instrumentPlayer?.stop()
-                break
+        if (audioPlayerState === 'paused' || audioPlayerState === 'stopped') {
+            instrumentPlayer?.stop()
         }
     }, [audioPlayerState])
 
@@ -105,7 +100,6 @@ export function InstrumentPlayer({
 
     useEffect(() => {
         if (isMute) {
-            instrumentPlayer?.stop()
             return
         }
         function startInstrument() {
@@ -132,23 +126,19 @@ export function InstrumentPlayer({
     useEffect(() => {
         const sameChannelNotes = activeNotes.filter((note) => note.channel === channel)
         const shouldPlay =
-            !isMute && sameChannelNotes.length && instrumentPlayer && channel !== MIDI_INPUT_CHANNEL
+            !isMute && sameChannelNotes.length && instrumentPlayer && channel !== MIDI_INPUT_CHANNEL // MIDI_INPUT_CHANNEL is handled by instrumentPlayer.listenToMidi
 
         if (!shouldPlay) return
 
-        let newNotes = sameChannelNotes
+        const isNewNote = (note: ActiveNote) =>
+            !prevActiveKeys.find(
+                (prevActiveKey) =>
+                    'uniqueId' in prevActiveKey &&
+                    'uniqueId' in note &&
+                    prevActiveKey.uniqueId === note.uniqueId
+            )
 
-        if (prevActiveKeys) {
-            const isNewNote = (note: ActiveNote) =>
-                !prevActiveKeys.find(
-                    (prevActiveKey) =>
-                        'uniqueId' in prevActiveKey &&
-                        'uniqueId' in note &&
-                        prevActiveKey.uniqueId === note.uniqueId
-                )
-
-            newNotes = sameChannelNotes.filter((note) => isNewNote(note))
-        }
+        const newNotes = sameChannelNotes.filter((note) => isNewNote(note))
 
         newNotes.forEach((note) => {
             playNote(note)
@@ -160,11 +150,10 @@ export function InstrumentPlayer({
             const existingInstrument = loadedInstrumentPlayers.findIndex(
                 (loadedInstrumentPlayer) => loadedInstrumentPlayer === instrumentName
             )
-            if (existingInstrument >= 0) {
-                return [...loadedInstrumentPlayers]
-            } else {
-                return [...loadedInstrumentPlayers, instrumentName]
-            }
+
+            return existingInstrument >= 0
+                ? [...loadedInstrumentPlayers]
+                : [...loadedInstrumentPlayers, instrumentName]
         })
     }
 
