@@ -72,7 +72,6 @@ export function ProgressBar({
     useIntervalWorker(onTimeChange)
 
     function setProgressBarValue(value: number) {
-        console.log(value)
         if (refBar.current) {
             refBar.current.value = value.toString()
         }
