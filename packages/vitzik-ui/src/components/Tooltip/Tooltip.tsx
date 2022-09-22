@@ -134,7 +134,10 @@ export function Tooltip({
 
     return (
         <>
-            {React.cloneElement(referenceChild, { ref: setReferenceElement, ...props })}
+            {React.cloneElement(referenceChild, {
+                ref: setReferenceElement,
+                ...{ key: 'reference', ...props },
+            })}
 
             {isVisible && strategy === 'absolute' ? TooltipContent() : null}
 
