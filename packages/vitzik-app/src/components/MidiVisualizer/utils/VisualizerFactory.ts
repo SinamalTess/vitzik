@@ -33,7 +33,7 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
 
     #getMidiFileEvents = (midiFile: IMidiFile) => this.parseMidiJson(midiFile)
 
-    getAllEvents = (): SectionOfEvents[] => this.#allEvents
+    getAllEvents = (): SectionOfEvents[] => [...this.#allEvents]
 
     getNoteEvents = (): SectionOfEvents[] =>
         this.#allEvents.map((section) => {
@@ -137,15 +137,16 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
     }
 
     getEventsForTracks = (activeTracks: number[]) => {
-        if (
-            !activeTracks.length ||
-            !this.#midiFileEvents.length ||
-            activeTracks.length > this.#midiFileEvents.length
-        ) {
+        const haveActiveTracks = activeTracks.length
+        const haveMidiFileEvents = this.#midiFileEvents.length
+        const requestInvalidActiveTracksNb = activeTracks.length > this.#midiFileEvents.length
+
+        if (!haveActiveTracks || !haveMidiFileEvents || requestInvalidActiveTracksNb) {
             return []
         }
 
         let mergedSections: SectionOfEvents[] = []
+        const thirdEventsAdded: VisualizerEvent[] = []
 
         const activeTracksSections = activeTracks
             .map((track) => this.#midiFileEvents[track])
@@ -158,7 +159,18 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
             if (this.#thirdEvents) {
                 const [currentEventsCopy, thirdEvents] =
                     this.#getEventsAfterCutByLoopTimestamps(section)
-                newEvents = [...currentEventsCopy, ...thirdEvents]
+
+                // This avoids duplicating the thirdEvents on multiple tracks
+                const newThirdEvents = thirdEvents.filter(
+                    (thirdEvent) =>
+                        !thirdEventsAdded.some(
+                            (event) => event.startingTime === thirdEvent.startingTime
+                        )
+                )
+
+                newEvents = [...currentEventsCopy, ...newThirdEvents]
+
+                thirdEventsAdded.push(...newThirdEvents)
             }
 
             this.updateOrCreateSection(mergedSections, newEvents, sectionKey)
