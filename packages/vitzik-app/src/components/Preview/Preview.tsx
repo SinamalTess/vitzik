@@ -1,6 +1,5 @@
 import { MidiTitle } from '../MidiTitle'
 import { MidiImporter } from '../MidiImporter'
-import { Visualizer } from '../Visualizer'
 import { Keyboard } from '../Keyboard'
 import { InstrumentPlayer } from '../InstrumentPlayer'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -21,6 +20,7 @@ import { getMidiMetas, MidiFactory } from '../../utils'
 import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../utils/const'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
 import { useIntervalWorker } from '../../hooks'
+import { MidiVisualizer } from '../MidiVisualizer'
 
 const AUDIO_CONTEXT = new AudioContext()
 
@@ -215,7 +215,7 @@ export function Preview({
                 {midiMetas ? <MidiTitle midiTitle={midiTitle} /> : null}
                 <MidiImporter isMidiImported={Boolean(midiMetas)} onMidiImport={handleMidiImport} />
                 {midiMetas && midiFile ? (
-                    <Visualizer
+                    <MidiVisualizer
                         activeInstruments={activeInstruments}
                         midiFile={midiFile}
                         config={visualizerConfig}

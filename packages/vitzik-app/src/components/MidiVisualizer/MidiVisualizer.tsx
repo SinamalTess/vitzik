@@ -1,122 +1,115 @@
-import React, { useEffect, useRef, useState } from 'react'
-import './MidiVisualizer.scss'
-import { Slide } from './components/Slide/Slide'
+import React, { useEffect, useMemo } from 'react'
+import { IMidiFile } from 'midi-json-parser-worker'
+import { MidiMetas, ActiveNote, LoopTimestamps, ActiveInstrument } from '../../types'
+import { ErrorBoundary } from 'vitzik-ui'
+import { MidiEventsManager } from './components/MidiEventsManager'
+import { VisualizerFactory } from './utils'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
+import { LoopEditor } from './components/LoopEditor'
+import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
+import { Visualizer } from './components/Visualizer'
+import throttle from 'lodash/throttle'
 import { useIntervalWorker } from '../../hooks'
-import { SectionOfEvents, VisualizerEvent } from './types'
-import { MidiVisualizerFactory } from './utils/MidiVisualizerFactory'
-import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
 
-interface MidiVisualizerProps {
-    data: SectionOfEvents[]
-    config: MidiVisualizerConfig
-    onWheel: (e: WheelEvent) => void
+interface VisualizerProps {
+    activeInstruments: ActiveInstrument[]
+    config: MidiVisualizerUserConfig
+    midiFile: IMidiFile
+    midiMetas: MidiMetas
+    height?: number
+    width?: number
+    onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
+    onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
+    onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void
+    onChangeLoopTimestamps: React.Dispatch<React.SetStateAction<LoopTimestamps>>
 }
 
-export const BASE_CLASS = 'midi-visualizer'
-
 export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
-    config,
-    data,
-    onWheel,
-}: MidiVisualizerProps) {
-    const ref = useRef<HTMLDivElement>(null)
-    const { timeRef, intervalWorker } = useIntervalWorker(onTimeChange)
-    const animRef = useRef<null | number>(null)
-    const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
-    const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
-    const { height, midiSpeedFactor = 1, msPerSection } = config
-    const midiVisualizerFactory = new MidiVisualizerFactory(height, msPerSection)
-    const slides = ref.current?.getElementsByTagName('div')
-
-    useIntervalWorker(onTimeChange)
-
-    function onTimeChange(time: number, code: string) {
-        if (shouldRedraw(time)) {
-            reDraw(time)
-        }
-        if (['pause', 'stop', 'updateTimer'].includes(code)) {
-            animateOnce(time)
-        } else if (animRef.current === null && code === 'start') {
-            animate(time)
-        }
+    activeInstruments,
+    config: userConfig,
+    midiFile,
+    midiMetas,
+    height = 0,
+    width = 0,
+    onChangeActiveNotes,
+    onChangeNextNoteStartingTime,
+    onChangeActiveInstruments,
+    onChangeLoopTimestamps,
+}: VisualizerProps) {
+    const config = {
+        ...userConfig,
+        height,
+        width,
     }
-
-    function animate(time: number, limit = false) {
-        let startTime = 0
-        let timeElapsed = 0
-        function animationStep(timestamp: number) {
-            if (!startTime) {
-                startTime = timestamp
-            }
-            if (!timeElapsed) {
-                timeElapsed = timestamp - startTime
-            }
-
-            const interval = timestamp - startTime
-            const top = midiVisualizerFactory.getSlidesPercentageTop(
-                time + timeElapsed / midiSpeedFactor
-            )
-
-            if (slides) {
-                slides[0].style.transform = `translate3d(0, ${top[0]}, 0)`
-                slides[1].style.transform = `translate3d(0, ${top[1]}, 0)`
-            }
-
-            if (limit) {
-                stopAnimation()
-            } else {
-                startTime = timestamp
-                timeElapsed = timeElapsed + interval
-                animRef.current = window.requestAnimationFrame(animationStep)
-            }
-        }
-
-        animRef.current = window.requestAnimationFrame(animationStep)
-    }
-
-    function stopAnimation() {
-        if (animRef.current) {
-            window.cancelAnimationFrame(animRef.current)
-            animRef.current = null
-        }
-    }
-
-    function shouldRedraw(time: number) {
-        const newIndexesToDraw = midiVisualizerFactory.getIndexesSectionToDraw(time)
-        return newIndexesToDraw[0] !== indexesToDraw[0] || newIndexesToDraw[1] !== indexesToDraw[1]
-    }
-
-    function reDraw(time: number) {
-        const newIndexesToDraw = midiVisualizerFactory.getIndexesSectionToDraw(time)
-
-        setSlidesEvents([
-            midiVisualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[0]),
-            midiVisualizerFactory.getEventsBySectionIndex(data, newIndexesToDraw[1]),
-        ])
-
-        setIndexesToDraw(newIndexesToDraw)
-    }
-
-    function animateOnce(time: number) {
-        stopAnimation()
-        animate(time, true)
-    }
+    const { timeRef, intervalWorker } = useIntervalWorker()
+    const { msPerSection, showDampPedal, activeTracks, showLoopEditor, loopTimestamps } = config
+    const { midiDuration } = midiMetas
+    const visualizerFactory = useMemo(
+        () => new VisualizerFactory({ height, width }, msPerSection, midiMetas, midiFile),
+        [height, midiMetas, width]
+    )
 
     useEffect(() => {
-        const time = timeRef.current
-        animateOnce(time)
-        reDraw(time)
-    }, [data])
+        visualizerFactory.setEventsForTracks(activeTracks)
+    }, [activeTracks, visualizerFactory])
+
+    const data = useMemo(() => {
+        visualizerFactory.clearThirdEvents()
+        if (loopTimestamps) {
+            const [startLoop, endLoop] = loopTimestamps
+            if (startLoop) {
+                visualizerFactory.addLoopTimeStampEvent(startLoop)
+            }
+            if (endLoop) {
+                visualizerFactory.addLoopTimeStampEvent(endLoop)
+            }
+        }
+        visualizerFactory.setEventsForTracks(activeTracks)
+        if (!showDampPedal) {
+            return visualizerFactory.getNoteEvents()
+        } else {
+            return visualizerFactory.getAllEvents()
+        }
+    }, [visualizerFactory, showDampPedal, activeTracks, loopTimestamps])
+
+    // @ts-ignore
+    function handleWheel(e: WheelEvent<HTMLDivElement>) {
+        const onWheel = () => {
+            const { deltaY } = e
+            const newTime = timeRef.current - deltaY
+            const isValidTime = newTime >= 0 && newTime < midiDuration
+
+            if (isValidTime) {
+                intervalWorker?.updateTimer(newTime)
+            }
+        }
+
+        throttle(onWheel, 100)()
+    }
 
     return (
-        // @ts-ignore
-        <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={onWheel}>
-            {[0, 1].map((index) => {
-                return (
-                    <Slide config={config} index={index} key={index} events={slidesEvents[index]} />
-                )
-            })}
-        </div>
+        <ErrorBoundary>
+            {midiMetas && midiFile ? (
+                <>
+                    <Visualizer data={data} config={config} onWheel={handleWheel} />
+                    {showLoopEditor && loopTimestamps ? (
+                        <LoopEditor
+                            config={config}
+                            onWheel={handleWheel}
+                            onChangeLoopTimestamps={onChangeLoopTimestamps}
+                        />
+                    ) : null}
+                    <MidiEventsManager
+                        data={data}
+                        config={config}
+                        midiMetas={midiMetas}
+                        activeInstruments={activeInstruments}
+                        onChangeActiveNotes={onChangeActiveNotes}
+                        onChangeActiveInstruments={onChangeActiveInstruments}
+                        onChangeNextNoteStartingTime={onChangeNextNoteStartingTime}
+                    />
+                </>
+            ) : null}
+        </ErrorBoundary>
     )
 })
