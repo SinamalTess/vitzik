@@ -1,7 +1,7 @@
 import { SVGRectangle } from 'vitzik-ui'
 import React from 'react'
 
-import { VisualizerEvent } from '../types'
+import { VisualizerEvent } from '../../types'
 
 interface DampPedalProps {
     event: VisualizerEvent

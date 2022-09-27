@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './MidiVisualizer.scss'
-import { MidiVisualizerSlide } from './MidiVisualizerSlide'
+import { Slide } from './components/Slide/Slide'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { useIntervalWorker } from '../../hooks'
 import { SectionOfEvents, VisualizerEvent } from './types'
@@ -114,12 +114,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         <div className={BASE_CLASS} ref={ref} aria-label={'visualizer'} onWheel={onWheel}>
             {[0, 1].map((index) => {
                 return (
-                    <MidiVisualizerSlide
-                        config={config}
-                        index={index}
-                        key={index}
-                        events={slidesEvents[index]}
-                    />
+                    <Slide config={config} index={index} key={index} events={slidesEvents[index]} />
                 )
             })}
         </div>

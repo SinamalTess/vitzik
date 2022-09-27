@@ -1,17 +1,17 @@
 import React from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
-import { ActiveInstrument, ActiveNote, MidiMetas } from '../../types'
-import { SectionOfEvents, VisualizerEvent } from './types'
-import { useIntervalWorker } from '../../hooks'
+import { ActiveInstrument, ActiveNote, MidiMetas } from '../../../../types'
+import { SectionOfEvents, VisualizerEvent } from '../../types'
+import { useIntervalWorker } from '../../../../hooks'
 import {
     activeInstrumentsToInstruments,
     instrumentsToActiveInstruments,
     KEYBOARD_CHANNEL,
     MIDI_INPUT_CHANNEL,
-} from '../../utils/const'
-import { VisualizerEventManager } from './utils/VisualizerEventManager'
-import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
+} from '../../../../utils/const'
+import { VisualizerEventManager } from '../../utils/VisualizerEventManager'
+import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 interface MidiEventsManagerProps {
     midiMetas: MidiMetas

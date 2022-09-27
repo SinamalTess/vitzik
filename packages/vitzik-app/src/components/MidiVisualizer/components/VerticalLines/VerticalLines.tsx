@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useRef } from 'react'
-import { NB_WHITE_PIANO_KEYS } from '../../utils/const'
-import './MidiVisualizerVerticalLines.scss'
+import { NB_WHITE_PIANO_KEYS } from '../../../../utils/const'
+import './VerticalLines.scss'
 import clsx from 'clsx'
-import { Keyboard } from '../../utils/Keyboard'
+import { Keyboard } from '../../../../utils/Keyboard'
 
-interface MidiVisualizerTracksProps {
+interface VerticalLinesProps {
     height: number
     width: number
 }
@@ -29,7 +29,7 @@ function drawTrackLines(ctx: CanvasRenderingContext2D, h: number, w: number) {
     }
 }
 
-export function MidiVisualizerVerticalLines({ height, width }: MidiVisualizerTracksProps) {
+export function VerticalLines({ height, width }: VerticalLinesProps) {
     const refCanvas = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {

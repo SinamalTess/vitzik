@@ -1,6 +1,6 @@
 import { List, ListItem, SVGRectangle, Tooltip } from 'vitzik-ui'
 import React from 'react'
-import { VisualizerNoteEvent } from '../types'
+import { VisualizerNoteEvent } from '../../types'
 
 const RADIUS = 5
 
@@ -30,9 +30,7 @@ export function Note({ showDebugInfos = false, event, opacity = 1 }: NoteProps) 
             <SVGRectangle {...props} />
             <List variant={'transparent'}>
                 {Object.entries(event).map(([key, value], k) => {
-                    return <ListItem key={k}>
-                        {`${key} : ${value}`}
-                    </ListItem>
+                    return <ListItem key={k}>{`${key} : ${value}`}</ListItem>
                 })}
             </List>
         </Tooltip>

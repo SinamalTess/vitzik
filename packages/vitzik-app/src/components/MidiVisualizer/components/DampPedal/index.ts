@@ -1,0 +1,1 @@
+export { DampPedal } from './DampPedal'

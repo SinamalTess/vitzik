@@ -1,15 +1,20 @@
 import React from 'react'
-import './MidiVisualizerSlide.scss'
+import './Slide.scss'
 import clsx from 'clsx'
-import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent, VisualizerNoteEvent } from './types'
-import { MidiVisualizerVerticalLines } from './MidiVisualizerVerticalLines'
-import { Note } from './events/Note'
-import { LoopLine } from './events/LoopLine'
-import { DampPedal } from './events/DampPedal'
-import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
-import { LoopTimestamps } from '../../types'
+import {
+    isLoopTimestampEvent,
+    isNoteEvent,
+    VisualizerEvent,
+    VisualizerNoteEvent,
+} from '../../types'
+import { VerticalLines } from '../VerticalLines/VerticalLines'
+import { Note } from '../Note/Note'
+import { LoopLine } from '../LoopLine/LoopLine'
+import { DampPedal } from '../DampPedal/DampPedal'
+import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
+import { LoopTimestamps } from '../../../../types'
 
-interface MidiVisualizerSlideProps {
+interface SlideProps {
     index: number
     config: MidiVisualizerConfig
     events: VisualizerEvent[] | null | undefined
@@ -64,7 +69,7 @@ const Events = React.memo(function Events({ config, events }: EventsProps) {
     )
 })
 
-export function MidiVisualizerSlide({ index, config, events }: MidiVisualizerSlideProps) {
+export function Slide({ index, config, events }: SlideProps) {
     const { height, width } = config
     const classNames = clsx(BASECLASS, [`${BASECLASS}--${index}`])
 
@@ -73,7 +78,7 @@ export function MidiVisualizerSlide({ index, config, events }: MidiVisualizerSli
             <svg width={width} height={height} data-testid={`${BASECLASS}--${index}`}>
                 {events ? <Events events={events} config={config} /> : null}
             </svg>
-            <MidiVisualizerVerticalLines height={height} width={width} />
+            <VerticalLines height={height} width={width} />
         </div>
     )
 }

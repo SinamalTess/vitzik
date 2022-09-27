@@ -1,9 +1,9 @@
 import React, { useRef } from 'react'
-import { MidiVisualizerSlide } from './MidiVisualizerSlide'
+import { Slide } from './Slide'
 import { render, screen } from '@testing-library/react'
 import canvasMock from 'jest-canvas-mock'
-import { VisualizerNoteEvent } from './types'
-import { MidiVisualizerConfig } from '../../types/MidiVisualizerConfig'
+import { VisualizerNoteEvent } from '../../types'
+import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 jest.mock('react', () => {
     const originReact = jest.requireActual('react')
@@ -49,13 +49,7 @@ describe('MidiVisualizerSlide', () => {
             activeTracks: [],
             loopTimestamps: [null, null],
         }
-        render(
-            <MidiVisualizerSlide
-                events={noteEvents}
-                config={config}
-                index={0}
-            ></MidiVisualizerSlide>
-        )
+        render(<Slide events={noteEvents} config={config} index={0}></Slide>)
 
         const section = screen.getByTestId('midi-visualizer__slide--0')
         expect(section).toBeVisible()
