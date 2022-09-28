@@ -10,10 +10,10 @@ import {
     KEYBOARD_CHANNEL,
     MIDI_INPUT_CHANNEL,
 } from '../../../../utils/const'
-import { VisualizerEventManager } from '../../utils/VisualizerEventManager'
+import { EventManagerFactory } from '../../utils/EventManagerFactory'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
-interface MidiEventsManagerProps {
+interface EventManagerProps {
     midiMetas: MidiMetas
     config: MidiVisualizerConfig
     activeInstruments: ActiveInstrument[]
@@ -25,7 +25,7 @@ interface MidiEventsManagerProps {
 
 const isUserChannel = (channel: number) => [MIDI_INPUT_CHANNEL, KEYBOARD_CHANNEL].includes(channel)
 
-export function MidiEventsManager({
+export function EventManager({
     midiMetas,
     activeInstruments,
     data,
@@ -33,10 +33,10 @@ export function MidiEventsManager({
     onChangeActiveNotes,
     onChangeActiveInstruments,
     onChangeNextNoteStartingTime,
-}: MidiEventsManagerProps) {
+}: EventManagerProps) {
     const { msPerSection, height, showDampPedal, loopTimestamps } = config
     const { instruments } = midiMetas
-    const visualizerFactory = new VisualizerEventManager(msPerSection, height)
+    const visualizerFactory = new EventManagerFactory(msPerSection, height)
     const midiTrackActiveInstruments = activeInstruments.filter(
         ({ channel }) => !isUserChannel(channel)
     )

@@ -4,7 +4,7 @@ import { MidiVisualizerActiveNote } from '../../../types'
 import minBy from 'lodash/minBy'
 import { SectionFactory } from './SectionFactory'
 
-export class VisualizerEventManager extends SectionFactory {
+export class EventManagerFactory extends SectionFactory {
     #msPerSection: number
 
     constructor(msPerSection: number, height: number) {

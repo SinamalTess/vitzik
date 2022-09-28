@@ -4,7 +4,7 @@ import { Slide } from '../Slide'
 import { WithContainerDimensions } from '../../../_hocs/WithContainerDimensions'
 import { useIntervalWorker } from '../../../../hooks'
 import { SectionOfEvents, VisualizerEvent } from '../../types'
-import { MidiVisualizerFactory } from '../../utils/MidiVisualizerFactory'
+import { AnimationFactory } from '../../utils/AnimationFactory'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 interface VisualizerProps {
@@ -26,7 +26,7 @@ export const Visualizer = WithContainerDimensions(function MidiVisualizer({
     const [slidesEvents, setSlidesEvents] = useState<VisualizerEvent[][]>([])
     const [indexesToDraw, setIndexesToDraw] = useState([0, 1])
     const { height, midiSpeedFactor = 1, msPerSection } = config
-    const midiVisualizerFactory = new MidiVisualizerFactory(height, msPerSection)
+    const midiVisualizerFactory = new AnimationFactory(height, msPerSection)
     const slides = ref.current?.getElementsByTagName('div')
 
     useIntervalWorker(onTimeChange)

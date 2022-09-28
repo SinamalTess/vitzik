@@ -8,7 +8,7 @@ import { Dimensions } from '../types/Dimensions'
 import { IMidiControlChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { KEYBOARD_CHANNEL } from '../../../utils/const'
 
-export class VisualizerEventsFactory {
+export class EventsFactory {
     #width: number
     #height: number
     #ratioSection: number

@@ -2,8 +2,8 @@ import React, { useEffect, useMemo } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { MidiMetas, ActiveNote, LoopTimestamps, ActiveInstrument } from '../../types'
 import { ErrorBoundary } from 'vitzik-ui'
-import { MidiEventsManager } from './components/MidiEventsManager'
-import { VisualizerFactory } from './utils'
+import { EventManager } from './components/EventManager'
+import { DataFactory } from './utils'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { LoopEditor } from './components/LoopEditor'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
@@ -11,7 +11,7 @@ import { Visualizer } from './components/Visualizer'
 import throttle from 'lodash/throttle'
 import { useIntervalWorker } from '../../hooks'
 
-interface VisualizerProps {
+interface MidiVisualizerProps {
     activeInstruments: ActiveInstrument[]
     config: MidiVisualizerUserConfig
     midiFile: IMidiFile
@@ -35,7 +35,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     onChangeNextNoteStartingTime,
     onChangeActiveInstruments,
     onChangeLoopTimestamps,
-}: VisualizerProps) {
+}: MidiVisualizerProps) {
     const config = {
         ...userConfig,
         height,
@@ -45,7 +45,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
     const { msPerSection, showDampPedal, activeTracks, showLoopEditor, loopTimestamps } = config
     const { midiDuration } = midiMetas
     const visualizerFactory = useMemo(
-        () => new VisualizerFactory({ height, width }, msPerSection, midiMetas, midiFile),
+        () => new DataFactory({ height, width }, msPerSection, midiMetas, midiFile),
         [height, midiMetas, width]
     )
 
@@ -99,7 +99,7 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
                             onChangeLoopTimestamps={onChangeLoopTimestamps}
                         />
                     ) : null}
-                    <MidiEventsManager
+                    <EventManager
                         data={data}
                         config={config}
                         midiMetas={midiMetas}

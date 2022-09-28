@@ -1,10 +1,10 @@
 import { MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { isLoopTimestampEvent, isNoteEvent, SectionOfEvents, VisualizerEvent } from '../types'
-import { VisualizerFileParserFactory } from './VisualizerFileParserFactory'
+import { MidiJsonParser } from './MidiJsonParser'
 import { Dimensions } from '../types/Dimensions'
 
-export class VisualizerFactory extends VisualizerFileParserFactory {
+export class DataFactory extends MidiJsonParser {
     #height: number
     #msPerSection: number
     #midiFileEvents: SectionOfEvents[][]
@@ -31,7 +31,7 @@ export class VisualizerFactory extends VisualizerFileParserFactory {
 
     #getArrayOfNumbers = (length: number) => Array.apply(null, Array(length)).map((x, i) => i)
 
-    #getMidiFileEvents = (midiFile: IMidiFile) => this.parseMidiJson(midiFile)
+    #getMidiFileEvents = (midiFile: IMidiFile) => this.parse(midiFile)
 
     getAllEvents = (): SectionOfEvents[] => [...this.#allEvents]
 

@@ -8,12 +8,12 @@ import {
     isNoteOnEvent as checkIsNoteOnEvent,
     MidiFactory,
 } from '../../../utils'
-import { VisualizerEventsFactory } from './VisualizerEventsFactory'
+import { EventsFactory } from './EventsFactory'
 import { MsPerBeat } from '../../../types'
 import { SectionOfEvents } from '../types'
 import { Dimensions } from '../types/Dimensions'
 
-export class VisualizerFileParserFactory extends VisualizerEventsFactory {
+export class MidiJsonParser extends EventsFactory {
     #eventsBeingProcessed: VisualizerEvent[]
     #msPerSection: number
     #msPerBeatValue: number
@@ -93,7 +93,7 @@ export class VisualizerFileParserFactory extends VisualizerEventsFactory {
         }
     }
 
-    parseMidiJson = (midiJson: IMidiFile) => {
+    parse = (midiJson: IMidiFile) => {
         const { tracks } = midiJson
         let events: SectionOfEvents[][] = []
 

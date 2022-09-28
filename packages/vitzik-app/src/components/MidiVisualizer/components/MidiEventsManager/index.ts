@@ -1,1 +1,0 @@
-export { MidiEventsManager } from './MidiEventsManager'

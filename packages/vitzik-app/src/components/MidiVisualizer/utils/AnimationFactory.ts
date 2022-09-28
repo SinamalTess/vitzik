@@ -1,7 +1,7 @@
 import { isEven } from '../../../utils'
 import { SectionFactory } from './SectionFactory'
 
-export class MidiVisualizerFactory extends SectionFactory {
+export class AnimationFactory extends SectionFactory {
     #height: number
     #msPerSection: number
 
