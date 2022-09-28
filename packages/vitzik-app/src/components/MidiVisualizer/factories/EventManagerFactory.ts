@@ -2,7 +2,7 @@ import { isNoteEvent, VisualizerEvent, VisualizerNoteEvent } from '../types'
 import { MidiVisualizerActiveNote } from '../../../types'
 import minBy from 'lodash/minBy'
 import { SectionFactory } from './SectionFactory'
-import { Section } from './Section'
+import { Section } from '../classes/Section'
 
 export class EventManagerFactory extends SectionFactory {
     #msPerSection: number
@@ -63,8 +63,8 @@ export class EventManagerFactory extends SectionFactory {
         const lastSectionToCheck = indexSectionPlaying + nbSectionsToCheck
 
         for (let i = indexSectionPlaying; i < lastSectionToCheck; i++) {
-            const key = i.toString()
-            const section = this.findSectionByKey(key, sections)
+            const index = i.toString()
+            const section = this.findSectionByKey(index, sections)
             if (section) {
                 const { events } = section
                 const nextNotes = events.filter(

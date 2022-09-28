@@ -1,5 +1,5 @@
 import { isEven } from '../../../utils'
-import { Section } from './Section'
+import { Section } from '../classes/Section'
 
 export class SectionFactory {
     #msPerSection: number

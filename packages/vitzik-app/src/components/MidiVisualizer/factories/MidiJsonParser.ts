@@ -10,7 +10,7 @@ import {
 } from '../../../utils'
 import { EventsFactory } from './EventsFactory'
 import { MsPerBeat } from '../../../types'
-import { Section } from './Section'
+import { Section } from '../classes/Section'
 import { Dimensions } from '../types/Dimensions'
 
 export class MidiJsonParser extends EventsFactory {
@@ -96,7 +96,7 @@ export class MidiJsonParser extends EventsFactory {
         tracks.forEach((track) => {
             let deltaAcc = 0
             this.#eventsBeingProcessed = []
-            let sectionsOfEvents: Section[] = []
+            let sections: Section[] = []
 
             track.forEach((event) => {
                 deltaAcc = deltaAcc + event.delta
@@ -112,7 +112,7 @@ export class MidiJsonParser extends EventsFactory {
                 if (isNoteOnEvent) {
                     this.#processOnEvent(event, deltaAcc)
                 } else if (isNoteOffEvent) {
-                    this.#processOffEvent(event, deltaAcc, sectionsOfEvents)
+                    this.#processOffEvent(event, deltaAcc, sections)
                 } else if (isControlChangeEvent(event)) {
                     const { controlChange } = event
                     const { value, type } = controlChange
@@ -123,13 +123,13 @@ export class MidiJsonParser extends EventsFactory {
                             this.#processOnEvent(event, deltaAcc)
                         } else {
                             // OFF
-                            this.#processOffEvent(event, deltaAcc, sectionsOfEvents)
+                            this.#processOffEvent(event, deltaAcc, sections)
                         }
                     }
                 }
             })
 
-            events.push(sectionsOfEvents)
+            events.push(sections)
         })
 
         return events

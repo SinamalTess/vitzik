@@ -1,9 +1,9 @@
 import { MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent } from '../types'
+import { isLoopTimestampEvent, VisualizerEvent } from '../types'
 import { MidiJsonParser } from './MidiJsonParser'
 import { Dimensions } from '../types/Dimensions'
-import { Section } from './Section'
+import { Section } from '../classes/Section'
 import { getArrayOfNumbers } from '../utils/getArrayOfNumbers'
 
 export class DataFactory extends MidiJsonParser {
@@ -37,14 +37,14 @@ export class DataFactory extends MidiJsonParser {
 
     getNoteEvents = (): Section[] =>
         this.#allEvents.map((section) => {
-            const { index, events } = section
-            const noteEvents = events.filter((event) => isNoteEvent(event))
+            const noteEvents = Section.getNoteEvents(section)
+            const { index } = section
 
             return new Section(index, noteEvents)
         })
 
     getEventsBySectionIndex = (sections: Section[], index: number) => {
-        const section = this.#findSectionByKey(index.toString(), sections)
+        const section = this.#findSectionByIndex(index.toString(), sections)
 
         if (section) {
             const { events } = section
@@ -61,11 +61,11 @@ export class DataFactory extends MidiJsonParser {
         }
     }
 
-    #findSectionIndexByKey = (key: string, sections: Section[]) =>
-        sections.findIndex((section) => key in section)
+    #findIndexSectionByIndex = (index: string, sections: Section[]) =>
+        sections.findIndex((section) => section.index === index)
 
-    #findSectionByKey = (key: string, sections: Section[]) =>
-        sections.find((section) => key in section)
+    #findSectionByIndex = (index: string, sections: Section[]) =>
+        sections.find((section) => section.index === index)
 
     getIndexSectionFromTime = (time: number) => Math.floor(time / this.#msPerSection).toString()
 
@@ -95,11 +95,10 @@ export class DataFactory extends MidiJsonParser {
         let thirdEvents: VisualizerEvent[] = []
         const { index } = section
         const { events } = section
-        const thirdEventsSection = this.#findSectionByKey(index, this.#thirdEvents)
+        const thirdEventsSection = this.#findSectionByIndex(index, this.#thirdEvents)
 
         if (thirdEventsSection) {
             const { events: thirdEvents } = thirdEventsSection
-
             const loopTimestamps = thirdEvents.filter((event) => isLoopTimestampEvent(event))
 
             events.forEach((event) => {
@@ -177,7 +176,7 @@ export class DataFactory extends MidiJsonParser {
     }
 
     updateOrCreateSection = (sections: Section[], newEvents: VisualizerEvent[], index: string) => {
-        const indexExistingSection = this.#findSectionIndexByKey(index, sections)
+        const indexExistingSection = this.#findIndexSectionByIndex(index, sections)
         const sectionAlreadyExists = indexExistingSection >= 0
 
         if (sectionAlreadyExists) {

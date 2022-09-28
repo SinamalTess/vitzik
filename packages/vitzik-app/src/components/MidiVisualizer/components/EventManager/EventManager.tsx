@@ -11,7 +11,7 @@ import {
     MIDI_INPUT_CHANNEL,
 } from '../../../../utils/const'
 import { EventManagerFactory } from '../../factories/EventManagerFactory'
-import { Section } from '../../factories/Section'
+import { Section } from '../../classes/Section'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 interface EventManagerProps {

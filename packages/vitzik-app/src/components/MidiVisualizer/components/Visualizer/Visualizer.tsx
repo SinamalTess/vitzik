@@ -5,7 +5,7 @@ import { WithContainerDimensions } from '../../../_hocs/WithContainerDimensions'
 import { useIntervalWorker } from '../../../../hooks'
 import { VisualizerEvent } from '../../types'
 import { AnimationFactory } from '../../factories/AnimationFactory'
-import { Section } from '../../factories/Section'
+import { Section } from '../../classes/Section'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 interface VisualizerProps {

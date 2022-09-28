@@ -7,6 +7,7 @@ import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { Dimensions } from '../types/Dimensions'
 import { IMidiControlChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { KEYBOARD_CHANNEL } from '../../../utils/const'
+import { Coordinates } from '../classes/Coordinates'
 
 export class EventsFactory {
     #width: number
@@ -50,13 +51,11 @@ export class EventsFactory {
 
     getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
         const y = this.getYFromStartingTime(startingTime)
+        const coordinates = new Coordinates(0, y, this.#width, 1)
         return {
+            ...coordinates,
             eventType: 'loopTimestamp',
             startingTime,
-            h: 1,
-            w: this.#width,
-            x: 0,
-            y,
             duration: 0,
             channel: KEYBOARD_CHANNEL,
         }
@@ -68,11 +67,10 @@ export class EventsFactory {
     ): VisualizerEvent => {
         const startingTime = this.#deltaToTime(deltaAcc)
         const { channel } = event
+        const y = this.getYFromStartingTime(startingTime)
+        const coordinates = new Coordinates(0, y, this.#width, 0)
         return {
-            w: this.#width,
-            h: 0,
-            x: 0,
-            y: this.getYFromStartingTime(startingTime),
+            ...coordinates,
             startingTime,
             eventType: 'dampPedal',
             duration: 0,
@@ -106,7 +104,7 @@ export class EventsFactory {
         if (name) {
             const keyboardFactory = new Keyboard(this.#width)
             const { width, x } = keyboardFactory.getKeyStyles(name)
-            const coordinates = { y, w: width, x, h: 0 }
+            const coordinates = new Coordinates(x, y, width, 0)
 
             return {
                 ...coordinates,
@@ -114,7 +112,7 @@ export class EventsFactory {
                 ...defaultMetas,
             }
         } else {
-            const coordinates = { y, w: 0, x: 0, h: 0 }
+            const coordinates = new Coordinates(0, y, 0, 0)
             /*
                 Some notes don't have associated names because they are just frequencies.
                 See : https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies

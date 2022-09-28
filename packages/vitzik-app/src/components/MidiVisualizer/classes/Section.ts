@@ -1,4 +1,4 @@
-import { VisualizerEvent } from '../types'
+import { isNoteEvent, VisualizerEvent } from '../types'
 
 export class Section {
     index: string
@@ -8,4 +8,7 @@ export class Section {
         this.index = index
         this.events = events
     }
+
+    static getNoteEvents = (section: Section) =>
+        section.events.filter((event) => isNoteEvent(event))
 }
