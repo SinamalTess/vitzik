@@ -4,6 +4,7 @@ import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent } from '../types'
 import { MidiJsonParser } from './MidiJsonParser'
 import { Dimensions } from '../types/Dimensions'
 import { Section } from './Section'
+import { getArrayOfNumbers } from '../utils/getArrayOfNumbers'
 
 export class DataFactory extends MidiJsonParser {
     #height: number
@@ -26,11 +27,9 @@ export class DataFactory extends MidiJsonParser {
         this.#height = containerDimensions.height
         this.#msPerSection = msPerSection
         this.#midiFileEvents = this.#getMidiFileEvents(midiFile)
-        this.#allEvents = this.getEventsForTracks(this.#getArrayOfNumbers(midiFile.tracks.length))
+        this.#allEvents = this.getEventsForTracks(getArrayOfNumbers(midiFile.tracks.length))
         this.#thirdEvents = []
     }
-
-    #getArrayOfNumbers = (length: number) => Array.apply(null, Array(length)).map((x, i) => i)
 
     #getMidiFileEvents = (midiFile: IMidiFile) => this.parse(midiFile)
 
