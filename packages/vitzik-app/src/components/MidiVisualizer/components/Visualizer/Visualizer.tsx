@@ -3,12 +3,13 @@ import './Visualizer.scss'
 import { Slide } from '../Slide'
 import { WithContainerDimensions } from '../../../_hocs/WithContainerDimensions'
 import { useIntervalWorker } from '../../../../hooks'
-import { SectionOfEvents, VisualizerEvent } from '../../types'
-import { AnimationFactory } from '../../utils/AnimationFactory'
+import { VisualizerEvent } from '../../types'
+import { AnimationFactory } from '../../factories/AnimationFactory'
+import { Section } from '../../factories/Section'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 interface VisualizerProps {
-    data: SectionOfEvents[]
+    data: Section[]
     config: MidiVisualizerConfig
     onWheel: (e: WheelEvent) => void
 }

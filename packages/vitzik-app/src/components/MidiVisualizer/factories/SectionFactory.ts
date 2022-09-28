@@ -1,5 +1,5 @@
-import { SectionOfEvents, VisualizerEvent } from '../types'
 import { isEven } from '../../../utils'
+import { Section } from './Section'
 
 export class SectionFactory {
     #msPerSection: number
@@ -21,19 +21,16 @@ export class SectionFactory {
         ]
     }
 
-    findSectionByKey = (key: string, sections: SectionOfEvents[]) =>
-        sections.find((section) => key in section)
+    findSectionByKey = (key: string, sections: Section[]) =>
+        sections.find((section) => section.index === key)
 
     getIndexSectionByTime = (time: number) => Math.floor(time / this.#msPerSection)
 
-    getEventsFromSection = (section: SectionOfEvents): VisualizerEvent[] =>
-        Object.values(section)[0]
-
-    getEventsBySectionIndex = (sectionsOfEvents: SectionOfEvents[], index: number) => {
+    getEventsBySectionIndex = (sectionsOfEvents: Section[], index: number) => {
         const section = this.findSectionByKey(index.toString(), sectionsOfEvents)
 
         if (section) {
-            const events = this.getEventsFromSection(section)
+            const { events } = section
 
             return events.map((visualizerEvent) => {
                 const computedY =

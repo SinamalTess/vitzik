@@ -2,7 +2,7 @@ import React from 'react'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import { ActiveInstrument, ActiveNote, MidiMetas } from '../../../../types'
-import { SectionOfEvents, VisualizerEvent } from '../../types'
+import { VisualizerEvent } from '../../types'
 import { useIntervalWorker } from '../../../../hooks'
 import {
     activeInstrumentsToInstruments,
@@ -10,14 +10,15 @@ import {
     KEYBOARD_CHANNEL,
     MIDI_INPUT_CHANNEL,
 } from '../../../../utils/const'
-import { EventManagerFactory } from '../../utils/EventManagerFactory'
+import { EventManagerFactory } from '../../factories/EventManagerFactory'
+import { Section } from '../../factories/Section'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 
 interface EventManagerProps {
     midiMetas: MidiMetas
     config: MidiVisualizerConfig
     activeInstruments: ActiveInstrument[]
-    data: SectionOfEvents[]
+    data: Section[]
     onChangeActiveNotes: React.Dispatch<React.SetStateAction<ActiveNote[]>>
     onChangeActiveInstruments: React.Dispatch<React.SetStateAction<ActiveInstrument[]>>
     onChangeNextNoteStartingTime: (nextNoteStartingTime: number | null) => void

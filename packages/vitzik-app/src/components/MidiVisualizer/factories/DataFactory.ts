@@ -1,15 +1,16 @@
 import { MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { isLoopTimestampEvent, isNoteEvent, SectionOfEvents, VisualizerEvent } from '../types'
+import { isLoopTimestampEvent, isNoteEvent, VisualizerEvent } from '../types'
 import { MidiJsonParser } from './MidiJsonParser'
 import { Dimensions } from '../types/Dimensions'
+import { Section } from './Section'
 
 export class DataFactory extends MidiJsonParser {
     #height: number
     #msPerSection: number
-    #midiFileEvents: SectionOfEvents[][]
-    #allEvents: SectionOfEvents[]
-    #thirdEvents: SectionOfEvents[]
+    #midiFileEvents: Section[][]
+    #allEvents: Section[]
+    #thirdEvents: Section[]
 
     constructor(
         containerDimensions: Dimensions,
@@ -33,23 +34,21 @@ export class DataFactory extends MidiJsonParser {
 
     #getMidiFileEvents = (midiFile: IMidiFile) => this.parse(midiFile)
 
-    getAllEvents = (): SectionOfEvents[] => [...this.#allEvents]
+    getAllEvents = (): Section[] => [...this.#allEvents]
 
-    getNoteEvents = (): SectionOfEvents[] =>
+    getNoteEvents = (): Section[] =>
         this.#allEvents.map((section) => {
-            const key = this.#getSectionKey(section)
-            const events = this.#getEventsFromSection(section).filter((event) => isNoteEvent(event))
+            const { index, events } = section
+            const noteEvents = events.filter((event) => isNoteEvent(event))
 
-            return {
-                [key]: [...events],
-            }
+            return new Section(index, noteEvents)
         })
 
-    getEventsBySectionIndex = (sections: SectionOfEvents[], index: number) => {
+    getEventsBySectionIndex = (sections: Section[], index: number) => {
         const section = this.#findSectionByKey(index.toString(), sections)
 
         if (section) {
-            const events = this.#getEventsFromSection(section)
+            const { events } = section
 
             return events.map((visualizerEvent) => {
                 const computedY = visualizerEvent.y - index * this.#height
@@ -63,18 +62,13 @@ export class DataFactory extends MidiJsonParser {
         }
     }
 
-    #findSectionIndexByKey = (key: string, sections: SectionOfEvents[]) =>
+    #findSectionIndexByKey = (key: string, sections: Section[]) =>
         sections.findIndex((section) => key in section)
 
-    #findSectionByKey = (key: string, sections: SectionOfEvents[]) =>
+    #findSectionByKey = (key: string, sections: Section[]) =>
         sections.find((section) => key in section)
 
-    getIndexSectionByTime = (time: number) => Math.floor(time / this.#msPerSection)
-
-    #getEventsFromSection = (section: SectionOfEvents): VisualizerEvent[] =>
-        Object.values(section)[0]
-
-    #getSectionKey = (section: SectionOfEvents) => Object.keys(section)[0]
+    getIndexSectionFromTime = (time: number) => Math.floor(time / this.#msPerSection).toString()
 
     #isTimestampWithinEvent = (timestamp: number, event: VisualizerEvent) =>
         timestamp > event.startingTime && timestamp < event.startingTime + event.duration
@@ -97,19 +91,19 @@ export class DataFactory extends MidiJsonParser {
         return [firstHalf, secondHalf]
     }
 
-    #getEventsAfterCutByLoopTimestamps = (section: SectionOfEvents) => {
+    #getEventsAfterCutByLoopTimestamps = (section: Section) => {
         let currentEventsCopy: VisualizerEvent[] = []
         let thirdEvents: VisualizerEvent[] = []
-        const sectionKey = this.#getSectionKey(section)
-        const currentEvents = this.#getEventsFromSection(section)
-        const thirdEventsSection = this.#findSectionByKey(sectionKey, this.#thirdEvents)
+        const { index } = section
+        const { events } = section
+        const thirdEventsSection = this.#findSectionByKey(index, this.#thirdEvents)
 
         if (thirdEventsSection) {
-            thirdEvents = this.#getEventsFromSection(thirdEventsSection)
+            const { events: thirdEvents } = thirdEventsSection
 
             const loopTimestamps = thirdEvents.filter((event) => isLoopTimestampEvent(event))
 
-            currentEvents.forEach((event) => {
+            events.forEach((event) => {
                 const isCutByLoopTimestamp = loopTimestamps.some(({ startingTime }) =>
                     this.#isTimestampWithinEvent(startingTime, event)
                 )
@@ -130,7 +124,7 @@ export class DataFactory extends MidiJsonParser {
                 }
             })
         } else {
-            currentEventsCopy = [...currentEvents]
+            currentEventsCopy = [...events]
         }
 
         return [currentEventsCopy, thirdEvents]
@@ -145,7 +139,7 @@ export class DataFactory extends MidiJsonParser {
             return []
         }
 
-        let mergedSections: SectionOfEvents[] = []
+        let mergedSections: Section[] = []
         const thirdEventsAdded: VisualizerEvent[] = []
 
         const activeTracksSections = activeTracks
@@ -153,7 +147,7 @@ export class DataFactory extends MidiJsonParser {
             .flat(1)
 
         activeTracksSections.forEach((section) => {
-            const sectionKey = this.#getSectionKey(section)
+            const { index } = section
             let newEvents: VisualizerEvent[] = []
 
             if (this.#thirdEvents) {
@@ -173,7 +167,7 @@ export class DataFactory extends MidiJsonParser {
                 thirdEventsAdded.push(...newThirdEvents)
             }
 
-            this.updateOrCreateSection(mergedSections, newEvents, sectionKey)
+            this.updateOrCreateSection(mergedSections, newEvents, index)
         })
 
         return mergedSections
@@ -183,31 +177,22 @@ export class DataFactory extends MidiJsonParser {
         this.#allEvents = this.getEventsForTracks(activeTracks)
     }
 
-    updateOrCreateSection = (
-        sections: SectionOfEvents[],
-        newEvents: VisualizerEvent[],
-        sectionKey: string
-    ) => {
-        const indexExistingSection = this.#findSectionIndexByKey(sectionKey, sections)
+    updateOrCreateSection = (sections: Section[], newEvents: VisualizerEvent[], index: string) => {
+        const indexExistingSection = this.#findSectionIndexByKey(index, sections)
         const sectionAlreadyExists = indexExistingSection >= 0
 
         if (sectionAlreadyExists) {
-            const events = this.#getEventsFromSection(sections[indexExistingSection])
-            sections[indexExistingSection] = {
-                [sectionKey]: [...events, ...newEvents],
-            }
+            const { events } = sections[indexExistingSection]
+            sections[indexExistingSection] = new Section(index, [...events, ...newEvents])
         } else {
-            const section = {
-                [sectionKey]: [...newEvents],
-            }
-
+            const section = new Section(index, [...newEvents])
             sections.push(section)
         }
     }
 
     #addThirdEvent = (event: VisualizerEvent) => {
         const { startingTime } = event
-        const indexSection = this.getIndexSectionByTime(startingTime).toString()
+        const indexSection = this.getIndexSectionFromTime(startingTime)
 
         this.updateOrCreateSection(this.#thirdEvents, [event], indexSection)
     }

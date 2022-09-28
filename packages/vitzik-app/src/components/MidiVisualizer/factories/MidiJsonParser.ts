@@ -10,7 +10,7 @@ import {
 } from '../../../utils'
 import { EventsFactory } from './EventsFactory'
 import { MsPerBeat } from '../../../types'
-import { SectionOfEvents } from '../types'
+import { Section } from './Section'
 import { Dimensions } from '../types/Dimensions'
 
 export class MidiJsonParser extends EventsFactory {
@@ -54,11 +54,7 @@ export class MidiJsonParser extends EventsFactory {
         }
     }
 
-    #processOffEvent = (
-        event: TMidiEvent,
-        deltaAcc: number,
-        sectionsOfEvents: SectionOfEvents[]
-    ) => {
+    #processOffEvent = (event: TMidiEvent, deltaAcc: number, sections: Section[]) => {
         const indexEventBeingProcessed = this.#findIndexEventBeingProcessed(event)
 
         if (indexEventBeingProcessed !== -1) {
@@ -67,40 +63,40 @@ export class MidiJsonParser extends EventsFactory {
             }
 
             const finalEvent = this.getFinalEvent(eventBeingProcessed, deltaAcc)
-            this.#addEventToSection(finalEvent, sectionsOfEvents)
+            this.#addEventToSection(finalEvent, sections)
             this.#eventsBeingProcessed.splice(indexEventBeingProcessed, 1)
         }
     }
 
-    #addEventToSection = (
-        visualizerEvent: VisualizerEvent,
-        sectionsOfEvents: SectionOfEvents[]
-    ) => {
+    #addEventToSection = (visualizerEvent: VisualizerEvent, sections: Section[]) => {
         const startingSection = Math.floor(visualizerEvent.startingTime / this.#msPerSection) // arrays start at 0, so we use floor to get number below
         const endingSection = Math.floor(
             (visualizerEvent.startingTime + visualizerEvent.duration) / this.#msPerSection
         )
 
         for (let i = startingSection; i <= endingSection; i++) {
-            const indexSection = sectionsOfEvents.findIndex((section) => section[i])
+            const index = i.toString()
+            const indexSection = sections.findIndex((section) => section.index === index)
             if (indexSection >= 0) {
-                sectionsOfEvents[indexSection] = {
-                    [i]: [...sectionsOfEvents[indexSection][i], visualizerEvent],
-                }
+                sections[indexSection] = new Section(index, [
+                    ...sections[indexSection].events,
+                    visualizerEvent,
+                ])
             } else {
-                sectionsOfEvents.push({ [i]: [visualizerEvent] })
+                const section = new Section(index, [visualizerEvent])
+                sections.push(section)
             }
         }
     }
 
     parse = (midiJson: IMidiFile) => {
         const { tracks } = midiJson
-        let events: SectionOfEvents[][] = []
+        let events: Section[][] = []
 
         tracks.forEach((track) => {
             let deltaAcc = 0
             this.#eventsBeingProcessed = []
-            let sectionsOfEvents: SectionOfEvents[] = []
+            let sectionsOfEvents: Section[] = []
 
             track.forEach((event) => {
                 deltaAcc = deltaAcc + event.delta
