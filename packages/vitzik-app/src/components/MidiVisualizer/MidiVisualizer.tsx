@@ -87,6 +87,8 @@ export const MidiVisualizer = WithContainerDimensions(function MidiVisualizer({
         throttle(onWheel, 100)()
     }
 
+    console.log({ data })
+
     return (
         <ErrorBoundary>
             {midiMetas && midiFile ? (

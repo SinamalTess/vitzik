@@ -1,8 +1,9 @@
-import { isNoteEvent, VisualizerEvent, VisualizerNoteEvent } from '../types'
+import { VisualizerEvent } from '../types'
 import { MidiVisualizerActiveNote } from '../../../types'
 import minBy from 'lodash/minBy'
 import { SectionFactory } from './SectionFactory'
 import { Section } from '../classes/Section'
+import { NoteEvent } from '../classes/NoteEvent'
 
 export class EventManagerFactory extends SectionFactory {
     #msPerSection: number
@@ -12,41 +13,27 @@ export class EventManagerFactory extends SectionFactory {
         this.#msPerSection = msPerSection
     }
 
-    #visualizerNoteEventToActiveNote = (
-        visualizerNoteEvent: VisualizerNoteEvent
-    ): MidiVisualizerActiveNote => {
-        const { startingTime, duration, key, channel, name, velocity, uniqueId } =
-            visualizerNoteEvent
-        return {
-            startingTime,
-            duration,
-            key,
-            channel,
-            name,
-            velocity,
-            uniqueId,
-        }
-    }
+    #noteEventToActiveNote = (noteEvent: NoteEvent): MidiVisualizerActiveNote => ({
+        ...noteEvent.note,
+        ...noteEvent.metas,
+    })
 
-    #visualizerNoteEventsToActiveNotes = (visualizerNoteEvents: VisualizerNoteEvent[]) =>
-        visualizerNoteEvents.map((visualizerNoteEvent) =>
-            this.#visualizerNoteEventToActiveNote(visualizerNoteEvent)
-        )
+    #noteEventsToActiveNotes = (noteEvents: NoteEvent[]) =>
+        noteEvents.map((noteEvent) => this.#noteEventToActiveNote(noteEvent))
 
     getActiveNotes = (sections: Section[], time: number): MidiVisualizerActiveNote[] => {
         const indexSectionPlaying = this.getIndexSectionByTime(time).toString()
-        const sectionPlaying = this.findSectionByKey(indexSectionPlaying, sections)
+        const sectionPlaying = this.findSectionByIndex(indexSectionPlaying, sections)
         const isEventActive = (event: VisualizerEvent) =>
             event.startingTime <= time && event.startingTime + event.duration > time
-        const isActiveNote = (event: VisualizerEvent) => isNoteEvent(event) && isEventActive(event)
+        const isActiveNote = (event: VisualizerEvent) =>
+            event instanceof NoteEvent && isEventActive(event)
 
         if (sectionPlaying) {
             const { events } = sectionPlaying
-            const activeNoteEvents = events.filter((event) =>
-                isActiveNote(event)
-            ) as VisualizerNoteEvent[]
+            const activeNoteEvents = events.filter((event) => isActiveNote(event)) as NoteEvent[]
 
-            return this.#visualizerNoteEventsToActiveNotes(activeNoteEvents)
+            return this.#noteEventsToActiveNotes(activeNoteEvents)
         }
 
         return []
@@ -64,11 +51,11 @@ export class EventManagerFactory extends SectionFactory {
 
         for (let i = indexSectionPlaying; i < lastSectionToCheck; i++) {
             const index = i.toString()
-            const section = this.findSectionByKey(index, sections)
+            const section = this.findSectionByIndex(index, sections)
             if (section) {
                 const { events } = section
                 const nextNotes = events.filter(
-                    (event) => isNoteEvent(event) && event.startingTime > time
+                    (event) => event instanceof NoteEvent && event.startingTime > time
                 )
                 const firstNextNote = minBy(nextNotes, 'startingTime')
                 if (firstNextNote) {

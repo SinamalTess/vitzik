@@ -1,10 +1,14 @@
 import { MsPerBeat } from '../../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { isLoopTimestampEvent, VisualizerEvent } from '../types'
+import { VisualizerEvent } from '../types'
 import { MidiJsonParser } from './MidiJsonParser'
 import { Dimensions } from '../types/Dimensions'
 import { Section } from '../classes/Section'
 import { getArrayOfNumbers } from '../utils/getArrayOfNumbers'
+import { LoopEvent } from '../classes/LoopEvent'
+import { NoteEvent } from '../classes/NoteEvent'
+import { Coordinates } from '../classes/Coordinates'
+import { DampPedalEvent } from '../classes/DampPedalEvent'
 
 export class DataFactory extends MidiJsonParser {
     #height: number
@@ -50,11 +54,11 @@ export class DataFactory extends MidiJsonParser {
             const { events } = section
 
             return events.map((visualizerEvent) => {
-                const computedY = visualizerEvent.y - index * this.#height
-                return {
-                    ...visualizerEvent,
-                    y: computedY,
-                }
+                const { x, y, h, w } = visualizerEvent.coordinates
+                const computedY = y - index * this.#height
+                visualizerEvent.coordinates = new Coordinates(x, computedY, w, h)
+
+                return visualizerEvent
             })
         } else {
             return []
@@ -74,20 +78,26 @@ export class DataFactory extends MidiJsonParser {
 
     #cutEventAtTime = (event: VisualizerEvent, splitTime: number): VisualizerEvent[] => {
         const ySplit = this.getYFromStartingTime(splitTime)
-        const firstHalf = {
-            ...event,
-            h: ySplit - event.y,
-            duration: splitTime - event.duration,
+        const { x, y, w, h } = event.coordinates
+        const { metas } = event
+        const coordinates1 = new Coordinates(x, y, w, ySplit - y)
+        const metas1 = { ...metas, duration: splitTime - event.duration }
+        const coordinates2 = new Coordinates(x, ySplit, w, h - (ySplit - y))
+        const metas2 = { ...metas, duration: splitTime - event.duration, startingTime: splitTime }
+
+        if (event instanceof NoteEvent) {
+            return [
+                new NoteEvent(coordinates1, metas1, event.note),
+                new NoteEvent(coordinates2, metas2, event.note),
+            ]
+        } else if (event instanceof LoopEvent) {
+            return [new LoopEvent(coordinates1, metas1), new LoopEvent(coordinates2, metas2)]
+        } else {
+            return [
+                new DampPedalEvent(coordinates1, metas1),
+                new DampPedalEvent(coordinates2, metas2),
+            ]
         }
-        const secondHalf = {
-            ...event,
-            startingTime: splitTime,
-            y: ySplit,
-            uniqueId: `${Math.random()}`,
-            h: event.h - (ySplit - event.y),
-            duration: splitTime - event.duration,
-        }
-        return [firstHalf, secondHalf]
     }
 
     #getEventsAfterCutByLoopTimestamps = (section: Section) => {
@@ -99,7 +109,7 @@ export class DataFactory extends MidiJsonParser {
 
         if (thirdEventsSection) {
             const { events: thirdEvents } = thirdEventsSection
-            const loopTimestamps = thirdEvents.filter((event) => isLoopTimestampEvent(event))
+            const loopTimestamps = thirdEvents.filter((event) => event instanceof LoopEvent)
 
             events.forEach((event) => {
                 const isCutByLoopTimestamp = loopTimestamps.some(({ startingTime }) =>

@@ -2,8 +2,9 @@ import React, { useRef } from 'react'
 import { Slide } from './Slide'
 import { render, screen } from '@testing-library/react'
 import canvasMock from 'jest-canvas-mock'
-import { VisualizerNoteEvent } from '../../types'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
+import { NoteEvent } from '../../classes/NoteEvent'
+import { AlphabeticalNote } from '../../../../types'
 
 jest.mock('react', () => {
     const originReact = jest.requireActual('react')
@@ -14,22 +15,27 @@ jest.mock('react', () => {
     }
 })
 
-const noteEvents: VisualizerNoteEvent[] = [
-    {
-        duration: 10,
-        velocity: 100,
-        name: 'A0',
-        key: 21,
-        w: 5,
-        h: 10,
-        x: 10,
-        y: 5,
-        channel: 0,
-        startingTime: 0,
-        uniqueId: '1',
-        eventType: 'note',
-    },
-]
+const coordinates = {
+    w: 5,
+    h: 10,
+    x: 10,
+    y: 5,
+}
+
+const note = {
+    velocity: 100,
+    name: 'A0' as AlphabeticalNote,
+    key: 21,
+    channel: 0,
+}
+
+const metas = {
+    duration: 10,
+    channel: 0,
+    startingTime: 0,
+}
+
+const noteEvents: NoteEvent[] = [new NoteEvent(coordinates, metas, note)]
 
 describe('MidiVisualizerSlide', () => {
     beforeEach(() => {

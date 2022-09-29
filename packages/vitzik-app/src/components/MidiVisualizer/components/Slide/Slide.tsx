@@ -1,18 +1,15 @@
 import React from 'react'
 import './Slide.scss'
 import clsx from 'clsx'
-import {
-    isLoopTimestampEvent,
-    isNoteEvent,
-    VisualizerEvent,
-    VisualizerNoteEvent,
-} from '../../types'
-import { VerticalLines } from '../VerticalLines/VerticalLines'
-import { Note } from '../Note/Note'
-import { LoopLine } from '../LoopLine/LoopLine'
-import { DampPedal } from '../DampPedal/DampPedal'
+import { VisualizerEvent } from '../../types'
+import { VerticalLines } from '../VerticalLines'
+import { Note } from '../Note'
+import { LoopLine } from '../LoopLine'
+import { DampPedal } from '../DampPedal'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 import { LoopTimestamps } from '../../../../types'
+import { NoteEvent } from '../../classes/NoteEvent'
+import { LoopEvent } from '../../classes/LoopEvent'
 
 interface SlideProps {
     index: number
@@ -27,7 +24,7 @@ interface EventsProps {
 
 const BASECLASS = `midi-visualizer__slide`
 
-function getOpacityNote(event: VisualizerNoteEvent, loopTimestamps: LoopTimestamps) {
+function getOpacityNote(event: VisualizerEvent, loopTimestamps: LoopTimestamps) {
     const OPACITY_MIN = 0.1
     const OPACITY_DEFAULT = 1
     const { startingTime } = event
@@ -52,13 +49,14 @@ const Events = React.memo(function Events({ config, events }: EventsProps) {
     return (
         <>
             {events.map((event) => {
-                if (isNoteEvent(event)) {
+                if (event instanceof NoteEvent) {
                     const { uniqueId } = event
                     const opacity = getOpacityNote(event, loopTimestamps)
 
-                    return <Note event={event} key={`${uniqueId}`} opacity={opacity} />
-                } else if (isLoopTimestampEvent(event)) {
-                    const { startingTime: timestamp, w: width, y } = event
+                    return <Note event={event} key={uniqueId} opacity={opacity} />
+                } else if (event instanceof LoopEvent) {
+                    const { startingTime: timestamp } = event
+                    const { w: width, y } = event.coordinates
 
                     return <LoopLine timestamp={timestamp} width={width} y={y} key={timestamp} />
                 } else {

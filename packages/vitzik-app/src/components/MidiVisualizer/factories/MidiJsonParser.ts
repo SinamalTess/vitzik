@@ -12,6 +12,8 @@ import { EventsFactory } from './EventsFactory'
 import { MsPerBeat } from '../../../types'
 import { Section } from '../classes/Section'
 import { Dimensions } from '../types/Dimensions'
+import { NoteEvent } from '../classes/NoteEvent'
+import { DampPedalEvent } from '../classes/DampPedalEvent'
 
 export class MidiJsonParser extends EventsFactory {
     #eventsBeingProcessed: VisualizerEvent[]
@@ -47,10 +49,10 @@ export class MidiJsonParser extends EventsFactory {
         if (isNoteOnEvent(event) || isNoteOffEvent(event)) {
             const key = MidiFactory.Note(event).getKey()
             return this.#eventsBeingProcessed.findIndex(
-                (event) => 'key' in event && event.key === key
+                (event) => event instanceof NoteEvent && event.note.key === key
             )
         } else {
-            return this.#eventsBeingProcessed.findIndex((event) => event.eventType === 'dampPedal')
+            return this.#eventsBeingProcessed.findIndex((event) => event instanceof DampPedalEvent)
         }
     }
 
@@ -58,11 +60,10 @@ export class MidiJsonParser extends EventsFactory {
         const indexEventBeingProcessed = this.#findIndexEventBeingProcessed(event)
 
         if (indexEventBeingProcessed !== -1) {
-            const eventBeingProcessed = {
-                ...this.#eventsBeingProcessed[indexEventBeingProcessed],
-            }
-
-            const finalEvent = this.getFinalEvent(eventBeingProcessed, deltaAcc)
+            const finalEvent = this.getFinalEvent(
+                this.#eventsBeingProcessed[indexEventBeingProcessed],
+                deltaAcc
+            )
             this.#addEventToSection(finalEvent, sections)
             this.#eventsBeingProcessed.splice(indexEventBeingProcessed, 1)
         }

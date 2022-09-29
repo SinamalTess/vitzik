@@ -1,4 +1,5 @@
-import { isNoteEvent, VisualizerEvent } from '../types'
+import { VisualizerEvent } from '../types'
+import { NoteEvent } from './NoteEvent'
 
 export class Section {
     index: string
@@ -10,5 +11,5 @@ export class Section {
     }
 
     static getNoteEvents = (section: Section) =>
-        section.events.filter((event) => isNoteEvent(event))
+        section.events.filter((event) => event instanceof NoteEvent)
 }

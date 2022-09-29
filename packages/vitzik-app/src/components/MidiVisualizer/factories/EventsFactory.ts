@@ -1,13 +1,16 @@
 import { MsPerBeat } from '../../../types'
 import findLast from 'lodash/findLast'
 import { Keyboard } from '../../../utils/Keyboard'
-import { VisualizerEvent, VisualizerEventType } from '../types'
 import { MidiFactory } from '../../../utils'
 import { IMidiNoteOnEvent } from 'midi-json-parser-worker'
 import { Dimensions } from '../types/Dimensions'
 import { IMidiControlChangeEvent } from 'midi-json-parser-worker/src/interfaces'
 import { KEYBOARD_CHANNEL } from '../../../utils/const'
 import { Coordinates } from '../classes/Coordinates'
+import { VisualizerEvent } from '../classes/VisualizerEvent'
+import { DampPedalEvent } from '../classes/DampPedalEvent'
+import { LoopEvent } from '../classes/LoopEvent'
+import { NoteEvent } from '../classes/NoteEvent'
 
 export class EventsFactory {
     #width: number
@@ -49,68 +52,68 @@ export class EventsFactory {
 
     #getHFromDuration = (duration: number) => this.#ratioSection * duration
 
-    getLoopTimestampEvent = (startingTime: number): VisualizerEvent => {
+    getLoopTimestampEvent = (startingTime: number) => {
         const y = this.getYFromStartingTime(startingTime)
         const coordinates = new Coordinates(0, y, this.#width, 1)
-        return {
-            ...coordinates,
-            eventType: 'loopTimestamp',
+        const metas = {
             startingTime,
-            duration: 0,
             channel: KEYBOARD_CHANNEL,
         }
+
+        return new LoopEvent(coordinates, metas)
     }
 
-    getPartialDampPedalEvent = (
-        event: IMidiControlChangeEvent,
-        deltaAcc: number
-    ): VisualizerEvent => {
+    getPartialDampPedalEvent = (event: IMidiControlChangeEvent, deltaAcc: number) => {
         const startingTime = this.#deltaToTime(deltaAcc)
         const { channel } = event
         const y = this.getYFromStartingTime(startingTime)
         const coordinates = new Coordinates(0, y, this.#width, 0)
-        return {
-            ...coordinates,
+        const metas = {
             startingTime,
-            eventType: 'dampPedal',
-            duration: 0,
             channel,
         }
+
+        return new DampPedalEvent(coordinates, metas)
     }
 
     getFinalEvent = (event: VisualizerEvent, deltaAcc: number) => {
+        const { x, y, w } = event.coordinates
+        const { startingTime, channel } = event
         const duration = this.#deltaToTime(deltaAcc) - event.startingTime
         const h = this.#getHFromDuration(duration)
-
-        return {
-            ...event,
-            h,
+        const coordinates = new Coordinates(x, y, w, h)
+        const metas = {
             duration,
+            startingTime,
+            channel,
+        }
+
+        if (event instanceof DampPedalEvent) {
+            return new DampPedalEvent(coordinates, metas)
+        } else if (event instanceof NoteEvent) {
+            const note = event.note
+            return new NoteEvent(coordinates, metas, note)
+        } else {
+            return new LoopEvent(coordinates, metas)
         }
     }
 
     getPartialVisualizerNoteEvent = (event: IMidiNoteOnEvent, deltaAcc: number) => {
         const note = MidiFactory.Note(event).getMetas()
-        const { name } = note
+        const { name, channel } = note
         const startingTime = this.#deltaToTime(deltaAcc)
         const y = this.getYFromStartingTime(startingTime)
         const defaultMetas = {
             startingTime,
+            channel,
             duration: 0,
-            eventType: 'note' as VisualizerEventType,
-            uniqueId: `${name}-${y}-${note.channel}-${Math.random()}`,
         }
 
         if (name) {
-            const keyboardFactory = new Keyboard(this.#width)
-            const { width, x } = keyboardFactory.getKeyStyles(name)
+            const { width, x } = new Keyboard(this.#width).getKeyStyles(name)
             const coordinates = new Coordinates(x, y, width, 0)
 
-            return {
-                ...coordinates,
-                ...note,
-                ...defaultMetas,
-            }
+            return new NoteEvent(coordinates, defaultMetas, note)
         } else {
             const coordinates = new Coordinates(0, y, 0, 0)
             /*
@@ -121,11 +124,7 @@ export class EventsFactory {
                 But the 'y' and 'h' must be correct --> to play at the right timing
             */
 
-            return {
-                ...coordinates,
-                ...note,
-                ...defaultMetas,
-            }
+            return new NoteEvent(coordinates, defaultMetas, note)
         }
     }
 }

@@ -1,17 +1,18 @@
 import { List, ListItem, SVGRectangle, Tooltip } from 'vitzik-ui'
 import React from 'react'
-import { VisualizerNoteEvent } from '../../types'
+import { NoteEvent } from '../../classes/NoteEvent'
 
 const RADIUS = 5
 
 interface NoteProps {
     showDebugInfos?: boolean
-    event: VisualizerNoteEvent
+    event: NoteEvent
     opacity?: number
 }
 
 export function Note({ showDebugInfos = false, event, opacity = 1 }: NoteProps) {
-    const { name, channel, x, y, w, h } = event
+    const { x, y, w, h } = event.coordinates
+    const { name, channel } = event.note
 
     const props = {
         'aria-label': `${name} note`,
