@@ -1,6 +1,7 @@
 import { KEYBOARD_CHANNEL, MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTE_NAMES } from '@/const'
 import { clamp, noteToKey } from './index'
 import { AlphabeticalNote } from '@/types'
+import { isLowerCaseCharacter } from '@/utils'
 
 export class Keyboard {
     private width: number
@@ -34,9 +35,6 @@ export class Keyboard {
 
     static isBlackKey(keyName: AlphabeticalNote) {
         const hasHastag = keyName.includes('#')
-        const isLowerCaseCharacter = (character: string) =>
-            // @ts-ignore
-            isNaN(character) && character === character.toLowerCase()
         const hasLowerCaseCharacters = [...keyName].some((character) =>
             isLowerCaseCharacter(character)
         )
