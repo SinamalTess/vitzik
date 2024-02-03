@@ -1,10 +1,25 @@
 export const msToSec = (ms: number): number => ms / 1000
 
-export const msToHumanReadableTime = (ms: number, showMs?: boolean): string => {
+export const msToTime = (ms: number) => {
     const msDurationDate = new Date(ms)
-    const min = String(msDurationDate.getMinutes()).padStart(2, '0')
-    const sec = String(msDurationDate.getSeconds()).padStart(2, '0')
-    const milliseconds = String(msDurationDate.getMilliseconds()).padStart(2, '0')
+    const hours = msDurationDate.getHours()
+    const min = msDurationDate.getMinutes()
+    const sec = msDurationDate.getSeconds()
+    const msFormatted = msDurationDate.getMilliseconds() / 10
 
-    return `${min}:${sec}${showMs ? ':' + milliseconds : ''}`
+    return { hours, min, sec, ms: msFormatted }
+}
+
+const timeToString = (min: number, sec: number, ms: number, showMs?: boolean): string => {
+    const minString = String(min).padStart(2, '0')
+    const secString = String(sec).padStart(2, '0')
+    const msString = String(ms).padStart(2, '0')
+
+    return `${minString}:${secString}${showMs ? ':' + msString : ''}`
+}
+
+export const msToHumanReadableTime = (ms: number, showMs?: boolean): string => {
+    const { min, sec, ms: msFormatted } = msToTime(ms)
+
+    return timeToString(min, sec, msFormatted, showMs)
 }

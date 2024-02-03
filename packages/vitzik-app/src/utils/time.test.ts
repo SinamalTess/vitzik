@@ -10,7 +10,7 @@ describe('msToHumanReadableTime()', () => {
 
     describe('When the showMs parameter is "true"', () => {
         it('should convert milliseconds to minutes, seconds and milliseconds', () => {
-            expect(msToHumanReadableTime(2100, true)).toBe('00:02:100')
+            expect(msToHumanReadableTime(2100, true)).toBe('00:02:10')
             expect(msToHumanReadableTime(240000, true)).toBe('04:00:00')
         })
     })
