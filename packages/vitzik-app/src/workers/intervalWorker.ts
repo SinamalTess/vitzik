@@ -1,9 +1,31 @@
-import { IntervalWorkerMessage } from '@/types/IntervalWorkerCode'
-
+import { IntervalWorkerCode, IntervalWorkerMessage } from '@/types/IntervalWorkerCode'
 const FPS = 20
-const interval = 1000 / FPS
 let timeElapsed = 0
 let timer: number | NodeJS.Timeout | undefined
+
+const startTimer = (startAt: number, midiSpeedFactor: number) => {
+    const msInterval = 1000 / FPS
+    timer = setInterval(() => {
+        sendIntervalWorkerMessage('start', timeElapsed + msInterval / midiSpeedFactor)
+    }, msInterval)
+}
+
+const stopTimer = () => {
+    clearTimer()
+    timeElapsed = 0
+}
+
+const clearTimer = () => {
+    if (timer) clearInterval(timer)
+}
+
+const sendIntervalWorkerMessage = (code: IntervalWorkerCode, time?: number) => {
+    postMessage({
+        code,
+        time: time ?? timeElapsed,
+    })
+    if (time !== undefined) timeElapsed = time
+}
 
 // eslint-disable-next-line no-restricted-globals
 self.onmessage = (message) => {
@@ -12,47 +34,18 @@ self.onmessage = (message) => {
     if (code === 'start') {
         startTimer(startAt, midiSpeedFactor)
     } else if (code === 'updateTimer') {
-        clearInterval(timer)
-        postMessage({
-            code,
-            time: startAt,
-        })
-        timeElapsed = startAt
+        clearTimer()
+        sendIntervalWorkerMessage(code, startAt)
     } else if (code === 'stop') {
         stopTimer()
-        postMessage({
-            code,
-            time: 0,
-        })
+        sendIntervalWorkerMessage(code, 0)
     } else if (code === 'pause') {
-        clearInterval(timer)
-        postMessage({
-            code,
-            time: timeElapsed,
-        })
+        clearTimer()
+        sendIntervalWorkerMessage(code)
     } else if (code === 'restart') {
-        clearInterval(timer)
+        clearTimer()
         startTimer(startAt, midiSpeedFactor)
     } else if (code === 'getTime') {
-        postMessage({
-            code,
-            time: timeElapsed,
-        })
+        sendIntervalWorkerMessage(code)
     }
-}
-
-const stopTimer = () => {
-    clearInterval(timer)
-    timeElapsed = 0
-}
-
-const startTimer = (startAt: number, midiSpeedFactor: number) => {
-    timer = setInterval(() => {
-        postMessage({
-            time: timeElapsed ?? startAt,
-            code: 'start',
-        })
-
-        timeElapsed = timeElapsed + interval / midiSpeedFactor
-    }, interval)
 }

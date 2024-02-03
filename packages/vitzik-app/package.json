@@ -72,6 +72,7 @@
     "@types/react-transition-group": "^4.4.5",
     "@types/vexflow": "^1.2.38",
     "@types/webmidi": "^2.0.10",
+    "@vitest/coverage-v8": "^1.2.2",
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint-plugin-unused-imports": "^3.0.0",
     "happy-dom": "^13.3.8",
