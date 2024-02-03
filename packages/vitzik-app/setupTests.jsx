@@ -3,8 +3,7 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "vitest-canvas-mock";
-import { IntervalWorkerMessengerMock } from "./src/tests/mocks/IntervalWorkerMessengerMock";
-import { vi, expect, beforeAll } from "vitest";
+import { vi, expect } from "vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
 import { AudioContextMock } from "./src/tests/mocks/AudioContextMock";
 import { requestMIDIAccess } from "./src/tests/mocks/requestMIDIAccess";
@@ -14,10 +13,9 @@ import { WorkerMock } from "./src/tests/mocks/WorkerMock";
 expect.extend(matchers);
 
 vi.stubGlobal("Worker", WorkerMock);
+vi.stubGlobal("AudioContext", AudioContextMock);
 
 window.navigator.requestMIDIAccess = requestMIDIAccess;
-
-vi.stubGlobal("AudioContext", AudioContextMock);
 
 vi.mock("midi-json-parser", () => ({
   default: {
