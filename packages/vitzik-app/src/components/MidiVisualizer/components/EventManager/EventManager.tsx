@@ -9,7 +9,7 @@ import {
     instrumentsToActiveInstruments,
     KEYBOARD_CHANNEL,
     MIDI_INPUT_CHANNEL,
-} from '../../../../utils/const'
+} from '../../../../const'
 import { EventManagerFactory } from '../../factories/EventManagerFactory'
 import { Section } from '../../classes/Section'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'

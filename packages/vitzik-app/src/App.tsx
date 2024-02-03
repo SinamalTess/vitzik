@@ -9,10 +9,11 @@ import {
     MidiMetas,
     InstrumentUserFriendlyName,
     MidiAccessMode,
-    LoopTimestamps, ActiveInstrument,
+    LoopTimestamps,
+    ActiveInstrument,
 } from './types'
 import { AudioPlayer } from './components/AudioPlayer'
-import { DEFAULT_INSTRUMENTS } from './utils/const'
+import { DEFAULT_INSTRUMENTS } from './const'
 import { useTitle } from './hooks'
 import { AppInfos } from './components/AppInfos'
 import { Preview } from './components/Preview'
@@ -21,7 +22,8 @@ import { AppContextProvider } from './components/_contexts'
 function App() {
     const [musicSystem, setMusicSystem] = useState<MusicSystem>('alphabetical')
     const [appMode, setAppMode] = useState<AppMode>('import')
-    const [activeInstruments, setActiveInstruments] = useState<ActiveInstrument[]>(DEFAULT_INSTRUMENTS)
+    const [activeInstruments, setActiveInstruments] =
+        useState<ActiveInstrument[]>(DEFAULT_INSTRUMENTS)
     const [audioPlayerState, setAudioPlayerState] = useState<AudioPlayerState>('stopped')
     const [isMute, setIsMute] = useState(false)
     const [activeTracks, setActiveTracks] = useState<number[]>([])

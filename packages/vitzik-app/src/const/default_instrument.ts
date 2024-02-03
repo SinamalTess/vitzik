@@ -1,5 +1,5 @@
 import { NOTE_NAMES } from './note_names'
-import {ActiveInstrument, Instrument} from '../../types'
+import { ActiveInstrument, Instrument } from '../types'
 import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from './midi_channels'
 
 export const DEFAULT_KEYBOARD_INSTRUMENT: ActiveInstrument = {
@@ -24,7 +24,9 @@ export const instrumentsToActiveInstruments = (instruments: Instrument[]): Activ
         ...instrument,
         isDampPedalOn: false,
     }))
-export const activeInstrumentsToInstruments = (activeInstruments: ActiveInstrument[]): Instrument[] =>
+export const activeInstrumentsToInstruments = (
+    activeInstruments: ActiveInstrument[]
+): Instrument[] =>
     activeInstruments.map(({ index, timestamp, channel, name, notes, delta }) => ({
         timestamp,
         channel,

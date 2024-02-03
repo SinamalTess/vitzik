@@ -9,8 +9,8 @@ import {
 } from '../../types'
 import { keyToNote } from '../../utils'
 import React, { useEffect, useState } from 'react'
-import { MIDI_INPUT_CHANNEL } from '../../utils/const'
-import { MIDI_MESSAGE_CONTROL } from '../../utils/const/midi_message_controls'
+import { MIDI_INPUT_CHANNEL } from '../../const'
+import { MIDI_MESSAGE_CONTROL } from '../../const/midi_message_controls'
 
 interface MidiMessageManagerProps {
     midiInput: MIDIInput

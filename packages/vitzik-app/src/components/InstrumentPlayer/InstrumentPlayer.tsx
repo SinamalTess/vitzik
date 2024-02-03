@@ -14,7 +14,7 @@ import {
     MIDI_INSTRUMENTS_FATBOY,
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
-} from '../../utils/const'
+} from '../../const'
 import { usePrevious } from '../../hooks'
 
 interface InstrumentPlayerProps {

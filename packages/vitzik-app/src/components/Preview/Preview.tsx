@@ -17,7 +17,7 @@ import {
 } from '../../types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { getMidiMetas, MidiFactory } from '../../utils'
-import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../utils/const'
+import { DEFAULT_INSTRUMENTS, instrumentsToActiveInstruments } from '../../const'
 import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
 import { useIntervalWorker } from '../../hooks'
 import { MidiVisualizer } from '../MidiVisualizer'

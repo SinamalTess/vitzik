@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { Keyboard } from './Keyboard'
-import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../utils/const'
+import { NB_BLACK_PIANO_KEYS, NB_WHITE_PIANO_KEYS } from '../../const'
 import { MidiInputActiveNote, MidiPlayMode } from '../../types'
 import { clickKey, clickMidiExample, touchKey } from '../../tests/utils'
 import {

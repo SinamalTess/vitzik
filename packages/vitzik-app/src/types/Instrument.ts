@@ -1,7 +1,7 @@
-import { MIDI_INSTRUMENTS } from '../utils/const'
+import { MIDI_INSTRUMENTS } from '../const'
 import { AlphabeticalNote } from './Notes'
 
-export type InstrumentUserFriendlyName = typeof MIDI_INSTRUMENTS[number] | 'Drum Kit'
+export type InstrumentUserFriendlyName = (typeof MIDI_INSTRUMENTS)[number] | 'Drum Kit'
 
 export interface Instrument {
     name: InstrumentUserFriendlyName
@@ -12,6 +12,6 @@ export interface Instrument {
     delta: number
 }
 
-export interface ActiveInstrument extends Instrument{
+export interface ActiveInstrument extends Instrument {
     isDampPedalOn: boolean
 }

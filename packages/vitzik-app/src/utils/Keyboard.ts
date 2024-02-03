@@ -1,9 +1,4 @@
-import {
-    KEYBOARD_CHANNEL,
-    MIDI_PIANO_KEYS_OFFSET,
-    NB_WHITE_PIANO_KEYS,
-    NOTE_NAMES,
-} from './const'
+import { KEYBOARD_CHANNEL, MIDI_PIANO_KEYS_OFFSET, NB_WHITE_PIANO_KEYS, NOTE_NAMES } from '../const'
 import { clamp, noteToKey } from './index'
 import { AlphabeticalNote } from '../types'
 
@@ -88,5 +83,4 @@ export class Keyboard {
             width: this.getWidthKey(keyName),
         }
     }
-
 }

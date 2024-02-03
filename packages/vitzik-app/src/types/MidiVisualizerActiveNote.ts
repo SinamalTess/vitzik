@@ -1,5 +1,5 @@
 import { AlphabeticalNote } from './Notes'
-import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../utils/const'
+import { KEYBOARD_CHANNEL, MIDI_INPUT_CHANNEL } from '../const'
 
 export interface MidiInputActiveNote {
     name?: AlphabeticalNote

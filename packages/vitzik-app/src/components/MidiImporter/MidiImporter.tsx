@@ -99,7 +99,7 @@ export function MidiImporter({ isMidiImported, onMidiImport }: MidiImporterProps
     }
 
     function handleClick() {
-        import('../../utils/const/midi_file_example').then((data) => {
+        import('../../const/midi_file_example').then((data) => {
             onMidiImport('Turkish March - Mozart', data.TURKISH_MARCH as IMidiFile)
             setState('pending')
         })
