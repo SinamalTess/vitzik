@@ -1,6 +1,6 @@
 import React from 'react'
 import { Tooltip, Divider, ListItem, ListItemSecondaryAction, Button, List } from 'vitzik-ui'
-import { Instrument, InstrumentUserFriendlyName, TrackMetas } from '../../types'
+import { Instrument, InstrumentUserFriendlyName, TrackMetas } from '@/types'
 import './MidiTrackList.scss'
 import { ChannelList } from './ChannelList'
 

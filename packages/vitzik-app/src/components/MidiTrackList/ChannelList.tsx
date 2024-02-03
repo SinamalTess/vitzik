@@ -1,5 +1,5 @@
 import { ListItem, Tooltip, Loader, List } from 'vitzik-ui'
-import { msToHumanReadableTime } from '../../utils'
+import { msToHumanReadableTime } from '@/utils'
 import { InstrumentImage } from '../InstrumentImage'
 import React from 'react'
 import { ChannelInfos } from './MidiTrackList'

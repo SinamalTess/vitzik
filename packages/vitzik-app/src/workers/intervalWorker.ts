@@ -1,4 +1,4 @@
-import { IntervalWorkerMessage } from '../types/IntervalWorkerCode'
+import { IntervalWorkerMessage } from '@/types/IntervalWorkerCode'
 
 const FPS = 20
 const interval = 1000 / FPS

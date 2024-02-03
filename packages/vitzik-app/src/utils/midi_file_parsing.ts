@@ -6,8 +6,8 @@ import {
     MsPerBeat,
     AlphabeticalNote,
     Instrument,
-} from '../types'
-import { DRUM_KIT_CHANNEL, MIDI_INSTRUMENTS } from '../const'
+} from '@/types'
+import { DRUM_KIT_CHANNEL, MIDI_INSTRUMENTS } from '@/const'
 import { keyToNote } from './notes'
 import {
     isKeySignatureEvent,

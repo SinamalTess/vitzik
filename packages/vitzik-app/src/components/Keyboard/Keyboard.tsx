@@ -7,8 +7,8 @@ import {
     MidiPlayMode,
     MidiVisualizerActiveNote,
     MusicSystem,
-} from '../../types'
-import { translateNoteTo } from '../../utils'
+} from '@/types'
+import { translateNoteTo } from '@/utils'
 import clsx from 'clsx'
 import findLast from 'lodash/findLast'
 import last from 'lodash/last'

@@ -13,7 +13,7 @@ import {
     ActiveInstrument,
 } from './types'
 import { AudioPlayer } from './components/AudioPlayer'
-import { DEFAULT_INSTRUMENTS } from './const'
+import { DEFAULT_INSTRUMENTS } from '@/const'
 import { useTitle } from './hooks'
 import { AppInfos } from './components/AppInfos'
 import { Preview } from './components/Preview'

@@ -1,4 +1,4 @@
-import { isEven } from '../../../utils'
+import { isEven } from '@/utils'
 import { Section } from '../classes/Section'
 import { Coordinates } from '../classes/Coordinates'
 import { NoteEvent } from '../classes/NoteEvent'

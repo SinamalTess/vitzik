@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { useRef } from 'react'
-import { NB_WHITE_PIANO_KEYS } from '../../../../const'
+import { NB_WHITE_PIANO_KEYS } from '@/const'
 import './VerticalLines.scss'
 import clsx from 'clsx'
-import { Keyboard } from '../../../../utils/Keyboard'
+import { Keyboard } from '@/utils/Keyboard'
 
 interface VerticalLinesProps {
     height: number

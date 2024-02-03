@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from 'react'
-import { AppContext } from '../components/_contexts'
+import { AppContext } from '@/components/_contexts'
 
 /*
     Custom hook that listens for messages posted by the intervalWorker.

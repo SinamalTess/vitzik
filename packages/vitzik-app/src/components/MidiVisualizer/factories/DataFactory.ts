@@ -1,4 +1,4 @@
-import { MsPerBeat } from '../../../types'
+import { MsPerBeat } from '@/types'
 import { IMidiFile } from 'midi-json-parser-worker'
 import { VisualizerEvent } from '../types'
 import { MidiJsonParser } from './MidiJsonParser'

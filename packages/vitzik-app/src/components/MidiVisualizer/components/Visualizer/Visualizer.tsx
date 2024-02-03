@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import './Visualizer.scss'
 import { Slide } from '../Slide'
 import { WithContainerDimensions } from '../../../_hocs/WithContainerDimensions'
-import { useIntervalWorker } from '../../../../hooks'
+import { useIntervalWorker } from '@/hooks'
 import { VisualizerEvent } from '../../types'
 import { AnimationFactory } from '../../factories/AnimationFactory'
 import { Section } from '../../classes/Section'
-import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
+import { MidiVisualizerConfig } from '@/types/MidiVisualizerConfig'
 
 interface VisualizerProps {
     data: Section[]

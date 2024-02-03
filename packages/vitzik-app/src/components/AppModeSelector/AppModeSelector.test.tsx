@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { AppModeSelector } from './index'
-import { clickImportMode } from '../../tests/utils'
+import { clickImportMode } from '@/tests/utils'
 
 describe('AppModeSelector', () => {
     const onChange = vi.fn()

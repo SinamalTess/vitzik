@@ -1,4 +1,4 @@
-import { IntervalWorkerCode } from '../../types/IntervalWorkerCode'
+import { IntervalWorkerCode } from '@/types/IntervalWorkerCode'
 
 export class IntervalWorkerMessengerMock {
     callbacks: Function[] = []

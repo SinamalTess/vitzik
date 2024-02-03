@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Soundfont, { InstrumentName } from 'soundfont-player'
-import { msToSec } from '../../utils'
+import { msToSec } from '@/utils'
 import {
     ActiveNote,
     AlphabeticalNote,
     AudioPlayerState,
     InstrumentUserFriendlyName,
     isMidiVisualizerActiveNote,
-} from '../../types'
+} from '@/types'
 import {
     MIDI_INPUT_CHANNEL,
     MIDI_INSTRUMENTS,
     MIDI_INSTRUMENTS_FATBOY,
     MIDI_INSTRUMENTS_FLUIDR3_GM,
     MIDI_INSTRUMENTS_MUSYNGKITE,
-} from '../../const'
+} from '@/const'
 import { usePrevious } from '../../hooks'
 
 interface InstrumentPlayerProps {

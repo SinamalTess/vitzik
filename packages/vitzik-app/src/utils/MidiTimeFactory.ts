@@ -1,4 +1,4 @@
-import { MsPerBeat } from '../types'
+import { MsPerBeat } from '@/types'
 import findLast from 'lodash/findLast'
 import { MidiFactory } from './MidiFactory'
 

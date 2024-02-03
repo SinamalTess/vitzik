@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react'
-import { AudioPlayerState, MidiMetas, LoopTimestamps } from '../../types'
+import { AudioPlayerState, MidiMetas, LoopTimestamps } from '@/types'
 import './AudioPlayer.scss'
 import { ProgressBar } from './ProgressBar'
 import { Controls } from './Controls'
 import { IntervalWorkerManager } from './IntervalWorkerManager'
 import { AppContext } from '../_contexts'
 import { Shortcuts } from './Shortcuts'
-import { useIntervalWorker } from '../../hooks'
+import { useIntervalWorker } from '@/hooks'
 
 interface AudioPlayerProps {
     midiMetas: MidiMetas

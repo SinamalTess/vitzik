@@ -2,7 +2,7 @@ import { Button } from 'vitzik-ui'
 import { PlayButton } from './PlayButton'
 import { VolumeButton } from '../VolumeButton'
 import React from 'react'
-import { AudioPlayerState } from '../../types'
+import { AudioPlayerState } from '@/types'
 
 interface ControlsProps {
     isMute: boolean

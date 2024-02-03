@@ -1,4 +1,4 @@
-import { MIDI_INSTRUMENTS } from '../const'
+import { MIDI_INSTRUMENTS } from '@/const'
 import { AlphabeticalNote } from './Notes'
 
 export type InstrumentUserFriendlyName = (typeof MIDI_INSTRUMENTS)[number] | 'Drum Kit'

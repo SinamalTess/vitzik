@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AudioPlayerState } from '../../types'
-import { useKeyboardShortcut, useIntervalWorker } from '../../hooks'
+import { AudioPlayerState } from '@/types'
+import { useKeyboardShortcut, useIntervalWorker } from '@/hooks'
 
 interface KeyboardShortcutsProps {
     playerState: AudioPlayerState

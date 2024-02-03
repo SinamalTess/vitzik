@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import './LoopEditor.scss'
-import { LoopTimestamps } from '../../../../types'
-import { useIntervalWorker } from '../../../../hooks'
+import { LoopTimestamps } from '@/types'
+import { useIntervalWorker } from '@/hooks'
 import { LoopLine } from '../LoopLine/LoopLine'
-import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
+import { MidiVisualizerConfig } from '@/types/MidiVisualizerConfig'
 
 export const BASE_CLASS = 'loop-editor'
 

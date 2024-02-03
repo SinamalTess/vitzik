@@ -1,10 +1,10 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
-import viteTsconfigPaths from "vite-tsconfig-paths";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   base: "",
-  plugins: [react(), viteTsconfigPaths()],
+  plugins: [tsconfigPaths(), react()],
   server: {
     open: true,
     port: 3000,

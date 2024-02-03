@@ -1,7 +1,7 @@
 import { IMidiFile, TMidiEvent } from 'midi-json-parser-worker'
 import { isPositive } from './maths'
 import max from 'lodash/max'
-import { Instrument, MidiJsonNote, MsPerBeat } from '../types'
+import { Instrument, MidiJsonNote, MsPerBeat } from '@/types'
 import last from 'lodash/last'
 import { MidiNoteFactory } from './MidiNoteFactory'
 import { MidiTrackFactory } from './MidiTrackFactory'

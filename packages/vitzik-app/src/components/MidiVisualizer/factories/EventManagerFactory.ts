@@ -1,5 +1,5 @@
 import { VisualizerEvent } from '../types'
-import { MidiVisualizerActiveNote } from '../../../types'
+import { MidiVisualizerActiveNote } from '@/types'
 import minBy from 'lodash/minBy'
 import { SectionFactory } from './SectionFactory'
 import { Section } from '../classes/Section'

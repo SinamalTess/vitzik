@@ -1,6 +1,6 @@
 import { VisualizerEvent, VisualizerEventMetas } from './VisualizerEvent'
 import { Coordinates } from './Coordinates'
-import { MidiInputActiveNote } from '../../../types'
+import { MidiInputActiveNote } from '@/types'
 
 type NoteEventMetas = Pick<VisualizerEventMetas, 'channel' | 'startingTime' | 'duration'>
 

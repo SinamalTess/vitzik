@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo } from 'react'
 import { IMidiFile } from 'midi-json-parser-worker'
-import { MidiMetas, ActiveNote, LoopTimestamps, ActiveInstrument } from '../../types'
+import { MidiMetas, ActiveNote, LoopTimestamps, ActiveInstrument } from '@/types'
 import { ErrorBoundary } from 'vitzik-ui'
 import { EventManager } from './components/EventManager'
 import { DataFactory } from './factories'
 import { WithContainerDimensions } from '../_hocs/WithContainerDimensions'
 import { LoopEditor } from './components/LoopEditor'
-import { MidiVisualizerUserConfig } from '../../types/MidiVisualizerConfig'
+import { MidiVisualizerUserConfig } from '@/types/MidiVisualizerConfig'
 import { Visualizer } from './components/Visualizer'
 import throttle from 'lodash/throttle'
-import { useIntervalWorker } from '../../hooks'
+import { useIntervalWorker } from '@/hooks'
 
 interface MidiVisualizerProps {
     activeInstruments: ActiveInstrument[]

@@ -1,6 +1,6 @@
 import { ButtonGroup, Tooltip, Button } from 'vitzik-ui'
 import React from 'react'
-import { AppMode } from '../../types'
+import { AppMode } from '@/types'
 
 interface AppModeSelectorProps {
     appMode: AppMode

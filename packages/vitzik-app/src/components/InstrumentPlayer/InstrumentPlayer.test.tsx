@@ -6,10 +6,10 @@ import {
     AudioPlayerState,
     InstrumentUserFriendlyName,
     MidiVisualizerActiveNote,
-} from '../../types'
+} from '@/types'
 import { instrumentPlayerMock } from '../../tests/mocks/SoundFont'
 import { MidiInputMock } from '../../tests/mocks/requestMIDIAccess'
-import { MIDI_INPUT_CHANNEL } from '../../const'
+import { MIDI_INPUT_CHANNEL } from '@/const'
 import { waitSoundFontInstrumentPromise } from '../../tests/utils/acts'
 import { Mock, vi } from 'vitest'
 import Soundfont from 'soundfont-player'

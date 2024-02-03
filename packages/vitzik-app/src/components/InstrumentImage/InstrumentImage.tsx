@@ -1,5 +1,5 @@
 import React from 'react'
-import { InstrumentUserFriendlyName } from '../../types'
+import { InstrumentUserFriendlyName } from '@/types'
 
 interface InstrumentImageProps {
     instrumentName: InstrumentUserFriendlyName

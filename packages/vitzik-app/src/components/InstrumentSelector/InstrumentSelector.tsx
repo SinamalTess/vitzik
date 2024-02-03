@@ -1,7 +1,7 @@
 import { Select } from 'vitzik-ui'
 import React from 'react'
-import { MIDI_INSTRUMENTS, DEFAULT_MIDI_INSTRUMENT, DEFAULT_KEYBOARD_INSTRUMENT } from '../../const'
-import { ActiveInstrument, InstrumentUserFriendlyName } from '../../types'
+import { MIDI_INSTRUMENTS, DEFAULT_MIDI_INSTRUMENT, DEFAULT_KEYBOARD_INSTRUMENT } from '@/const'
+import { ActiveInstrument, InstrumentUserFriendlyName } from '@/types'
 
 interface InstrumentSelectorProps {
     value: string

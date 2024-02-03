@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './MidiTitle.scss'
 import { CSSTransition } from 'react-transition-group'
-import { normalizeMidiTitle } from '../../utils'
+import { normalizeMidiTitle } from '@/utils'
 
 interface MidiTrackInfosPros {
     midiTitle: string

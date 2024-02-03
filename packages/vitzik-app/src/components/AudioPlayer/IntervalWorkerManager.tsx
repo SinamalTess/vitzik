@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { AudioPlayerState, MidiMetas } from '../../types'
-import { useIntervalWorker, usePrevious } from '../../hooks'
+import { AudioPlayerState, MidiMetas } from '@/types'
+import { useIntervalWorker, usePrevious } from '@/hooks'
 
 interface IntervalWorkerManagerProps {
     midiMetas: MidiMetas

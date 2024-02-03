@@ -1,4 +1,4 @@
-import { isEven } from '../../../utils'
+import { isEven } from '@/utils'
 import { SectionFactory } from './SectionFactory'
 
 export class AnimationFactory extends SectionFactory {

@@ -1,4 +1,4 @@
-import { MidiInputActiveNote, MidiJsonNote } from '../types'
+import { MidiInputActiveNote, MidiJsonNote } from '@/types'
 import { keyToNote } from './notes'
 import { isNoteOnEvent } from './midi_events'
 

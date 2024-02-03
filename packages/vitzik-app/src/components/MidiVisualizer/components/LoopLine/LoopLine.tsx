@@ -1,5 +1,5 @@
 import { SVGLine } from 'vitzik-ui'
-import { msToHumanReadableTime } from '../../../../utils'
+import { msToHumanReadableTime } from '@/utils'
 import React from 'react'
 
 interface LineProps {

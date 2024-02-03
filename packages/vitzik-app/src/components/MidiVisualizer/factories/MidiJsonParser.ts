@@ -9,7 +9,7 @@ import {
     MidiFactory,
 } from '../../../utils'
 import { EventsFactory } from './EventsFactory'
-import { MsPerBeat } from '../../../types'
+import { MsPerBeat } from '@/types'
 import { Section } from '../classes/Section'
 import { Dimensions } from '../types/Dimensions'
 import { NoteEvent } from '../classes/NoteEvent'

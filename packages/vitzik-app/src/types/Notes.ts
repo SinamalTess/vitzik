@@ -1,4 +1,4 @@
-import { NOTE_NAMES } from '../const'
+import { NOTE_NAMES } from '@/const'
 
 export type GermanNote = (typeof NOTE_NAMES.german)[number]
 export type SyllabicNote = (typeof NOTE_NAMES.syllabic)[number]

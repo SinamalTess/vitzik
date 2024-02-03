@@ -9,14 +9,14 @@ import {
     MidiAccessMode,
     LoopTimestamps,
     ActiveInstrument,
-} from '../../types'
+} from '@/types'
 import { AppModeSelector } from '../AppModeSelector'
 import { MidiInputSelector } from '../MidiInputSelector'
 import { Switch, Button, Divider, Tooltip } from 'vitzik-ui'
 import { ExtraSettingsPanel } from './ExtraSettingsPanel'
-import { MIDI_INPUT_CHANNEL } from '../../const'
+import { MIDI_INPUT_CHANNEL } from '@/const'
 import { BpmSelector } from '../BpmSelector'
-import { useKeyboardShortcut } from '../../hooks'
+import { useKeyboardShortcut } from '@/hooks'
 
 interface SettingsProps {
     showNotes: boolean
