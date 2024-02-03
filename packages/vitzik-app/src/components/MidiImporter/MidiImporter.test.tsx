@@ -4,7 +4,7 @@ import { MidiImporter } from './MidiImporter'
 import * as reactDeviceDetect from 'react-device-detect'
 import { dragInvalidFile, dragValidFile } from '../../tests/utils'
 
-const onMidiImport = jest.fn()
+const onMidiImport = vi.fn()
 
 describe('MidiImporter', () => {
     it('should start in pending state', () => {

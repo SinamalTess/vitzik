@@ -1,14 +1,14 @@
 import React, { useRef } from 'react'
 import { Slide } from './Slide'
 import { render, screen } from '@testing-library/react'
-import canvasMock from 'jest-canvas-mock'
+import canvasMock from 'vitest-canvas-mock'
 import { MidiVisualizerConfig } from '../../../../types/MidiVisualizerConfig'
 import { NoteEvent } from '../../classes/NoteEvent'
 import { AlphabeticalNote } from '../../../../types'
 
-jest.mock('react', () => {
-    const originReact = jest.requireActual('react')
-    const mockUseRef = jest.fn()
+vi.mock('react', async () => {
+    const originReact = await vi.importActual('react')
+    const mockUseRef = vi.fn()
     return {
         ...originReact,
         useRef: mockUseRef,
@@ -39,7 +39,6 @@ const noteEvents: NoteEvent[] = [new NoteEvent(coordinates, metas, note)]
 
 describe('MidiVisualizerSlide', () => {
     beforeEach(() => {
-        // @ts-ignore
         useRef.mockReturnValue({
             current: canvasMock,
         })

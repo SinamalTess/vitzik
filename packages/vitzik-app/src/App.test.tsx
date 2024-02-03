@@ -26,7 +26,7 @@ describe('App', () => {
     describe('When there is no midi input', () => {
         beforeEach(() => {
             requestMIDIAccess.mockResolvedValue(midiAccessMock())
-            jest.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
+            vi.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
         })
 
         it('should render the initial state', async () => {
@@ -61,7 +61,7 @@ describe('App', () => {
     describe('When there is a midi input', () => {
         beforeEach(async () => {
             requestMIDIAccess.mockResolvedValue(midiAccessMock([midiInput]))
-            jest.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
+            vi.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
         })
 
         describe('When no midi file is imported yet', () => {

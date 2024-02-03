@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "main": "lib/index.js",
+  "type": "module",
   "dependencies": {
     "@popperjs/core": "^2.11.5",
     "clsx": "^2.0.0",

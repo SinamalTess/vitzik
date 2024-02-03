@@ -1,10 +1,14 @@
 #! /usr/bin/env node
-const { generateTypeDefinitions, runWebpack, clearOutputDir} = require("./utils");
-const { PACKAGE_NAME } = require("./const");
+import { PACKAGE_NAME } from "./const/index.js";
+import {
+  generateTypeDefinitions,
+  runWebpack,
+  clearOutputDir,
+} from "./utils/index.js";
 
 (() => {
   console.log(`Starting ${PACKAGE_NAME} in watch mode`);
-  clearOutputDir()
+  clearOutputDir();
   runWebpack(true);
   generateTypeDefinitions(true);
 })();

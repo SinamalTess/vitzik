@@ -1,10 +1,10 @@
-import {render, screen} from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { AppModeSelector } from './index'
 import { clickImportMode } from '../../tests/utils'
 
 describe('AppModeSelector', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
 
     it('should show a disabled "learning" button', async () => {
         render(<AppModeSelector appMode={'import'} onChange={onChange}></AppModeSelector>)

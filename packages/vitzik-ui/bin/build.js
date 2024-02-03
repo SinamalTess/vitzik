@@ -1,10 +1,14 @@
 #! /usr/bin/env node
-const { runWebpack, generateTypeDefinitions, clearOutputDir} = require("./utils");
-const { PACKAGE_NAME } = require("./const");
+import {
+  runWebpack,
+  generateTypeDefinitions,
+  clearOutputDir,
+} from "./utils/index.js";
+import { PACKAGE_NAME } from "./const/index.js";
 
 (() => {
   console.log(`Starting build task in ${PACKAGE_NAME}`);
-  clearOutputDir()
+  clearOutputDir();
   runWebpack();
   generateTypeDefinitions();
 })();

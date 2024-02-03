@@ -1,9 +1,3 @@
-const PACKAGE_NAME = "vitzik-ui";
-const ROOT_DIR = "src";
-const OUTPUT_DIR = "lib";
-
-module.exports = {
-    PACKAGE_NAME,
-    ROOT_DIR,
-    OUTPUT_DIR
-}
+export const PACKAGE_NAME = "vitzik-ui";
+export const ROOT_DIR = "src";
+export const OUTPUT_DIR = "lib";

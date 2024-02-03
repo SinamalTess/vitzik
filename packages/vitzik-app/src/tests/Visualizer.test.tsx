@@ -11,7 +11,7 @@ const midiInput = new MidiInputMock('Piano', 'Yamaha')
 describe('The visualizer', () => {
     beforeEach(async () => {
         requestMIDIAccess.mockResolvedValue(midiAccessMock([midiInput]))
-        jest.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
+        vi.spyOn(Soundfont, 'instrument').mockResolvedValue(instrumentPlayerMock)
     })
 
     it('should render', async () => {

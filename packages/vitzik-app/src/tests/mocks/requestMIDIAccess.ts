@@ -1,6 +1,6 @@
-export const requestMIDIAccess = jest.fn()
-const onmidimessage = jest.fn()
-const removeEventListener = jest.fn()
+export const requestMIDIAccess = vi.fn()
+const onmidimessage = vi.fn()
+const removeEventListener = vi.fn()
 
 export const midiAccessMock = (midiInputs?: MidiInputMock[], midiOutputs?: MidiInputMock[]) => ({
     inputs: {

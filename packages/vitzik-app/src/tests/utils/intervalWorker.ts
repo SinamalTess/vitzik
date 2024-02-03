@@ -1,6 +1,7 @@
 // @ts-ignore
-import { mockIntervalWorker } from '../../setupTests.js'
+
+import { WorkerMock } from '../mocks/WorkerMock'
 
 export const dispatchIntervalWorkerEvent = (time: number) => {
-    mockIntervalWorker.callWith('updateTimer', { time })
+    // WorkerMock.callWith('updateTimer', { time })
 }

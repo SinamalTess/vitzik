@@ -19,7 +19,7 @@ const clickAlphabeticalSystem = async () => {
 }
 
 describe('MusicSystemSelector', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
 
     it('calls onChange() callback with "syllabic" mode', async () => {
         render(

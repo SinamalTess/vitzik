@@ -7,12 +7,12 @@ import {
     InstrumentUserFriendlyName,
     MidiVisualizerActiveNote,
 } from '../../types'
-import Soundfont from 'soundfont-player'
-import Mock = jest.Mock
 import { instrumentPlayerMock } from '../../tests/mocks/SoundFont'
 import { MidiInputMock } from '../../tests/mocks/requestMIDIAccess'
 import { MIDI_INPUT_CHANNEL } from '../../utils/const'
 import { waitSoundFontInstrumentPromise } from '../../tests/utils/acts'
+import { Mock, vi } from 'vitest'
+import Soundfont from 'soundfont-player'
 
 const activeNote: MidiVisualizerActiveNote = {
     name: 'A0',
@@ -38,6 +38,7 @@ const props = {
 
 describe('InstrumentPlayer', () => {
     beforeEach(async () => {
+        ;(Soundfont.instrument as Mock).mockClear()
         ;(Soundfont.instrument as Mock).mockResolvedValue(() => instrumentPlayerMock)
     })
 
