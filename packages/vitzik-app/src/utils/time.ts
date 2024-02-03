@@ -1,6 +1,6 @@
 export const msToSec = (ms: number): number => ms / 1000
 
-export const msToTime = (ms: number) => {
+const msToTime = (ms: number) => {
     const msDurationDate = new Date(ms)
     const hours = msDurationDate.getHours()
     const min = msDurationDate.getMinutes()

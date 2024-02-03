@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './MidiTitle.scss'
 import { CSSTransition } from 'react-transition-group'
-import { normalizeMidiTitle } from '@/utils'
+import { normalizeMidiFileTitle } from '@/utils'
 
 interface MidiTrackInfosPros {
     midiTitle: string
@@ -12,7 +12,7 @@ const BASE_CLASS = 'midi-title'
 
 export function MidiTitle({ midiTitle }: MidiTrackInfosPros) {
     const [isVisible, setIsVisible] = useState<boolean>(false)
-    const title = normalizeMidiTitle(midiTitle)
+    const title = normalizeMidiFileTitle(midiTitle)
 
     useEffect(() => {
         setIsVisible(true)

@@ -1,6 +1,6 @@
 import { RangeSlider, Tooltip } from 'vitzik-ui'
 import React, { useEffect, useRef } from 'react'
-import { msToHumanReadableTime, normalizeMidiTitle } from '@/utils'
+import { msToHumanReadableTime, normalizeMidiFileTitle } from '@/utils'
 import { LoopTimestamps } from '@/types'
 import './ProgressBar.scss'
 import { useIntervalWorker } from '@/hooks'
@@ -67,7 +67,7 @@ export function ProgressBar({
     const refTime = useRef<HTMLSpanElement>(null)
     const refBar = useRef<HTMLInputElement>(null)
     const totalTime = msToHumanReadableTime(duration)
-    const titleWithoutExtension = normalizeMidiTitle(title ?? '')
+    const titleWithoutExtension = normalizeMidiFileTitle(title ?? '')
 
     useIntervalWorker(onTimeChange)
 
