@@ -5,7 +5,7 @@ import { ROOT_DIR, OUTPUT_DIR } from "../const/index.js";
 export function runWebpack(watch = false) {
   console.log("Run Webpack config");
   const webpackProcess = exec(
-    `webpack ${watch ? "-w" : ""} --config webpack.config.js`,
+    `webpack ${watch ? "-w" : ""} --config webpack.config.cjs`,
   );
 
   webpackProcess.stdout.on("data", function (data) {
