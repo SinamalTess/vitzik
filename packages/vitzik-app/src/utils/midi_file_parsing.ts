@@ -43,7 +43,7 @@ const getInstrument = (event: IMidiProgramChangeEvent, deltaAcc: number) => {
     return {
         channel: actualChannel,
         delta: deltaAcc,
-        timestamp: 0, // to be replaced once we know allMsPerBeat values
+        timestamp: 0, // TODO: replace once we know allMsPerBeat values
         name,
         index: programNumber,
         notes: new Set(),
