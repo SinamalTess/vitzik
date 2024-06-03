@@ -7,7 +7,7 @@ Also adds a very subtle skew to change the 'thickness' of the glitch. */
     @for $i from 0 through $steps {
         #{percentage($i * calc(1 / $steps))} {
             clip: rect(random(100) + px, 9999px, random(100) + px, 0);
-            transform: skew((random(100) / 100) + deg);
+            transform: skew(calc(random(100) / 100) + deg);
         }
     }
 }
@@ -18,7 +18,7 @@ Also adds a very subtle skew to change the 'thickness' of the glitch. */
     @for $i from 0 through $steps {
         #{percentage($i * calc(1 / $steps))} {
             clip: rect(random(100) + px, 9999px, random(100) + px, 0);
-            transform: skew((random(100) / 100) + deg);
+            transform: skew(calc(random(100) / 100) + deg);
         }
     }
 }
@@ -63,7 +63,9 @@ Also adds a very subtle skew to change the 'thickness' of the glitch. */
     &::after {
         @include glitch-copy;
         left: -2px;
-        text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+        text-shadow:
+            -2px 0 #00fff9,
+            2px 2px #ff00c1;
         animation: glitch-animation-2 1s infinite linear alternate-reverse;
     }
 }
