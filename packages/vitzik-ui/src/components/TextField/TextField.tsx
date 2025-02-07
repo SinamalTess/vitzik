@@ -9,6 +9,7 @@ interface TextFieldProps extends PresentationalComponentBasicProps {
     fitSize?: boolean
     icon?: IconName
     type?: 'text' | 'number'
+    placeholder?: string
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -20,6 +21,7 @@ export function TextField({
     value,
     fitSize = false,
     icon,
+    placeholder,
     type = 'text',
     onChange,
 }: TextFieldProps) {
@@ -32,6 +34,7 @@ export function TextField({
                 max={200}
                 style={{ width: fitSize ? value.toString().length + 2 + 'ch' : 'auto' }}
                 type={type}
+                placeholder={placeholder}
                 value={value}
                 onChange={onChange}
             />

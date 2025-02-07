@@ -1,87 +1,90 @@
 {
-  "name": "vitzik-app",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": "./",
-  "dependencies": {
-    "@popperjs/core": "^2.11.5",
-    "@vitejs/plugin-react": "^4.2.1",
-    "clsx": "^1.1.0",
-    "lodash": "^4.5.0",
-    "midi-json-parser": "^8.1.7",
-    "react": "^18.1.0",
-    "react-device-detect": "^2.2.2",
-    "react-dom": "^18.1.0",
-    "react-popper": "^2.3.0",
-    "react-transition-group": "^4.4.2",
-    "soundfont-player": "^0.12.0",
-    "vexflow": "^4.0.3",
-    "vite": "^5.0.12",
-    "vite-tsconfig-paths": "^4.3.1",
-    "vitzik-ui": "^0.1.0",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest --watch=false",
-    "test:watch": "vitest",
-    "test:staged": "vitest --watch=false --passWithNoTests --coverage"
-  },
-  "lint-staged": {
-    "**/*": [
-      "prettier --write --ignore-unknown"
-    ],
-    "src/**/*.(ts|tsx)": [
-      "npm run test:staged"
-    ]
-  },
-  "jest": {
-    "displayName": "vitzip-app",
-    "coveragePathIgnorePatterns": [
-      "/src/types",
-      "/src/tests",
-      "/src/reportWebVitals.js",
-      "/src/utils/const",
-      "/index.js",
-      "/index.ts"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^6.0.0",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.3.0",
-    "@types/jest": "^29.0.0",
-    "@types/lodash": "^4.5.6",
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.5",
-    "@types/react-transition-group": "^4.4.5",
-    "@types/vexflow": "^1.2.38",
-    "@types/webmidi": "^2.0.10",
-    "@vitest/coverage-v8": "^1.2.2",
-    "babel-plugin-named-exports-order": "^0.0.2",
-    "eslint-plugin-unused-imports": "^3.0.0",
-    "happy-dom": "^13.3.8",
-    "prettier": "^3.0.0",
-    "sass": "^1.52.1",
-    "ts-loader": "^9.3.1",
-    "typescript": "^5.0.0",
-    "vitest": "^1.2.2",
-    "vitest-canvas-mock": "^0.3.3",
-    "webpack": "^5.72.1"
-  }
+    "name": "vitzik-app",
+    "version": "0.1.0",
+    "description": "The frontend for the Vitzik application",
+    "author": "Tess Lucia Sinamal",
+    "private": true,
+    "homepage": "./",
+    "dependencies": {
+        "@azure/web-pubsub-client": "^1.0.1",
+        "@popperjs/core": "^2.11.5",
+        "@vitejs/plugin-react": "^4.2.1",
+        "clsx": "^1.1.0",
+        "lodash": "^4.5.0",
+        "midi-json-parser": "^8.1.7",
+        "react": "^18.1.0",
+        "react-device-detect": "^2.2.2",
+        "react-dom": "^18.1.0",
+        "react-popper": "^2.3.0",
+        "react-transition-group": "^4.4.2",
+        "soundfont-player": "^0.12.0",
+        "vexflow": "^4.0.3",
+        "vite": "^5.0.12",
+        "vite-tsconfig-paths": "^4.3.1",
+        "vitzik-ui": "^0.1.0",
+        "web-vitals": "^2.1.4"
+    },
+    "scripts": {
+        "start": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "test": "vitest --watch=false",
+        "test:watch": "vitest",
+        "test:staged": "vitest --watch=false --passWithNoTests --coverage"
+    },
+    "lint-staged": {
+        "**/*": [
+            "prettier --write --ignore-unknown"
+        ],
+        "src/**/*.(ts|tsx)": [
+            "npm run test:staged"
+        ]
+    },
+    "jest": {
+        "displayName": "vitzip-app",
+        "coveragePathIgnorePatterns": [
+            "/src/types",
+            "/src/tests",
+            "/src/reportWebVitals.js",
+            "/src/utils/const",
+            "/index.js",
+            "/index.ts"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.0.0",
+        "@testing-library/react": "^14.0.0",
+        "@testing-library/user-event": "^14.3.0",
+        "@types/jest": "^29.0.0",
+        "@types/lodash": "^4.5.6",
+        "@types/node": "^20.0.0",
+        "@types/react": "^18.0.9",
+        "@types/react-dom": "^18.0.5",
+        "@types/react-transition-group": "^4.4.5",
+        "@types/vexflow": "^1.2.38",
+        "@types/webmidi": "^2.0.10",
+        "@vitest/coverage-v8": "^1.2.2",
+        "babel-plugin-named-exports-order": "^0.0.2",
+        "eslint-plugin-unused-imports": "^3.0.0",
+        "happy-dom": "^13.3.8",
+        "prettier": "^3.0.0",
+        "sass": "^1.52.1",
+        "ts-loader": "^9.3.1",
+        "typescript": "^5.0.0",
+        "vitest": "^1.2.2",
+        "vitest-canvas-mock": "^0.3.3",
+        "webpack": "^5.72.1"
+    }
 }

@@ -17,6 +17,7 @@ import { ExtraSettingsPanel } from './ExtraSettingsPanel'
 import { MIDI_INPUT_CHANNEL } from '@/const'
 import { BpmSelector } from '../BpmSelector'
 import { useKeyboardShortcut } from '@/hooks'
+import { WebSocketButton } from '@/components/WebSocketButton'
 
 interface SettingsProps {
     showNotes: boolean
@@ -166,6 +167,7 @@ export function Settings({
                             forward
                         </span>
                     </Tooltip>
+                    <WebSocketButton />
                 </>
             ) : null}
             <Button icon={'settings'} onClick={handleClickOnExtraSettings} aria-label={'settings'}>
