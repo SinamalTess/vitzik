@@ -1,34 +1,31 @@
 {
-  "name": "root",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "start": "npx lerna run start --parallel",
-    "build": "npx lerna run build",
-    "test": "npx lerna run test",
-    "test:watch": "npx lerna run test --coverage",
-    "test:staged": "npx lerna run test:staged",
-    "prepare": "husky install",
-    "deploy": "gh-pages -d packages/vitzik-app/build"
-  },
-  "lint-staged": {
-    "**/*": [
-      "prettier --write --ignore-unknown"
-    ],
-    "src/**/*.(ts|tsx)": [
-      "npm run test:staged"
+    "name": "root",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "start": "yarn workspaces foreach --all -p run start",
+        "build": "yarn workspaces foreach --all build",
+        "test": "yarn workspaces foreach --all test",
+        "test:watch": "yarn workspaces foreach --all test --coverage",
+        "test:staged": "yarn workspaces foreach --all test:staged",
+        "prepare": "husky install",
+        "deploy": "gh-pages -d packages/vitzik-app/build"
+    },
+    "lint-staged": {
+        "**/*": [
+            "prettier --write --ignore-unknown"
+        ]
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^18.0.0",
+        "@commitlint/config-conventional": "^17.0.0",
+        "gh-pages": "^6.0.0",
+        "husky": "^9.0.0",
+        "lerna": "^8.0.0",
+        "lint-staged": "^15.4.3",
+        "prettier": "^3.0.0"
+    },
+    "workspaces": [
+        "packages/*"
     ]
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^18.0.0",
-    "@commitlint/config-conventional": "^18.0.0",
-    "gh-pages": "^6.0.0",
-    "husky": "^9.0.0",
-    "lerna": "^8.0.0",
-    "lint-staged": "^15.0.0",
-    "prettier": "^3.0.0"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
 }

@@ -37,7 +37,7 @@
             "prettier --write --ignore-unknown"
         ],
         "src/**/*.(ts|tsx)": [
-            "npm run test:staged"
+            "yarn test:staged"
         ]
     },
     "jest": {
