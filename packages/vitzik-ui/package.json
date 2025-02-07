@@ -20,14 +20,6 @@
         "storybook": "start-storybook -p 6006 -s public",
         "build-storybook": "build-storybook -s public"
     },
-    "lint-staged": {
-        "**/*": [
-            "prettier --write --ignore-unknown"
-        ],
-        "src/**/*.(ts|tsx)": [
-            "yarn test:staged"
-        ]
-    },
     "browserslist": {
         "production": [
             ">0.2%",

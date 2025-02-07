@@ -7,18 +7,16 @@
     "homepage": "./",
     "dependencies": {
         "@azure/web-pubsub-client": "^1.0.1",
-        "@popperjs/core": "^2.11.5",
         "@vitejs/plugin-react": "^4.2.1",
         "clsx": "^1.1.0",
         "lodash": "^4.5.0",
         "midi-json-parser": "^8.1.7",
+        "midi-json-parser-worker": "^8.1.52",
         "react": "^18.1.0",
         "react-device-detect": "^2.2.2",
         "react-dom": "^18.1.0",
-        "react-popper": "^2.3.0",
         "react-transition-group": "^4.4.2",
         "soundfont-player": "^0.12.0",
-        "vexflow": "^4.0.3",
         "vite": "^5.0.12",
         "vite-tsconfig-paths": "^4.3.1",
         "vitzik-ui": "^0.1.0",
@@ -31,14 +29,6 @@
         "test": "vitest --watch=false",
         "test:watch": "vitest",
         "test:staged": "vitest --watch=false --passWithNoTests --coverage"
-    },
-    "lint-staged": {
-        "**/*": [
-            "prettier --write --ignore-unknown"
-        ],
-        "src/**/*.(ts|tsx)": [
-            "yarn test:staged"
-        ]
     },
     "jest": {
         "displayName": "vitzip-app",
@@ -75,16 +65,12 @@
         "@types/react-transition-group": "^4.4.5",
         "@types/vexflow": "^1.2.38",
         "@types/webmidi": "^2.0.10",
-        "@vitest/coverage-v8": "^1.2.2",
-        "babel-plugin-named-exports-order": "^0.0.2",
+        "eslint-config-react-app": "^7.0.1",
         "eslint-plugin-unused-imports": "^3.0.0",
         "happy-dom": "^13.3.8",
-        "prettier": "^3.0.0",
         "sass": "^1.52.1",
-        "ts-loader": "^9.3.1",
         "typescript": "^5.0.0",
         "vitest": "^1.2.2",
-        "vitest-canvas-mock": "^0.3.3",
-        "webpack": "^5.72.1"
+        "vitest-canvas-mock": "^0.3.3"
     }
 }

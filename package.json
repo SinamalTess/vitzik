@@ -16,12 +16,17 @@
             "prettier --write --ignore-unknown"
         ]
     },
+    "depcheck": {
+        "ignores": [
+            "@types/*"
+        ]
+    },
     "devDependencies": {
         "@commitlint/cli": "^18.0.0",
         "@commitlint/config-conventional": "^17.0.0",
+        "depcheck": "^1.4.7",
         "gh-pages": "^6.0.0",
         "husky": "^9.0.0",
-        "lerna": "^8.0.0",
         "lint-staged": "^15.4.3",
         "prettier": "^3.0.0"
     },
