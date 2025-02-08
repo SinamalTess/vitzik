@@ -9,12 +9,8 @@ export const WebSocketButton = () => {
     const { webSocket } = useContext(AppContext)
 
     const handleOnClickConnectToMultiplayers = async () => {
-        try {
-            await webSocket.joinGroup('hello there')
-            setIsOpen(true)
-        } catch (error) {
-            console.error('Failed to join group:', error)
-        }
+        await webSocket.joinGroup('hello there')
+        setIsOpen(true)
     }
 
     const handleOnClose = () => {
