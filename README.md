@@ -22,28 +22,36 @@ The monorepo uses [Lerna](https://lerna.js.org/) to run commands across multiple
 Install dependencies:
 
 ```sh
-npm install
+yarn
 ```
 
 Start application:
 
 ```sh
-npm start
+yarn start
 ```
 
 Run tests:
 
 ```sh
-npm run test
+yarn test
 ```
 
 Build the packages:
 
 ```sh
-npm run build
+yarn build
 ```
 
-Note : tests and prettier are automatically run when committing. If a test fails the commit will be aborted.
+## Commit checks
+
+- Tests and Prettier are run when committing. This is configured in `.husky` folder with the `lint-staged` command (found in package.json) If a test fails the commit will be aborted.
+- Commit message is checked to match `commitlint` format. This is configured in `.husky` folder.
+- The monorepo is checked for missing or unnecessary dependencies with `depcheck`. This is configured in `.husky` folder.
+
+## Dependency updates
+
+- `Dependabot` is configured to automatically open PRs for dependency updates. This is configured in `.github/dependabot.yml`.
 
 ## Useful Links
 
