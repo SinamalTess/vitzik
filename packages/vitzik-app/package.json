@@ -14,7 +14,7 @@
         "lodash": "^4.5.0",
         "midi-json-parser": "^8.1.7",
         "midi-json-parser-worker": "^8.1.52",
-        "react": "^18.1.0",
+        "react": "^19.0.0",
         "react-device-detect": "^2.2.2",
         "react-dom": "^18.1.0",
         "react-transition-group": "^4.4.2",
