@@ -5,10 +5,10 @@
     "packageManager": "^yarn@4.2.2",
     "scripts": {
         "start": "yarn workspaces foreach --all -p run start",
-        "build": "yarn workspaces foreach --all build",
-        "test": "yarn workspaces foreach --all test",
-        "test:watch": "yarn workspaces foreach --all test --coverage",
-        "test:staged": "yarn workspaces foreach --all test:staged",
+        "build": "yarn workspaces foreach --all run build",
+        "test": "yarn workspaces foreach --all run test",
+        "test:watch": "yarn workspaces foreach --all run test --coverage",
+        "test:staged": "yarn workspaces foreach --all run test:staged",
         "prepare": "husky install",
         "deploy": "gh-pages -d packages/vitzik-app/build"
     },
