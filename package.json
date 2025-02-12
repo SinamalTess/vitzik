@@ -2,6 +2,7 @@
     "name": "root",
     "version": "0.1.0",
     "private": true,
+    "packageManager": "^yarn@4.2.2",
     "scripts": {
         "start": "yarn workspaces foreach --all -p run start",
         "build": "yarn workspaces foreach --all build",

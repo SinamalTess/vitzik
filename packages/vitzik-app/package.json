@@ -5,6 +5,7 @@
     "author": "Tess Lucia Sinamal",
     "private": true,
     "homepage": "./",
+    "packageManager": "^yarn@4.2.2",
     "dependencies": {
         "@azure/web-pubsub-client": "^1.0.1",
         "@vitejs/plugin-react": "^4.2.1",
