@@ -24,3 +24,5 @@ export { SVGRectangle } from './components/SVGRectangle'
 export * from './types'
 
 export { useClickOutside } from './hooks/useClickOutside'
+
+import './style/icons.scss'
