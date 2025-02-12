@@ -4,13 +4,12 @@ import { IconName, PresentationalComponentBasicProps } from '../../types'
 import { Icon } from '../Icon'
 import clsx from 'clsx'
 
-interface TextFieldProps extends PresentationalComponentBasicProps {
+interface TextFieldProps extends PresentationalComponentBasicProps<HTMLInputElement> {
     value: string | number
     fitSize?: boolean
     icon?: IconName
     type?: 'text' | 'number'
     placeholder?: string
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 const BASE_CLASS = 'text-field'

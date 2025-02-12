@@ -8,14 +8,12 @@ interface IconProps extends PresentationalComponentBasicProps {
     color?: string
     children?: string
     size?: CSSSpacingSize
-    onMouseEnter?: (event: React.MouseEvent<HTMLSpanElement>) => void
-    onMouseLeave?: (event: React.MouseEvent<HTMLSpanElement>) => void
 }
 
 const BASE_CLASS = 'icon'
 
 export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
-    { style, className, name, children, color, size = 'md', onMouseLeave, onMouseEnter },
+    { style, className, name, children, color, size = 'md', ...rest },
     ref
 ) {
     const classNames = clsx(
@@ -32,13 +30,7 @@ export const Icon = React.forwardRef<HTMLSpanElement, IconProps>(function Icon(
     }
 
     return (
-        <span
-            className={classNames}
-            style={styles}
-            ref={ref}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-        >
+        <span className={classNames} style={styles} ref={ref} {...rest}>
             {children}
         </span>
     )

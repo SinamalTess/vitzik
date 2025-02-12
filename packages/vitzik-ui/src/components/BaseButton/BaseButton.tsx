@@ -1,10 +1,8 @@
 import clsx from 'clsx'
 import React, { ReactNode } from 'react'
-import { CSSSpacingSize, PresentationalComponentBasicProps } from '../../types'
+import { CSSColor, CSSSpacingSize, PresentationalComponentBasicProps } from '../../types'
 
-export interface BaseButtonProps
-    extends PresentationalComponentBasicProps,
-        React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface BaseButtonProps extends PresentationalComponentBasicProps<HTMLButtonElement> {
     children?: ReactNode
     disabled?: boolean
     size?: CSSSpacingSize

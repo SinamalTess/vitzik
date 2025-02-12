@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { PresentationalComponentBasicProps } from '../../types'
 import { BASE_CLASS as LIST_BASE_CLASS } from '../List/List'
 
-interface ListItemProps extends PresentationalComponentBasicProps {
+interface ListItemProps extends PresentationalComponentBasicProps<HTMLLIElement> {
     children: ReactNode
 }
 

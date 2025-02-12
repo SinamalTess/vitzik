@@ -9,7 +9,7 @@ import { Icon } from '../Icon'
 
 type ButtonVariant = 'outlined' | 'filled' | 'text'
 
-interface ButtonProps extends BaseButtonProps {
+export interface ButtonProps extends BaseButtonProps {
     icon?: IconName
     color?: CSSColor
     variant?: ButtonVariant

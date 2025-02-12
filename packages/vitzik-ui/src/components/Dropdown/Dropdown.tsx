@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { PresentationalComponentBasicProps } from '../../types'
 import { isArrayOfChildren } from '../../utils/isArrayOfChildren'
 
-interface DropdownProps extends PresentationalComponentBasicProps {
+interface DropdownProps extends PresentationalComponentBasicProps<HTMLDivElement> {
     children: ReactNode
     open?: boolean
 }

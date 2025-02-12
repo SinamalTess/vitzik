@@ -4,7 +4,7 @@ import './List.scss'
 import clsx from 'clsx'
 import { PresentationalComponentBasicProps } from '../../types'
 
-interface ListProps extends PresentationalComponentBasicProps {
+interface ListProps extends PresentationalComponentBasicProps<HTMLUListElement> {
     children: ReactNode
     variant?: 'background' | 'transparent'
 }

@@ -4,7 +4,7 @@ import { CSSSpacingSize, PresentationalComponentBasicProps } from '../../types'
 import clsx from 'clsx'
 import { isArrayOfChildren } from '../../utils/isArrayOfChildren'
 
-interface ButtonGroupProps extends PresentationalComponentBasicProps {
+interface ButtonGroupProps extends PresentationalComponentBasicProps<HTMLButtonElement> {
     children: ReactNode
     size?: CSSSpacingSize
 }
@@ -16,7 +16,7 @@ interface IButtonGroupContext {
 export const ButtonGroupContext = React.createContext<IButtonGroupContext>({})
 
 const BASE_CLASS = 'btn-group'
- 
+
 export function ButtonGroup({ style, className, children, size = 'md' }: ButtonGroupProps) {
     if (!isArrayOfChildren(children, ButtonGroup.name)) return null
 

@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { PresentationalComponentBasicProps } from '../../types'
 
-interface SideBarProps extends PresentationalComponentBasicProps {
+interface SideBarProps extends PresentationalComponentBasicProps<HTMLDivElement> {
     open: boolean
     children: ReactNode
     position?: 'top' | 'left' | 'right' | 'bottom'
@@ -23,6 +23,7 @@ export function SideBar({
     open,
     position = 'right',
     onClose,
+    ...rest
 }: SideBarProps) {
     const [isOpen, setIsOpen] = useState(open)
     const ref = useRef<HTMLDivElement>(null)
@@ -45,6 +46,7 @@ export function SideBar({
             in={isOpen}
             timeout={ANIMATION_DURATION}
             classNames={classNames}
+            {...rest}
         >
             <div className={classNames} ref={ref} style={style}>
                 {children}

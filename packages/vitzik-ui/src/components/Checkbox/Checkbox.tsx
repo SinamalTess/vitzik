@@ -4,12 +4,11 @@ import './Checkbox.scss'
 import clsx from 'clsx'
 import { PresentationalComponentBasicProps } from '../../types'
 
-interface CheckboxProps extends PresentationalComponentBasicProps {
+interface CheckboxProps extends PresentationalComponentBasicProps<HTMLSpanElement> {
     children?: ReactNode
     value: string
     checked?: boolean
     disabled?: boolean
-    onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const BASE_CLASS = 'checkbox'
@@ -21,16 +20,12 @@ export function Checkbox({
     checked = false,
     disabled = false,
     className,
-    onChange,
+    ...rest
 }: CheckboxProps) {
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        onChange(event)
-    }
-
     const classNames = clsx(BASE_CLASS, className)
 
     return (
-        <span className={classNames}>
+        <span className={classNames} {...rest}>
             <input
                 aria-checked={checked}
                 type="checkbox"
@@ -38,7 +33,6 @@ export function Checkbox({
                 checked={checked}
                 disabled={disabled}
                 style={style}
-                onChange={handleChange}
             />
             {children ? <label>{children}</label> : null}
         </span>
