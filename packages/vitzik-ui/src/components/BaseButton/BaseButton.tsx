@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import React, { ReactNode } from 'react'
-import { CSSColor, CSSSpacingSize, PresentationalComponentBasicProps } from '../../types'
+import { CSSSpacingSize, PresentationalComponentBasicProps } from '../../types'
 
 export interface BaseButtonProps extends PresentationalComponentBasicProps<HTMLButtonElement> {
     children?: ReactNode
@@ -11,18 +11,12 @@ export interface BaseButtonProps extends PresentationalComponentBasicProps<HTMLB
 export const BASE_CLASS = 'btn'
 
 export const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(function BaseButton(
-    { children, className, 'aria-label': ariaLabel, disabled = false, ...rest }: BaseButtonProps,
+    { children, className, disabled = false, ...rest }: BaseButtonProps,
     ref
 ) {
     const classNames = clsx({ [`${BASE_CLASS}--disabled`]: disabled }, className)
     return (
-        <button
-            ref={ref}
-            disabled={disabled}
-            className={classNames}
-            aria-label={ariaLabel}
-            {...rest}
-        >
+        <button ref={ref} disabled={disabled} className={classNames} {...rest}>
             {children}
         </button>
     )
