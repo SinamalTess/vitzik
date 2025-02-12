@@ -10,7 +10,7 @@
         "test:watch": "yarn workspaces foreach --all run test --coverage",
         "test:staged": "yarn workspaces foreach --all run test:staged",
         "prepare": "husky install",
-        "deploy": "gh-pages -d packages/vitzik-app/build"
+        "deploy": "gh-pages -d packages/vitzik-app/dist"
     },
     "lint-staged": {
         "**/*": [
