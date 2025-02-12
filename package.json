@@ -23,7 +23,7 @@
         ]
     },
     "devDependencies": {
-        "@commitlint/cli": "^18.0.0",
+        "@commitlint/cli": "^19.7.1",
         "@commitlint/config-conventional": "^17.0.0",
         "depcheck": "^1.4.7",
         "gh-pages": "^6.0.0",
