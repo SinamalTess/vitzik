@@ -70,7 +70,7 @@
         "eslint-config-react-app": "^7.0.1",
         "eslint-plugin-unused-imports": "^3.0.0",
         "happy-dom": "15.10.2",
-        "sass": "^1.52.1",
+        "sass": "^1.85.0",
         "typescript": "^5.0.0",
         "vitest": "^1.2.2",
         "vitest-canvas-mock": "^0.3.3"
