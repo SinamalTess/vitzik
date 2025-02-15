@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+    backend:
+        build:
+            context: ./
+        ports:
+            - '8080:8080'
+        volumes:
+            - ./packages/vitzik-backend:/app
+            - /app/node_modules
+        environment:
+            - NODE_ENV=development
