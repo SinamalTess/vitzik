@@ -31,6 +31,12 @@ Start application:
 yarn start
 ```
 
+Start database and backend inside docker :
+
+```sh
+docker compose up
+```
+
 Run tests:
 
 ```sh

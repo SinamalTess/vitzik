@@ -1,13 +1,27 @@
-version: '3.8'
-
 services:
     backend:
         build:
             context: ./
+            dockerfile: ./packages/vitzik-backend/Dockerfile
         ports:
             - '8080:8080'
         volumes:
-            - ./packages/vitzik-backend:/app
+            - .:/app
             - /app/node_modules
         environment:
             - NODE_ENV=development
+            - MYSQL_DATABASE_HOST=mysql
+    mysql:
+        image: mysql:latest
+        container_name: vitzik-mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: vitzik-db
+            MYSQL_PASSWORD: root
+        ports:
+            - '3306:3306'
+        volumes:
+            - mysql-data:/var/lib/mysql
+
+volumes:
+    mysql-data:

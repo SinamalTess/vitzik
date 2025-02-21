@@ -6,7 +6,6 @@
     "scripts": {
         "start": "yarn workspaces foreach --all -p run start",
         "build": "yarn workspaces foreach --all run build",
-        "build:docker": "docker build -t vitzik -f packages/vitzik-backend/Dockerfile .",
         "test": "yarn workspaces foreach --all run test",
         "test:watch": "yarn workspaces foreach --all run test --coverage",
         "test:staged": "yarn workspaces foreach --all run test:staged",

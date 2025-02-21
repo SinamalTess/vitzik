@@ -17,7 +17,6 @@ export const azureWebSubPubController = (req: Request, res: Response) => {
     const joinGroup = async (groupName: string) => {
         try {
             const hasConnections = await serviceClient.groupExists(groupName)
-            console.log(hasConnections)
             if (hasConnections) {
                 return res.status(400).send('Group already exists')
             } else {
