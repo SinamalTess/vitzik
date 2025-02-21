@@ -1,16 +1,20 @@
 import express from 'express'
 import cors from 'cors'
 import { config } from 'dotenv'
-import { azureWebSubPubRoutes } from './routes'
+import { routes } from './routes'
+import { dataSource } from './config'
 
 config()
 
 const app = express()
 const PORT = 8080
 
-app.use(cors())
-app.use('/', azureWebSubPubRoutes())
+app.use([cors(), express.json(), routes()])
 
-app.listen(PORT, () =>
+app.listen(PORT, async () => {
     console.log(`Application server listening at http://localhost:${PORT}`)
-)
+
+    await dataSource.initialize()
+
+    console.log(`Connection to the database successful`)
+})
