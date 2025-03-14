@@ -23,8 +23,14 @@ jobs:
         with:
           node-version: '22.x'
           
-      - name: Install Yarn 4.2.2
-        run: npm install -g yarn@4.2.2
+      - name: Install Corepack
+        run: npm i -g corepack
+      
+      - name: Enable Corepack (Yarn 4+)
+        run: corepack enable
+      
+      - name: Use the Correct Yarn Version
+        run: corepack prepare yarn@4.2.2 --activate
 
       - name: yarn install, build, and test
         run: |
