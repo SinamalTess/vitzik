@@ -6,7 +6,7 @@
     "main": "lib/index.js",
     "author": "Tess Lucia Sinamal",
     "type": "module",
-    "packageManager": "^yarn@4.2.2",
+    "packageManager": "yarn@4.2.2",
     "dependencies": {
         "@popperjs/core": "^2.11.5",
         "clsx": "^2.0.0",
