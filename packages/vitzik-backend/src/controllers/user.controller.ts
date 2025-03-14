@@ -3,9 +3,16 @@ import { UserService } from '../services'
 
 export const UserController = {
     async createUser(req: Request, res: Response) {
+        const { email } = req.body
+        const user = await UserService.getUserByEmail(email)
+
+        if (user) {
+            res.status(400).json({ error: 'User already exists' })
+        }
+
         try {
-            const { name } = req.body
-            const user = await UserService.createUser(name)
+            const user = await UserService.createUser(email)
+
             res.status(201).json(user)
         } catch (error) {
             res.status(500).json({ error: 'Error creating user' })
@@ -24,13 +31,19 @@ export const UserController = {
             : res.status(404).json({ error: 'User not found' })
     },
 
-    async updateUser(req: Request, res: Response) {
-        const user = await UserService.updateUser(
-            Number(req.params.id),
-            req.body.name
-        )
+    async getUserByEmail(req: Request, res: Response) {
+        const user = await UserService.getUserByEmail(req.params.email)
         user
             ? res.json(user)
+            : res.status(404).json({ error: 'User not found' })
+    },
+
+    async updateUser(req: Request, res: Response) {
+        const user = req.body
+
+        const _user = await UserService.updateUser(user)
+        _user
+            ? res.json(_user)
             : res.status(404).json({ error: 'User not found' })
     },
 

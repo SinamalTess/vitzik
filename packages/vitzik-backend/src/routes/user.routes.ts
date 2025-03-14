@@ -6,9 +6,10 @@ export const userRoutes = () => {
 
     router.get('/', UserController.getUsers)
     router.get('/:id', UserController.getUserById)
-    router.delete('/:id', UserController.deleteUser)
-    router.put('/:id', UserController.updateUser)
+    router.get('/:email', UserController.getUserByEmail)
     router.post('/', UserController.createUser)
+    router.put('/:id', UserController.updateUser)
+    router.delete('/:id', UserController.deleteUser)
 
     return router
 }

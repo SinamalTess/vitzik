@@ -1,15 +1,15 @@
 import express from 'express'
-import { azureWebSubPubController } from '../controllers'
+import { AzureWebSubPubController } from '../controllers'
 
 export const azureWebSubPubRoutes = () => {
     const router = express.Router()
 
     router.get('/negotiate', (req, res) =>
-        azureWebSubPubController(req, res).negociate()
+        AzureWebSubPubController(req, res).negotiate()
     )
 
     router.get('/join-group', (req, res) =>
-        azureWebSubPubController(req, res).joinGroup('test')
+        AzureWebSubPubController(req, res).joinGroup('test')
     )
 
     return router

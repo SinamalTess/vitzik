@@ -1,25 +1,31 @@
 import { userRepository } from '../repositories/user.repository'
+import { User } from '../entities'
 
 export const UserService = {
-    async createUser(name: string) {
-        const user = userRepository.create({ name })
-        return await userRepository.save(user)
+    async createUser(email: User['email']) {
+        const _user = userRepository.create({ email })
+        return await userRepository.save(_user)
     },
 
     async getUsers() {
         return await userRepository.find()
     },
 
-    async getUserById(id: number) {
+    async getUserById(id: User['id']) {
         return await userRepository.findOne({ where: { id } })
     },
 
-    async updateUser(id: number, name: string) {
-        await userRepository.update(id, { name })
+    async getUserByEmail(email: User['email']) {
+        return await userRepository.findOne({ where: { email } })
+    },
+
+    async updateUser(user) {
+        const { id, ...rest } = user
+        await userRepository.update(id, rest)
         return userRepository.findOne({ where: { id } })
     },
 
-    async deleteUser(id: number) {
+    async deleteUser(id: User['id']) {
         return await userRepository.delete(id)
     },
 }
