@@ -5,7 +5,7 @@
     "author": "Tess Lucia Sinamal",
     "private": true,
     "homepage": "./",
-    "packageManager": "^yarn@4.2.2",
+    "packageManager": "yarn@4.2.2",
     "type": "module",
     "dependencies": {
         "@azure/web-pubsub-client": "^1.0.1",
